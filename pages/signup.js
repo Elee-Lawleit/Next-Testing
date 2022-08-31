@@ -1,10 +1,11 @@
 import { useForm } from "react-hook-form";
-import { signUpSchema } from "../schemas";
+import { signUpSchema } from "../schemas/signUpSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import clsx from "clsx";
 import useFetchGigs from "../hooks/gigs/useFetchGigs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
+import Head from "next/head";
 
 import {
   faUser,
@@ -15,7 +16,7 @@ import {
   faLock,
 } from "@fortawesome/free-solid-svg-icons";
 
-export default function Home({user}) {
+export default function Home({ user }) {
   const {
     register,
     formState: { errors },
@@ -24,15 +25,17 @@ export default function Home({user}) {
     resolver: yupResolver(signUpSchema),
   });
 
-  const { data } = useFetchGigs();
-  console.log(data);
+  // const { data } = useFetchGigs();
+  // console.log(data);
 
   const onSignup = (data) => {
+    console.log("This is the register function: ",register())
     console.log(data);
   };
 
   return (
     <>
+      <Head meta="" keywords="" />
       <div className="flex flex-col items-center justify-center h-screen overflow-hidden">
         <form onSubmit={handleSubmit(onSignup)} className="flex flex-col gap-1">
           <div className="relative">
@@ -70,40 +73,26 @@ export default function Home({user}) {
             />
           </div>
 
-          {user=== "parent" && <div className="relative">
-            <input
-              type="text"
-              name=""
-              id=""
-              placeholder="CNIC..."
-              className={clsx(
-                "border border-gray-400 p-4 w-72 outline-none bg-gray-100 enabled:hover:bg-gray-200 placeholder:italic placeholder:pl-1 indent-5",
-                errors?.cnic && "border-red-500"
-              )}
-              {...register("cnic")}
-            />
-            <FontAwesomeIcon
-              icon={faIdCard}
-              className="absolute top-5 left-2 text-gray-800 ml-1"
-            />
-          </div>}
-          { user=== "student" && <div className="relative">
-            <input
-              type="text"
-              name=""
-              id=""
-              placeholder="Registration number..."
-              className={clsx(
-                "border border-gray-400 p-4 w-72 outline-none bg-gray-100 enabled:hover:bg-gray-200 placeholder:italic placeholder:pl-1 indent-5",
-                errors?.cnic && "border-red-500"
-              )}
-              {...register("regno")}
-            />
-            <FontAwesomeIcon
-              icon={faIdBadge}
-              className="absolute top-5 left-2 text-gray-800 ml-1"
-            />
-          </div>}
+          {user === "parent" && (
+            <div className="relative">
+              <input
+                type="text"
+                name=""
+                id=""
+                placeholder="CNIC..."
+                className={clsx(
+                  "border border-gray-400 p-4 w-72 outline-none bg-gray-100 enabled:hover:bg-gray-200 placeholder:italic placeholder:pl-1 indent-5",
+                  errors?.cnic && "border-red-500"
+                )}
+                {...register("cnic")}
+              />
+              <FontAwesomeIcon
+                icon={faIdCard}
+                className="absolute top-5 left-2 text-gray-800 ml-1"
+              />
+            </div>
+          )}
+
           <div className="relative">
             <input
               type="text"
@@ -123,7 +112,7 @@ export default function Home({user}) {
           </div>
           <div className="relative">
             <input
-              type="text"
+              type="password"
               name=""
               id=""
               placeholder="Password..."

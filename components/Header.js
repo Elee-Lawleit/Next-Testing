@@ -4,14 +4,11 @@ import Link from "next/link";
 
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 
-
 export default function Header(props) {
-
   const [isOpen, setMenu] = useState(false);
   const openMenu = () => {
     isOpen ? setMenu(false) : setMenu(true);
   };
-
 
   return (
     <>
@@ -21,11 +18,6 @@ export default function Header(props) {
           className="text-white text-2xl sm:invisible"
           onClick={openMenu}
         />
-        <div className="">
-          <h1 className="text-white text-lg font-['Helvetica']">
-            {props.heading}
-          </h1>
-        </div>
         <div className="invisible sm:visible text-white font-['Helvetica] flex gap-6">
           <Link href="/">
             <a href="">Home</a>
@@ -33,19 +25,15 @@ export default function Header(props) {
           <Link href="/signup">
             <a href="">Signup</a>
           </Link>
+          <div className="justify-center2">
+            <h1> BIIT Parent Appointment Portal </h1>
+          </div>
         </div>
       </div>
       {isOpen && (
         <div className="absolute top-13 h-screen z-50 flex flex-col gap-5 p-6 bg-purple-500 text-white font-['Helvetica']">
           <div className="rounded-sm bg-purple-800 p-2">
-            <button onClick={props.setParent}>
-              Sign up as parent
-            </button>
-          </div>
-          <div className="rounded-sm bg-purple-800 p-2">
-            <button onClick={props.setStudent}>
-              Sign up as student
-            </button>
+            <button onClick={props.setParent}>Sign up as parent</button>
           </div>
           <div className="rounded-sm bg-purple-800 p-2">
             <Link href="/contact">
