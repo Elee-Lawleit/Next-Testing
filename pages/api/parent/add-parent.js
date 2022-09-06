@@ -13,6 +13,10 @@ export default async function handler(req, res) {
 
     const { username, email, cnic, phone, password } = req.body;
 
+    if(!username || !email || !cnic || !phone || !password){
+      return res.status(403).json({error: "Please fill in all the fields"});
+    }
+
     await prisma.parent.create({
       data: {
         username: username,
