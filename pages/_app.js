@@ -2,35 +2,22 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import "../styles/globals.css";
 import "@fortawesome/fontawesome-svg-core/styles.css"; // import Font Awesome CSS
 import { config } from "@fortawesome/fontawesome-svg-core";
-import { Toaster } from "react-hot-toast";
+import dynamic from "next/dynamic";
 import { ReactQueryDevtools } from "react-query/devtools";
 config.autoAddCss = false;
 import Header from "../components/Header";
+
+//dynamically importing it because goddammit it
+const Toaster = dynamic(() => import('./../components/GlobalToaster'), {
+  ssr: false
+})
 
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }) {
   return (
     <>
-      <Toaster
-        position="bottom-right"
-        reverseOrder={false}
-        toastOptions={{
-          duration: 5000,
-          success: {
-            style: {
-              background: "#8358ff",
-              color: "#ffffff",
-            },
-          },
-          error: {
-            style: {
-              background: "#ef4444",
-              color: "#ffffff",
-            },
-          },
-        }}
-      />
+      <Toaster />
       <QueryClientProvider client={queryClient}>
         <Header />
         <Component {...pageProps} />
