@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef, useEffect, isValidElement} from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import clsx from "clsx";
@@ -12,12 +12,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-hot-toast";
 import { loginSchema } from "schemas/loginschema";
+import { trackPromise, usePromiseTracker } from "react-promise-tracker";
+import Spinner from "components/Spinner";
 
 
 
 const Login = () => {
   const router = useRouter();
-
+  
   const {
     register,
     formState: { errors },
@@ -26,29 +28,32 @@ const Login = () => {
     resolver: yupResolver(loginSchema)
   });
 
-
    const onLogin = async(data) => {
     console.log("This code is running!")
+    console.log("data obj: ", data);
     try{
-      const response = await useLoginParent(data);
+      const response = await trackPromise(useLoginParent(data));
       toast.success("Login successful");
       router.push("/")
 
     }
     catch(error){
+      console.log("This is error: ", error.response.data.error);
       toast.error(error.response.data.error)
     }
   }
 
-  const useLoginParent = async({username, password}) => {
+  const useLoginParent = async({username, password, role}) => {
     return await axios.post("/api/parent/login-parent", {
       username,
-      password
+      password,
+      role
     });
 
   }
 
 return (<div className="flex flex-col items-center justify-center h-screen overflow-hidden">
+  <Spinner/>
   <form onSubmit={handleSubmit(onLogin)} className="flex flex-col gap-1">
     <div className="relative">
       <input
@@ -92,6 +97,14 @@ return (<div className="flex flex-col items-center justify-center h-screen overf
         id=""
         className="w-full px-4 py-2 mt-1 bg-blue-500 rounded-sm cursor-pointer"
       />
+    </div>
+    <div className="flex justify-center mt-5">
+      <select name="" id="" {...register("role")}>
+        <option value="">Select Role</option>
+        <option value="admin">Admin</option>
+        <option value="parent">Parent</option>
+        <option value="student">Student</option>
+      </select>
     </div>
   </form>
   <div className="mt-2">

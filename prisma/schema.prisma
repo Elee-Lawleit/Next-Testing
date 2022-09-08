@@ -11,10 +11,90 @@ datasource db {
 }
 
 model Parent {
+  id       Int    @id @default(autoincrement())
+  parentEmail    String @unique
+  parentName     String @unique
+  parentCnic     String @unique
+  parentPhone    String @unique
+  parentPassword String
+
+  Meeting Meeting[]
+}
+
+model Admin {
+  id          Int     @id @default(autoincrement())
+  adminName        String
+  adminPassword    String
+  adminGender      String
+  adminCnic        String
+  adminEmail       String
+  adminDesignation String?
+
+  Role    Role[]
+  Meeting Meeting[]
+}
+
+model Role {
+  id  Int    @id @default(autoincrement())
+  role    String
+  adminId Int
+  Admin   Admin  @relation(fields: [adminId], references: [id])
+}
+
+model Student {
+  id       Int    @id @default(autoincrement())
+  studentRegNo    String @unique
+  studentName     String @unique
+  studentPassword String @unique
+
+  //tells which other models refer to this model
+  StudentInfo StudentInfo[]
+  Subject     Subject[]
+  Meeting     Meeting[]
+}
+
+model StudentInfo {
+  infoCgpa       Float
+  infoAttendance Boolean
+  studentId      Int     @id
+
+  //defining foreign key
+  Student Student @relation(fields: [studentId], references: [id])
+}
+
+model Subject {
+  subjectName String
+  studentId   Int
+  Student     Student @relation(fields: [studentId], references: [id])
+
+  //composite primary key
+  @@id([subjectName, studentId])
+}
+
+model Meeting {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String   @unique
-  cnic      String   @unique
-  phone     String   @unique
-  password  String
+  meetingDay       DateTime
+  meetingStartTime DateTime
+  meetingEndTime   DateTime
+  meetingStatus    Boolean
+  meetingReason    String?
+
+  adminId   Int
+  studentId Int
+  parentId  Int
+
+  Admin   Admin   @relation(fields: [adminId], references: [id])
+  Student Student @relation(fields: [studentId], references: [id])
+  Parent  Parent  @relation(fields: [parentId], references: [id])
+
+  Feedback Feedback[]
+}
+
+model Feedback {
+  id    Int     @id @default(autoincrement())
+  meetingId     Int
+  adminRemarks  String?
+  parentRemarks String?
+
+  Meeting Meeting @relation(fields: [meetingId], references: [id])
 }

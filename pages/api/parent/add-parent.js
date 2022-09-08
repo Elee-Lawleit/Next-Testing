@@ -19,11 +19,11 @@ export default async function handler(req, res) {
 
     await prisma.parent.create({
       data: {
-        username: username,
-        email: email,
-        cnic: cnic,
-        phone: phone,
-        password: password,
+        parentName: username,
+        parentEmail: email,
+        parentCnic: cnic,
+        parentPhone: phone,
+        parentPassword: password,
       },
     });
 

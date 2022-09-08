@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { useState, useLayoutEffect } from "react";
+import { useState } from "react";
 import {
   faUser,
   faEnvelope,
@@ -15,20 +15,25 @@ import {
   faLock,
 } from "@fortawesome/free-solid-svg-icons";
 import useAddParentMutation from "hooks/parent/use-add-parent-mutation";
-import toast from "react-hot-toast";
+import Spinner from "components/Spinner";
+import { trackPromise } from "react-promise-tracker";
 
 
-const Signup = () => {
+const Signup = (props) => {
+
+
+  const [loading, setLoading] = useState(true);
+
+  //may need to use this hack again
+  // setTimeout(()=>{
+  //   setLoading(false);
+  // }, 1000)
+  
 
   //dynamically creating a component
   const SignUp = dynamic(() => import("components/Use-otp"), {
     ssr: false
   });
-  
- toast.loading("Please wait... ", {
-  duration: 1000,
-  position: "top-center"
- })
 
   const [payload, setPayload] = useState();
 
@@ -63,8 +68,10 @@ const Signup = () => {
   return (
 
     <>
-      {!payload && <SignUp setPayload={setPayload} />}
+      {loading && <Spinner/>}
+      {!payload && <SignUp setPayload={setPayload} setLoading={setLoading} />}
       {payload && <div className="flex flex-col items-center justify-center h-screen overflow-hidden">
+        <Spinner/>
         <form onSubmit={handleSubmit(onSignup)} className="flex flex-col gap-1">
           <div className="relative">
             <input
