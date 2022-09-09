@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, isValidElement} from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import clsx from "clsx";
@@ -19,6 +19,7 @@ import Spinner from "components/Spinner";
 
 const Login = () => {
   const router = useRouter();
+  const promiseInProgress = usePromiseTracker(); 
   
   const {
     register,
@@ -27,23 +28,27 @@ const Login = () => {
   } = useForm({
     resolver: yupResolver(loginSchema)
   });
-
-   const onLogin = async(data) => {
+  
+  const onLogin = async(data) => {
     console.log("This code is running!")
     console.log("data obj: ", data);
     try{
       const response = await trackPromise(useLoginParent(data));
-      toast.success("Login successful");
+      console.log(response);
+      if(typeof window !== "undefined"){
+        localStorage.setItem("accessToken", response.data.token)
+      }
       router.push("/")
-
+      toast.success("Login successful");
     }
     catch(error){
-      console.log("This is error: ", error.response.data.error);
-      toast.error(error.response.data.error)
+      console.log("This is error: ", error);
+      // toast.error(error)
     }
   }
 
   const useLoginParent = async({username, password, role}) => {
+    console.log("Username: ", username)
     return await axios.post("/api/parent/login-parent", {
       username,
       password,
@@ -51,9 +56,12 @@ const Login = () => {
     });
 
   }
-
+  
+  if(promiseInProgress.promiseInProgress){
+    return(<Spinner/>)
+  }
+  
 return (<div className="flex flex-col items-center justify-center h-screen overflow-hidden">
-  <Spinner/>
   <form onSubmit={handleSubmit(onLogin)} className="flex flex-col gap-1">
     <div className="relative">
       <input

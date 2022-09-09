@@ -3,12 +3,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 
 import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { useRouter } from "next/router";
 
 export default function Header(props) {
+
+  const router = useRouter();
+
   const [isOpen, setMenu] = useState(false);
   const openMenu = () => {
     isOpen ? setMenu(false) : setMenu(true);
   };
+
+  if(typeof window !== "undefined"){
+    var token = localStorage.getItem("accessToken");
+  }
 
   return (
     <>
@@ -22,9 +30,17 @@ export default function Header(props) {
           <Link href="/">
             <a>Home</a>
           </Link>{" "}
-          <Link href="/signup">
+          {!token && <Link href="/signup">
             <a>Signup</a>
-          </Link>
+          </Link>}
+          {!token && <Link href="/login">
+            <a>Login</a>
+          </Link>}
+         {token && <Link href="/">
+            <a onClick={()=>{
+              localStorage.clear();
+            }}>Logout</a>
+          </Link>}
         </div>
       </div>
       {isOpen && (

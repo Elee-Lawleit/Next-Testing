@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { Router } from "next/router";
+import withProtect from "middleware/withProtect";
+import jwt from "jsonwebtoken"
 const prisma = new PrismaClient();
 
 const handler = async (req, res) => {
@@ -15,6 +16,8 @@ const handler = async (req, res) => {
       return res.status(403).json({ error: "Please fill in all the fields" });
     }
 
+
+    
     if(role === "parent"){
       console.log("parent being logged in")
       var user = await prisma.parent.findFirst({
@@ -46,9 +49,12 @@ const handler = async (req, res) => {
     if (!user) {
       return res.status(401).json({ error: "Wrong email/username or password" })
     }
+    
+    const accessToken = jwt.sign({id: user.id, timeStamp: new Date().getTime()}, "very unique secret key")
 
     return res.status(200).json({
       msg: "Signed up successfully.",
+      token: accessToken,
     });
   }
   catch (err) {
@@ -59,4 +65,7 @@ const handler = async (req, res) => {
   }
 }
 
+//will keep this for now
 export default handler;
+
+// export default withProtect(handler);

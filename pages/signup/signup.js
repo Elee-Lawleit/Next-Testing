@@ -16,28 +16,22 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import useAddParentMutation from "hooks/parent/use-add-parent-mutation";
 import Spinner from "components/Spinner";
-import { trackPromise } from "react-promise-tracker";
+import { toast } from "react-hot-toast";
+import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 
 
-const Signup = (props) => {
+const Signup = () => {
 
-
-  const [loading, setLoading] = useState(true);
-
-  //may need to use this hack again
-  // setTimeout(()=>{
-  //   setLoading(false);
-  // }, 1000)
-  
+  const promiseInProgress = usePromiseTracker();
+  const [payload, setPayload] = useState();
 
   //dynamically creating a component
-  const SignUp = dynamic(() => import("components/Use-otp"), {
+  const SignUp = dynamic(() => trackPromise(import("components/Use-otp")), {
     ssr: false
   });
 
-  const [payload, setPayload] = useState();
-
   const router = useRouter();
+
   const {
     register,
     formState: { errors },
@@ -46,7 +40,7 @@ const Signup = (props) => {
     resolver: yupResolver(signUpSchema),
   });
 
-  const { mutate: addParent } = useAddParentMutation();
+  const { mutate: addParent, isLoading } = useAddParentMutation();
 
   const onSignup = (data) => {
     addParent(
@@ -55,23 +49,34 @@ const Signup = (props) => {
       },
       {
         onSuccess: () => {
-          // toast.success("Parent added.");
+          toast.success("Parent added.");
           router.push("/login");
         },
         onError: () => {
-          // toast.error("Error adding parent.");
+          toast.error("Error adding parent.");
         },
       }
-    );
-  };
+      );
+    };
+  
+  //when rendering the otp component  
+  if(promiseInProgress.promiseInProgress){
+    console.log("loading because of promise tracker");
+    return (<Spinner/>)
+  }
+  
+  //waiting for signup
+  if(isLoading){
+    console.log("loading because of mutation");
+    return (<Spinner/>)
+  }
+    
 
   return (
 
     <>
-      {loading && <Spinner/>}
-      {!payload && <SignUp setPayload={setPayload} setLoading={setLoading} />}
+      {!payload && <SignUp setPayload={setPayload}  />}
       {payload && <div className="flex flex-col items-center justify-center h-screen overflow-hidden">
-        <Spinner/>
         <form onSubmit={handleSubmit(onSignup)} className="flex flex-col gap-1">
           <div className="relative">
             <input

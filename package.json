@@ -17,6 +17,7 @@
     "axios": "^0.27.2",
     "clsx": "^1.2.1",
     "daisyui": "^2.25.0",
+    "jsonwebtoken": "^8.5.1",
     "mojoauth-web-sdk": "^1.1.11",
     "next": "12.2.5",
     "react": "18.2.0",
