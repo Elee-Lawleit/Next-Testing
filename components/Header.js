@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/router";
 
-export default function Header(props) {
-
+export default function Header({ session }) {
   const router = useRouter();
 
   const [isOpen, setMenu] = useState(false);
@@ -14,7 +14,7 @@ export default function Header(props) {
     isOpen ? setMenu(false) : setMenu(true);
   };
 
-  if(typeof window !== "undefined"){
+  if (typeof window !== "undefined") {
     var token = localStorage.getItem("accessToken");
   }
 
@@ -30,17 +30,20 @@ export default function Header(props) {
           <Link href="/">
             <a>Home</a>
           </Link>{" "}
-          {!token && <Link href="/signup">
-            <a>Signup</a>
-          </Link>}
-          {!token && <Link href="/login">
-            <a>Login</a>
-          </Link>}
-         {token && <Link href="/">
-            <a onClick={()=>{
-              localStorage.clear();
-            }}>Logout</a>
-          </Link>}
+          {!token && (
+            <Link href="/signup">
+              <a>Signup</a>
+            </Link>
+          )}
+          {session ? (
+            <a onClick={signOut} className="cursor-pointer">
+              Logout
+            </a>
+          ) : (
+            <Link href="/login">
+              <a>Login</a>
+            </Link>
+          )}
         </div>
       </div>
       {isOpen && (

@@ -6,25 +6,34 @@ import dynamic from "next/dynamic";
 import { ReactQueryDevtools } from "react-query/devtools";
 config.autoAddCss = false;
 import Header from "../components/Header";
+import { SessionProvider } from "next-auth/react";
+import { getSession } from "next-auth/react";
 
 //dynamically importing it because goddammit it
-const Toaster = dynamic(() => import('./../components/GlobalToaster'), {
-  ssr: false
-})
+const Toaster = dynamic(() => import("./../components/GlobalToaster"), {
+  ssr: false,
+});
 
 const queryClient = new QueryClient();
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps, session }) {
   return (
-    <>
+    <SessionProvider session={session}>
       <Toaster />
       <QueryClientProvider client={queryClient}>
-        <Header />
-        <Component {...pageProps} />
+        <Header session={session} />
+        <Component {...pageProps} session={session} />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
-    </>
+    </SessionProvider>
   );
 }
+
+MyApp.getInitialProps = async (context) => {
+  const session = await getSession(context);
+  return {
+    session: session,
+  };
+};
 
 export default MyApp;
