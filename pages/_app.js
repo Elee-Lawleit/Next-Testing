@@ -8,6 +8,7 @@ config.autoAddCss = false;
 import Header from "../components/Header";
 import { SessionProvider } from "next-auth/react";
 import { getSession } from "next-auth/react";
+import { MantineProvider } from "@mantine/core";
 
 //dynamically importing it because goddammit it
 const Toaster = dynamic(() => import("./../components/GlobalToaster"), {
@@ -22,7 +23,9 @@ function MyApp({ Component, pageProps, session }) {
       <Toaster />
       <QueryClientProvider client={queryClient}>
         <Header session={session} />
-        <Component {...pageProps} session={session} />
+        <MantineProvider theme={{colorScheme: "light"}}>
+          <Component {...pageProps} session={session} />
+        </MantineProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </SessionProvider>

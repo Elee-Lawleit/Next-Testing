@@ -19,6 +19,7 @@ model Parent {
   parentPassword String
 
   Meeting Meeting[]
+  Student Student[]
 }
 
 model Admin {
@@ -45,7 +46,9 @@ model Student {
   id       Int    @id @default(autoincrement())
   studentRegNo    String @unique
   studentName     String @unique
-  studentPassword String @unique
+  studentPassword String 
+  parentId  Int
+  Parent Parent @relation(fields: [parentId], references: [id])
 
   //tells which other models refer to this model
   StudentInfo StudentInfo[]
@@ -73,9 +76,8 @@ model Subject {
 
 model Meeting {
   id        Int      @id @default(autoincrement())
-  meetingDay       DateTime
-  meetingStartTime DateTime
-  meetingEndTime   DateTime
+  meetingTime      DateTime
+  meetingLength    Int
   meetingStatus    Boolean
   meetingReason    String?
 

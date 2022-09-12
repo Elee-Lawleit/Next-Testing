@@ -4,19 +4,13 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-import { useRouter } from "next/router";
 
 export default function Header({ session }) {
-  const router = useRouter();
 
   const [isOpen, setMenu] = useState(false);
   const openMenu = () => {
     isOpen ? setMenu(false) : setMenu(true);
   };
-
-  if (typeof window !== "undefined") {
-    var token = localStorage.getItem("accessToken");
-  }
 
   return (
     <>
@@ -30,7 +24,7 @@ export default function Header({ session }) {
           <Link href="/">
             <a>Home</a>
           </Link>{" "}
-          {!token && (
+          {!session && (
             <Link href="/signup">
               <a>Signup</a>
             </Link>

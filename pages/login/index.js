@@ -34,7 +34,12 @@ const Login = () => {
         role: data.role,
         redirect: false,
       });
-      router.push("/");
+
+      console.log("THis is response: ", res);
+      
+      if (res.ok) {
+        router.push("/");
+      }
     } catch (error) {
       console.log("This is error: ", error);
     }
