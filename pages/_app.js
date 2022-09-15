@@ -5,10 +5,10 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import dynamic from "next/dynamic";
 import { ReactQueryDevtools } from "react-query/devtools";
 config.autoAddCss = false;
-import Header from "../components/Header";
 import { SessionProvider } from "next-auth/react";
 import { getSession } from "next-auth/react";
 import { MantineProvider } from "@mantine/core";
+import { useState } from "react";
 
 //dynamically importing it because goddammit it
 const Toaster = dynamic(() => import("./../components/GlobalToaster"), {
@@ -18,14 +18,17 @@ const Toaster = dynamic(() => import("./../components/GlobalToaster"), {
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps, session }) {
+  
+  const [opened, setOpened] = useState(false);
+
   return (
     <SessionProvider session={session}>
       <Toaster />
       <QueryClientProvider client={queryClient}>
-        <Header session={session} />
-        <MantineProvider theme={{colorScheme: "light"}}>
-          <Component {...pageProps} session={session} />
-        </MantineProvider>
+          {/* <Header session={session}/> */}
+          <MantineProvider theme={{colorScheme: "light"}}>
+            <Component {...pageProps} session={session} opened={opened} setOpened={setOpened} />
+          </MantineProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </SessionProvider>

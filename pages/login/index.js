@@ -13,8 +13,9 @@ import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 import Spinner from "components/Spinner";
 import { signIn } from "next-auth/react";
 import { getSession } from "next-auth/react";
+import { Loader, Center } from "@mantine/core";
 
-const Login = () => {
+const Login = ({session}) => {
   const router = useRouter();
   const promiseInProgress = usePromiseTracker();
 
@@ -28,17 +29,19 @@ const Login = () => {
 
   const onLogin = async (data) => {
     try {
-      const res = await signIn("credentials", {
+      const res = await trackPromise(signIn("credentials", {
         username: data.username,
         password: data.password,
         role: data.role,
         redirect: false,
-      });
+      }));
 
       console.log("THis is response: ", res);
       
       if (res.ok) {
+        toast.success("Logged In")
         router.push("/");
+        return;
       }
     } catch (error) {
       console.log("This is error: ", error);
@@ -46,75 +49,75 @@ const Login = () => {
   };
 
   if (promiseInProgress.promiseInProgress) {
-    return <Spinner />;
+    return<Center> <Loader justify={"center"} /></Center>;
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen overflow-hidden">
-      <form onSubmit={handleSubmit(onLogin)} className="flex flex-col gap-1">
-        <div className="relative">
-          <input
-            type="text"
-            name=""
-            id=""
-            placeholder="Username or email"
-            className={clsx(
-              "border border-gray-400 p-4 w-72 outline-none bg-gray-100 enabled:hover:bg-gray-200 placeholder:italic placeholder:pl-1 indent-5",
-              errors?.username && "border-red-500"
-            )}
-            {...register("username")}
-          />
-          <FontAwesomeIcon
-            icon={faUser}
-            className="absolute ml-1 text-gray-800 top-5 left-2"
-          />
-        </div>
-        <div className="relative">
-          <input
-            type="password"
-            name=""
-            id=""
-            placeholder="Password..."
-            className={clsx(
-              "border border-gray-400 p-4 w-72 outline-none bg-gray-100 enabled:hover:bg-gray-200 placeholder:italic placeholder:pl-1 indent-5",
-              errors?.password && "border-red-500"
-            )}
-            {...register("password")}
-          />
-          <FontAwesomeIcon
-            icon={faLock}
-            className="absolute ml-1 text-gray-800 top-5 left-2"
-          />
-        </div>
-        <div className="text-center text-white">
-          <input
-            type="submit"
-            value="Login"
-            name=""
-            id=""
-            className="w-full px-4 py-2 mt-1 bg-blue-500 rounded-sm cursor-pointer"
-          />
-        </div>
-        <div className="flex justify-center mt-5">
-          <select name="" id="" {...register("role")}>
-            <option value="">Select Role</option>
-            <option value="admin">Admin</option>
-            <option value="parent">Parent</option>
-            <option value="student">Student</option>
-          </select>
-        </div>
-      </form>
-      <div className="mt-2">
-        <span className="text-gray-500">
-          Dont't have an account?{" "}
-          <Link href="/signup">
-            <a href="" className="font-bold text-blue-500 underline">
-              Signup
-            </a>
-          </Link>
-        </span>
-      </div>
-    </div>
+    <div className="h-[80vh] w-full flex flex-col px-4 justify-center items-center m-auto">
+              <form onSubmit={handleSubmit(onLogin)} className="w-full gap-2 md:w-3/6 form-control">
+                <div className="relative">
+                  <input
+                    type="text"
+                    name=""
+                    id=""
+                    placeholder="Username..."
+                    className={clsx(
+                      "input input-primary input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                      errors?.username && "input-error"
+                    )}
+                    {...register("username")}
+                  />
+                  <FontAwesomeIcon
+                    icon={faUser}
+                      className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
+                  />
+                </div>
+                <div className="relative">
+                  <input
+                    type="password"
+                    name=""
+                    id=""
+                    placeholder="Password..."
+                    className={clsx(
+                      "input input-primary input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                      errors?.password && "input-error"
+                    )}
+                    {...register("password")}
+                  />
+                  <FontAwesomeIcon
+                    icon={faLock}
+                    className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
+                  />
+                </div>
+                <div className="flex justify-center">
+                  <select name="" id="" {...register("role")} className={clsx("w-full select select-bordered select-primary select-sm lg:select-md", errors?.role && "select-error")}>
+                    <option value="" defaultChecked>Select Role</option>
+                      <option value="admin">Admin</option>
+                    <option value="parent">Parent</option>
+                    <option value="student">Student</option>
+                  </select>
+                </div>
+                <div className="text-center text-white">
+                  <input
+                    type="submit"
+                    value="Login"
+                    name=""
+                    id=""
+                    className="w-full rounded-xl btn btn-primary"
+                  />
+                </div>
+              </form>
+            <div className="px-2 mt-2 sm:p-0">
+              <span className="text-gray-500">
+                Dont't have an account?{" "}
+                <Link href="/signup">
+                  <a href="" className="font-bold link link-primary">
+                    Signup
+                  </a>
+                </Link>
+              </span>
+            </div>
+          </div>
   );
 };
 

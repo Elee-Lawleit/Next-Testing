@@ -32,7 +32,7 @@ const handler = async (req, res) => {
       var user = await prisma.admin.findFirst({
         where: {
           adminName: username,
-          // adminPassword: password
+          adminPassword: password
         }
       });
     }

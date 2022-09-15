@@ -4363,11 +4363,6 @@ randombytes@^2.1.0:
   dependencies:
     safe-buffer "^5.1.0"
 
-react-daisyui@^2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/react-daisyui/-/react-daisyui-2.4.0.tgz#0fc0ab3b28aca22be025b4de558f675c468c9ce5"
-  integrity sha512-LNGVi24ak8ZpHOb8NjxH4d9mjoUt24G5XZsNWi4j5uY4M2VqWc8c7wRBIactfdHpu88tbgsspBBIJXBl67kH1w==
-
 react-dom@18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.2.0.tgz#22aaf38708db2674ed9ada224ca4aa708d821e3d"

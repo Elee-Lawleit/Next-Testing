@@ -1,8 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
+  output   = "./src/generated/client"
 }
 
 datasource db {
@@ -11,58 +9,52 @@ datasource db {
 }
 
 model Parent {
-  id       Int    @id @default(autoincrement())
-  parentEmail    String @unique
-  parentName     String @unique
-  parentCnic     String @unique
-  parentPhone    String @unique
+  id             Int       @id @default(autoincrement())
+  parentEmail    String    @unique
+  parentName     String
+  parentCnic     String    @unique
+  parentPhone    String
   parentPassword String
-
-  Meeting Meeting[]
-  Student Student[]
+  Meeting        Meeting[]
+  Student        Student[]
 }
 
 model Admin {
-  id          Int     @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   adminName        String
   adminPassword    String
   adminGender      String
-  adminCnic        String
-  adminEmail       String
+  adminCnic        String @unique
+  adminEmail       String   @unique
   adminDesignation String?
-
-  Role    Role[]
-  Meeting Meeting[]
+  Meeting          Meeting[]
+  Role             Role[]
 }
 
 model Role {
-  id  Int    @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   role    String
   adminId Int
   Admin   Admin  @relation(fields: [adminId], references: [id])
 }
 
 model Student {
-  id       Int    @id @default(autoincrement())
-  studentRegNo    String @unique
-  studentName     String @unique
-  studentPassword String 
-  parentId  Int
-  Parent Parent @relation(fields: [parentId], references: [id])
-
-  //tells which other models refer to this model
-  StudentInfo StudentInfo[]
-  Subject     Subject[]
-  Meeting     Meeting[]
+  id              Int          @id @default(autoincrement())
+  studentRegNo    String       @unique
+  studentName     String       @unique
+  studentPassword String
+  parentId        Int
+  Parent          Parent       @relation(fields: [parentId], references: [id])
+  Meeting         Meeting[]
+  StudentInfo     StudentInfo[]
+  Subject         Subject[]
 }
 
 model StudentInfo {
   infoCgpa       Float
   infoAttendance Boolean
   studentId      Int     @id
-
-  //defining foreign key
-  Student Student @relation(fields: [studentId], references: [id])
+  Student        Student @relation(fields: [studentId], references: [id])
 }
 
 model Subject {
@@ -70,33 +62,29 @@ model Subject {
   studentId   Int
   Student     Student @relation(fields: [studentId], references: [id])
 
-  //composite primary key
   @@id([subjectName, studentId])
 }
 
 model Meeting {
-  id        Int      @id @default(autoincrement())
-  meetingTime      DateTime
-  meetingLength    Int
+  id               Int        @id @default(autoincrement())
+  meetingDay       String
   meetingStatus    Boolean
   meetingReason    String?
-
-  adminId   Int
-  studentId Int
-  parentId  Int
-
-  Admin   Admin   @relation(fields: [adminId], references: [id])
-  Student Student @relation(fields: [studentId], references: [id])
-  Parent  Parent  @relation(fields: [parentId], references: [id])
-
-  Feedback Feedback[]
+  adminId          Int
+  studentId        Int
+  parentId         Int
+  meetingStartTime String
+  meetingEndTime   String
+  Admin            Admin      @relation(fields: [adminId], references: [id])
+  Parent           Parent     @relation(fields: [parentId], references: [id])
+  Student          Student    @relation(fields: [studentId], references: [id])
+  Feedback         Feedback[]
 }
 
 model Feedback {
-  id    Int     @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   meetingId     Int
   adminRemarks  String?
   parentRemarks String?
-
-  Meeting Meeting @relation(fields: [meetingId], references: [id])
+  Meeting       Meeting @relation(fields: [meetingId], references: [id])
 }

@@ -20,7 +20,7 @@ import { toast } from "react-hot-toast";
 import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 
 
-const Signup = () => {
+const Signup = ({session}) => {
 
   const promiseInProgress = usePromiseTracker();
   const [payload, setPayload] = useState();
@@ -70,6 +70,12 @@ const Signup = () => {
     console.log("loading because of mutation");
     return (<Spinner/>)
   }
+
+  if(typeof window !== "undefined"){
+    if(session){
+      router.push("/")
+    }
+  }
     
 
   return (
@@ -77,7 +83,7 @@ const Signup = () => {
     <>
       {!payload && <SignUp setPayload={setPayload}  />}
       {payload && <div className="flex flex-col items-center justify-center h-screen overflow-hidden">
-        <form onSubmit={handleSubmit(onSignup)} className="flex flex-col gap-1">
+        <form onSubmit={handleSubmit(onSignup)} className="justify-center w-9/12 gap-2 md:w-3/6 form-control">
           <div className="relative">
             <input
               type="text"
@@ -85,14 +91,14 @@ const Signup = () => {
               id=""
               placeholder="Username..."
               className={clsx(
-                "border border-gray-400 p-4 w-72 outline-none bg-gray-100 enabled:hover:bg-gray-200 placeholder:italic placeholder:pl-1 indent-5",
-                errors?.username && "border-red-500"
+                "input input-primary input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                errors?.username && "input-error"
               )}
               {...register("username")}
             />
             <FontAwesomeIcon
               icon={faUser}
-              className="absolute ml-1 text-gray-800 top-5 left-2"
+              className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
             />
           </div>
           <div className="relative">
@@ -102,14 +108,14 @@ const Signup = () => {
               id=""
               placeholder="Email..."
               className={clsx(
-                "border border-gray-400 p-4 w-72 outline-none bg-gray-100 enabled:hover:bg-gray-200 placeholder:italic placeholder:pl-1 indent-5",
-                errors?.email && "border-red-500"
+                "input input-primary input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                errors?.email && "input-error"
               )}
               {...register("email")}
             />
             <FontAwesomeIcon
               icon={faEnvelope}
-              className="absolute ml-1 text-gray-800 top-5 left-2"
+              className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
             />
           </div>
 
@@ -120,14 +126,14 @@ const Signup = () => {
               id=""
               placeholder="CNIC..."
               className={clsx(
-                "border border-gray-400 p-4 w-72 outline-none bg-gray-100 enabled:hover:bg-gray-200 placeholder:italic placeholder:pl-1 indent-5",
-                errors?.cnic && "border-red-500"
+                "input input-primary input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                errors?.cnic && "input-error"
               )}
               {...register("cnic")}
             />
             <FontAwesomeIcon
               icon={faIdCard}
-              className="absolute ml-1 text-gray-800 top-5 left-2"
+              className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
             />
           </div>
 
@@ -138,14 +144,14 @@ const Signup = () => {
               id=""
               placeholder="Phone..."
               className={clsx(
-                "border border-gray-400 p-4 w-72 outline-none bg-gray-100 enabled:hover:bg-gray-200 placeholder:italic placeholder:pl-1 indent-5",
-                errors?.phone && "border-red-500"
+                "input input-primary input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                errors?.phone && "input-error"
               )}
               {...register("phone")}
             />
             <FontAwesomeIcon
               icon={faPhone}
-              className="absolute ml-1 text-gray-800 top-5 left-2"
+              className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
             />
           </div>
           <div className="relative">
@@ -155,14 +161,14 @@ const Signup = () => {
               id=""
               placeholder="Password..."
               className={clsx(
-                "border border-gray-400 p-4 w-72 outline-none bg-gray-100 enabled:hover:bg-gray-200 placeholder:italic placeholder:pl-1 indent-5",
-                errors?.password && "border-red-500"
+                "input input-primary input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                errors?.password && "input-error"
               )}
               {...register("password")}
             />
             <FontAwesomeIcon
               icon={faLock}
-              className="absolute ml-1 text-gray-800 top-5 left-2"
+              className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
             />
           </div>
           <div className="text-center text-white">
@@ -171,7 +177,7 @@ const Signup = () => {
               value="Signup"
               name=""
               id=""
-              className="w-full px-4 py-2 mt-1 bg-blue-500 rounded-sm cursor-pointer"
+              className="w-full rounded-xl btn btn-primary"
             />
           </div>
         </form>
@@ -179,7 +185,7 @@ const Signup = () => {
           <span className="text-gray-500">
             Already have an account?{" "}
             <Link href="/login">
-              <a href="" className="font-bold text-blue-500 underline">
+              <a href="" className="font-bold link link-primary">
                 Login
               </a>
             </Link>

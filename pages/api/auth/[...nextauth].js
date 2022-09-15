@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "/prisma/src/generated/client"
 
 const prisma = new PrismaClient();
 
@@ -30,9 +30,12 @@ export const authOptions = {
           console.log("Inside error if");
           return null;
         }
+
+        var userRole = credentials.role;
         
         if (credentials.role === "parent") {
           console.log("Inside parent: ", credentials)
+          console.log("Admin Model: ", prisma.admin);
           var user = await prisma.parent.findFirst({
             where: {
               parentName: credentials.username,
@@ -66,7 +69,8 @@ export const authOptions = {
           console.log("Inside user if");
           return {
             id: user.id,
-            name: user.parentName || user.studentName || user.adminName
+            name: user.parentName || user.studentName || user.adminName,
+            role: userRole
           };
         }
         return null;
@@ -80,12 +84,14 @@ export const authOptions = {
         //because it's sensitive I guess
         //didn't have to reattach the username here to token
         token.id = user.id;
+        token.role = user.role
       }
       return token;
     },
     session: ({ session, token }) => {
       if (session?.user) {
         session.user.id = token.id;
+        session.user.role = token.role
       }
       return session;
     },
