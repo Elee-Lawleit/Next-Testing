@@ -1,6 +1,9 @@
 generator client {
   provider = "prisma-client-js"
   output   = "./src/generated/client"
+
+  //to use where in _count
+  previewFeatures = ["filteredRelationCount"]
 }
 
 datasource db {

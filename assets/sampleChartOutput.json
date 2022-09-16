@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Week 1",
+    "totalMeetings": 40,
+    "attendedMeetings": 34,
+    "pendingMeetings": 6
+  },
+  {
+    "name": "Week 2",
+    "totalMeetings": 30,
+    "attendedMeetings": 12,
+    "pendingMeetings": 18
+  },
+  {
+    "name": "Week 3",
+    "totalMeetings": 18,
+    "attendedMeetings": 17,
+    "pendingMeetings": 1
+  },
+  {
+    "name": "Week 4",
+    "totalMeetings": 27,
+    "attendedMeetings": 25,
+    "pendingMeetings": 2
+  }
+]

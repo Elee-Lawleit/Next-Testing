@@ -4,16 +4,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import clsx from "clsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import axios from "axios";
 import { useRouter } from "next/router";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-hot-toast";
 import { loginSchema } from "schemas/loginschema";
 import { trackPromise, usePromiseTracker } from "react-promise-tracker";
-import Spinner from "components/Spinner";
 import { signIn } from "next-auth/react";
 import { getSession } from "next-auth/react";
-import { Loader, Center } from "@mantine/core";
+import { LoadingOverlay } from "@mantine/core";
 
 const Login = ({session}) => {
   const router = useRouter();
@@ -49,7 +47,7 @@ const Login = ({session}) => {
   };
 
   if (promiseInProgress.promiseInProgress) {
-    return<Center> <Loader justify={"center"} /></Center>;
+    return <LoadingOverlay/>;
   }
 
   return (
@@ -126,7 +124,6 @@ export default Login;
 // write server side props
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  console.log("in login = ", session);
   if (session) {
     return {
       redirect: {

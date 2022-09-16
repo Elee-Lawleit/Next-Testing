@@ -92,8 +92,8 @@ export type Meeting = {
   adminId: number
   studentId: number
   parentId: number
-  meetingStartTime: Date
-  meetingEndTime: Date
+  meetingStartTime: string
+  meetingEndTime: string
 }
 
 /**
@@ -368,7 +368,7 @@ export namespace Prisma {
 
   /**
    * Prisma Client JS version: 4.3.0
-   * Query Engine version: 2920a97877e12e055c1333079b8d19cee7f33826
+   * Query Engine version: c875e43600dfe042452e0b868f7a48b817b9640b
    */
   export type PrismaVersion = {
     client: string
@@ -977,8 +977,8 @@ export namespace Prisma {
   }
 
   export type ParentCountOutputTypeSelect = {
-    Meeting?: boolean
-    Student?: boolean
+    Meeting?: boolean | ParentCountOutputTypeCountMeetingArgs
+    Student?: boolean | ParentCountOutputTypeCountStudentArgs
   }
 
   export type ParentCountOutputTypeGetPayload<
@@ -1016,6 +1016,22 @@ export namespace Prisma {
   }
 
 
+  /**
+   * ParentCountOutputType without action
+   */
+  export type ParentCountOutputTypeCountMeetingArgs = {
+    where?: MeetingWhereInput
+  }
+
+
+  /**
+   * ParentCountOutputType without action
+   */
+  export type ParentCountOutputTypeCountStudentArgs = {
+    where?: StudentWhereInput
+  }
+
+
 
   /**
    * Count Type AdminCountOutputType
@@ -1028,8 +1044,8 @@ export namespace Prisma {
   }
 
   export type AdminCountOutputTypeSelect = {
-    Meeting?: boolean
-    Role?: boolean
+    Meeting?: boolean | AdminCountOutputTypeCountMeetingArgs
+    Role?: boolean | AdminCountOutputTypeCountRoleArgs
   }
 
   export type AdminCountOutputTypeGetPayload<
@@ -1067,6 +1083,22 @@ export namespace Prisma {
   }
 
 
+  /**
+   * AdminCountOutputType without action
+   */
+  export type AdminCountOutputTypeCountMeetingArgs = {
+    where?: MeetingWhereInput
+  }
+
+
+  /**
+   * AdminCountOutputType without action
+   */
+  export type AdminCountOutputTypeCountRoleArgs = {
+    where?: RoleWhereInput
+  }
+
+
 
   /**
    * Count Type StudentCountOutputType
@@ -1075,12 +1107,14 @@ export namespace Prisma {
 
   export type StudentCountOutputType = {
     Meeting: number
+    StudentInfo: number
     Subject: number
   }
 
   export type StudentCountOutputTypeSelect = {
-    Meeting?: boolean
-    Subject?: boolean
+    Meeting?: boolean | StudentCountOutputTypeCountMeetingArgs
+    StudentInfo?: boolean | StudentCountOutputTypeCountStudentInfoArgs
+    Subject?: boolean | StudentCountOutputTypeCountSubjectArgs
   }
 
   export type StudentCountOutputTypeGetPayload<
@@ -1118,6 +1152,30 @@ export namespace Prisma {
   }
 
 
+  /**
+   * StudentCountOutputType without action
+   */
+  export type StudentCountOutputTypeCountMeetingArgs = {
+    where?: MeetingWhereInput
+  }
+
+
+  /**
+   * StudentCountOutputType without action
+   */
+  export type StudentCountOutputTypeCountStudentInfoArgs = {
+    where?: StudentInfoWhereInput
+  }
+
+
+  /**
+   * StudentCountOutputType without action
+   */
+  export type StudentCountOutputTypeCountSubjectArgs = {
+    where?: SubjectWhereInput
+  }
+
+
 
   /**
    * Count Type MeetingCountOutputType
@@ -1129,7 +1187,7 @@ export namespace Prisma {
   }
 
   export type MeetingCountOutputTypeSelect = {
-    Feedback?: boolean
+    Feedback?: boolean | MeetingCountOutputTypeCountFeedbackArgs
   }
 
   export type MeetingCountOutputTypeGetPayload<
@@ -1164,6 +1222,14 @@ export namespace Prisma {
      * 
     **/
     select?: MeetingCountOutputTypeSelect | null
+  }
+
+
+  /**
+   * MeetingCountOutputType without action
+   */
+  export type MeetingCountOutputTypeCountFeedbackArgs = {
+    where?: FeedbackWhereInput
   }
 
 
@@ -4292,7 +4358,7 @@ export namespace Prisma {
     parentId?: boolean
     Parent?: boolean | ParentArgs
     Meeting?: boolean | MeetingFindManyArgs
-    StudentInfo?: boolean | StudentInfoArgs
+    StudentInfo?: boolean | StudentInfoFindManyArgs
     Subject?: boolean | SubjectFindManyArgs
     _count?: boolean | StudentCountOutputTypeArgs
   }
@@ -4300,7 +4366,7 @@ export namespace Prisma {
   export type StudentInclude = {
     Parent?: boolean | ParentArgs
     Meeting?: boolean | MeetingFindManyArgs
-    StudentInfo?: boolean | StudentInfoArgs
+    StudentInfo?: boolean | StudentInfoFindManyArgs
     Subject?: boolean | SubjectFindManyArgs
     _count?: boolean | StudentCountOutputTypeArgs
   }
@@ -4318,7 +4384,7 @@ export namespace Prisma {
     [P in TrueKeys<S['include']>]:
         P extends 'Parent' ? ParentGetPayload<S['include'][P]> :
         P extends 'Meeting' ? Array < MeetingGetPayload<S['include'][P]>>  :
-        P extends 'StudentInfo' ? StudentInfoGetPayload<S['include'][P]> | null :
+        P extends 'StudentInfo' ? Array < StudentInfoGetPayload<S['include'][P]>>  :
         P extends 'Subject' ? Array < SubjectGetPayload<S['include'][P]>>  :
         P extends '_count' ? StudentCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
@@ -4327,7 +4393,7 @@ export namespace Prisma {
     [P in TrueKeys<S['select']>]:
         P extends 'Parent' ? ParentGetPayload<S['select'][P]> :
         P extends 'Meeting' ? Array < MeetingGetPayload<S['select'][P]>>  :
-        P extends 'StudentInfo' ? StudentInfoGetPayload<S['select'][P]> | null :
+        P extends 'StudentInfo' ? Array < StudentInfoGetPayload<S['select'][P]>>  :
         P extends 'Subject' ? Array < SubjectGetPayload<S['select'][P]>>  :
         P extends '_count' ? StudentCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Student ? Student[P] : never
   } 
@@ -4708,7 +4774,7 @@ export namespace Prisma {
 
     Meeting<T extends MeetingFindManyArgs = {}>(args?: Subset<T, MeetingFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Meeting>>, PrismaPromise<Array<MeetingGetPayload<T>>>>;
 
-    StudentInfo<T extends StudentInfoArgs = {}>(args?: Subset<T, StudentInfoArgs>): CheckSelect<T, Prisma__StudentInfoClient<StudentInfo | null >, Prisma__StudentInfoClient<StudentInfoGetPayload<T> | null >>;
+    StudentInfo<T extends StudentInfoFindManyArgs = {}>(args?: Subset<T, StudentInfoFindManyArgs>): CheckSelect<T, PrismaPromise<Array<StudentInfo>>, PrismaPromise<Array<StudentInfoGetPayload<T>>>>;
 
     Subject<T extends SubjectFindManyArgs = {}>(args?: Subset<T, SubjectFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Subject>>, PrismaPromise<Array<SubjectGetPayload<T>>>>;
 
@@ -6983,8 +7049,8 @@ export namespace Prisma {
     adminId: number | null
     studentId: number | null
     parentId: number | null
-    meetingStartTime: Date | null
-    meetingEndTime: Date | null
+    meetingStartTime: string | null
+    meetingEndTime: string | null
   }
 
   export type MeetingMaxAggregateOutputType = {
@@ -6995,8 +7061,8 @@ export namespace Prisma {
     adminId: number | null
     studentId: number | null
     parentId: number | null
-    meetingStartTime: Date | null
-    meetingEndTime: Date | null
+    meetingStartTime: string | null
+    meetingEndTime: string | null
   }
 
   export type MeetingCountAggregateOutputType = {
@@ -7164,8 +7230,8 @@ export namespace Prisma {
     adminId: number
     studentId: number
     parentId: number
-    meetingStartTime: Date
-    meetingEndTime: Date
+    meetingStartTime: string
+    meetingEndTime: string
     _count: MeetingCountAggregateOutputType | null
     _avg: MeetingAvgAggregateOutputType | null
     _sum: MeetingSumAggregateOutputType | null
@@ -9081,9 +9147,7 @@ export namespace Prisma {
   export type ParentWhereUniqueInput = {
     id?: number
     parentEmail?: string
-    parentName?: string
     parentCnic?: string
-    parentPhone?: string
   }
 
   export type ParentOrderByWithAggregationInput = {
@@ -9141,6 +9205,8 @@ export namespace Prisma {
 
   export type AdminWhereUniqueInput = {
     id?: number
+    adminCnic?: string
+    adminEmail?: string
   }
 
   export type AdminOrderByWithAggregationInput = {
@@ -9223,7 +9289,7 @@ export namespace Prisma {
     parentId?: IntFilter | number
     Parent?: XOR<ParentRelationFilter, ParentWhereInput>
     Meeting?: MeetingListRelationFilter
-    StudentInfo?: XOR<StudentInfoRelationFilter, StudentInfoWhereInput> | null
+    StudentInfo?: StudentInfoListRelationFilter
     Subject?: SubjectListRelationFilter
   }
 
@@ -9235,7 +9301,7 @@ export namespace Prisma {
     parentId?: SortOrder
     Parent?: ParentOrderByWithRelationInput
     Meeting?: MeetingOrderByRelationAggregateInput
-    StudentInfo?: StudentInfoOrderByWithRelationInput
+    StudentInfo?: StudentInfoOrderByRelationAggregateInput
     Subject?: SubjectOrderByRelationAggregateInput
   }
 
@@ -9358,8 +9424,8 @@ export namespace Prisma {
     adminId?: IntFilter | number
     studentId?: IntFilter | number
     parentId?: IntFilter | number
-    meetingStartTime?: DateTimeFilter | Date | string
-    meetingEndTime?: DateTimeFilter | Date | string
+    meetingStartTime?: StringFilter | string
+    meetingEndTime?: StringFilter | string
     Admin?: XOR<AdminRelationFilter, AdminWhereInput>
     Parent?: XOR<ParentRelationFilter, ParentWhereInput>
     Student?: XOR<StudentRelationFilter, StudentWhereInput>
@@ -9414,8 +9480,8 @@ export namespace Prisma {
     adminId?: IntWithAggregatesFilter | number
     studentId?: IntWithAggregatesFilter | number
     parentId?: IntWithAggregatesFilter | number
-    meetingStartTime?: DateTimeWithAggregatesFilter | Date | string
-    meetingEndTime?: DateTimeWithAggregatesFilter | Date | string
+    meetingStartTime?: StringWithAggregatesFilter | string
+    meetingEndTime?: StringWithAggregatesFilter | string
   }
 
   export type FeedbackWhereInput = {
@@ -9650,7 +9716,7 @@ export namespace Prisma {
     studentPassword: string
     Parent: ParentCreateNestedOneWithoutStudentInput
     Meeting?: MeetingCreateNestedManyWithoutStudentInput
-    StudentInfo?: StudentInfoCreateNestedOneWithoutStudentInput
+    StudentInfo?: StudentInfoCreateNestedManyWithoutStudentInput
     Subject?: SubjectCreateNestedManyWithoutStudentInput
   }
 
@@ -9661,7 +9727,7 @@ export namespace Prisma {
     studentPassword: string
     parentId: number
     Meeting?: MeetingUncheckedCreateNestedManyWithoutStudentInput
-    StudentInfo?: StudentInfoUncheckedCreateNestedOneWithoutStudentInput
+    StudentInfo?: StudentInfoUncheckedCreateNestedManyWithoutStudentInput
     Subject?: SubjectUncheckedCreateNestedManyWithoutStudentInput
   }
 
@@ -9671,7 +9737,7 @@ export namespace Prisma {
     studentPassword?: StringFieldUpdateOperationsInput | string
     Parent?: ParentUpdateOneRequiredWithoutStudentNestedInput
     Meeting?: MeetingUpdateManyWithoutStudentNestedInput
-    StudentInfo?: StudentInfoUpdateOneWithoutStudentNestedInput
+    StudentInfo?: StudentInfoUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUpdateManyWithoutStudentNestedInput
   }
 
@@ -9682,7 +9748,7 @@ export namespace Prisma {
     studentPassword?: StringFieldUpdateOperationsInput | string
     parentId?: IntFieldUpdateOperationsInput | number
     Meeting?: MeetingUncheckedUpdateManyWithoutStudentNestedInput
-    StudentInfo?: StudentInfoUncheckedUpdateOneWithoutStudentNestedInput
+    StudentInfo?: StudentInfoUncheckedUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUncheckedUpdateManyWithoutStudentNestedInput
   }
 
@@ -9787,8 +9853,8 @@ export namespace Prisma {
     meetingDay: string
     meetingStatus: boolean
     meetingReason?: string | null
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
     Admin: AdminCreateNestedOneWithoutMeetingInput
     Parent: ParentCreateNestedOneWithoutMeetingInput
     Student: StudentCreateNestedOneWithoutMeetingInput
@@ -9803,8 +9869,8 @@ export namespace Prisma {
     adminId: number
     studentId: number
     parentId: number
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
     Feedback?: FeedbackUncheckedCreateNestedManyWithoutMeetingInput
   }
 
@@ -9812,8 +9878,8 @@ export namespace Prisma {
     meetingDay?: StringFieldUpdateOperationsInput | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
-    meetingStartTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    meetingEndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
     Admin?: AdminUpdateOneRequiredWithoutMeetingNestedInput
     Parent?: ParentUpdateOneRequiredWithoutMeetingNestedInput
     Student?: StudentUpdateOneRequiredWithoutMeetingNestedInput
@@ -9828,8 +9894,8 @@ export namespace Prisma {
     adminId?: IntFieldUpdateOperationsInput | number
     studentId?: IntFieldUpdateOperationsInput | number
     parentId?: IntFieldUpdateOperationsInput | number
-    meetingStartTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    meetingEndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
     Feedback?: FeedbackUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
@@ -9841,16 +9907,16 @@ export namespace Prisma {
     adminId: number
     studentId: number
     parentId: number
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
   }
 
   export type MeetingUpdateManyMutationInput = {
     meetingDay?: StringFieldUpdateOperationsInput | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
-    meetingStartTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    meetingEndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
   }
 
   export type MeetingUncheckedUpdateManyInput = {
@@ -9861,8 +9927,8 @@ export namespace Prisma {
     adminId?: IntFieldUpdateOperationsInput | number
     studentId?: IntFieldUpdateOperationsInput | number
     parentId?: IntFieldUpdateOperationsInput | number
-    meetingStartTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    meetingEndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
   }
 
   export type FeedbackCreateInput = {
@@ -10144,15 +10210,20 @@ export namespace Prisma {
     isNot?: ParentWhereInput
   }
 
-  export type StudentInfoRelationFilter = {
-    is?: StudentInfoWhereInput | null
-    isNot?: StudentInfoWhereInput | null
+  export type StudentInfoListRelationFilter = {
+    every?: StudentInfoWhereInput
+    some?: StudentInfoWhereInput
+    none?: StudentInfoWhereInput
   }
 
   export type SubjectListRelationFilter = {
     every?: SubjectWhereInput
     some?: SubjectWhereInput
     none?: SubjectWhereInput
+  }
+
+  export type StudentInfoOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type SubjectOrderByRelationAggregateInput = {
@@ -10294,17 +10365,6 @@ export namespace Prisma {
     studentId?: SortOrder
   }
 
-  export type DateTimeFilter = {
-    equals?: Date | string
-    in?: Enumerable<Date> | Enumerable<string>
-    notIn?: Enumerable<Date> | Enumerable<string>
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeFilter | Date | string
-  }
-
   export type FeedbackListRelationFilter = {
     every?: FeedbackWhereInput
     some?: FeedbackWhereInput
@@ -10363,20 +10423,6 @@ export namespace Prisma {
     adminId?: SortOrder
     studentId?: SortOrder
     parentId?: SortOrder
-  }
-
-  export type DateTimeWithAggregatesFilter = {
-    equals?: Date | string
-    in?: Enumerable<Date> | Enumerable<string>
-    notIn?: Enumerable<Date> | Enumerable<string>
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeWithAggregatesFilter | Date | string
-    _count?: NestedIntFilter
-    _min?: NestedDateTimeFilter
-    _max?: NestedDateTimeFilter
   }
 
   export type MeetingRelationFilter = {
@@ -10626,10 +10672,11 @@ export namespace Prisma {
     connect?: Enumerable<MeetingWhereUniqueInput>
   }
 
-  export type StudentInfoCreateNestedOneWithoutStudentInput = {
-    create?: XOR<StudentInfoCreateWithoutStudentInput, StudentInfoUncheckedCreateWithoutStudentInput>
-    connectOrCreate?: StudentInfoCreateOrConnectWithoutStudentInput
-    connect?: StudentInfoWhereUniqueInput
+  export type StudentInfoCreateNestedManyWithoutStudentInput = {
+    create?: XOR<Enumerable<StudentInfoCreateWithoutStudentInput>, Enumerable<StudentInfoUncheckedCreateWithoutStudentInput>>
+    connectOrCreate?: Enumerable<StudentInfoCreateOrConnectWithoutStudentInput>
+    createMany?: StudentInfoCreateManyStudentInputEnvelope
+    connect?: Enumerable<StudentInfoWhereUniqueInput>
   }
 
   export type SubjectCreateNestedManyWithoutStudentInput = {
@@ -10646,10 +10693,11 @@ export namespace Prisma {
     connect?: Enumerable<MeetingWhereUniqueInput>
   }
 
-  export type StudentInfoUncheckedCreateNestedOneWithoutStudentInput = {
-    create?: XOR<StudentInfoCreateWithoutStudentInput, StudentInfoUncheckedCreateWithoutStudentInput>
-    connectOrCreate?: StudentInfoCreateOrConnectWithoutStudentInput
-    connect?: StudentInfoWhereUniqueInput
+  export type StudentInfoUncheckedCreateNestedManyWithoutStudentInput = {
+    create?: XOR<Enumerable<StudentInfoCreateWithoutStudentInput>, Enumerable<StudentInfoUncheckedCreateWithoutStudentInput>>
+    connectOrCreate?: Enumerable<StudentInfoCreateOrConnectWithoutStudentInput>
+    createMany?: StudentInfoCreateManyStudentInputEnvelope
+    connect?: Enumerable<StudentInfoWhereUniqueInput>
   }
 
   export type SubjectUncheckedCreateNestedManyWithoutStudentInput = {
@@ -10681,14 +10729,18 @@ export namespace Prisma {
     deleteMany?: Enumerable<MeetingScalarWhereInput>
   }
 
-  export type StudentInfoUpdateOneWithoutStudentNestedInput = {
-    create?: XOR<StudentInfoCreateWithoutStudentInput, StudentInfoUncheckedCreateWithoutStudentInput>
-    connectOrCreate?: StudentInfoCreateOrConnectWithoutStudentInput
-    upsert?: StudentInfoUpsertWithoutStudentInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: StudentInfoWhereUniqueInput
-    update?: XOR<StudentInfoUpdateWithoutStudentInput, StudentInfoUncheckedUpdateWithoutStudentInput>
+  export type StudentInfoUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<Enumerable<StudentInfoCreateWithoutStudentInput>, Enumerable<StudentInfoUncheckedCreateWithoutStudentInput>>
+    connectOrCreate?: Enumerable<StudentInfoCreateOrConnectWithoutStudentInput>
+    upsert?: Enumerable<StudentInfoUpsertWithWhereUniqueWithoutStudentInput>
+    createMany?: StudentInfoCreateManyStudentInputEnvelope
+    set?: Enumerable<StudentInfoWhereUniqueInput>
+    disconnect?: Enumerable<StudentInfoWhereUniqueInput>
+    delete?: Enumerable<StudentInfoWhereUniqueInput>
+    connect?: Enumerable<StudentInfoWhereUniqueInput>
+    update?: Enumerable<StudentInfoUpdateWithWhereUniqueWithoutStudentInput>
+    updateMany?: Enumerable<StudentInfoUpdateManyWithWhereWithoutStudentInput>
+    deleteMany?: Enumerable<StudentInfoScalarWhereInput>
   }
 
   export type SubjectUpdateManyWithoutStudentNestedInput = {
@@ -10719,14 +10771,18 @@ export namespace Prisma {
     deleteMany?: Enumerable<MeetingScalarWhereInput>
   }
 
-  export type StudentInfoUncheckedUpdateOneWithoutStudentNestedInput = {
-    create?: XOR<StudentInfoCreateWithoutStudentInput, StudentInfoUncheckedCreateWithoutStudentInput>
-    connectOrCreate?: StudentInfoCreateOrConnectWithoutStudentInput
-    upsert?: StudentInfoUpsertWithoutStudentInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: StudentInfoWhereUniqueInput
-    update?: XOR<StudentInfoUpdateWithoutStudentInput, StudentInfoUncheckedUpdateWithoutStudentInput>
+  export type StudentInfoUncheckedUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<Enumerable<StudentInfoCreateWithoutStudentInput>, Enumerable<StudentInfoUncheckedCreateWithoutStudentInput>>
+    connectOrCreate?: Enumerable<StudentInfoCreateOrConnectWithoutStudentInput>
+    upsert?: Enumerable<StudentInfoUpsertWithWhereUniqueWithoutStudentInput>
+    createMany?: StudentInfoCreateManyStudentInputEnvelope
+    set?: Enumerable<StudentInfoWhereUniqueInput>
+    disconnect?: Enumerable<StudentInfoWhereUniqueInput>
+    delete?: Enumerable<StudentInfoWhereUniqueInput>
+    connect?: Enumerable<StudentInfoWhereUniqueInput>
+    update?: Enumerable<StudentInfoUpdateWithWhereUniqueWithoutStudentInput>
+    updateMany?: Enumerable<StudentInfoUpdateManyWithWhereWithoutStudentInput>
+    deleteMany?: Enumerable<StudentInfoScalarWhereInput>
   }
 
   export type SubjectUncheckedUpdateManyWithoutStudentNestedInput = {
@@ -10813,10 +10869,6 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<FeedbackCreateOrConnectWithoutMeetingInput>
     createMany?: FeedbackCreateManyMeetingInputEnvelope
     connect?: Enumerable<FeedbackWhereUniqueInput>
-  }
-
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
   }
 
   export type AdminUpdateOneRequiredWithoutMeetingNestedInput = {
@@ -11025,37 +11077,12 @@ export namespace Prisma {
     _max?: NestedBoolFilter
   }
 
-  export type NestedDateTimeFilter = {
-    equals?: Date | string
-    in?: Enumerable<Date> | Enumerable<string>
-    notIn?: Enumerable<Date> | Enumerable<string>
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeFilter | Date | string
-  }
-
-  export type NestedDateTimeWithAggregatesFilter = {
-    equals?: Date | string
-    in?: Enumerable<Date> | Enumerable<string>
-    notIn?: Enumerable<Date> | Enumerable<string>
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeWithAggregatesFilter | Date | string
-    _count?: NestedIntFilter
-    _min?: NestedDateTimeFilter
-    _max?: NestedDateTimeFilter
-  }
-
   export type MeetingCreateWithoutParentInput = {
     meetingDay: string
     meetingStatus: boolean
     meetingReason?: string | null
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
     Admin: AdminCreateNestedOneWithoutMeetingInput
     Student: StudentCreateNestedOneWithoutMeetingInput
     Feedback?: FeedbackCreateNestedManyWithoutMeetingInput
@@ -11068,8 +11095,8 @@ export namespace Prisma {
     meetingReason?: string | null
     adminId: number
     studentId: number
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
     Feedback?: FeedbackUncheckedCreateNestedManyWithoutMeetingInput
   }
 
@@ -11088,7 +11115,7 @@ export namespace Prisma {
     studentName: string
     studentPassword: string
     Meeting?: MeetingCreateNestedManyWithoutStudentInput
-    StudentInfo?: StudentInfoCreateNestedOneWithoutStudentInput
+    StudentInfo?: StudentInfoCreateNestedManyWithoutStudentInput
     Subject?: SubjectCreateNestedManyWithoutStudentInput
   }
 
@@ -11098,7 +11125,7 @@ export namespace Prisma {
     studentName: string
     studentPassword: string
     Meeting?: MeetingUncheckedCreateNestedManyWithoutStudentInput
-    StudentInfo?: StudentInfoUncheckedCreateNestedOneWithoutStudentInput
+    StudentInfo?: StudentInfoUncheckedCreateNestedManyWithoutStudentInput
     Subject?: SubjectUncheckedCreateNestedManyWithoutStudentInput
   }
 
@@ -11139,8 +11166,8 @@ export namespace Prisma {
     adminId?: IntFilter | number
     studentId?: IntFilter | number
     parentId?: IntFilter | number
-    meetingStartTime?: DateTimeFilter | Date | string
-    meetingEndTime?: DateTimeFilter | Date | string
+    meetingStartTime?: StringFilter | string
+    meetingEndTime?: StringFilter | string
   }
 
   export type StudentUpsertWithWhereUniqueWithoutParentInput = {
@@ -11174,8 +11201,8 @@ export namespace Prisma {
     meetingDay: string
     meetingStatus: boolean
     meetingReason?: string | null
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
     Parent: ParentCreateNestedOneWithoutMeetingInput
     Student: StudentCreateNestedOneWithoutMeetingInput
     Feedback?: FeedbackCreateNestedManyWithoutMeetingInput
@@ -11188,8 +11215,8 @@ export namespace Prisma {
     meetingReason?: string | null
     studentId: number
     parentId: number
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
     Feedback?: FeedbackUncheckedCreateNestedManyWithoutMeetingInput
   }
 
@@ -11343,8 +11370,8 @@ export namespace Prisma {
     meetingDay: string
     meetingStatus: boolean
     meetingReason?: string | null
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
     Admin: AdminCreateNestedOneWithoutMeetingInput
     Parent: ParentCreateNestedOneWithoutMeetingInput
     Feedback?: FeedbackCreateNestedManyWithoutMeetingInput
@@ -11357,8 +11384,8 @@ export namespace Prisma {
     meetingReason?: string | null
     adminId: number
     parentId: number
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
     Feedback?: FeedbackUncheckedCreateNestedManyWithoutMeetingInput
   }
 
@@ -11385,6 +11412,11 @@ export namespace Prisma {
   export type StudentInfoCreateOrConnectWithoutStudentInput = {
     where: StudentInfoWhereUniqueInput
     create: XOR<StudentInfoCreateWithoutStudentInput, StudentInfoUncheckedCreateWithoutStudentInput>
+  }
+
+  export type StudentInfoCreateManyStudentInputEnvelope = {
+    data: Enumerable<StudentInfoCreateManyStudentInput>
+    skipDuplicates?: boolean
   }
 
   export type SubjectCreateWithoutStudentInput = {
@@ -11445,19 +11477,29 @@ export namespace Prisma {
     data: XOR<MeetingUpdateManyMutationInput, MeetingUncheckedUpdateManyWithoutMeetingInput>
   }
 
-  export type StudentInfoUpsertWithoutStudentInput = {
+  export type StudentInfoUpsertWithWhereUniqueWithoutStudentInput = {
+    where: StudentInfoWhereUniqueInput
     update: XOR<StudentInfoUpdateWithoutStudentInput, StudentInfoUncheckedUpdateWithoutStudentInput>
     create: XOR<StudentInfoCreateWithoutStudentInput, StudentInfoUncheckedCreateWithoutStudentInput>
   }
 
-  export type StudentInfoUpdateWithoutStudentInput = {
-    infoCgpa?: FloatFieldUpdateOperationsInput | number
-    infoAttendance?: BoolFieldUpdateOperationsInput | boolean
+  export type StudentInfoUpdateWithWhereUniqueWithoutStudentInput = {
+    where: StudentInfoWhereUniqueInput
+    data: XOR<StudentInfoUpdateWithoutStudentInput, StudentInfoUncheckedUpdateWithoutStudentInput>
   }
 
-  export type StudentInfoUncheckedUpdateWithoutStudentInput = {
-    infoCgpa?: FloatFieldUpdateOperationsInput | number
-    infoAttendance?: BoolFieldUpdateOperationsInput | boolean
+  export type StudentInfoUpdateManyWithWhereWithoutStudentInput = {
+    where: StudentInfoScalarWhereInput
+    data: XOR<StudentInfoUpdateManyMutationInput, StudentInfoUncheckedUpdateManyWithoutStudentInfoInput>
+  }
+
+  export type StudentInfoScalarWhereInput = {
+    AND?: Enumerable<StudentInfoScalarWhereInput>
+    OR?: Enumerable<StudentInfoScalarWhereInput>
+    NOT?: Enumerable<StudentInfoScalarWhereInput>
+    infoCgpa?: FloatFilter | number
+    infoAttendance?: BoolFilter | boolean
+    studentId?: IntFilter | number
   }
 
   export type SubjectUpsertWithWhereUniqueWithoutStudentInput = {
@@ -11538,7 +11580,7 @@ export namespace Prisma {
     studentPassword: string
     Parent: ParentCreateNestedOneWithoutStudentInput
     Meeting?: MeetingCreateNestedManyWithoutStudentInput
-    StudentInfo?: StudentInfoCreateNestedOneWithoutStudentInput
+    StudentInfo?: StudentInfoCreateNestedManyWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutSubjectInput = {
@@ -11548,7 +11590,7 @@ export namespace Prisma {
     studentPassword: string
     parentId: number
     Meeting?: MeetingUncheckedCreateNestedManyWithoutStudentInput
-    StudentInfo?: StudentInfoUncheckedCreateNestedOneWithoutStudentInput
+    StudentInfo?: StudentInfoUncheckedCreateNestedManyWithoutStudentInput
   }
 
   export type StudentCreateOrConnectWithoutSubjectInput = {
@@ -11567,7 +11609,7 @@ export namespace Prisma {
     studentPassword?: StringFieldUpdateOperationsInput | string
     Parent?: ParentUpdateOneRequiredWithoutStudentNestedInput
     Meeting?: MeetingUpdateManyWithoutStudentNestedInput
-    StudentInfo?: StudentInfoUpdateOneWithoutStudentNestedInput
+    StudentInfo?: StudentInfoUpdateManyWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutSubjectInput = {
@@ -11577,7 +11619,7 @@ export namespace Prisma {
     studentPassword?: StringFieldUpdateOperationsInput | string
     parentId?: IntFieldUpdateOperationsInput | number
     Meeting?: MeetingUncheckedUpdateManyWithoutStudentNestedInput
-    StudentInfo?: StudentInfoUncheckedUpdateOneWithoutStudentNestedInput
+    StudentInfo?: StudentInfoUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type AdminCreateWithoutMeetingInput = {
@@ -11635,7 +11677,7 @@ export namespace Prisma {
     studentName: string
     studentPassword: string
     Parent: ParentCreateNestedOneWithoutStudentInput
-    StudentInfo?: StudentInfoCreateNestedOneWithoutStudentInput
+    StudentInfo?: StudentInfoCreateNestedManyWithoutStudentInput
     Subject?: SubjectCreateNestedManyWithoutStudentInput
   }
 
@@ -11645,7 +11687,7 @@ export namespace Prisma {
     studentName: string
     studentPassword: string
     parentId: number
-    StudentInfo?: StudentInfoUncheckedCreateNestedOneWithoutStudentInput
+    StudentInfo?: StudentInfoUncheckedCreateNestedManyWithoutStudentInput
     Subject?: SubjectUncheckedCreateNestedManyWithoutStudentInput
   }
 
@@ -11735,7 +11777,7 @@ export namespace Prisma {
     studentName?: StringFieldUpdateOperationsInput | string
     studentPassword?: StringFieldUpdateOperationsInput | string
     Parent?: ParentUpdateOneRequiredWithoutStudentNestedInput
-    StudentInfo?: StudentInfoUpdateOneWithoutStudentNestedInput
+    StudentInfo?: StudentInfoUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUpdateManyWithoutStudentNestedInput
   }
 
@@ -11745,7 +11787,7 @@ export namespace Prisma {
     studentName?: StringFieldUpdateOperationsInput | string
     studentPassword?: StringFieldUpdateOperationsInput | string
     parentId?: IntFieldUpdateOperationsInput | number
-    StudentInfo?: StudentInfoUncheckedUpdateOneWithoutStudentNestedInput
+    StudentInfo?: StudentInfoUncheckedUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUncheckedUpdateManyWithoutStudentNestedInput
   }
 
@@ -11779,8 +11821,8 @@ export namespace Prisma {
     meetingDay: string
     meetingStatus: boolean
     meetingReason?: string | null
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
     Admin: AdminCreateNestedOneWithoutMeetingInput
     Parent: ParentCreateNestedOneWithoutMeetingInput
     Student: StudentCreateNestedOneWithoutMeetingInput
@@ -11794,8 +11836,8 @@ export namespace Prisma {
     adminId: number
     studentId: number
     parentId: number
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
   }
 
   export type MeetingCreateOrConnectWithoutFeedbackInput = {
@@ -11812,8 +11854,8 @@ export namespace Prisma {
     meetingDay?: StringFieldUpdateOperationsInput | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
-    meetingStartTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    meetingEndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
     Admin?: AdminUpdateOneRequiredWithoutMeetingNestedInput
     Parent?: ParentUpdateOneRequiredWithoutMeetingNestedInput
     Student?: StudentUpdateOneRequiredWithoutMeetingNestedInput
@@ -11827,8 +11869,8 @@ export namespace Prisma {
     adminId?: IntFieldUpdateOperationsInput | number
     studentId?: IntFieldUpdateOperationsInput | number
     parentId?: IntFieldUpdateOperationsInput | number
-    meetingStartTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    meetingEndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
   }
 
   export type MeetingCreateManyParentInput = {
@@ -11838,8 +11880,8 @@ export namespace Prisma {
     meetingReason?: string | null
     adminId: number
     studentId: number
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
   }
 
   export type StudentCreateManyParentInput = {
@@ -11853,8 +11895,8 @@ export namespace Prisma {
     meetingDay?: StringFieldUpdateOperationsInput | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
-    meetingStartTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    meetingEndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
     Admin?: AdminUpdateOneRequiredWithoutMeetingNestedInput
     Student?: StudentUpdateOneRequiredWithoutMeetingNestedInput
     Feedback?: FeedbackUpdateManyWithoutMeetingNestedInput
@@ -11867,8 +11909,8 @@ export namespace Prisma {
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     adminId?: IntFieldUpdateOperationsInput | number
     studentId?: IntFieldUpdateOperationsInput | number
-    meetingStartTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    meetingEndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
     Feedback?: FeedbackUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
@@ -11879,8 +11921,8 @@ export namespace Prisma {
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     adminId?: IntFieldUpdateOperationsInput | number
     studentId?: IntFieldUpdateOperationsInput | number
-    meetingStartTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    meetingEndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
   }
 
   export type StudentUpdateWithoutParentInput = {
@@ -11888,7 +11930,7 @@ export namespace Prisma {
     studentName?: StringFieldUpdateOperationsInput | string
     studentPassword?: StringFieldUpdateOperationsInput | string
     Meeting?: MeetingUpdateManyWithoutStudentNestedInput
-    StudentInfo?: StudentInfoUpdateOneWithoutStudentNestedInput
+    StudentInfo?: StudentInfoUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUpdateManyWithoutStudentNestedInput
   }
 
@@ -11898,7 +11940,7 @@ export namespace Prisma {
     studentName?: StringFieldUpdateOperationsInput | string
     studentPassword?: StringFieldUpdateOperationsInput | string
     Meeting?: MeetingUncheckedUpdateManyWithoutStudentNestedInput
-    StudentInfo?: StudentInfoUncheckedUpdateOneWithoutStudentNestedInput
+    StudentInfo?: StudentInfoUncheckedUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUncheckedUpdateManyWithoutStudentNestedInput
   }
 
@@ -11916,8 +11958,8 @@ export namespace Prisma {
     meetingReason?: string | null
     studentId: number
     parentId: number
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
   }
 
   export type RoleCreateManyAdminInput = {
@@ -11929,8 +11971,8 @@ export namespace Prisma {
     meetingDay?: StringFieldUpdateOperationsInput | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
-    meetingStartTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    meetingEndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
     Parent?: ParentUpdateOneRequiredWithoutMeetingNestedInput
     Student?: StudentUpdateOneRequiredWithoutMeetingNestedInput
     Feedback?: FeedbackUpdateManyWithoutMeetingNestedInput
@@ -11943,8 +11985,8 @@ export namespace Prisma {
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     studentId?: IntFieldUpdateOperationsInput | number
     parentId?: IntFieldUpdateOperationsInput | number
-    meetingStartTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    meetingEndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
     Feedback?: FeedbackUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
@@ -11969,8 +12011,13 @@ export namespace Prisma {
     meetingReason?: string | null
     adminId: number
     parentId: number
-    meetingStartTime: Date | string
-    meetingEndTime: Date | string
+    meetingStartTime: string
+    meetingEndTime: string
+  }
+
+  export type StudentInfoCreateManyStudentInput = {
+    infoCgpa: number
+    infoAttendance: boolean
   }
 
   export type SubjectCreateManyStudentInput = {
@@ -11981,8 +12028,8 @@ export namespace Prisma {
     meetingDay?: StringFieldUpdateOperationsInput | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
-    meetingStartTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    meetingEndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
     Admin?: AdminUpdateOneRequiredWithoutMeetingNestedInput
     Parent?: ParentUpdateOneRequiredWithoutMeetingNestedInput
     Feedback?: FeedbackUpdateManyWithoutMeetingNestedInput
@@ -11995,9 +12042,24 @@ export namespace Prisma {
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     adminId?: IntFieldUpdateOperationsInput | number
     parentId?: IntFieldUpdateOperationsInput | number
-    meetingStartTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    meetingEndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
     Feedback?: FeedbackUncheckedUpdateManyWithoutMeetingNestedInput
+  }
+
+  export type StudentInfoUpdateWithoutStudentInput = {
+    infoCgpa?: FloatFieldUpdateOperationsInput | number
+    infoAttendance?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type StudentInfoUncheckedUpdateWithoutStudentInput = {
+    infoCgpa?: FloatFieldUpdateOperationsInput | number
+    infoAttendance?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type StudentInfoUncheckedUpdateManyWithoutStudentInfoInput = {
+    infoCgpa?: FloatFieldUpdateOperationsInput | number
+    infoAttendance?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type SubjectUpdateWithoutStudentInput = {

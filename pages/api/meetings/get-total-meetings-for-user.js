@@ -13,7 +13,6 @@ const handler = async (req, res) => {
     // console.log("Data being sent to backend in req body: ", req)
 
     const { userId, userRole } = req.query;
-    console.log("userRole is: ", userRole, "UserId is: ", userId)
 
     const today = new Date().toDateString();
 
@@ -23,9 +22,13 @@ const handler = async (req, res) => {
                 id: parseInt(userId),
             },
             select: {
-                Meeting: {
-                    where: {
-                        meetingDay: today
+                _count: {
+                    select: {
+                        Meeting: {
+                            where: {
+                                meetingDay: today
+                            }
+                        }
                     }
                 }
             }
@@ -37,9 +40,13 @@ const handler = async (req, res) => {
                 id: parseInt(userId),
             },
             select: {
-                Meeting: {
-                    where: {
-                        meetingDay: today
+                _count: {
+                    select: {
+                        Meeting: {
+                            where: {
+                                meetingDay: today
+                            }
+                        }
                     }
                 }
             }
@@ -51,23 +58,26 @@ const handler = async (req, res) => {
                 id: parseInt(userId),
             },
             select: {
-                Meeting: {
-                    where: {
-                        meetingDay: today
+                _count: {
+                    select: {
+                        Meeting: {
+                            where: {
+                                meetingDay: today
+                            }
+                        }
                     }
                 }
             }
         })
     }
 
-    console.log("Count of meeting is: ", count.Meeting.length);
-
-    // console.log(meetings.Meeting.length);
-
-
     //returning meeting count like this bc prisma doesn't support where clause inside _count right now
     //the other way is using raw query, but you know what's the point of using raw query with an ORM, right?
-    return res.status(200).json({ meetings: count.Meeting.length });
+    // return res.status(200).json({ meetings: count.Meeting.length });
+    
+    //well, the feature just came out, so
+    return res.status(200).json({ meetings: count._count.Meeting });
+
 }
 
 

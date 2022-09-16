@@ -1,6 +1,9 @@
 generator client {
   provider = "prisma-client-js"
   output   = "./src/generated/client"
+
+  //to use where in _count
+  previewFeatures = ["filteredRelationCount"]
 }
 
 datasource db {
@@ -11,9 +14,9 @@ datasource db {
 model Parent {
   id             Int       @id @default(autoincrement())
   parentEmail    String    @unique
-  parentName     String    @unique
+  parentName     String
   parentCnic     String    @unique
-  parentPhone    String    @unique
+  parentPhone    String
   parentPassword String
   Meeting        Meeting[]
   Student        Student[]
@@ -24,8 +27,8 @@ model Admin {
   adminName        String
   adminPassword    String
   adminGender      String
-  adminCnic        String
-  adminEmail       String
+  adminCnic        String @unique
+  adminEmail       String   @unique
   adminDesignation String?
   Meeting          Meeting[]
   Role             Role[]
@@ -46,7 +49,7 @@ model Student {
   parentId        Int
   Parent          Parent       @relation(fields: [parentId], references: [id])
   Meeting         Meeting[]
-  StudentInfo     StudentInfo?
+  StudentInfo     StudentInfo[]
   Subject         Subject[]
 }
 
@@ -73,8 +76,8 @@ model Meeting {
   adminId          Int
   studentId        Int
   parentId         Int
-  meetingStartTime DateTime   @db.Time(2)
-  meetingEndTime   DateTime   @db.Time(2)
+  meetingStartTime String
+  meetingEndTime   String
   Admin            Admin      @relation(fields: [adminId], references: [id])
   Parent           Parent     @relation(fields: [parentId], references: [id])
   Student          Student    @relation(fields: [studentId], references: [id])
