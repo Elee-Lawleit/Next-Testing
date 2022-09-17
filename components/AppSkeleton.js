@@ -14,9 +14,11 @@ import {
   ScrollArea,
   Notification,
   LoadingOverlay,
+  Button,
 } from '@mantine/core';
 import { Calendar } from '@mantine/dates';
 import useFetchMeetings from 'hooks/meetings/use-fetch-meetings';
+import Link from 'next/link';
 
 const AppSkeloton = ({ children, ...props }) => {
 
@@ -41,29 +43,38 @@ const AppSkeloton = ({ children, ...props }) => {
       styles={{
         main: {
           background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
-          paddingBlock: "4.7rem"
+          paddingBlock: "5rem"
 
         },
       }}
 
       navbar={
         <Navbar p="md" hiddenBreakpoint="md" hidden={!opened} width={{ md: 170, lg: 250 }}>
-          <Text>
+            {/* will  do something about the logo */}
             <div className='h-max'>
               <h1 className='font-bold'>Logo goes here</h1>
             </div>
             <div>
-              <li><span></span> Dashboard</li>
+            <ul className='list-none mt-4'>
+              <li>
+                <Link href=''>
+                <Button>
+                  Dashboard
+                </Button>
+                </Link>
+                </li>
               <li><span></span> Second</li>
               <li>Third</li>
+            </ul>
             </div>
             <hr className='h-1' />
             <div>
+              <ul>
               <li>More List Items</li>
               <li>MOre</li>
               <li>Even more</li>
+              </ul>
             </div>
-          </Text>
         </Navbar>
       }
       aside={

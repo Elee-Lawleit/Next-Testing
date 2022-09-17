@@ -20,12 +20,14 @@ export default function ({ session }) {
 
   const hour = dayjs().get("hour")
   const min = dayjs().get("minute")
+  console.log(typeof(min));
 
   //fetch total meetings
   const { data, isLoading } = useFetchTotalMeetings(session.user.id, session.user.role);
 
   //fetch meeting stats
-  const { data: statsData, isLoading: statsLoading } = useFetchMeetingStats(session.user.id, session.user.role)
+  const { data: statsData, isLoading: areStatsLoading } = useFetchMeetingStats(session.user.id, session.user.role)
+  
   console.log("meeting stats are: ", statsData);
 
 
@@ -39,17 +41,17 @@ export default function ({ session }) {
 
   return (
     <AppSkeloton session={session}>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 font-sans">
+      <div className="grid grid-cols-1 gap-3 font-sans">
 
         {/* Hello div */}
-        <div className="sm:col-span-2 shadow-sm md:col-span-3 bg-white flex flex-col justify-between p-2 gap-2 sm:order-1">
+        <div className="shadow-sm bg-white flex flex-col justify-between p-2 gap-2">
           <div className="flex gap-1 font-medium text-xs text-gray-500">
             <p>
               {new Date().toDateString()}
             </p>
             <Divider my="2px" orientation="vertical" />
             <p>
-              {hour}:{min}
+              {hour.toString().length == 1? `0${hour}`: hour}:{min.toString().length == 1? `0${min}`: min}
             </p>
           </div>
 
@@ -64,7 +66,7 @@ export default function ({ session }) {
         </div>
 
         {/* Top meetings div */}
-        <div className="bg-white sm:col-span-2 lg:col-span-2 p-2 px-3 sm:order-2">
+        <div className="bg-white p-2 px-3">
           <div className="flex justify-between items-center">
             <p className="font-semibold">Top meetings for today</p>
             <Link href=""><a className="text-sm font-medium text-purple-400">See all</a></Link>
@@ -77,19 +79,26 @@ export default function ({ session }) {
         </div>
 
         {/* Area chart div */}
-        <div className="col-span-1 bg-white sm:order-3">
+        <div className="col-span-1 bg-white">
+          <div className="relative text-center font-semibold text-lg mt-2">
+            Meeting Analysis (September)
+          </div>
           <MeetingAreaChart />
         </div>
 
         {/* Meeting Satisfaction Pie Chart div */}
-        <div className="bg-white lg:row-span-2 sm:order-5">
+        <div className="bg-white relative">
+          <div className="relative font-semibold text-2xl">
+            <p className="absolute top-10 bottom-0 m-auto left-0 right-0 text-center">
+              Parent satisfaction rate
+              </p>
+          </div>
           <MeetingPieChart/>
         </div>
 
 
         {/* more div */}
-        <div className="bg-green-400 sm:order-4
-        ">More of some other content probably</div>
+        <div className="bg-green-400">More of some other content probably</div>
        
       </div>
     </AppSkeloton>

@@ -3,9 +3,9 @@ import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
 
 //sample data... these are gonna be pulled from database
 const data = [
-    { name: "Group A", value: 400 },
-    { name: "Group B", value: 300 },
-    { name: "Group C", value: 300 },
+    { name: "Satisfied", value: 40 },
+    { name: "Average", value: 10 },
+    { name: "Dissatisfied", value: 2 },
 ];
 
 const renderActiveShape = (props) => {

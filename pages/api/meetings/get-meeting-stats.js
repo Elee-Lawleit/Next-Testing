@@ -14,118 +14,52 @@ const handler = async (req, res) => {
 
     const { userId, userRole } = req.query;
 
-    //I don't think I need to mention this, but this obviously isn't the correct way to do this
 
-    // ---------- GOING TO FIX THIS LATER ----------
+    // well then, here's the fix
+    //using prisma aggregation... groupBy
 
     if (userRole === "admin") {
-        var countPending = await prisma.admin.findFirst({
-            where: {
-                id: parseInt(userId),
+        var countedMeetings = await prisma.meeting.groupBy({
+            by: ["meetingStatus"],
+            _count: {
+                _all: true
             },
-            select: {
-                _count: {
-                    select: {
-                        Meeting: {
-                            where: {
-                                meetingStatus: false
-                            }
-                        }
-                    }
-                }, 
-            }
-        })
-        var countDone = await prisma.admin.findFirst({
             where: {
-                id: parseInt(userId),
-            },
-            select: {
-                _count: {
-                    select: {
-                        Meeting: {
-                            where: {
-                                meetingStatus: true
-                            }
-                        }
-                    }
-                },
+                adminId: parseInt(userId)
             }
-        })
+        });
     }
     if (userRole === "parent") {
         console.log("parent running");
-        var countPending = await prisma.parent.findFirst({
-            where: {
-                id: parseInt(userId),
+        var countedMeetings = await prisma.meeting.groupBy({
+            by: ["meetingStatus"],
+            _count: {
+                _all: true
             },
-            select: {
-                _count: {
-                    select: {
-                        Meeting: {
-                            where: {
-                                meetingStatus: false
-                            }
-                        }
-                    }
-                },
-            }
-        })
-        var countDone = await prisma.parent.findFirst({
             where: {
-                id: parseInt(userId),
-            },
-            select: {
-                _count: {
-                    select: {
-                        Meeting: {
-                            where: {
-                                meetingStatus: true
-                            }
-                        }
-                    }
-                },
+                parentId: parseInt(userId)
             }
         })
     }
     if (userRole === "student") {
-        var countPending = await prisma.student.findFirst({
-            where: {
-                id: parseInt(userId),
+        var countedMeetings = await prisma.meeting.groupBy({
+            by: ["meetingStatus"],
+            _count: {
+                _all: true
             },
-            select: {
-                _count: {
-                    select: {
-                        Meeting: {
-                            where: {
-                                meetingStatus: false
-                            }
-                        }
-                    }
-                },
-            }
-        })
-        var countDone = await prisma.student.findFirst({
             where: {
-                id: parseInt(userId),
-            },
-            select: {
-                _count: {
-                    select: {
-                        Meeting: {
-                            where: {
-                                meetingStatus: true
-                            }
-                        }
-                    }
-                },
+                studentId: parseInt(userId)
             }
         })
     }
 
+    console.log("fadasda", countedMeetings);
 
-    console.log("Pending meetings: ", countPending, "Done meetings: ", countDone);
+    // const pendingMeetings = countedMeetings[0]._count._all;
+    // const attendedMeetings = countedMeetings[1]._count._all;
+    // const totalMeetings = countedMeetings[0]._count._all + countedMeetings[1]._count._all;
 
-    return res.status(200).json({ meetings: [countPending, countDone] });
+    // return res.status(200).json({ total: totalMeetings, pending: pendingMeetings, attended: attendedMeetings });
 
 }
 
