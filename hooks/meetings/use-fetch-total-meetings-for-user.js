@@ -3,6 +3,7 @@ import axios from "axios";
 
 const useFetchTotalMeetings = (userId, userRole) => {
 
+    //it is used fetching data
     return useQuery(["total-meetings", userId, userRole], async () => {
         const res = await axios.get(`/api/meetings/get-total-meetings-for-user?userId=${userId}&userRole=${userRole}`);
         return res?.data;

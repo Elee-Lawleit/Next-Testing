@@ -70,7 +70,7 @@ model Subject {
 
 model Meeting {
   id               Int        @id @default(autoincrement())
-  meetingDay       String
+  meetingDay       DateTime   @db.Date
   meetingStatus    Boolean
   meetingReason    String?
   adminId          Int

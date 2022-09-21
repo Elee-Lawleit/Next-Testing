@@ -86,7 +86,7 @@ export type Subject = {
  */
 export type Meeting = {
   id: number
-  meetingDay: string
+  meetingDay: Date
   meetingStatus: boolean
   meetingReason: string | null
   adminId: number
@@ -7043,7 +7043,7 @@ export namespace Prisma {
 
   export type MeetingMinAggregateOutputType = {
     id: number | null
-    meetingDay: string | null
+    meetingDay: Date | null
     meetingStatus: boolean | null
     meetingReason: string | null
     adminId: number | null
@@ -7055,7 +7055,7 @@ export namespace Prisma {
 
   export type MeetingMaxAggregateOutputType = {
     id: number | null
-    meetingDay: string | null
+    meetingDay: Date | null
     meetingStatus: boolean | null
     meetingReason: string | null
     adminId: number | null
@@ -7224,7 +7224,7 @@ export namespace Prisma {
 
   export type MeetingGroupByOutputType = {
     id: number
-    meetingDay: string
+    meetingDay: Date
     meetingStatus: boolean
     meetingReason: string | null
     adminId: number
@@ -9418,7 +9418,7 @@ export namespace Prisma {
     OR?: Enumerable<MeetingWhereInput>
     NOT?: Enumerable<MeetingWhereInput>
     id?: IntFilter | number
-    meetingDay?: StringFilter | string
+    meetingDay?: DateTimeFilter | Date | string
     meetingStatus?: BoolFilter | boolean
     meetingReason?: StringNullableFilter | string | null
     adminId?: IntFilter | number
@@ -9474,7 +9474,7 @@ export namespace Prisma {
     OR?: Enumerable<MeetingScalarWhereWithAggregatesInput>
     NOT?: Enumerable<MeetingScalarWhereWithAggregatesInput>
     id?: IntWithAggregatesFilter | number
-    meetingDay?: StringWithAggregatesFilter | string
+    meetingDay?: DateTimeWithAggregatesFilter | Date | string
     meetingStatus?: BoolWithAggregatesFilter | boolean
     meetingReason?: StringNullableWithAggregatesFilter | string | null
     adminId?: IntWithAggregatesFilter | number
@@ -9850,7 +9850,7 @@ export namespace Prisma {
   }
 
   export type MeetingCreateInput = {
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     meetingStartTime: string
@@ -9863,7 +9863,7 @@ export namespace Prisma {
 
   export type MeetingUncheckedCreateInput = {
     id?: number
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     adminId: number
@@ -9875,7 +9875,7 @@ export namespace Prisma {
   }
 
   export type MeetingUpdateInput = {
-    meetingDay?: StringFieldUpdateOperationsInput | string
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingStartTime?: StringFieldUpdateOperationsInput | string
@@ -9888,7 +9888,7 @@ export namespace Prisma {
 
   export type MeetingUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    meetingDay?: StringFieldUpdateOperationsInput | string
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     adminId?: IntFieldUpdateOperationsInput | number
@@ -9901,7 +9901,7 @@ export namespace Prisma {
 
   export type MeetingCreateManyInput = {
     id?: number
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     adminId: number
@@ -9912,7 +9912,7 @@ export namespace Prisma {
   }
 
   export type MeetingUpdateManyMutationInput = {
-    meetingDay?: StringFieldUpdateOperationsInput | string
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingStartTime?: StringFieldUpdateOperationsInput | string
@@ -9921,7 +9921,7 @@ export namespace Prisma {
 
   export type MeetingUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    meetingDay?: StringFieldUpdateOperationsInput | string
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     adminId?: IntFieldUpdateOperationsInput | number
@@ -10365,6 +10365,17 @@ export namespace Prisma {
     studentId?: SortOrder
   }
 
+  export type DateTimeFilter = {
+    equals?: Date | string
+    in?: Enumerable<Date> | Enumerable<string>
+    notIn?: Enumerable<Date> | Enumerable<string>
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeFilter | Date | string
+  }
+
   export type FeedbackListRelationFilter = {
     every?: FeedbackWhereInput
     some?: FeedbackWhereInput
@@ -10423,6 +10434,20 @@ export namespace Prisma {
     adminId?: SortOrder
     studentId?: SortOrder
     parentId?: SortOrder
+  }
+
+  export type DateTimeWithAggregatesFilter = {
+    equals?: Date | string
+    in?: Enumerable<Date> | Enumerable<string>
+    notIn?: Enumerable<Date> | Enumerable<string>
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeWithAggregatesFilter | Date | string
+    _count?: NestedIntFilter
+    _min?: NestedDateTimeFilter
+    _max?: NestedDateTimeFilter
   }
 
   export type MeetingRelationFilter = {
@@ -10871,6 +10896,10 @@ export namespace Prisma {
     connect?: Enumerable<FeedbackWhereUniqueInput>
   }
 
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
   export type AdminUpdateOneRequiredWithoutMeetingNestedInput = {
     create?: XOR<AdminCreateWithoutMeetingInput, AdminUncheckedCreateWithoutMeetingInput>
     connectOrCreate?: AdminCreateOrConnectWithoutMeetingInput
@@ -11077,8 +11106,33 @@ export namespace Prisma {
     _max?: NestedBoolFilter
   }
 
+  export type NestedDateTimeFilter = {
+    equals?: Date | string
+    in?: Enumerable<Date> | Enumerable<string>
+    notIn?: Enumerable<Date> | Enumerable<string>
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeFilter | Date | string
+  }
+
+  export type NestedDateTimeWithAggregatesFilter = {
+    equals?: Date | string
+    in?: Enumerable<Date> | Enumerable<string>
+    notIn?: Enumerable<Date> | Enumerable<string>
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeWithAggregatesFilter | Date | string
+    _count?: NestedIntFilter
+    _min?: NestedDateTimeFilter
+    _max?: NestedDateTimeFilter
+  }
+
   export type MeetingCreateWithoutParentInput = {
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     meetingStartTime: string
@@ -11090,7 +11144,7 @@ export namespace Prisma {
 
   export type MeetingUncheckedCreateWithoutParentInput = {
     id?: number
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     adminId: number
@@ -11160,7 +11214,7 @@ export namespace Prisma {
     OR?: Enumerable<MeetingScalarWhereInput>
     NOT?: Enumerable<MeetingScalarWhereInput>
     id?: IntFilter | number
-    meetingDay?: StringFilter | string
+    meetingDay?: DateTimeFilter | Date | string
     meetingStatus?: BoolFilter | boolean
     meetingReason?: StringNullableFilter | string | null
     adminId?: IntFilter | number
@@ -11198,7 +11252,7 @@ export namespace Prisma {
   }
 
   export type MeetingCreateWithoutAdminInput = {
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     meetingStartTime: string
@@ -11210,7 +11264,7 @@ export namespace Prisma {
 
   export type MeetingUncheckedCreateWithoutAdminInput = {
     id?: number
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     studentId: number
@@ -11367,7 +11421,7 @@ export namespace Prisma {
   }
 
   export type MeetingCreateWithoutStudentInput = {
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     meetingStartTime: string
@@ -11379,7 +11433,7 @@ export namespace Prisma {
 
   export type MeetingUncheckedCreateWithoutStudentInput = {
     id?: number
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     adminId: number
@@ -11818,7 +11872,7 @@ export namespace Prisma {
   }
 
   export type MeetingCreateWithoutFeedbackInput = {
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     meetingStartTime: string
@@ -11830,7 +11884,7 @@ export namespace Prisma {
 
   export type MeetingUncheckedCreateWithoutFeedbackInput = {
     id?: number
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     adminId: number
@@ -11851,7 +11905,7 @@ export namespace Prisma {
   }
 
   export type MeetingUpdateWithoutFeedbackInput = {
-    meetingDay?: StringFieldUpdateOperationsInput | string
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingStartTime?: StringFieldUpdateOperationsInput | string
@@ -11863,7 +11917,7 @@ export namespace Prisma {
 
   export type MeetingUncheckedUpdateWithoutFeedbackInput = {
     id?: IntFieldUpdateOperationsInput | number
-    meetingDay?: StringFieldUpdateOperationsInput | string
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     adminId?: IntFieldUpdateOperationsInput | number
@@ -11875,7 +11929,7 @@ export namespace Prisma {
 
   export type MeetingCreateManyParentInput = {
     id?: number
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     adminId: number
@@ -11892,7 +11946,7 @@ export namespace Prisma {
   }
 
   export type MeetingUpdateWithoutParentInput = {
-    meetingDay?: StringFieldUpdateOperationsInput | string
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingStartTime?: StringFieldUpdateOperationsInput | string
@@ -11904,7 +11958,7 @@ export namespace Prisma {
 
   export type MeetingUncheckedUpdateWithoutParentInput = {
     id?: IntFieldUpdateOperationsInput | number
-    meetingDay?: StringFieldUpdateOperationsInput | string
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     adminId?: IntFieldUpdateOperationsInput | number
@@ -11916,7 +11970,7 @@ export namespace Prisma {
 
   export type MeetingUncheckedUpdateManyWithoutMeetingInput = {
     id?: IntFieldUpdateOperationsInput | number
-    meetingDay?: StringFieldUpdateOperationsInput | string
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     adminId?: IntFieldUpdateOperationsInput | number
@@ -11953,7 +12007,7 @@ export namespace Prisma {
 
   export type MeetingCreateManyAdminInput = {
     id?: number
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     studentId: number
@@ -11968,7 +12022,7 @@ export namespace Prisma {
   }
 
   export type MeetingUpdateWithoutAdminInput = {
-    meetingDay?: StringFieldUpdateOperationsInput | string
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingStartTime?: StringFieldUpdateOperationsInput | string
@@ -11980,7 +12034,7 @@ export namespace Prisma {
 
   export type MeetingUncheckedUpdateWithoutAdminInput = {
     id?: IntFieldUpdateOperationsInput | number
-    meetingDay?: StringFieldUpdateOperationsInput | string
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     studentId?: IntFieldUpdateOperationsInput | number
@@ -12006,7 +12060,7 @@ export namespace Prisma {
 
   export type MeetingCreateManyStudentInput = {
     id?: number
-    meetingDay: string
+    meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     adminId: number
@@ -12025,7 +12079,7 @@ export namespace Prisma {
   }
 
   export type MeetingUpdateWithoutStudentInput = {
-    meetingDay?: StringFieldUpdateOperationsInput | string
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingStartTime?: StringFieldUpdateOperationsInput | string
@@ -12037,7 +12091,7 @@ export namespace Prisma {
 
   export type MeetingUncheckedUpdateWithoutStudentInput = {
     id?: IntFieldUpdateOperationsInput | number
-    meetingDay?: StringFieldUpdateOperationsInput | string
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     adminId?: IntFieldUpdateOperationsInput | number

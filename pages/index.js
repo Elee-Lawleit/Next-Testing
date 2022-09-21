@@ -23,11 +23,13 @@ export default function ({ session }) {
   console.log(typeof(min));
 
   //fetch total meetings
-  const { data, isLoading } = useFetchTotalMeetings(session.user.id, session.user.role);
+  const { data, isLoading } = useFetchTotalMeetings(session?.user?.id, session?.user?.role);
+
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
   //fetch meeting stats
-  const { data: statsData, isLoading: areStatsLoading } = useFetchMeetingStats(session.user.id, session.user.role)
-  
+  const { data: statsData, isLoading: areStatsLoading } = useFetchMeetingStats(session?.user?.id, session?.user?.role)
+
   console.log("meeting stats are: ", statsData);
 
 
@@ -81,7 +83,7 @@ export default function ({ session }) {
         {/* Area chart div */}
         <div className="col-span-1 bg-white">
           <div className="relative text-center font-semibold text-lg mt-2">
-            Meeting Analysis (September)
+            Meeting Analysis ({months[new Date().getMonth()]})
           </div>
           <MeetingAreaChart />
         </div>

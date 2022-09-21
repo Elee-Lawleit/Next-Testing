@@ -19,15 +19,18 @@ import {
 import { Calendar } from '@mantine/dates';
 import useFetchMeetings from 'hooks/meetings/use-fetch-meetings';
 import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 
 const AppSkeloton = ({ children, ...props }) => {
 
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   const [date, setDate] = useState(new Date());
+  
 
   //will send date string to database
-  const { isLoading, data } = useFetchMeetings(date.toDateString(), props.session?.user?.id, props.session?.user?.role);
+  //not converting date to 'date.toDateString()' anymore bc I changed the type to Date Object in database
+  const { isLoading, data } = useFetchMeetings(date, props.session?.user?.id, props.session?.user?.role);
 
   //checking whether session is accessible inside app skele
   // console.log("Session inside app skele is: ", props.session);
@@ -73,6 +76,7 @@ const AppSkeloton = ({ children, ...props }) => {
               <li>More List Items</li>
               <li>MOre</li>
               <li>Even more</li>
+              {props.session && <li><Button onClick={signOut}>Logout</Button></li>}
               </ul>
             </div>
         </Navbar>

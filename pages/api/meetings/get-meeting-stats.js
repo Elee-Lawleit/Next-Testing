@@ -1,4 +1,5 @@
 import { PrismaClient } from "/prisma/src/generated/client";
+import React from 'react'
 const prisma = new PrismaClient();
 
 const handler = async (req, res) => {
@@ -8,59 +9,93 @@ const handler = async (req, res) => {
         return res.status(403).json({ error: "Method not allowed" });
     }
 
+    const { dayString, userId, userRole } = req.query;
 
-    // console.log("Data being sent to backend in req query: ", req.query)
-    // console.log("Data being sent to backend in req body: ", req)
-
-    const { userId, userRole } = req.query;
-
-
-    // well then, here's the fix
-    //using prisma aggregation... groupBy
+    const month = new Date().getMonth();
+    console.log("The value of month is: ", month);
 
     if (userRole === "admin") {
-        var countedMeetings = await prisma.meeting.groupBy({
-            by: ["meetingStatus"],
-            _count: {
-                _all: true
-            },
+        var meetings = await prisma.admin.findFirst({
             where: {
-                adminId: parseInt(userId)
+                id: parseInt(userId),
+            },
+            select: {
+                Meeting: {
+                    where: {
+                        AND: [
+                            {
+                                meetingDay: {
+                                    gte: new Date(`2022-${month}-01`)
+                                }
+                            },
+                            {
+                                meetingDay: {
+                                    lte: new Date("2022-9-30")
+                                }
+                            }
+                        ]
+                    }
+                }
             }
-        });
+        })
     }
     if (userRole === "parent") {
-        console.log("parent running");
-        var countedMeetings = await prisma.meeting.groupBy({
-            by: ["meetingStatus"],
-            _count: {
-                _all: true
-            },
+        var meetings = await prisma.parent.findUnique({
             where: {
-                parentId: parseInt(userId)
+                id: parseInt(userId),
+            },
+            select: {
+                Meeting: {
+                    where: {
+                        AND: [
+                            {
+                                meetingDay: {
+                                    lte: new Date(`2022-${month + 1}-30`)
+                                }
+                            },
+                            {
+                                meetingDay: {
+                                    gte: new Date(`2022-${month + 1}-01`)
+                                }
+                            },
+                        ]
+                    }
+                }
             }
         })
     }
     if (userRole === "student") {
-        var countedMeetings = await prisma.meeting.groupBy({
-            by: ["meetingStatus"],
-            _count: {
-                _all: true
-            },
+        var meetings = await prisma.student.findFirst({
             where: {
-                studentId: parseInt(userId)
+                id: parseInt(userId),
+            },
+            select: {
+                Meeting: {
+                    where: {
+                        AND: [
+                            {
+                                meetingDay: {
+                                    gte: new Date(`2022-${month}-01`)
+                                }
+                            },
+                            {
+                                meetingDay: {
+                                    lte: new Date(`2022-${month}-30`)
+                                }
+                            }
+                        ]
+                    }
+                }
             }
         })
     }
 
-    console.log("fadasda", countedMeetings);
 
-    // const pendingMeetings = countedMeetings[0]._count._all;
-    // const attendedMeetings = countedMeetings[1]._count._all;
-    // const totalMeetings = countedMeetings[0]._count._all + countedMeetings[1]._count._all;
+    console.log("Meetings stats are: ", meetings);
 
-    // return res.status(200).json({ total: totalMeetings, pending: pendingMeetings, attended: attendedMeetings });
+    // if (!meetings.Meeting.length) return res.status(204).json();
 
+    return res.status(200).json({ meetings: meetings });
 }
 
 

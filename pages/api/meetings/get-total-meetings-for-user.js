@@ -14,7 +14,7 @@ const handler = async (req, res) => {
 
     const { userId, userRole } = req.query;
 
-    const today = new Date().toDateString();
+    const today = new Date();
 
     if (userRole === "admin") {
         var count = await prisma.admin.findFirst({
