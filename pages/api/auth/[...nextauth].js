@@ -25,48 +25,51 @@ export const authOptions = {
       authorize: async (credentials) => {
 
         console.log("Credentials: ", credentials)
-        
-        if(!credentials.username || !credentials.password || !credentials.role){
+
+        if (!credentials.username || !credentials.password || !credentials.role) {
           console.log("Inside error if");
           return null;
         }
 
-        var userRole = credentials.role;
-        
+        const userRole = credentials.role;
+        // console.log("THE ADMIN MODEL IS: ", prisma.admin);
+
+
         if (credentials.role === "parent") {
-          console.log("Inside parent: ", credentials)
-          console.log("Admin Model: ", prisma.admin);
           var user = await prisma.parent.findFirst({
             where: {
               parentName: credentials.username,
               parentPassword: credentials.password
             }
           });
-
-          if (credentials.role === "admin") {
-            console.log("Inside Admin: ", credentials)
-            var user = await prisma.admin.findFirst({
-              where: {
-                adminName: credentials.username,
-                adminPassword: credentials.password
-              }
-            });
-          }
-          if (credentials.role === "student") {
-            console.log("Inside student: ", credentials)
-            var user = await prisma.student.findFirst({
-              where: {
-                studentName: credentials.username,
-                studentPassword: credentials.password
-              }
-            });
-          }
         }
 
-        console.log("This USer: ",  user.adminName || user.parentName || user.studentName);
+        if (credentials.role === "admin") {
+          console.log("THE ADMIN IF IS WORKING")
+          var user = await prisma.admin.findFirst({
+            where: {
+              adminName: credentials.username,
+              adminPassword: credentials.password
+            }
+          });
+        }
+        if (credentials.role === "student") {
+          console.log("Inside student: ", credentials)
+          var user = await prisma.student.findFirst({
+            where: {
+              studentName: credentials.username,
+              studentPassword: credentials.password
+            }
+          });
+        }
+
+        // console.log("This is user object returned from database: ", user);
+
+        // console.log("This USer: ", user.adminName || user.parentName || user.studentName);
+
 
         if (user) {
-          console.log("Inside user if");
+          // console.log("Inside user if");
           return {
             id: user.id,
             name: user.parentName || user.studentName || user.adminName,

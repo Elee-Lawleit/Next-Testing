@@ -76,7 +76,7 @@ const handler = async (req, res) => {
     // return res.status(200).json({ meetings: count.Meeting.length });
     
     //well, the feature just came out, so
-    return res.status(200).json({ meetings: count._count.Meeting });
+    return res.status(200).json({ meetings: count?._count?.Meeting });
 
 }
 

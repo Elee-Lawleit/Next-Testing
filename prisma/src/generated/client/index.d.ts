@@ -40,12 +40,47 @@ export type Admin = {
 }
 
 /**
- * Model Role
+ * Model Department
  * 
  */
-export type Role = {
+export type Department = {
   id: number
-  role: string
+  departmentName: string
+}
+
+/**
+ * Model Faculty
+ * 
+ */
+export type Faculty = {
+  id: number
+  userName: string
+  departmentId: number
+}
+
+/**
+ * Model Schedule
+ * 
+ */
+export type Schedule = {
+  id: number
+  day: number
+  start: Date
+  end: Date
+  startTime: Date
+  EndTime: Date
+  adminId: number
+}
+
+/**
+ * Model DayTime
+ * 
+ */
+export type DayTime = {
+  id: number
+  day: number
+  startTime: Date
+  endTime: Date
   adminId: number
 }
 
@@ -81,6 +116,18 @@ export type Subject = {
 }
 
 /**
+ * Model RequestedMeetings
+ * 
+ */
+export type RequestedMeetings = {
+  id: number
+  meetingReason: string
+  parentId: number
+  studentId: number
+  adminId: number
+}
+
+/**
  * Model Meeting
  * 
  */
@@ -89,7 +136,8 @@ export type Meeting = {
   meetingDay: Date
   meetingStatus: boolean
   meetingReason: string | null
-  adminId: number
+  adminId: number | null
+  facultyId: number | null
   studentId: number
   parentId: number
   meetingStartTime: string
@@ -269,14 +317,44 @@ export class PrismaClient<
   get admin(): Prisma.AdminDelegate<GlobalReject>;
 
   /**
-   * `prisma.role`: Exposes CRUD operations for the **Role** model.
+   * `prisma.department`: Exposes CRUD operations for the **Department** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more Roles
-    * const roles = await prisma.role.findMany()
+    * // Fetch zero or more Departments
+    * const departments = await prisma.department.findMany()
     * ```
     */
-  get role(): Prisma.RoleDelegate<GlobalReject>;
+  get department(): Prisma.DepartmentDelegate<GlobalReject>;
+
+  /**
+   * `prisma.faculty`: Exposes CRUD operations for the **Faculty** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Faculties
+    * const faculties = await prisma.faculty.findMany()
+    * ```
+    */
+  get faculty(): Prisma.FacultyDelegate<GlobalReject>;
+
+  /**
+   * `prisma.schedule`: Exposes CRUD operations for the **Schedule** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Schedules
+    * const schedules = await prisma.schedule.findMany()
+    * ```
+    */
+  get schedule(): Prisma.ScheduleDelegate<GlobalReject>;
+
+  /**
+   * `prisma.dayTime`: Exposes CRUD operations for the **DayTime** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DayTimes
+    * const dayTimes = await prisma.dayTime.findMany()
+    * ```
+    */
+  get dayTime(): Prisma.DayTimeDelegate<GlobalReject>;
 
   /**
    * `prisma.student`: Exposes CRUD operations for the **Student** model.
@@ -307,6 +385,16 @@ export class PrismaClient<
     * ```
     */
   get subject(): Prisma.SubjectDelegate<GlobalReject>;
+
+  /**
+   * `prisma.requestedMeetings`: Exposes CRUD operations for the **RequestedMeetings** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RequestedMeetings
+    * const requestedMeetings = await prisma.requestedMeetings.findMany()
+    * ```
+    */
+  get requestedMeetings(): Prisma.RequestedMeetingsDelegate<GlobalReject>;
 
   /**
    * `prisma.meeting`: Exposes CRUD operations for the **Meeting** model.
@@ -802,10 +890,14 @@ export namespace Prisma {
   export const ModelName: {
     Parent: 'Parent',
     Admin: 'Admin',
-    Role: 'Role',
+    Department: 'Department',
+    Faculty: 'Faculty',
+    Schedule: 'Schedule',
+    DayTime: 'DayTime',
     Student: 'Student',
     StudentInfo: 'StudentInfo',
     Subject: 'Subject',
+    RequestedMeetings: 'RequestedMeetings',
     Meeting: 'Meeting',
     Feedback: 'Feedback'
   };
@@ -974,11 +1066,13 @@ export namespace Prisma {
   export type ParentCountOutputType = {
     Meeting: number
     Student: number
+    RequestedMeetings: number
   }
 
   export type ParentCountOutputTypeSelect = {
     Meeting?: boolean | ParentCountOutputTypeCountMeetingArgs
     Student?: boolean | ParentCountOutputTypeCountStudentArgs
+    RequestedMeetings?: boolean | ParentCountOutputTypeCountRequestedMeetingsArgs
   }
 
   export type ParentCountOutputTypeGetPayload<
@@ -1032,6 +1126,14 @@ export namespace Prisma {
   }
 
 
+  /**
+   * ParentCountOutputType without action
+   */
+  export type ParentCountOutputTypeCountRequestedMeetingsArgs = {
+    where?: RequestedMeetingsWhereInput
+  }
+
+
 
   /**
    * Count Type AdminCountOutputType
@@ -1040,12 +1142,16 @@ export namespace Prisma {
 
   export type AdminCountOutputType = {
     Meeting: number
-    Role: number
+    Schedule: number
+    RequestedMeetings: number
+    DayTime: number
   }
 
   export type AdminCountOutputTypeSelect = {
     Meeting?: boolean | AdminCountOutputTypeCountMeetingArgs
-    Role?: boolean | AdminCountOutputTypeCountRoleArgs
+    Schedule?: boolean | AdminCountOutputTypeCountScheduleArgs
+    RequestedMeetings?: boolean | AdminCountOutputTypeCountRequestedMeetingsArgs
+    DayTime?: boolean | AdminCountOutputTypeCountDayTimeArgs
   }
 
   export type AdminCountOutputTypeGetPayload<
@@ -1094,8 +1200,138 @@ export namespace Prisma {
   /**
    * AdminCountOutputType without action
    */
-  export type AdminCountOutputTypeCountRoleArgs = {
-    where?: RoleWhereInput
+  export type AdminCountOutputTypeCountScheduleArgs = {
+    where?: ScheduleWhereInput
+  }
+
+
+  /**
+   * AdminCountOutputType without action
+   */
+  export type AdminCountOutputTypeCountRequestedMeetingsArgs = {
+    where?: RequestedMeetingsWhereInput
+  }
+
+
+  /**
+   * AdminCountOutputType without action
+   */
+  export type AdminCountOutputTypeCountDayTimeArgs = {
+    where?: DayTimeWhereInput
+  }
+
+
+
+  /**
+   * Count Type DepartmentCountOutputType
+   */
+
+
+  export type DepartmentCountOutputType = {
+    Faculty: number
+  }
+
+  export type DepartmentCountOutputTypeSelect = {
+    Faculty?: boolean | DepartmentCountOutputTypeCountFacultyArgs
+  }
+
+  export type DepartmentCountOutputTypeGetPayload<
+    S extends boolean | null | undefined | DepartmentCountOutputTypeArgs,
+    U = keyof S
+      > = S extends true
+        ? DepartmentCountOutputType
+    : S extends undefined
+    ? never
+    : S extends DepartmentCountOutputTypeArgs
+    ?'include' extends U
+    ? DepartmentCountOutputType 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+    P extends keyof DepartmentCountOutputType ? DepartmentCountOutputType[P] : never
+  } 
+    : DepartmentCountOutputType
+  : DepartmentCountOutputType
+
+
+
+
+  // Custom InputTypes
+
+  /**
+   * DepartmentCountOutputType without action
+   */
+  export type DepartmentCountOutputTypeArgs = {
+    /**
+     * Select specific fields to fetch from the DepartmentCountOutputType
+     * 
+    **/
+    select?: DepartmentCountOutputTypeSelect | null
+  }
+
+
+  /**
+   * DepartmentCountOutputType without action
+   */
+  export type DepartmentCountOutputTypeCountFacultyArgs = {
+    where?: FacultyWhereInput
+  }
+
+
+
+  /**
+   * Count Type FacultyCountOutputType
+   */
+
+
+  export type FacultyCountOutputType = {
+    Meeting: number
+  }
+
+  export type FacultyCountOutputTypeSelect = {
+    Meeting?: boolean | FacultyCountOutputTypeCountMeetingArgs
+  }
+
+  export type FacultyCountOutputTypeGetPayload<
+    S extends boolean | null | undefined | FacultyCountOutputTypeArgs,
+    U = keyof S
+      > = S extends true
+        ? FacultyCountOutputType
+    : S extends undefined
+    ? never
+    : S extends FacultyCountOutputTypeArgs
+    ?'include' extends U
+    ? FacultyCountOutputType 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+    P extends keyof FacultyCountOutputType ? FacultyCountOutputType[P] : never
+  } 
+    : FacultyCountOutputType
+  : FacultyCountOutputType
+
+
+
+
+  // Custom InputTypes
+
+  /**
+   * FacultyCountOutputType without action
+   */
+  export type FacultyCountOutputTypeArgs = {
+    /**
+     * Select specific fields to fetch from the FacultyCountOutputType
+     * 
+    **/
+    select?: FacultyCountOutputTypeSelect | null
+  }
+
+
+  /**
+   * FacultyCountOutputType without action
+   */
+  export type FacultyCountOutputTypeCountMeetingArgs = {
+    where?: MeetingWhereInput
   }
 
 
@@ -1107,12 +1343,14 @@ export namespace Prisma {
 
   export type StudentCountOutputType = {
     Meeting: number
+    RequestedMeetings: number
     StudentInfo: number
     Subject: number
   }
 
   export type StudentCountOutputTypeSelect = {
     Meeting?: boolean | StudentCountOutputTypeCountMeetingArgs
+    RequestedMeetings?: boolean | StudentCountOutputTypeCountRequestedMeetingsArgs
     StudentInfo?: boolean | StudentCountOutputTypeCountStudentInfoArgs
     Subject?: boolean | StudentCountOutputTypeCountSubjectArgs
   }
@@ -1157,6 +1395,14 @@ export namespace Prisma {
    */
   export type StudentCountOutputTypeCountMeetingArgs = {
     where?: MeetingWhereInput
+  }
+
+
+  /**
+   * StudentCountOutputType without action
+   */
+  export type StudentCountOutputTypeCountRequestedMeetingsArgs = {
+    where?: RequestedMeetingsWhereInput
   }
 
 
@@ -1453,12 +1699,14 @@ export namespace Prisma {
     parentPassword?: boolean
     Meeting?: boolean | MeetingFindManyArgs
     Student?: boolean | StudentFindManyArgs
+    RequestedMeetings?: boolean | RequestedMeetingsFindManyArgs
     _count?: boolean | ParentCountOutputTypeArgs
   }
 
   export type ParentInclude = {
     Meeting?: boolean | MeetingFindManyArgs
     Student?: boolean | StudentFindManyArgs
+    RequestedMeetings?: boolean | RequestedMeetingsFindManyArgs
     _count?: boolean | ParentCountOutputTypeArgs
   }
 
@@ -1475,6 +1723,7 @@ export namespace Prisma {
     [P in TrueKeys<S['include']>]:
         P extends 'Meeting' ? Array < MeetingGetPayload<S['include'][P]>>  :
         P extends 'Student' ? Array < StudentGetPayload<S['include'][P]>>  :
+        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<S['include'][P]>>  :
         P extends '_count' ? ParentCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : 'select' extends U
@@ -1482,6 +1731,7 @@ export namespace Prisma {
     [P in TrueKeys<S['select']>]:
         P extends 'Meeting' ? Array < MeetingGetPayload<S['select'][P]>>  :
         P extends 'Student' ? Array < StudentGetPayload<S['select'][P]>>  :
+        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<S['select'][P]>>  :
         P extends '_count' ? ParentCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Parent ? Parent[P] : never
   } 
     : Parent
@@ -1860,6 +2110,8 @@ export namespace Prisma {
     Meeting<T extends MeetingFindManyArgs = {}>(args?: Subset<T, MeetingFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Meeting>>, PrismaPromise<Array<MeetingGetPayload<T>>>>;
 
     Student<T extends StudentFindManyArgs = {}>(args?: Subset<T, StudentFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Student>>, PrismaPromise<Array<StudentGetPayload<T>>>>;
+
+    RequestedMeetings<T extends RequestedMeetingsFindManyArgs = {}>(args?: Subset<T, RequestedMeetingsFindManyArgs>): CheckSelect<T, PrismaPromise<Array<RequestedMeetings>>, PrismaPromise<Array<RequestedMeetingsGetPayload<T>>>>;
 
     private get _document();
     /**
@@ -2437,13 +2689,17 @@ export namespace Prisma {
     adminEmail?: boolean
     adminDesignation?: boolean
     Meeting?: boolean | MeetingFindManyArgs
-    Role?: boolean | RoleFindManyArgs
+    Schedule?: boolean | ScheduleFindManyArgs
+    RequestedMeetings?: boolean | RequestedMeetingsFindManyArgs
+    DayTime?: boolean | DayTimeFindManyArgs
     _count?: boolean | AdminCountOutputTypeArgs
   }
 
   export type AdminInclude = {
     Meeting?: boolean | MeetingFindManyArgs
-    Role?: boolean | RoleFindManyArgs
+    Schedule?: boolean | ScheduleFindManyArgs
+    RequestedMeetings?: boolean | RequestedMeetingsFindManyArgs
+    DayTime?: boolean | DayTimeFindManyArgs
     _count?: boolean | AdminCountOutputTypeArgs
   }
 
@@ -2459,14 +2715,18 @@ export namespace Prisma {
     ? Admin  & {
     [P in TrueKeys<S['include']>]:
         P extends 'Meeting' ? Array < MeetingGetPayload<S['include'][P]>>  :
-        P extends 'Role' ? Array < RoleGetPayload<S['include'][P]>>  :
+        P extends 'Schedule' ? Array < ScheduleGetPayload<S['include'][P]>>  :
+        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<S['include'][P]>>  :
+        P extends 'DayTime' ? Array < DayTimeGetPayload<S['include'][P]>>  :
         P extends '_count' ? AdminCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
         P extends 'Meeting' ? Array < MeetingGetPayload<S['select'][P]>>  :
-        P extends 'Role' ? Array < RoleGetPayload<S['select'][P]>>  :
+        P extends 'Schedule' ? Array < ScheduleGetPayload<S['select'][P]>>  :
+        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<S['select'][P]>>  :
+        P extends 'DayTime' ? Array < DayTimeGetPayload<S['select'][P]>>  :
         P extends '_count' ? AdminCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Admin ? Admin[P] : never
   } 
     : Admin
@@ -2844,7 +3104,11 @@ export namespace Prisma {
 
     Meeting<T extends MeetingFindManyArgs = {}>(args?: Subset<T, MeetingFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Meeting>>, PrismaPromise<Array<MeetingGetPayload<T>>>>;
 
-    Role<T extends RoleFindManyArgs = {}>(args?: Subset<T, RoleFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Role>>, PrismaPromise<Array<RoleGetPayload<T>>>>;
+    Schedule<T extends ScheduleFindManyArgs = {}>(args?: Subset<T, ScheduleFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Schedule>>, PrismaPromise<Array<ScheduleGetPayload<T>>>>;
+
+    RequestedMeetings<T extends RequestedMeetingsFindManyArgs = {}>(args?: Subset<T, RequestedMeetingsFindManyArgs>): CheckSelect<T, PrismaPromise<Array<RequestedMeetings>>, PrismaPromise<Array<RequestedMeetingsGetPayload<T>>>>;
+
+    DayTime<T extends DayTimeFindManyArgs = {}>(args?: Subset<T, DayTimeFindManyArgs>): CheckSelect<T, PrismaPromise<Array<DayTime>>, PrismaPromise<Array<DayTimeGetPayload<T>>>>;
 
     private get _document();
     /**
@@ -3201,340 +3465,332 @@ export namespace Prisma {
 
 
   /**
-   * Model Role
+   * Model Department
    */
 
 
-  export type AggregateRole = {
-    _count: RoleCountAggregateOutputType | null
-    _avg: RoleAvgAggregateOutputType | null
-    _sum: RoleSumAggregateOutputType | null
-    _min: RoleMinAggregateOutputType | null
-    _max: RoleMaxAggregateOutputType | null
+  export type AggregateDepartment = {
+    _count: DepartmentCountAggregateOutputType | null
+    _avg: DepartmentAvgAggregateOutputType | null
+    _sum: DepartmentSumAggregateOutputType | null
+    _min: DepartmentMinAggregateOutputType | null
+    _max: DepartmentMaxAggregateOutputType | null
   }
 
-  export type RoleAvgAggregateOutputType = {
+  export type DepartmentAvgAggregateOutputType = {
     id: number | null
-    adminId: number | null
   }
 
-  export type RoleSumAggregateOutputType = {
+  export type DepartmentSumAggregateOutputType = {
     id: number | null
-    adminId: number | null
   }
 
-  export type RoleMinAggregateOutputType = {
+  export type DepartmentMinAggregateOutputType = {
     id: number | null
-    role: string | null
-    adminId: number | null
+    departmentName: string | null
   }
 
-  export type RoleMaxAggregateOutputType = {
+  export type DepartmentMaxAggregateOutputType = {
     id: number | null
-    role: string | null
-    adminId: number | null
+    departmentName: string | null
   }
 
-  export type RoleCountAggregateOutputType = {
+  export type DepartmentCountAggregateOutputType = {
     id: number
-    role: number
-    adminId: number
+    departmentName: number
     _all: number
   }
 
 
-  export type RoleAvgAggregateInputType = {
+  export type DepartmentAvgAggregateInputType = {
     id?: true
-    adminId?: true
   }
 
-  export type RoleSumAggregateInputType = {
+  export type DepartmentSumAggregateInputType = {
     id?: true
-    adminId?: true
   }
 
-  export type RoleMinAggregateInputType = {
+  export type DepartmentMinAggregateInputType = {
     id?: true
-    role?: true
-    adminId?: true
+    departmentName?: true
   }
 
-  export type RoleMaxAggregateInputType = {
+  export type DepartmentMaxAggregateInputType = {
     id?: true
-    role?: true
-    adminId?: true
+    departmentName?: true
   }
 
-  export type RoleCountAggregateInputType = {
+  export type DepartmentCountAggregateInputType = {
     id?: true
-    role?: true
-    adminId?: true
+    departmentName?: true
     _all?: true
   }
 
-  export type RoleAggregateArgs = {
+  export type DepartmentAggregateArgs = {
     /**
-     * Filter which Role to aggregate.
+     * Filter which Department to aggregate.
      * 
     **/
-    where?: RoleWhereInput
+    where?: DepartmentWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Roles to fetch.
+     * Determine the order of Departments to fetch.
      * 
     **/
-    orderBy?: Enumerable<RoleOrderByWithRelationInput>
+    orderBy?: Enumerable<DepartmentOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
      * 
     **/
-    cursor?: RoleWhereUniqueInput
+    cursor?: DepartmentWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Roles from the position of the cursor.
+     * Take `±n` Departments from the position of the cursor.
      * 
     **/
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Roles.
+     * Skip the first `n` Departments.
      * 
     **/
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Count returned Roles
+     * Count returned Departments
     **/
-    _count?: true | RoleCountAggregateInputType
+    _count?: true | DepartmentCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to average
     **/
-    _avg?: RoleAvgAggregateInputType
+    _avg?: DepartmentAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to sum
     **/
-    _sum?: RoleSumAggregateInputType
+    _sum?: DepartmentSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the minimum value
     **/
-    _min?: RoleMinAggregateInputType
+    _min?: DepartmentMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the maximum value
     **/
-    _max?: RoleMaxAggregateInputType
+    _max?: DepartmentMaxAggregateInputType
   }
 
-  export type GetRoleAggregateType<T extends RoleAggregateArgs> = {
-        [P in keyof T & keyof AggregateRole]: P extends '_count' | 'count'
+  export type GetDepartmentAggregateType<T extends DepartmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateDepartment]: P extends '_count' | 'count'
       ? T[P] extends true
         ? number
-        : GetScalarType<T[P], AggregateRole[P]>
-      : GetScalarType<T[P], AggregateRole[P]>
+        : GetScalarType<T[P], AggregateDepartment[P]>
+      : GetScalarType<T[P], AggregateDepartment[P]>
   }
 
 
 
 
-  export type RoleGroupByArgs = {
-    where?: RoleWhereInput
-    orderBy?: Enumerable<RoleOrderByWithAggregationInput>
-    by: Array<RoleScalarFieldEnum>
-    having?: RoleScalarWhereWithAggregatesInput
+  export type DepartmentGroupByArgs = {
+    where?: DepartmentWhereInput
+    orderBy?: Enumerable<DepartmentOrderByWithAggregationInput>
+    by: Array<DepartmentScalarFieldEnum>
+    having?: DepartmentScalarWhereWithAggregatesInput
     take?: number
     skip?: number
-    _count?: RoleCountAggregateInputType | true
-    _avg?: RoleAvgAggregateInputType
-    _sum?: RoleSumAggregateInputType
-    _min?: RoleMinAggregateInputType
-    _max?: RoleMaxAggregateInputType
+    _count?: DepartmentCountAggregateInputType | true
+    _avg?: DepartmentAvgAggregateInputType
+    _sum?: DepartmentSumAggregateInputType
+    _min?: DepartmentMinAggregateInputType
+    _max?: DepartmentMaxAggregateInputType
   }
 
 
-  export type RoleGroupByOutputType = {
+  export type DepartmentGroupByOutputType = {
     id: number
-    role: string
-    adminId: number
-    _count: RoleCountAggregateOutputType | null
-    _avg: RoleAvgAggregateOutputType | null
-    _sum: RoleSumAggregateOutputType | null
-    _min: RoleMinAggregateOutputType | null
-    _max: RoleMaxAggregateOutputType | null
+    departmentName: string
+    _count: DepartmentCountAggregateOutputType | null
+    _avg: DepartmentAvgAggregateOutputType | null
+    _sum: DepartmentSumAggregateOutputType | null
+    _min: DepartmentMinAggregateOutputType | null
+    _max: DepartmentMaxAggregateOutputType | null
   }
 
-  type GetRoleGroupByPayload<T extends RoleGroupByArgs> = PrismaPromise<
+  type GetDepartmentGroupByPayload<T extends DepartmentGroupByArgs> = PrismaPromise<
     Array<
-      PickArray<RoleGroupByOutputType, T['by']> &
+      PickArray<DepartmentGroupByOutputType, T['by']> &
         {
-          [P in ((keyof T) & (keyof RoleGroupByOutputType))]: P extends '_count'
+          [P in ((keyof T) & (keyof DepartmentGroupByOutputType))]: P extends '_count'
             ? T[P] extends boolean
               ? number
-              : GetScalarType<T[P], RoleGroupByOutputType[P]>
-            : GetScalarType<T[P], RoleGroupByOutputType[P]>
+              : GetScalarType<T[P], DepartmentGroupByOutputType[P]>
+            : GetScalarType<T[P], DepartmentGroupByOutputType[P]>
         }
       >
     >
 
 
-  export type RoleSelect = {
+  export type DepartmentSelect = {
     id?: boolean
-    role?: boolean
-    adminId?: boolean
-    Admin?: boolean | AdminArgs
+    departmentName?: boolean
+    Faculty?: boolean | FacultyFindManyArgs
+    _count?: boolean | DepartmentCountOutputTypeArgs
   }
 
-  export type RoleInclude = {
-    Admin?: boolean | AdminArgs
+  export type DepartmentInclude = {
+    Faculty?: boolean | FacultyFindManyArgs
+    _count?: boolean | DepartmentCountOutputTypeArgs
   }
 
-  export type RoleGetPayload<
-    S extends boolean | null | undefined | RoleArgs,
+  export type DepartmentGetPayload<
+    S extends boolean | null | undefined | DepartmentArgs,
     U = keyof S
       > = S extends true
-        ? Role
+        ? Department
     : S extends undefined
     ? never
-    : S extends RoleArgs | RoleFindManyArgs
+    : S extends DepartmentArgs | DepartmentFindManyArgs
     ?'include' extends U
-    ? Role  & {
+    ? Department  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Admin' ? AdminGetPayload<S['include'][P]> :  never
+        P extends 'Faculty' ? Array < FacultyGetPayload<S['include'][P]>>  :
+        P extends '_count' ? DepartmentCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Admin' ? AdminGetPayload<S['select'][P]> :  P extends keyof Role ? Role[P] : never
+        P extends 'Faculty' ? Array < FacultyGetPayload<S['select'][P]>>  :
+        P extends '_count' ? DepartmentCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Department ? Department[P] : never
   } 
-    : Role
-  : Role
+    : Department
+  : Department
 
 
-  type RoleCountArgs = Merge<
-    Omit<RoleFindManyArgs, 'select' | 'include'> & {
-      select?: RoleCountAggregateInputType | true
+  type DepartmentCountArgs = Merge<
+    Omit<DepartmentFindManyArgs, 'select' | 'include'> & {
+      select?: DepartmentCountAggregateInputType | true
     }
   >
 
-  export interface RoleDelegate<GlobalRejectSettings> {
+  export interface DepartmentDelegate<GlobalRejectSettings> {
     /**
-     * Find zero or one Role that matches the filter.
-     * @param {RoleFindUniqueArgs} args - Arguments to find a Role
+     * Find zero or one Department that matches the filter.
+     * @param {DepartmentFindUniqueArgs} args - Arguments to find a Department
      * @example
-     * // Get one Role
-     * const role = await prisma.role.findUnique({
+     * // Get one Department
+     * const department = await prisma.department.findUnique({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
     **/
-    findUnique<T extends RoleFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
-      args: SelectSubset<T, RoleFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Role'> extends True ? CheckSelect<T, Prisma__RoleClient<Role>, Prisma__RoleClient<RoleGetPayload<T>>> : CheckSelect<T, Prisma__RoleClient<Role | null >, Prisma__RoleClient<RoleGetPayload<T> | null >>
+    findUnique<T extends DepartmentFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, DepartmentFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Department'> extends True ? CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>> : CheckSelect<T, Prisma__DepartmentClient<Department | null >, Prisma__DepartmentClient<DepartmentGetPayload<T> | null >>
 
     /**
-     * Find the first Role that matches the filter.
+     * Find the first Department that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoleFindFirstArgs} args - Arguments to find a Role
+     * @param {DepartmentFindFirstArgs} args - Arguments to find a Department
      * @example
-     * // Get one Role
-     * const role = await prisma.role.findFirst({
+     * // Get one Department
+     * const department = await prisma.department.findFirst({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
     **/
-    findFirst<T extends RoleFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
-      args?: SelectSubset<T, RoleFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Role'> extends True ? CheckSelect<T, Prisma__RoleClient<Role>, Prisma__RoleClient<RoleGetPayload<T>>> : CheckSelect<T, Prisma__RoleClient<Role | null >, Prisma__RoleClient<RoleGetPayload<T> | null >>
+    findFirst<T extends DepartmentFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, DepartmentFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Department'> extends True ? CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>> : CheckSelect<T, Prisma__DepartmentClient<Department | null >, Prisma__DepartmentClient<DepartmentGetPayload<T> | null >>
 
     /**
-     * Find zero or more Roles that matches the filter.
+     * Find zero or more Departments that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoleFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @param {DepartmentFindManyArgs=} args - Arguments to filter and select certain fields only.
      * @example
-     * // Get all Roles
-     * const roles = await prisma.role.findMany()
+     * // Get all Departments
+     * const departments = await prisma.department.findMany()
      * 
-     * // Get first 10 Roles
-     * const roles = await prisma.role.findMany({ take: 10 })
+     * // Get first 10 Departments
+     * const departments = await prisma.department.findMany({ take: 10 })
      * 
      * // Only select the `id`
-     * const roleWithIdOnly = await prisma.role.findMany({ select: { id: true } })
+     * const departmentWithIdOnly = await prisma.department.findMany({ select: { id: true } })
      * 
     **/
-    findMany<T extends RoleFindManyArgs>(
-      args?: SelectSubset<T, RoleFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Role>>, PrismaPromise<Array<RoleGetPayload<T>>>>
+    findMany<T extends DepartmentFindManyArgs>(
+      args?: SelectSubset<T, DepartmentFindManyArgs>
+    ): CheckSelect<T, PrismaPromise<Array<Department>>, PrismaPromise<Array<DepartmentGetPayload<T>>>>
 
     /**
-     * Create a Role.
-     * @param {RoleCreateArgs} args - Arguments to create a Role.
+     * Create a Department.
+     * @param {DepartmentCreateArgs} args - Arguments to create a Department.
      * @example
-     * // Create one Role
-     * const Role = await prisma.role.create({
+     * // Create one Department
+     * const Department = await prisma.department.create({
      *   data: {
-     *     // ... data to create a Role
+     *     // ... data to create a Department
      *   }
      * })
      * 
     **/
-    create<T extends RoleCreateArgs>(
-      args: SelectSubset<T, RoleCreateArgs>
-    ): CheckSelect<T, Prisma__RoleClient<Role>, Prisma__RoleClient<RoleGetPayload<T>>>
+    create<T extends DepartmentCreateArgs>(
+      args: SelectSubset<T, DepartmentCreateArgs>
+    ): CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>>
 
     /**
-     * Create many Roles.
-     *     @param {RoleCreateManyArgs} args - Arguments to create many Roles.
+     * Create many Departments.
+     *     @param {DepartmentCreateManyArgs} args - Arguments to create many Departments.
      *     @example
-     *     // Create many Roles
-     *     const role = await prisma.role.createMany({
+     *     // Create many Departments
+     *     const department = await prisma.department.createMany({
      *       data: {
      *         // ... provide data here
      *       }
      *     })
      *     
     **/
-    createMany<T extends RoleCreateManyArgs>(
-      args?: SelectSubset<T, RoleCreateManyArgs>
+    createMany<T extends DepartmentCreateManyArgs>(
+      args?: SelectSubset<T, DepartmentCreateManyArgs>
     ): PrismaPromise<BatchPayload>
 
     /**
-     * Delete a Role.
-     * @param {RoleDeleteArgs} args - Arguments to delete one Role.
+     * Delete a Department.
+     * @param {DepartmentDeleteArgs} args - Arguments to delete one Department.
      * @example
-     * // Delete one Role
-     * const Role = await prisma.role.delete({
+     * // Delete one Department
+     * const Department = await prisma.department.delete({
      *   where: {
-     *     // ... filter to delete one Role
+     *     // ... filter to delete one Department
      *   }
      * })
      * 
     **/
-    delete<T extends RoleDeleteArgs>(
-      args: SelectSubset<T, RoleDeleteArgs>
-    ): CheckSelect<T, Prisma__RoleClient<Role>, Prisma__RoleClient<RoleGetPayload<T>>>
+    delete<T extends DepartmentDeleteArgs>(
+      args: SelectSubset<T, DepartmentDeleteArgs>
+    ): CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>>
 
     /**
-     * Update one Role.
-     * @param {RoleUpdateArgs} args - Arguments to update one Role.
+     * Update one Department.
+     * @param {DepartmentUpdateArgs} args - Arguments to update one Department.
      * @example
-     * // Update one Role
-     * const role = await prisma.role.update({
+     * // Update one Department
+     * const department = await prisma.department.update({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -3544,34 +3800,34 @@ export namespace Prisma {
      * })
      * 
     **/
-    update<T extends RoleUpdateArgs>(
-      args: SelectSubset<T, RoleUpdateArgs>
-    ): CheckSelect<T, Prisma__RoleClient<Role>, Prisma__RoleClient<RoleGetPayload<T>>>
+    update<T extends DepartmentUpdateArgs>(
+      args: SelectSubset<T, DepartmentUpdateArgs>
+    ): CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>>
 
     /**
-     * Delete zero or more Roles.
-     * @param {RoleDeleteManyArgs} args - Arguments to filter Roles to delete.
+     * Delete zero or more Departments.
+     * @param {DepartmentDeleteManyArgs} args - Arguments to filter Departments to delete.
      * @example
-     * // Delete a few Roles
-     * const { count } = await prisma.role.deleteMany({
+     * // Delete a few Departments
+     * const { count } = await prisma.department.deleteMany({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      * 
     **/
-    deleteMany<T extends RoleDeleteManyArgs>(
-      args?: SelectSubset<T, RoleDeleteManyArgs>
+    deleteMany<T extends DepartmentDeleteManyArgs>(
+      args?: SelectSubset<T, DepartmentDeleteManyArgs>
     ): PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Roles.
+     * Update zero or more Departments.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @param {DepartmentUpdateManyArgs} args - Arguments to update one or more rows.
      * @example
-     * // Update many Roles
-     * const role = await prisma.role.updateMany({
+     * // Update many Departments
+     * const department = await prisma.department.updateMany({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -3581,93 +3837,93 @@ export namespace Prisma {
      * })
      * 
     **/
-    updateMany<T extends RoleUpdateManyArgs>(
-      args: SelectSubset<T, RoleUpdateManyArgs>
+    updateMany<T extends DepartmentUpdateManyArgs>(
+      args: SelectSubset<T, DepartmentUpdateManyArgs>
     ): PrismaPromise<BatchPayload>
 
     /**
-     * Create or update one Role.
-     * @param {RoleUpsertArgs} args - Arguments to update or create a Role.
+     * Create or update one Department.
+     * @param {DepartmentUpsertArgs} args - Arguments to update or create a Department.
      * @example
-     * // Update or create a Role
-     * const role = await prisma.role.upsert({
+     * // Update or create a Department
+     * const department = await prisma.department.upsert({
      *   create: {
-     *     // ... data to create a Role
+     *     // ... data to create a Department
      *   },
      *   update: {
      *     // ... in case it already exists, update
      *   },
      *   where: {
-     *     // ... the filter for the Role we want to update
+     *     // ... the filter for the Department we want to update
      *   }
      * })
     **/
-    upsert<T extends RoleUpsertArgs>(
-      args: SelectSubset<T, RoleUpsertArgs>
-    ): CheckSelect<T, Prisma__RoleClient<Role>, Prisma__RoleClient<RoleGetPayload<T>>>
+    upsert<T extends DepartmentUpsertArgs>(
+      args: SelectSubset<T, DepartmentUpsertArgs>
+    ): CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>>
 
     /**
-     * Find one Role that matches the filter or throw
+     * Find one Department that matches the filter or throw
      * `NotFoundError` if no matches were found.
-     * @param {RoleFindUniqueOrThrowArgs} args - Arguments to find a Role
+     * @param {DepartmentFindUniqueOrThrowArgs} args - Arguments to find a Department
      * @example
-     * // Get one Role
-     * const role = await prisma.role.findUniqueOrThrow({
+     * // Get one Department
+     * const department = await prisma.department.findUniqueOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
     **/
-    findUniqueOrThrow<T extends RoleFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, RoleFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__RoleClient<Role>, Prisma__RoleClient<RoleGetPayload<T>>>
+    findUniqueOrThrow<T extends DepartmentFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, DepartmentFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>>
 
     /**
-     * Find the first Role that matches the filter or
+     * Find the first Department that matches the filter or
      * throw `NotFoundError` if no matches were found.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoleFindFirstOrThrowArgs} args - Arguments to find a Role
+     * @param {DepartmentFindFirstOrThrowArgs} args - Arguments to find a Department
      * @example
-     * // Get one Role
-     * const role = await prisma.role.findFirstOrThrow({
+     * // Get one Department
+     * const department = await prisma.department.findFirstOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
     **/
-    findFirstOrThrow<T extends RoleFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, RoleFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__RoleClient<Role>, Prisma__RoleClient<RoleGetPayload<T>>>
+    findFirstOrThrow<T extends DepartmentFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, DepartmentFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>>
 
     /**
-     * Count the number of Roles.
+     * Count the number of Departments.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoleCountArgs} args - Arguments to filter Roles to count.
+     * @param {DepartmentCountArgs} args - Arguments to filter Departments to count.
      * @example
-     * // Count the number of Roles
-     * const count = await prisma.role.count({
+     * // Count the number of Departments
+     * const count = await prisma.department.count({
      *   where: {
-     *     // ... the filter for the Roles we want to count
+     *     // ... the filter for the Departments we want to count
      *   }
      * })
     **/
-    count<T extends RoleCountArgs>(
-      args?: Subset<T, RoleCountArgs>,
+    count<T extends DepartmentCountArgs>(
+      args?: Subset<T, DepartmentCountArgs>,
     ): PrismaPromise<
       T extends _Record<'select', any>
         ? T['select'] extends true
           ? number
-          : GetScalarType<T['select'], RoleCountAggregateOutputType>
+          : GetScalarType<T['select'], DepartmentCountAggregateOutputType>
         : number
     >
 
     /**
-     * Allows you to perform aggregations operations on a Role.
+     * Allows you to perform aggregations operations on a Department.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @param {DepartmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
      * @example
      * // Ordered by age ascending
      * // Where email contains prisma.io
@@ -3687,13 +3943,13 @@ export namespace Prisma {
      *   take: 10,
      * })
     **/
-    aggregate<T extends RoleAggregateArgs>(args: Subset<T, RoleAggregateArgs>): PrismaPromise<GetRoleAggregateType<T>>
+    aggregate<T extends DepartmentAggregateArgs>(args: Subset<T, DepartmentAggregateArgs>): PrismaPromise<GetDepartmentAggregateType<T>>
 
     /**
-     * Group by Role.
+     * Group by Department.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoleGroupByArgs} args - Group by arguments.
+     * @param {DepartmentGroupByArgs} args - Group by arguments.
      * @example
      * // Group by city, order by createdAt, get count
      * const result = await prisma.user.groupBy({
@@ -3708,14 +3964,14 @@ export namespace Prisma {
      * 
     **/
     groupBy<
-      T extends RoleGroupByArgs,
+      T extends DepartmentGroupByArgs,
       HasSelectOrTake extends Or<
         Extends<'skip', Keys<T>>,
         Extends<'take', Keys<T>>
       >,
       OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: RoleGroupByArgs['orderBy'] }
-        : { orderBy?: RoleGroupByArgs['orderBy'] },
+        ? { orderBy: DepartmentGroupByArgs['orderBy'] }
+        : { orderBy?: DepartmentGroupByArgs['orderBy'] },
       OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
       ByFields extends TupleToUnion<T['by']>,
       ByValid extends Has<ByFields, OrderFields>,
@@ -3764,17 +4020,1957 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, RoleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRoleGroupByPayload<T> : PrismaPromise<InputErrors>
+    >(args: SubsetIntersection<T, DepartmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDepartmentGroupByPayload<T> : PrismaPromise<InputErrors>
 
   }
 
   /**
-   * The delegate class that acts as a "Promise-like" for Role.
+   * The delegate class that acts as a "Promise-like" for Department.
    * Why is this prefixed with `Prisma__`?
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__RoleClient<T> implements PrismaPromise<T> {
+  export class Prisma__DepartmentClient<T> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    Faculty<T extends FacultyFindManyArgs = {}>(args?: Subset<T, FacultyFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Faculty>>, PrismaPromise<Array<FacultyGetPayload<T>>>>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * Department base type for findUnique actions
+   */
+  export type DepartmentFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the Department
+     * 
+    **/
+    select?: DepartmentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DepartmentInclude | null
+    /**
+     * Filter, which Department to fetch.
+     * 
+    **/
+    where: DepartmentWhereUniqueInput
+  }
+
+  /**
+   * Department: findUnique
+   */
+  export interface DepartmentFindUniqueArgs extends DepartmentFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Department base type for findFirst actions
+   */
+  export type DepartmentFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the Department
+     * 
+    **/
+    select?: DepartmentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DepartmentInclude | null
+    /**
+     * Filter, which Department to fetch.
+     * 
+    **/
+    where?: DepartmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Departments to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<DepartmentOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Departments.
+     * 
+    **/
+    cursor?: DepartmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Departments from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Departments.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Departments.
+     * 
+    **/
+    distinct?: Enumerable<DepartmentScalarFieldEnum>
+  }
+
+  /**
+   * Department: findFirst
+   */
+  export interface DepartmentFindFirstArgs extends DepartmentFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Department findMany
+   */
+  export type DepartmentFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the Department
+     * 
+    **/
+    select?: DepartmentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DepartmentInclude | null
+    /**
+     * Filter, which Departments to fetch.
+     * 
+    **/
+    where?: DepartmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Departments to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<DepartmentOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Departments.
+     * 
+    **/
+    cursor?: DepartmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Departments from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Departments.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<DepartmentScalarFieldEnum>
+  }
+
+
+  /**
+   * Department create
+   */
+  export type DepartmentCreateArgs = {
+    /**
+     * Select specific fields to fetch from the Department
+     * 
+    **/
+    select?: DepartmentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DepartmentInclude | null
+    /**
+     * The data needed to create a Department.
+     * 
+    **/
+    data: XOR<DepartmentCreateInput, DepartmentUncheckedCreateInput>
+  }
+
+
+  /**
+   * Department createMany
+   */
+  export type DepartmentCreateManyArgs = {
+    /**
+     * The data used to create many Departments.
+     * 
+    **/
+    data: Enumerable<DepartmentCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * Department update
+   */
+  export type DepartmentUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the Department
+     * 
+    **/
+    select?: DepartmentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DepartmentInclude | null
+    /**
+     * The data needed to update a Department.
+     * 
+    **/
+    data: XOR<DepartmentUpdateInput, DepartmentUncheckedUpdateInput>
+    /**
+     * Choose, which Department to update.
+     * 
+    **/
+    where: DepartmentWhereUniqueInput
+  }
+
+
+  /**
+   * Department updateMany
+   */
+  export type DepartmentUpdateManyArgs = {
+    /**
+     * The data used to update Departments.
+     * 
+    **/
+    data: XOR<DepartmentUpdateManyMutationInput, DepartmentUncheckedUpdateManyInput>
+    /**
+     * Filter which Departments to update
+     * 
+    **/
+    where?: DepartmentWhereInput
+  }
+
+
+  /**
+   * Department upsert
+   */
+  export type DepartmentUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the Department
+     * 
+    **/
+    select?: DepartmentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DepartmentInclude | null
+    /**
+     * The filter to search for the Department to update in case it exists.
+     * 
+    **/
+    where: DepartmentWhereUniqueInput
+    /**
+     * In case the Department found by the `where` argument doesn't exist, create a new Department with this data.
+     * 
+    **/
+    create: XOR<DepartmentCreateInput, DepartmentUncheckedCreateInput>
+    /**
+     * In case the Department was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<DepartmentUpdateInput, DepartmentUncheckedUpdateInput>
+  }
+
+
+  /**
+   * Department delete
+   */
+  export type DepartmentDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the Department
+     * 
+    **/
+    select?: DepartmentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DepartmentInclude | null
+    /**
+     * Filter which Department to delete.
+     * 
+    **/
+    where: DepartmentWhereUniqueInput
+  }
+
+
+  /**
+   * Department deleteMany
+   */
+  export type DepartmentDeleteManyArgs = {
+    /**
+     * Filter which Departments to delete
+     * 
+    **/
+    where?: DepartmentWhereInput
+  }
+
+
+  /**
+   * Department: findUniqueOrThrow
+   */
+  export type DepartmentFindUniqueOrThrowArgs = DepartmentFindUniqueArgsBase
+      
+
+  /**
+   * Department: findFirstOrThrow
+   */
+  export type DepartmentFindFirstOrThrowArgs = DepartmentFindFirstArgsBase
+      
+
+  /**
+   * Department without action
+   */
+  export type DepartmentArgs = {
+    /**
+     * Select specific fields to fetch from the Department
+     * 
+    **/
+    select?: DepartmentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DepartmentInclude | null
+  }
+
+
+
+  /**
+   * Model Faculty
+   */
+
+
+  export type AggregateFaculty = {
+    _count: FacultyCountAggregateOutputType | null
+    _avg: FacultyAvgAggregateOutputType | null
+    _sum: FacultySumAggregateOutputType | null
+    _min: FacultyMinAggregateOutputType | null
+    _max: FacultyMaxAggregateOutputType | null
+  }
+
+  export type FacultyAvgAggregateOutputType = {
+    id: number | null
+    departmentId: number | null
+  }
+
+  export type FacultySumAggregateOutputType = {
+    id: number | null
+    departmentId: number | null
+  }
+
+  export type FacultyMinAggregateOutputType = {
+    id: number | null
+    userName: string | null
+    departmentId: number | null
+  }
+
+  export type FacultyMaxAggregateOutputType = {
+    id: number | null
+    userName: string | null
+    departmentId: number | null
+  }
+
+  export type FacultyCountAggregateOutputType = {
+    id: number
+    userName: number
+    departmentId: number
+    _all: number
+  }
+
+
+  export type FacultyAvgAggregateInputType = {
+    id?: true
+    departmentId?: true
+  }
+
+  export type FacultySumAggregateInputType = {
+    id?: true
+    departmentId?: true
+  }
+
+  export type FacultyMinAggregateInputType = {
+    id?: true
+    userName?: true
+    departmentId?: true
+  }
+
+  export type FacultyMaxAggregateInputType = {
+    id?: true
+    userName?: true
+    departmentId?: true
+  }
+
+  export type FacultyCountAggregateInputType = {
+    id?: true
+    userName?: true
+    departmentId?: true
+    _all?: true
+  }
+
+  export type FacultyAggregateArgs = {
+    /**
+     * Filter which Faculty to aggregate.
+     * 
+    **/
+    where?: FacultyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Faculties to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<FacultyOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: FacultyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Faculties from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Faculties.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Faculties
+    **/
+    _count?: true | FacultyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: FacultyAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: FacultySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FacultyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FacultyMaxAggregateInputType
+  }
+
+  export type GetFacultyAggregateType<T extends FacultyAggregateArgs> = {
+        [P in keyof T & keyof AggregateFaculty]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFaculty[P]>
+      : GetScalarType<T[P], AggregateFaculty[P]>
+  }
+
+
+
+
+  export type FacultyGroupByArgs = {
+    where?: FacultyWhereInput
+    orderBy?: Enumerable<FacultyOrderByWithAggregationInput>
+    by: Array<FacultyScalarFieldEnum>
+    having?: FacultyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FacultyCountAggregateInputType | true
+    _avg?: FacultyAvgAggregateInputType
+    _sum?: FacultySumAggregateInputType
+    _min?: FacultyMinAggregateInputType
+    _max?: FacultyMaxAggregateInputType
+  }
+
+
+  export type FacultyGroupByOutputType = {
+    id: number
+    userName: string
+    departmentId: number
+    _count: FacultyCountAggregateOutputType | null
+    _avg: FacultyAvgAggregateOutputType | null
+    _sum: FacultySumAggregateOutputType | null
+    _min: FacultyMinAggregateOutputType | null
+    _max: FacultyMaxAggregateOutputType | null
+  }
+
+  type GetFacultyGroupByPayload<T extends FacultyGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<FacultyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FacultyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FacultyGroupByOutputType[P]>
+            : GetScalarType<T[P], FacultyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FacultySelect = {
+    id?: boolean
+    userName?: boolean
+    departmentId?: boolean
+    Meeting?: boolean | MeetingFindManyArgs
+    Department?: boolean | DepartmentArgs
+    _count?: boolean | FacultyCountOutputTypeArgs
+  }
+
+  export type FacultyInclude = {
+    Meeting?: boolean | MeetingFindManyArgs
+    Department?: boolean | DepartmentArgs
+    _count?: boolean | FacultyCountOutputTypeArgs
+  }
+
+  export type FacultyGetPayload<
+    S extends boolean | null | undefined | FacultyArgs,
+    U = keyof S
+      > = S extends true
+        ? Faculty
+    : S extends undefined
+    ? never
+    : S extends FacultyArgs | FacultyFindManyArgs
+    ?'include' extends U
+    ? Faculty  & {
+    [P in TrueKeys<S['include']>]:
+        P extends 'Meeting' ? Array < MeetingGetPayload<S['include'][P]>>  :
+        P extends 'Department' ? DepartmentGetPayload<S['include'][P]> :
+        P extends '_count' ? FacultyCountOutputTypeGetPayload<S['include'][P]> :  never
+  } 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+        P extends 'Meeting' ? Array < MeetingGetPayload<S['select'][P]>>  :
+        P extends 'Department' ? DepartmentGetPayload<S['select'][P]> :
+        P extends '_count' ? FacultyCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Faculty ? Faculty[P] : never
+  } 
+    : Faculty
+  : Faculty
+
+
+  type FacultyCountArgs = Merge<
+    Omit<FacultyFindManyArgs, 'select' | 'include'> & {
+      select?: FacultyCountAggregateInputType | true
+    }
+  >
+
+  export interface FacultyDelegate<GlobalRejectSettings> {
+    /**
+     * Find zero or one Faculty that matches the filter.
+     * @param {FacultyFindUniqueArgs} args - Arguments to find a Faculty
+     * @example
+     * // Get one Faculty
+     * const faculty = await prisma.faculty.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends FacultyFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, FacultyFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Faculty'> extends True ? CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>> : CheckSelect<T, Prisma__FacultyClient<Faculty | null >, Prisma__FacultyClient<FacultyGetPayload<T> | null >>
+
+    /**
+     * Find the first Faculty that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyFindFirstArgs} args - Arguments to find a Faculty
+     * @example
+     * // Get one Faculty
+     * const faculty = await prisma.faculty.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends FacultyFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, FacultyFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Faculty'> extends True ? CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>> : CheckSelect<T, Prisma__FacultyClient<Faculty | null >, Prisma__FacultyClient<FacultyGetPayload<T> | null >>
+
+    /**
+     * Find zero or more Faculties that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Faculties
+     * const faculties = await prisma.faculty.findMany()
+     * 
+     * // Get first 10 Faculties
+     * const faculties = await prisma.faculty.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const facultyWithIdOnly = await prisma.faculty.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends FacultyFindManyArgs>(
+      args?: SelectSubset<T, FacultyFindManyArgs>
+    ): CheckSelect<T, PrismaPromise<Array<Faculty>>, PrismaPromise<Array<FacultyGetPayload<T>>>>
+
+    /**
+     * Create a Faculty.
+     * @param {FacultyCreateArgs} args - Arguments to create a Faculty.
+     * @example
+     * // Create one Faculty
+     * const Faculty = await prisma.faculty.create({
+     *   data: {
+     *     // ... data to create a Faculty
+     *   }
+     * })
+     * 
+    **/
+    create<T extends FacultyCreateArgs>(
+      args: SelectSubset<T, FacultyCreateArgs>
+    ): CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>>
+
+    /**
+     * Create many Faculties.
+     *     @param {FacultyCreateManyArgs} args - Arguments to create many Faculties.
+     *     @example
+     *     // Create many Faculties
+     *     const faculty = await prisma.faculty.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends FacultyCreateManyArgs>(
+      args?: SelectSubset<T, FacultyCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Faculty.
+     * @param {FacultyDeleteArgs} args - Arguments to delete one Faculty.
+     * @example
+     * // Delete one Faculty
+     * const Faculty = await prisma.faculty.delete({
+     *   where: {
+     *     // ... filter to delete one Faculty
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends FacultyDeleteArgs>(
+      args: SelectSubset<T, FacultyDeleteArgs>
+    ): CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>>
+
+    /**
+     * Update one Faculty.
+     * @param {FacultyUpdateArgs} args - Arguments to update one Faculty.
+     * @example
+     * // Update one Faculty
+     * const faculty = await prisma.faculty.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends FacultyUpdateArgs>(
+      args: SelectSubset<T, FacultyUpdateArgs>
+    ): CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>>
+
+    /**
+     * Delete zero or more Faculties.
+     * @param {FacultyDeleteManyArgs} args - Arguments to filter Faculties to delete.
+     * @example
+     * // Delete a few Faculties
+     * const { count } = await prisma.faculty.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends FacultyDeleteManyArgs>(
+      args?: SelectSubset<T, FacultyDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Faculties.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Faculties
+     * const faculty = await prisma.faculty.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends FacultyUpdateManyArgs>(
+      args: SelectSubset<T, FacultyUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Faculty.
+     * @param {FacultyUpsertArgs} args - Arguments to update or create a Faculty.
+     * @example
+     * // Update or create a Faculty
+     * const faculty = await prisma.faculty.upsert({
+     *   create: {
+     *     // ... data to create a Faculty
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Faculty we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends FacultyUpsertArgs>(
+      args: SelectSubset<T, FacultyUpsertArgs>
+    ): CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>>
+
+    /**
+     * Find one Faculty that matches the filter or throw
+     * `NotFoundError` if no matches were found.
+     * @param {FacultyFindUniqueOrThrowArgs} args - Arguments to find a Faculty
+     * @example
+     * // Get one Faculty
+     * const faculty = await prisma.faculty.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends FacultyFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, FacultyFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>>
+
+    /**
+     * Find the first Faculty that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyFindFirstOrThrowArgs} args - Arguments to find a Faculty
+     * @example
+     * // Get one Faculty
+     * const faculty = await prisma.faculty.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends FacultyFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, FacultyFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>>
+
+    /**
+     * Count the number of Faculties.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyCountArgs} args - Arguments to filter Faculties to count.
+     * @example
+     * // Count the number of Faculties
+     * const count = await prisma.faculty.count({
+     *   where: {
+     *     // ... the filter for the Faculties we want to count
+     *   }
+     * })
+    **/
+    count<T extends FacultyCountArgs>(
+      args?: Subset<T, FacultyCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FacultyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Faculty.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FacultyAggregateArgs>(args: Subset<T, FacultyAggregateArgs>): PrismaPromise<GetFacultyAggregateType<T>>
+
+    /**
+     * Group by Faculty.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FacultyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FacultyGroupByArgs['orderBy'] }
+        : { orderBy?: FacultyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FacultyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFacultyGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Faculty.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__FacultyClient<T> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    Meeting<T extends MeetingFindManyArgs = {}>(args?: Subset<T, MeetingFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Meeting>>, PrismaPromise<Array<MeetingGetPayload<T>>>>;
+
+    Department<T extends DepartmentArgs = {}>(args?: Subset<T, DepartmentArgs>): CheckSelect<T, Prisma__DepartmentClient<Department | null >, Prisma__DepartmentClient<DepartmentGetPayload<T> | null >>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * Faculty base type for findUnique actions
+   */
+  export type FacultyFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     * 
+    **/
+    select?: FacultySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: FacultyInclude | null
+    /**
+     * Filter, which Faculty to fetch.
+     * 
+    **/
+    where: FacultyWhereUniqueInput
+  }
+
+  /**
+   * Faculty: findUnique
+   */
+  export interface FacultyFindUniqueArgs extends FacultyFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Faculty base type for findFirst actions
+   */
+  export type FacultyFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     * 
+    **/
+    select?: FacultySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: FacultyInclude | null
+    /**
+     * Filter, which Faculty to fetch.
+     * 
+    **/
+    where?: FacultyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Faculties to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<FacultyOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Faculties.
+     * 
+    **/
+    cursor?: FacultyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Faculties from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Faculties.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Faculties.
+     * 
+    **/
+    distinct?: Enumerable<FacultyScalarFieldEnum>
+  }
+
+  /**
+   * Faculty: findFirst
+   */
+  export interface FacultyFindFirstArgs extends FacultyFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Faculty findMany
+   */
+  export type FacultyFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     * 
+    **/
+    select?: FacultySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: FacultyInclude | null
+    /**
+     * Filter, which Faculties to fetch.
+     * 
+    **/
+    where?: FacultyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Faculties to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<FacultyOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Faculties.
+     * 
+    **/
+    cursor?: FacultyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Faculties from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Faculties.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<FacultyScalarFieldEnum>
+  }
+
+
+  /**
+   * Faculty create
+   */
+  export type FacultyCreateArgs = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     * 
+    **/
+    select?: FacultySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: FacultyInclude | null
+    /**
+     * The data needed to create a Faculty.
+     * 
+    **/
+    data: XOR<FacultyCreateInput, FacultyUncheckedCreateInput>
+  }
+
+
+  /**
+   * Faculty createMany
+   */
+  export type FacultyCreateManyArgs = {
+    /**
+     * The data used to create many Faculties.
+     * 
+    **/
+    data: Enumerable<FacultyCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * Faculty update
+   */
+  export type FacultyUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     * 
+    **/
+    select?: FacultySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: FacultyInclude | null
+    /**
+     * The data needed to update a Faculty.
+     * 
+    **/
+    data: XOR<FacultyUpdateInput, FacultyUncheckedUpdateInput>
+    /**
+     * Choose, which Faculty to update.
+     * 
+    **/
+    where: FacultyWhereUniqueInput
+  }
+
+
+  /**
+   * Faculty updateMany
+   */
+  export type FacultyUpdateManyArgs = {
+    /**
+     * The data used to update Faculties.
+     * 
+    **/
+    data: XOR<FacultyUpdateManyMutationInput, FacultyUncheckedUpdateManyInput>
+    /**
+     * Filter which Faculties to update
+     * 
+    **/
+    where?: FacultyWhereInput
+  }
+
+
+  /**
+   * Faculty upsert
+   */
+  export type FacultyUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     * 
+    **/
+    select?: FacultySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: FacultyInclude | null
+    /**
+     * The filter to search for the Faculty to update in case it exists.
+     * 
+    **/
+    where: FacultyWhereUniqueInput
+    /**
+     * In case the Faculty found by the `where` argument doesn't exist, create a new Faculty with this data.
+     * 
+    **/
+    create: XOR<FacultyCreateInput, FacultyUncheckedCreateInput>
+    /**
+     * In case the Faculty was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<FacultyUpdateInput, FacultyUncheckedUpdateInput>
+  }
+
+
+  /**
+   * Faculty delete
+   */
+  export type FacultyDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     * 
+    **/
+    select?: FacultySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: FacultyInclude | null
+    /**
+     * Filter which Faculty to delete.
+     * 
+    **/
+    where: FacultyWhereUniqueInput
+  }
+
+
+  /**
+   * Faculty deleteMany
+   */
+  export type FacultyDeleteManyArgs = {
+    /**
+     * Filter which Faculties to delete
+     * 
+    **/
+    where?: FacultyWhereInput
+  }
+
+
+  /**
+   * Faculty: findUniqueOrThrow
+   */
+  export type FacultyFindUniqueOrThrowArgs = FacultyFindUniqueArgsBase
+      
+
+  /**
+   * Faculty: findFirstOrThrow
+   */
+  export type FacultyFindFirstOrThrowArgs = FacultyFindFirstArgsBase
+      
+
+  /**
+   * Faculty without action
+   */
+  export type FacultyArgs = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     * 
+    **/
+    select?: FacultySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: FacultyInclude | null
+  }
+
+
+
+  /**
+   * Model Schedule
+   */
+
+
+  export type AggregateSchedule = {
+    _count: ScheduleCountAggregateOutputType | null
+    _avg: ScheduleAvgAggregateOutputType | null
+    _sum: ScheduleSumAggregateOutputType | null
+    _min: ScheduleMinAggregateOutputType | null
+    _max: ScheduleMaxAggregateOutputType | null
+  }
+
+  export type ScheduleAvgAggregateOutputType = {
+    id: number | null
+    day: number | null
+    adminId: number | null
+  }
+
+  export type ScheduleSumAggregateOutputType = {
+    id: number | null
+    day: number | null
+    adminId: number | null
+  }
+
+  export type ScheduleMinAggregateOutputType = {
+    id: number | null
+    day: number | null
+    start: Date | null
+    end: Date | null
+    startTime: Date | null
+    EndTime: Date | null
+    adminId: number | null
+  }
+
+  export type ScheduleMaxAggregateOutputType = {
+    id: number | null
+    day: number | null
+    start: Date | null
+    end: Date | null
+    startTime: Date | null
+    EndTime: Date | null
+    adminId: number | null
+  }
+
+  export type ScheduleCountAggregateOutputType = {
+    id: number
+    day: number
+    start: number
+    end: number
+    startTime: number
+    EndTime: number
+    adminId: number
+    _all: number
+  }
+
+
+  export type ScheduleAvgAggregateInputType = {
+    id?: true
+    day?: true
+    adminId?: true
+  }
+
+  export type ScheduleSumAggregateInputType = {
+    id?: true
+    day?: true
+    adminId?: true
+  }
+
+  export type ScheduleMinAggregateInputType = {
+    id?: true
+    day?: true
+    start?: true
+    end?: true
+    startTime?: true
+    EndTime?: true
+    adminId?: true
+  }
+
+  export type ScheduleMaxAggregateInputType = {
+    id?: true
+    day?: true
+    start?: true
+    end?: true
+    startTime?: true
+    EndTime?: true
+    adminId?: true
+  }
+
+  export type ScheduleCountAggregateInputType = {
+    id?: true
+    day?: true
+    start?: true
+    end?: true
+    startTime?: true
+    EndTime?: true
+    adminId?: true
+    _all?: true
+  }
+
+  export type ScheduleAggregateArgs = {
+    /**
+     * Filter which Schedule to aggregate.
+     * 
+    **/
+    where?: ScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Schedules to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<ScheduleOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: ScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Schedules from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Schedules.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Schedules
+    **/
+    _count?: true | ScheduleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ScheduleAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ScheduleSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ScheduleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ScheduleMaxAggregateInputType
+  }
+
+  export type GetScheduleAggregateType<T extends ScheduleAggregateArgs> = {
+        [P in keyof T & keyof AggregateSchedule]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSchedule[P]>
+      : GetScalarType<T[P], AggregateSchedule[P]>
+  }
+
+
+
+
+  export type ScheduleGroupByArgs = {
+    where?: ScheduleWhereInput
+    orderBy?: Enumerable<ScheduleOrderByWithAggregationInput>
+    by: Array<ScheduleScalarFieldEnum>
+    having?: ScheduleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ScheduleCountAggregateInputType | true
+    _avg?: ScheduleAvgAggregateInputType
+    _sum?: ScheduleSumAggregateInputType
+    _min?: ScheduleMinAggregateInputType
+    _max?: ScheduleMaxAggregateInputType
+  }
+
+
+  export type ScheduleGroupByOutputType = {
+    id: number
+    day: number
+    start: Date
+    end: Date
+    startTime: Date
+    EndTime: Date
+    adminId: number
+    _count: ScheduleCountAggregateOutputType | null
+    _avg: ScheduleAvgAggregateOutputType | null
+    _sum: ScheduleSumAggregateOutputType | null
+    _min: ScheduleMinAggregateOutputType | null
+    _max: ScheduleMaxAggregateOutputType | null
+  }
+
+  type GetScheduleGroupByPayload<T extends ScheduleGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<ScheduleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ScheduleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ScheduleGroupByOutputType[P]>
+            : GetScalarType<T[P], ScheduleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ScheduleSelect = {
+    id?: boolean
+    day?: boolean
+    start?: boolean
+    end?: boolean
+    startTime?: boolean
+    EndTime?: boolean
+    adminId?: boolean
+    Admin?: boolean | AdminArgs
+  }
+
+  export type ScheduleInclude = {
+    Admin?: boolean | AdminArgs
+  }
+
+  export type ScheduleGetPayload<
+    S extends boolean | null | undefined | ScheduleArgs,
+    U = keyof S
+      > = S extends true
+        ? Schedule
+    : S extends undefined
+    ? never
+    : S extends ScheduleArgs | ScheduleFindManyArgs
+    ?'include' extends U
+    ? Schedule  & {
+    [P in TrueKeys<S['include']>]:
+        P extends 'Admin' ? AdminGetPayload<S['include'][P]> :  never
+  } 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+        P extends 'Admin' ? AdminGetPayload<S['select'][P]> :  P extends keyof Schedule ? Schedule[P] : never
+  } 
+    : Schedule
+  : Schedule
+
+
+  type ScheduleCountArgs = Merge<
+    Omit<ScheduleFindManyArgs, 'select' | 'include'> & {
+      select?: ScheduleCountAggregateInputType | true
+    }
+  >
+
+  export interface ScheduleDelegate<GlobalRejectSettings> {
+    /**
+     * Find zero or one Schedule that matches the filter.
+     * @param {ScheduleFindUniqueArgs} args - Arguments to find a Schedule
+     * @example
+     * // Get one Schedule
+     * const schedule = await prisma.schedule.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends ScheduleFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, ScheduleFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Schedule'> extends True ? CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>> : CheckSelect<T, Prisma__ScheduleClient<Schedule | null >, Prisma__ScheduleClient<ScheduleGetPayload<T> | null >>
+
+    /**
+     * Find the first Schedule that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduleFindFirstArgs} args - Arguments to find a Schedule
+     * @example
+     * // Get one Schedule
+     * const schedule = await prisma.schedule.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends ScheduleFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, ScheduleFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Schedule'> extends True ? CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>> : CheckSelect<T, Prisma__ScheduleClient<Schedule | null >, Prisma__ScheduleClient<ScheduleGetPayload<T> | null >>
+
+    /**
+     * Find zero or more Schedules that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduleFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Schedules
+     * const schedules = await prisma.schedule.findMany()
+     * 
+     * // Get first 10 Schedules
+     * const schedules = await prisma.schedule.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const scheduleWithIdOnly = await prisma.schedule.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends ScheduleFindManyArgs>(
+      args?: SelectSubset<T, ScheduleFindManyArgs>
+    ): CheckSelect<T, PrismaPromise<Array<Schedule>>, PrismaPromise<Array<ScheduleGetPayload<T>>>>
+
+    /**
+     * Create a Schedule.
+     * @param {ScheduleCreateArgs} args - Arguments to create a Schedule.
+     * @example
+     * // Create one Schedule
+     * const Schedule = await prisma.schedule.create({
+     *   data: {
+     *     // ... data to create a Schedule
+     *   }
+     * })
+     * 
+    **/
+    create<T extends ScheduleCreateArgs>(
+      args: SelectSubset<T, ScheduleCreateArgs>
+    ): CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>>
+
+    /**
+     * Create many Schedules.
+     *     @param {ScheduleCreateManyArgs} args - Arguments to create many Schedules.
+     *     @example
+     *     // Create many Schedules
+     *     const schedule = await prisma.schedule.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends ScheduleCreateManyArgs>(
+      args?: SelectSubset<T, ScheduleCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Schedule.
+     * @param {ScheduleDeleteArgs} args - Arguments to delete one Schedule.
+     * @example
+     * // Delete one Schedule
+     * const Schedule = await prisma.schedule.delete({
+     *   where: {
+     *     // ... filter to delete one Schedule
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends ScheduleDeleteArgs>(
+      args: SelectSubset<T, ScheduleDeleteArgs>
+    ): CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>>
+
+    /**
+     * Update one Schedule.
+     * @param {ScheduleUpdateArgs} args - Arguments to update one Schedule.
+     * @example
+     * // Update one Schedule
+     * const schedule = await prisma.schedule.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends ScheduleUpdateArgs>(
+      args: SelectSubset<T, ScheduleUpdateArgs>
+    ): CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>>
+
+    /**
+     * Delete zero or more Schedules.
+     * @param {ScheduleDeleteManyArgs} args - Arguments to filter Schedules to delete.
+     * @example
+     * // Delete a few Schedules
+     * const { count } = await prisma.schedule.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends ScheduleDeleteManyArgs>(
+      args?: SelectSubset<T, ScheduleDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Schedules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Schedules
+     * const schedule = await prisma.schedule.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends ScheduleUpdateManyArgs>(
+      args: SelectSubset<T, ScheduleUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Schedule.
+     * @param {ScheduleUpsertArgs} args - Arguments to update or create a Schedule.
+     * @example
+     * // Update or create a Schedule
+     * const schedule = await prisma.schedule.upsert({
+     *   create: {
+     *     // ... data to create a Schedule
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Schedule we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends ScheduleUpsertArgs>(
+      args: SelectSubset<T, ScheduleUpsertArgs>
+    ): CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>>
+
+    /**
+     * Find one Schedule that matches the filter or throw
+     * `NotFoundError` if no matches were found.
+     * @param {ScheduleFindUniqueOrThrowArgs} args - Arguments to find a Schedule
+     * @example
+     * // Get one Schedule
+     * const schedule = await prisma.schedule.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends ScheduleFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, ScheduleFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>>
+
+    /**
+     * Find the first Schedule that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduleFindFirstOrThrowArgs} args - Arguments to find a Schedule
+     * @example
+     * // Get one Schedule
+     * const schedule = await prisma.schedule.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends ScheduleFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, ScheduleFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>>
+
+    /**
+     * Count the number of Schedules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduleCountArgs} args - Arguments to filter Schedules to count.
+     * @example
+     * // Count the number of Schedules
+     * const count = await prisma.schedule.count({
+     *   where: {
+     *     // ... the filter for the Schedules we want to count
+     *   }
+     * })
+    **/
+    count<T extends ScheduleCountArgs>(
+      args?: Subset<T, ScheduleCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ScheduleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Schedule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ScheduleAggregateArgs>(args: Subset<T, ScheduleAggregateArgs>): PrismaPromise<GetScheduleAggregateType<T>>
+
+    /**
+     * Group by Schedule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ScheduleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ScheduleGroupByArgs['orderBy'] }
+        : { orderBy?: ScheduleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ScheduleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetScheduleGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Schedule.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__ScheduleClient<T> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -3821,30 +6017,30 @@ export namespace Prisma {
   // Custom InputTypes
 
   /**
-   * Role base type for findUnique actions
+   * Schedule base type for findUnique actions
    */
-  export type RoleFindUniqueArgsBase = {
+  export type ScheduleFindUniqueArgsBase = {
     /**
-     * Select specific fields to fetch from the Role
+     * Select specific fields to fetch from the Schedule
      * 
     **/
-    select?: RoleSelect | null
+    select?: ScheduleSelect | null
     /**
      * Choose, which related nodes to fetch as well.
      * 
     **/
-    include?: RoleInclude | null
+    include?: ScheduleInclude | null
     /**
-     * Filter, which Role to fetch.
+     * Filter, which Schedule to fetch.
      * 
     **/
-    where: RoleWhereUniqueInput
+    where: ScheduleWhereUniqueInput
   }
 
   /**
-   * Role: findUnique
+   * Schedule: findUnique
    */
-  export interface RoleFindUniqueArgs extends RoleFindUniqueArgsBase {
+  export interface ScheduleFindUniqueArgs extends ScheduleFindUniqueArgsBase {
    /**
     * Throw an Error if query returns no results
     * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
@@ -3854,65 +6050,65 @@ export namespace Prisma {
       
 
   /**
-   * Role base type for findFirst actions
+   * Schedule base type for findFirst actions
    */
-  export type RoleFindFirstArgsBase = {
+  export type ScheduleFindFirstArgsBase = {
     /**
-     * Select specific fields to fetch from the Role
+     * Select specific fields to fetch from the Schedule
      * 
     **/
-    select?: RoleSelect | null
+    select?: ScheduleSelect | null
     /**
      * Choose, which related nodes to fetch as well.
      * 
     **/
-    include?: RoleInclude | null
+    include?: ScheduleInclude | null
     /**
-     * Filter, which Role to fetch.
+     * Filter, which Schedule to fetch.
      * 
     **/
-    where?: RoleWhereInput
+    where?: ScheduleWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Roles to fetch.
+     * Determine the order of Schedules to fetch.
      * 
     **/
-    orderBy?: Enumerable<RoleOrderByWithRelationInput>
+    orderBy?: Enumerable<ScheduleOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for Roles.
+     * Sets the position for searching for Schedules.
      * 
     **/
-    cursor?: RoleWhereUniqueInput
+    cursor?: ScheduleWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Roles from the position of the cursor.
+     * Take `±n` Schedules from the position of the cursor.
      * 
     **/
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Roles.
+     * Skip the first `n` Schedules.
      * 
     **/
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of Roles.
+     * Filter by unique combinations of Schedules.
      * 
     **/
-    distinct?: Enumerable<RoleScalarFieldEnum>
+    distinct?: Enumerable<ScheduleScalarFieldEnum>
   }
 
   /**
-   * Role: findFirst
+   * Schedule: findFirst
    */
-  export interface RoleFindFirstArgs extends RoleFindFirstArgsBase {
+  export interface ScheduleFindFirstArgs extends ScheduleFindFirstArgsBase {
    /**
     * Throw an Error if query returns no results
     * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
@@ -3922,227 +6118,1194 @@ export namespace Prisma {
       
 
   /**
-   * Role findMany
+   * Schedule findMany
    */
-  export type RoleFindManyArgs = {
+  export type ScheduleFindManyArgs = {
     /**
-     * Select specific fields to fetch from the Role
+     * Select specific fields to fetch from the Schedule
      * 
     **/
-    select?: RoleSelect | null
+    select?: ScheduleSelect | null
     /**
      * Choose, which related nodes to fetch as well.
      * 
     **/
-    include?: RoleInclude | null
+    include?: ScheduleInclude | null
     /**
-     * Filter, which Roles to fetch.
+     * Filter, which Schedules to fetch.
      * 
     **/
-    where?: RoleWhereInput
+    where?: ScheduleWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Roles to fetch.
+     * Determine the order of Schedules to fetch.
      * 
     **/
-    orderBy?: Enumerable<RoleOrderByWithRelationInput>
+    orderBy?: Enumerable<ScheduleOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing Roles.
+     * Sets the position for listing Schedules.
      * 
     **/
-    cursor?: RoleWhereUniqueInput
+    cursor?: ScheduleWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Roles from the position of the cursor.
+     * Take `±n` Schedules from the position of the cursor.
      * 
     **/
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Roles.
+     * Skip the first `n` Schedules.
      * 
     **/
     skip?: number
-    distinct?: Enumerable<RoleScalarFieldEnum>
+    distinct?: Enumerable<ScheduleScalarFieldEnum>
   }
 
 
   /**
-   * Role create
+   * Schedule create
    */
-  export type RoleCreateArgs = {
+  export type ScheduleCreateArgs = {
     /**
-     * Select specific fields to fetch from the Role
+     * Select specific fields to fetch from the Schedule
      * 
     **/
-    select?: RoleSelect | null
+    select?: ScheduleSelect | null
     /**
      * Choose, which related nodes to fetch as well.
      * 
     **/
-    include?: RoleInclude | null
+    include?: ScheduleInclude | null
     /**
-     * The data needed to create a Role.
+     * The data needed to create a Schedule.
      * 
     **/
-    data: XOR<RoleCreateInput, RoleUncheckedCreateInput>
+    data: XOR<ScheduleCreateInput, ScheduleUncheckedCreateInput>
   }
 
 
   /**
-   * Role createMany
+   * Schedule createMany
    */
-  export type RoleCreateManyArgs = {
+  export type ScheduleCreateManyArgs = {
     /**
-     * The data used to create many Roles.
+     * The data used to create many Schedules.
      * 
     **/
-    data: Enumerable<RoleCreateManyInput>
+    data: Enumerable<ScheduleCreateManyInput>
     skipDuplicates?: boolean
   }
 
 
   /**
-   * Role update
+   * Schedule update
    */
-  export type RoleUpdateArgs = {
+  export type ScheduleUpdateArgs = {
     /**
-     * Select specific fields to fetch from the Role
+     * Select specific fields to fetch from the Schedule
      * 
     **/
-    select?: RoleSelect | null
+    select?: ScheduleSelect | null
     /**
      * Choose, which related nodes to fetch as well.
      * 
     **/
-    include?: RoleInclude | null
+    include?: ScheduleInclude | null
     /**
-     * The data needed to update a Role.
+     * The data needed to update a Schedule.
      * 
     **/
-    data: XOR<RoleUpdateInput, RoleUncheckedUpdateInput>
+    data: XOR<ScheduleUpdateInput, ScheduleUncheckedUpdateInput>
     /**
-     * Choose, which Role to update.
+     * Choose, which Schedule to update.
      * 
     **/
-    where: RoleWhereUniqueInput
+    where: ScheduleWhereUniqueInput
   }
 
 
   /**
-   * Role updateMany
+   * Schedule updateMany
    */
-  export type RoleUpdateManyArgs = {
+  export type ScheduleUpdateManyArgs = {
     /**
-     * The data used to update Roles.
+     * The data used to update Schedules.
      * 
     **/
-    data: XOR<RoleUpdateManyMutationInput, RoleUncheckedUpdateManyInput>
+    data: XOR<ScheduleUpdateManyMutationInput, ScheduleUncheckedUpdateManyInput>
     /**
-     * Filter which Roles to update
+     * Filter which Schedules to update
      * 
     **/
-    where?: RoleWhereInput
+    where?: ScheduleWhereInput
   }
 
 
   /**
-   * Role upsert
+   * Schedule upsert
    */
-  export type RoleUpsertArgs = {
+  export type ScheduleUpsertArgs = {
     /**
-     * Select specific fields to fetch from the Role
+     * Select specific fields to fetch from the Schedule
      * 
     **/
-    select?: RoleSelect | null
+    select?: ScheduleSelect | null
     /**
      * Choose, which related nodes to fetch as well.
      * 
     **/
-    include?: RoleInclude | null
+    include?: ScheduleInclude | null
     /**
-     * The filter to search for the Role to update in case it exists.
+     * The filter to search for the Schedule to update in case it exists.
      * 
     **/
-    where: RoleWhereUniqueInput
+    where: ScheduleWhereUniqueInput
     /**
-     * In case the Role found by the `where` argument doesn't exist, create a new Role with this data.
+     * In case the Schedule found by the `where` argument doesn't exist, create a new Schedule with this data.
      * 
     **/
-    create: XOR<RoleCreateInput, RoleUncheckedCreateInput>
+    create: XOR<ScheduleCreateInput, ScheduleUncheckedCreateInput>
     /**
-     * In case the Role was found with the provided `where` argument, update it with this data.
+     * In case the Schedule was found with the provided `where` argument, update it with this data.
      * 
     **/
-    update: XOR<RoleUpdateInput, RoleUncheckedUpdateInput>
+    update: XOR<ScheduleUpdateInput, ScheduleUncheckedUpdateInput>
   }
 
 
   /**
-   * Role delete
+   * Schedule delete
    */
-  export type RoleDeleteArgs = {
+  export type ScheduleDeleteArgs = {
     /**
-     * Select specific fields to fetch from the Role
+     * Select specific fields to fetch from the Schedule
      * 
     **/
-    select?: RoleSelect | null
+    select?: ScheduleSelect | null
     /**
      * Choose, which related nodes to fetch as well.
      * 
     **/
-    include?: RoleInclude | null
+    include?: ScheduleInclude | null
     /**
-     * Filter which Role to delete.
+     * Filter which Schedule to delete.
      * 
     **/
-    where: RoleWhereUniqueInput
+    where: ScheduleWhereUniqueInput
   }
 
 
   /**
-   * Role deleteMany
+   * Schedule deleteMany
    */
-  export type RoleDeleteManyArgs = {
+  export type ScheduleDeleteManyArgs = {
     /**
-     * Filter which Roles to delete
+     * Filter which Schedules to delete
      * 
     **/
-    where?: RoleWhereInput
+    where?: ScheduleWhereInput
   }
 
 
   /**
-   * Role: findUniqueOrThrow
+   * Schedule: findUniqueOrThrow
    */
-  export type RoleFindUniqueOrThrowArgs = RoleFindUniqueArgsBase
+  export type ScheduleFindUniqueOrThrowArgs = ScheduleFindUniqueArgsBase
       
 
   /**
-   * Role: findFirstOrThrow
+   * Schedule: findFirstOrThrow
    */
-  export type RoleFindFirstOrThrowArgs = RoleFindFirstArgsBase
+  export type ScheduleFindFirstOrThrowArgs = ScheduleFindFirstArgsBase
       
 
   /**
-   * Role without action
+   * Schedule without action
    */
-  export type RoleArgs = {
+  export type ScheduleArgs = {
     /**
-     * Select specific fields to fetch from the Role
+     * Select specific fields to fetch from the Schedule
      * 
     **/
-    select?: RoleSelect | null
+    select?: ScheduleSelect | null
     /**
      * Choose, which related nodes to fetch as well.
      * 
     **/
-    include?: RoleInclude | null
+    include?: ScheduleInclude | null
+  }
+
+
+
+  /**
+   * Model DayTime
+   */
+
+
+  export type AggregateDayTime = {
+    _count: DayTimeCountAggregateOutputType | null
+    _avg: DayTimeAvgAggregateOutputType | null
+    _sum: DayTimeSumAggregateOutputType | null
+    _min: DayTimeMinAggregateOutputType | null
+    _max: DayTimeMaxAggregateOutputType | null
+  }
+
+  export type DayTimeAvgAggregateOutputType = {
+    id: number | null
+    day: number | null
+    adminId: number | null
+  }
+
+  export type DayTimeSumAggregateOutputType = {
+    id: number | null
+    day: number | null
+    adminId: number | null
+  }
+
+  export type DayTimeMinAggregateOutputType = {
+    id: number | null
+    day: number | null
+    startTime: Date | null
+    endTime: Date | null
+    adminId: number | null
+  }
+
+  export type DayTimeMaxAggregateOutputType = {
+    id: number | null
+    day: number | null
+    startTime: Date | null
+    endTime: Date | null
+    adminId: number | null
+  }
+
+  export type DayTimeCountAggregateOutputType = {
+    id: number
+    day: number
+    startTime: number
+    endTime: number
+    adminId: number
+    _all: number
+  }
+
+
+  export type DayTimeAvgAggregateInputType = {
+    id?: true
+    day?: true
+    adminId?: true
+  }
+
+  export type DayTimeSumAggregateInputType = {
+    id?: true
+    day?: true
+    adminId?: true
+  }
+
+  export type DayTimeMinAggregateInputType = {
+    id?: true
+    day?: true
+    startTime?: true
+    endTime?: true
+    adminId?: true
+  }
+
+  export type DayTimeMaxAggregateInputType = {
+    id?: true
+    day?: true
+    startTime?: true
+    endTime?: true
+    adminId?: true
+  }
+
+  export type DayTimeCountAggregateInputType = {
+    id?: true
+    day?: true
+    startTime?: true
+    endTime?: true
+    adminId?: true
+    _all?: true
+  }
+
+  export type DayTimeAggregateArgs = {
+    /**
+     * Filter which DayTime to aggregate.
+     * 
+    **/
+    where?: DayTimeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DayTimes to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<DayTimeOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: DayTimeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DayTimes from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DayTimes.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DayTimes
+    **/
+    _count?: true | DayTimeCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DayTimeAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DayTimeSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DayTimeMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DayTimeMaxAggregateInputType
+  }
+
+  export type GetDayTimeAggregateType<T extends DayTimeAggregateArgs> = {
+        [P in keyof T & keyof AggregateDayTime]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDayTime[P]>
+      : GetScalarType<T[P], AggregateDayTime[P]>
+  }
+
+
+
+
+  export type DayTimeGroupByArgs = {
+    where?: DayTimeWhereInput
+    orderBy?: Enumerable<DayTimeOrderByWithAggregationInput>
+    by: Array<DayTimeScalarFieldEnum>
+    having?: DayTimeScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DayTimeCountAggregateInputType | true
+    _avg?: DayTimeAvgAggregateInputType
+    _sum?: DayTimeSumAggregateInputType
+    _min?: DayTimeMinAggregateInputType
+    _max?: DayTimeMaxAggregateInputType
+  }
+
+
+  export type DayTimeGroupByOutputType = {
+    id: number
+    day: number
+    startTime: Date
+    endTime: Date
+    adminId: number
+    _count: DayTimeCountAggregateOutputType | null
+    _avg: DayTimeAvgAggregateOutputType | null
+    _sum: DayTimeSumAggregateOutputType | null
+    _min: DayTimeMinAggregateOutputType | null
+    _max: DayTimeMaxAggregateOutputType | null
+  }
+
+  type GetDayTimeGroupByPayload<T extends DayTimeGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<DayTimeGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DayTimeGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DayTimeGroupByOutputType[P]>
+            : GetScalarType<T[P], DayTimeGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DayTimeSelect = {
+    id?: boolean
+    day?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    adminId?: boolean
+    Admin?: boolean | AdminArgs
+  }
+
+  export type DayTimeInclude = {
+    Admin?: boolean | AdminArgs
+  }
+
+  export type DayTimeGetPayload<
+    S extends boolean | null | undefined | DayTimeArgs,
+    U = keyof S
+      > = S extends true
+        ? DayTime
+    : S extends undefined
+    ? never
+    : S extends DayTimeArgs | DayTimeFindManyArgs
+    ?'include' extends U
+    ? DayTime  & {
+    [P in TrueKeys<S['include']>]:
+        P extends 'Admin' ? AdminGetPayload<S['include'][P]> :  never
+  } 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+        P extends 'Admin' ? AdminGetPayload<S['select'][P]> :  P extends keyof DayTime ? DayTime[P] : never
+  } 
+    : DayTime
+  : DayTime
+
+
+  type DayTimeCountArgs = Merge<
+    Omit<DayTimeFindManyArgs, 'select' | 'include'> & {
+      select?: DayTimeCountAggregateInputType | true
+    }
+  >
+
+  export interface DayTimeDelegate<GlobalRejectSettings> {
+    /**
+     * Find zero or one DayTime that matches the filter.
+     * @param {DayTimeFindUniqueArgs} args - Arguments to find a DayTime
+     * @example
+     * // Get one DayTime
+     * const dayTime = await prisma.dayTime.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends DayTimeFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, DayTimeFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'DayTime'> extends True ? CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>> : CheckSelect<T, Prisma__DayTimeClient<DayTime | null >, Prisma__DayTimeClient<DayTimeGetPayload<T> | null >>
+
+    /**
+     * Find the first DayTime that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DayTimeFindFirstArgs} args - Arguments to find a DayTime
+     * @example
+     * // Get one DayTime
+     * const dayTime = await prisma.dayTime.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends DayTimeFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, DayTimeFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'DayTime'> extends True ? CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>> : CheckSelect<T, Prisma__DayTimeClient<DayTime | null >, Prisma__DayTimeClient<DayTimeGetPayload<T> | null >>
+
+    /**
+     * Find zero or more DayTimes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DayTimeFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DayTimes
+     * const dayTimes = await prisma.dayTime.findMany()
+     * 
+     * // Get first 10 DayTimes
+     * const dayTimes = await prisma.dayTime.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const dayTimeWithIdOnly = await prisma.dayTime.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends DayTimeFindManyArgs>(
+      args?: SelectSubset<T, DayTimeFindManyArgs>
+    ): CheckSelect<T, PrismaPromise<Array<DayTime>>, PrismaPromise<Array<DayTimeGetPayload<T>>>>
+
+    /**
+     * Create a DayTime.
+     * @param {DayTimeCreateArgs} args - Arguments to create a DayTime.
+     * @example
+     * // Create one DayTime
+     * const DayTime = await prisma.dayTime.create({
+     *   data: {
+     *     // ... data to create a DayTime
+     *   }
+     * })
+     * 
+    **/
+    create<T extends DayTimeCreateArgs>(
+      args: SelectSubset<T, DayTimeCreateArgs>
+    ): CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>>
+
+    /**
+     * Create many DayTimes.
+     *     @param {DayTimeCreateManyArgs} args - Arguments to create many DayTimes.
+     *     @example
+     *     // Create many DayTimes
+     *     const dayTime = await prisma.dayTime.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends DayTimeCreateManyArgs>(
+      args?: SelectSubset<T, DayTimeCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a DayTime.
+     * @param {DayTimeDeleteArgs} args - Arguments to delete one DayTime.
+     * @example
+     * // Delete one DayTime
+     * const DayTime = await prisma.dayTime.delete({
+     *   where: {
+     *     // ... filter to delete one DayTime
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends DayTimeDeleteArgs>(
+      args: SelectSubset<T, DayTimeDeleteArgs>
+    ): CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>>
+
+    /**
+     * Update one DayTime.
+     * @param {DayTimeUpdateArgs} args - Arguments to update one DayTime.
+     * @example
+     * // Update one DayTime
+     * const dayTime = await prisma.dayTime.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends DayTimeUpdateArgs>(
+      args: SelectSubset<T, DayTimeUpdateArgs>
+    ): CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>>
+
+    /**
+     * Delete zero or more DayTimes.
+     * @param {DayTimeDeleteManyArgs} args - Arguments to filter DayTimes to delete.
+     * @example
+     * // Delete a few DayTimes
+     * const { count } = await prisma.dayTime.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends DayTimeDeleteManyArgs>(
+      args?: SelectSubset<T, DayTimeDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DayTimes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DayTimeUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DayTimes
+     * const dayTime = await prisma.dayTime.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends DayTimeUpdateManyArgs>(
+      args: SelectSubset<T, DayTimeUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one DayTime.
+     * @param {DayTimeUpsertArgs} args - Arguments to update or create a DayTime.
+     * @example
+     * // Update or create a DayTime
+     * const dayTime = await prisma.dayTime.upsert({
+     *   create: {
+     *     // ... data to create a DayTime
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DayTime we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends DayTimeUpsertArgs>(
+      args: SelectSubset<T, DayTimeUpsertArgs>
+    ): CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>>
+
+    /**
+     * Find one DayTime that matches the filter or throw
+     * `NotFoundError` if no matches were found.
+     * @param {DayTimeFindUniqueOrThrowArgs} args - Arguments to find a DayTime
+     * @example
+     * // Get one DayTime
+     * const dayTime = await prisma.dayTime.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends DayTimeFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, DayTimeFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>>
+
+    /**
+     * Find the first DayTime that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DayTimeFindFirstOrThrowArgs} args - Arguments to find a DayTime
+     * @example
+     * // Get one DayTime
+     * const dayTime = await prisma.dayTime.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends DayTimeFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, DayTimeFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>>
+
+    /**
+     * Count the number of DayTimes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DayTimeCountArgs} args - Arguments to filter DayTimes to count.
+     * @example
+     * // Count the number of DayTimes
+     * const count = await prisma.dayTime.count({
+     *   where: {
+     *     // ... the filter for the DayTimes we want to count
+     *   }
+     * })
+    **/
+    count<T extends DayTimeCountArgs>(
+      args?: Subset<T, DayTimeCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DayTimeCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DayTime.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DayTimeAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DayTimeAggregateArgs>(args: Subset<T, DayTimeAggregateArgs>): PrismaPromise<GetDayTimeAggregateType<T>>
+
+    /**
+     * Group by DayTime.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DayTimeGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DayTimeGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DayTimeGroupByArgs['orderBy'] }
+        : { orderBy?: DayTimeGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DayTimeGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDayTimeGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DayTime.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__DayTimeClient<T> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    Admin<T extends AdminArgs = {}>(args?: Subset<T, AdminArgs>): CheckSelect<T, Prisma__AdminClient<Admin | null >, Prisma__AdminClient<AdminGetPayload<T> | null >>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * DayTime base type for findUnique actions
+   */
+  export type DayTimeFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the DayTime
+     * 
+    **/
+    select?: DayTimeSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DayTimeInclude | null
+    /**
+     * Filter, which DayTime to fetch.
+     * 
+    **/
+    where: DayTimeWhereUniqueInput
+  }
+
+  /**
+   * DayTime: findUnique
+   */
+  export interface DayTimeFindUniqueArgs extends DayTimeFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * DayTime base type for findFirst actions
+   */
+  export type DayTimeFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the DayTime
+     * 
+    **/
+    select?: DayTimeSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DayTimeInclude | null
+    /**
+     * Filter, which DayTime to fetch.
+     * 
+    **/
+    where?: DayTimeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DayTimes to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<DayTimeOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DayTimes.
+     * 
+    **/
+    cursor?: DayTimeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DayTimes from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DayTimes.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DayTimes.
+     * 
+    **/
+    distinct?: Enumerable<DayTimeScalarFieldEnum>
+  }
+
+  /**
+   * DayTime: findFirst
+   */
+  export interface DayTimeFindFirstArgs extends DayTimeFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * DayTime findMany
+   */
+  export type DayTimeFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the DayTime
+     * 
+    **/
+    select?: DayTimeSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DayTimeInclude | null
+    /**
+     * Filter, which DayTimes to fetch.
+     * 
+    **/
+    where?: DayTimeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DayTimes to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<DayTimeOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DayTimes.
+     * 
+    **/
+    cursor?: DayTimeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DayTimes from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DayTimes.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<DayTimeScalarFieldEnum>
+  }
+
+
+  /**
+   * DayTime create
+   */
+  export type DayTimeCreateArgs = {
+    /**
+     * Select specific fields to fetch from the DayTime
+     * 
+    **/
+    select?: DayTimeSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DayTimeInclude | null
+    /**
+     * The data needed to create a DayTime.
+     * 
+    **/
+    data: XOR<DayTimeCreateInput, DayTimeUncheckedCreateInput>
+  }
+
+
+  /**
+   * DayTime createMany
+   */
+  export type DayTimeCreateManyArgs = {
+    /**
+     * The data used to create many DayTimes.
+     * 
+    **/
+    data: Enumerable<DayTimeCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * DayTime update
+   */
+  export type DayTimeUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the DayTime
+     * 
+    **/
+    select?: DayTimeSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DayTimeInclude | null
+    /**
+     * The data needed to update a DayTime.
+     * 
+    **/
+    data: XOR<DayTimeUpdateInput, DayTimeUncheckedUpdateInput>
+    /**
+     * Choose, which DayTime to update.
+     * 
+    **/
+    where: DayTimeWhereUniqueInput
+  }
+
+
+  /**
+   * DayTime updateMany
+   */
+  export type DayTimeUpdateManyArgs = {
+    /**
+     * The data used to update DayTimes.
+     * 
+    **/
+    data: XOR<DayTimeUpdateManyMutationInput, DayTimeUncheckedUpdateManyInput>
+    /**
+     * Filter which DayTimes to update
+     * 
+    **/
+    where?: DayTimeWhereInput
+  }
+
+
+  /**
+   * DayTime upsert
+   */
+  export type DayTimeUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the DayTime
+     * 
+    **/
+    select?: DayTimeSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DayTimeInclude | null
+    /**
+     * The filter to search for the DayTime to update in case it exists.
+     * 
+    **/
+    where: DayTimeWhereUniqueInput
+    /**
+     * In case the DayTime found by the `where` argument doesn't exist, create a new DayTime with this data.
+     * 
+    **/
+    create: XOR<DayTimeCreateInput, DayTimeUncheckedCreateInput>
+    /**
+     * In case the DayTime was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<DayTimeUpdateInput, DayTimeUncheckedUpdateInput>
+  }
+
+
+  /**
+   * DayTime delete
+   */
+  export type DayTimeDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the DayTime
+     * 
+    **/
+    select?: DayTimeSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DayTimeInclude | null
+    /**
+     * Filter which DayTime to delete.
+     * 
+    **/
+    where: DayTimeWhereUniqueInput
+  }
+
+
+  /**
+   * DayTime deleteMany
+   */
+  export type DayTimeDeleteManyArgs = {
+    /**
+     * Filter which DayTimes to delete
+     * 
+    **/
+    where?: DayTimeWhereInput
+  }
+
+
+  /**
+   * DayTime: findUniqueOrThrow
+   */
+  export type DayTimeFindUniqueOrThrowArgs = DayTimeFindUniqueArgsBase
+      
+
+  /**
+   * DayTime: findFirstOrThrow
+   */
+  export type DayTimeFindFirstOrThrowArgs = DayTimeFindFirstArgsBase
+      
+
+  /**
+   * DayTime without action
+   */
+  export type DayTimeArgs = {
+    /**
+     * Select specific fields to fetch from the DayTime
+     * 
+    **/
+    select?: DayTimeSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: DayTimeInclude | null
   }
 
 
@@ -4358,6 +7521,7 @@ export namespace Prisma {
     parentId?: boolean
     Parent?: boolean | ParentArgs
     Meeting?: boolean | MeetingFindManyArgs
+    RequestedMeetings?: boolean | RequestedMeetingsFindManyArgs
     StudentInfo?: boolean | StudentInfoFindManyArgs
     Subject?: boolean | SubjectFindManyArgs
     _count?: boolean | StudentCountOutputTypeArgs
@@ -4366,6 +7530,7 @@ export namespace Prisma {
   export type StudentInclude = {
     Parent?: boolean | ParentArgs
     Meeting?: boolean | MeetingFindManyArgs
+    RequestedMeetings?: boolean | RequestedMeetingsFindManyArgs
     StudentInfo?: boolean | StudentInfoFindManyArgs
     Subject?: boolean | SubjectFindManyArgs
     _count?: boolean | StudentCountOutputTypeArgs
@@ -4384,6 +7549,7 @@ export namespace Prisma {
     [P in TrueKeys<S['include']>]:
         P extends 'Parent' ? ParentGetPayload<S['include'][P]> :
         P extends 'Meeting' ? Array < MeetingGetPayload<S['include'][P]>>  :
+        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<S['include'][P]>>  :
         P extends 'StudentInfo' ? Array < StudentInfoGetPayload<S['include'][P]>>  :
         P extends 'Subject' ? Array < SubjectGetPayload<S['include'][P]>>  :
         P extends '_count' ? StudentCountOutputTypeGetPayload<S['include'][P]> :  never
@@ -4393,6 +7559,7 @@ export namespace Prisma {
     [P in TrueKeys<S['select']>]:
         P extends 'Parent' ? ParentGetPayload<S['select'][P]> :
         P extends 'Meeting' ? Array < MeetingGetPayload<S['select'][P]>>  :
+        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<S['select'][P]>>  :
         P extends 'StudentInfo' ? Array < StudentInfoGetPayload<S['select'][P]>>  :
         P extends 'Subject' ? Array < SubjectGetPayload<S['select'][P]>>  :
         P extends '_count' ? StudentCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Student ? Student[P] : never
@@ -4773,6 +7940,8 @@ export namespace Prisma {
     Parent<T extends ParentArgs = {}>(args?: Subset<T, ParentArgs>): CheckSelect<T, Prisma__ParentClient<Parent | null >, Prisma__ParentClient<ParentGetPayload<T> | null >>;
 
     Meeting<T extends MeetingFindManyArgs = {}>(args?: Subset<T, MeetingFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Meeting>>, PrismaPromise<Array<MeetingGetPayload<T>>>>;
+
+    RequestedMeetings<T extends RequestedMeetingsFindManyArgs = {}>(args?: Subset<T, RequestedMeetingsFindManyArgs>): CheckSelect<T, PrismaPromise<Array<RequestedMeetings>>, PrismaPromise<Array<RequestedMeetingsGetPayload<T>>>>;
 
     StudentInfo<T extends StudentInfoFindManyArgs = {}>(args?: Subset<T, StudentInfoFindManyArgs>): CheckSelect<T, PrismaPromise<Array<StudentInfo>>, PrismaPromise<Array<StudentInfoGetPayload<T>>>>;
 
@@ -7015,6 +10184,989 @@ export namespace Prisma {
 
 
   /**
+   * Model RequestedMeetings
+   */
+
+
+  export type AggregateRequestedMeetings = {
+    _count: RequestedMeetingsCountAggregateOutputType | null
+    _avg: RequestedMeetingsAvgAggregateOutputType | null
+    _sum: RequestedMeetingsSumAggregateOutputType | null
+    _min: RequestedMeetingsMinAggregateOutputType | null
+    _max: RequestedMeetingsMaxAggregateOutputType | null
+  }
+
+  export type RequestedMeetingsAvgAggregateOutputType = {
+    id: number | null
+    parentId: number | null
+    studentId: number | null
+    adminId: number | null
+  }
+
+  export type RequestedMeetingsSumAggregateOutputType = {
+    id: number | null
+    parentId: number | null
+    studentId: number | null
+    adminId: number | null
+  }
+
+  export type RequestedMeetingsMinAggregateOutputType = {
+    id: number | null
+    meetingReason: string | null
+    parentId: number | null
+    studentId: number | null
+    adminId: number | null
+  }
+
+  export type RequestedMeetingsMaxAggregateOutputType = {
+    id: number | null
+    meetingReason: string | null
+    parentId: number | null
+    studentId: number | null
+    adminId: number | null
+  }
+
+  export type RequestedMeetingsCountAggregateOutputType = {
+    id: number
+    meetingReason: number
+    parentId: number
+    studentId: number
+    adminId: number
+    _all: number
+  }
+
+
+  export type RequestedMeetingsAvgAggregateInputType = {
+    id?: true
+    parentId?: true
+    studentId?: true
+    adminId?: true
+  }
+
+  export type RequestedMeetingsSumAggregateInputType = {
+    id?: true
+    parentId?: true
+    studentId?: true
+    adminId?: true
+  }
+
+  export type RequestedMeetingsMinAggregateInputType = {
+    id?: true
+    meetingReason?: true
+    parentId?: true
+    studentId?: true
+    adminId?: true
+  }
+
+  export type RequestedMeetingsMaxAggregateInputType = {
+    id?: true
+    meetingReason?: true
+    parentId?: true
+    studentId?: true
+    adminId?: true
+  }
+
+  export type RequestedMeetingsCountAggregateInputType = {
+    id?: true
+    meetingReason?: true
+    parentId?: true
+    studentId?: true
+    adminId?: true
+    _all?: true
+  }
+
+  export type RequestedMeetingsAggregateArgs = {
+    /**
+     * Filter which RequestedMeetings to aggregate.
+     * 
+    **/
+    where?: RequestedMeetingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RequestedMeetings to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<RequestedMeetingsOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: RequestedMeetingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RequestedMeetings from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RequestedMeetings.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RequestedMeetings
+    **/
+    _count?: true | RequestedMeetingsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: RequestedMeetingsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: RequestedMeetingsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RequestedMeetingsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RequestedMeetingsMaxAggregateInputType
+  }
+
+  export type GetRequestedMeetingsAggregateType<T extends RequestedMeetingsAggregateArgs> = {
+        [P in keyof T & keyof AggregateRequestedMeetings]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRequestedMeetings[P]>
+      : GetScalarType<T[P], AggregateRequestedMeetings[P]>
+  }
+
+
+
+
+  export type RequestedMeetingsGroupByArgs = {
+    where?: RequestedMeetingsWhereInput
+    orderBy?: Enumerable<RequestedMeetingsOrderByWithAggregationInput>
+    by: Array<RequestedMeetingsScalarFieldEnum>
+    having?: RequestedMeetingsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RequestedMeetingsCountAggregateInputType | true
+    _avg?: RequestedMeetingsAvgAggregateInputType
+    _sum?: RequestedMeetingsSumAggregateInputType
+    _min?: RequestedMeetingsMinAggregateInputType
+    _max?: RequestedMeetingsMaxAggregateInputType
+  }
+
+
+  export type RequestedMeetingsGroupByOutputType = {
+    id: number
+    meetingReason: string
+    parentId: number
+    studentId: number
+    adminId: number
+    _count: RequestedMeetingsCountAggregateOutputType | null
+    _avg: RequestedMeetingsAvgAggregateOutputType | null
+    _sum: RequestedMeetingsSumAggregateOutputType | null
+    _min: RequestedMeetingsMinAggregateOutputType | null
+    _max: RequestedMeetingsMaxAggregateOutputType | null
+  }
+
+  type GetRequestedMeetingsGroupByPayload<T extends RequestedMeetingsGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<RequestedMeetingsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RequestedMeetingsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RequestedMeetingsGroupByOutputType[P]>
+            : GetScalarType<T[P], RequestedMeetingsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RequestedMeetingsSelect = {
+    id?: boolean
+    meetingReason?: boolean
+    parentId?: boolean
+    studentId?: boolean
+    adminId?: boolean
+    Admin?: boolean | AdminArgs
+    Parent?: boolean | ParentArgs
+    Student?: boolean | StudentArgs
+  }
+
+  export type RequestedMeetingsInclude = {
+    Admin?: boolean | AdminArgs
+    Parent?: boolean | ParentArgs
+    Student?: boolean | StudentArgs
+  }
+
+  export type RequestedMeetingsGetPayload<
+    S extends boolean | null | undefined | RequestedMeetingsArgs,
+    U = keyof S
+      > = S extends true
+        ? RequestedMeetings
+    : S extends undefined
+    ? never
+    : S extends RequestedMeetingsArgs | RequestedMeetingsFindManyArgs
+    ?'include' extends U
+    ? RequestedMeetings  & {
+    [P in TrueKeys<S['include']>]:
+        P extends 'Admin' ? AdminGetPayload<S['include'][P]> :
+        P extends 'Parent' ? ParentGetPayload<S['include'][P]> :
+        P extends 'Student' ? StudentGetPayload<S['include'][P]> :  never
+  } 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+        P extends 'Admin' ? AdminGetPayload<S['select'][P]> :
+        P extends 'Parent' ? ParentGetPayload<S['select'][P]> :
+        P extends 'Student' ? StudentGetPayload<S['select'][P]> :  P extends keyof RequestedMeetings ? RequestedMeetings[P] : never
+  } 
+    : RequestedMeetings
+  : RequestedMeetings
+
+
+  type RequestedMeetingsCountArgs = Merge<
+    Omit<RequestedMeetingsFindManyArgs, 'select' | 'include'> & {
+      select?: RequestedMeetingsCountAggregateInputType | true
+    }
+  >
+
+  export interface RequestedMeetingsDelegate<GlobalRejectSettings> {
+    /**
+     * Find zero or one RequestedMeetings that matches the filter.
+     * @param {RequestedMeetingsFindUniqueArgs} args - Arguments to find a RequestedMeetings
+     * @example
+     * // Get one RequestedMeetings
+     * const requestedMeetings = await prisma.requestedMeetings.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends RequestedMeetingsFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, RequestedMeetingsFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'RequestedMeetings'> extends True ? CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>> : CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings | null >, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T> | null >>
+
+    /**
+     * Find the first RequestedMeetings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestedMeetingsFindFirstArgs} args - Arguments to find a RequestedMeetings
+     * @example
+     * // Get one RequestedMeetings
+     * const requestedMeetings = await prisma.requestedMeetings.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends RequestedMeetingsFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, RequestedMeetingsFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'RequestedMeetings'> extends True ? CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>> : CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings | null >, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T> | null >>
+
+    /**
+     * Find zero or more RequestedMeetings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestedMeetingsFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RequestedMeetings
+     * const requestedMeetings = await prisma.requestedMeetings.findMany()
+     * 
+     * // Get first 10 RequestedMeetings
+     * const requestedMeetings = await prisma.requestedMeetings.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const requestedMeetingsWithIdOnly = await prisma.requestedMeetings.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends RequestedMeetingsFindManyArgs>(
+      args?: SelectSubset<T, RequestedMeetingsFindManyArgs>
+    ): CheckSelect<T, PrismaPromise<Array<RequestedMeetings>>, PrismaPromise<Array<RequestedMeetingsGetPayload<T>>>>
+
+    /**
+     * Create a RequestedMeetings.
+     * @param {RequestedMeetingsCreateArgs} args - Arguments to create a RequestedMeetings.
+     * @example
+     * // Create one RequestedMeetings
+     * const RequestedMeetings = await prisma.requestedMeetings.create({
+     *   data: {
+     *     // ... data to create a RequestedMeetings
+     *   }
+     * })
+     * 
+    **/
+    create<T extends RequestedMeetingsCreateArgs>(
+      args: SelectSubset<T, RequestedMeetingsCreateArgs>
+    ): CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>>
+
+    /**
+     * Create many RequestedMeetings.
+     *     @param {RequestedMeetingsCreateManyArgs} args - Arguments to create many RequestedMeetings.
+     *     @example
+     *     // Create many RequestedMeetings
+     *     const requestedMeetings = await prisma.requestedMeetings.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends RequestedMeetingsCreateManyArgs>(
+      args?: SelectSubset<T, RequestedMeetingsCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a RequestedMeetings.
+     * @param {RequestedMeetingsDeleteArgs} args - Arguments to delete one RequestedMeetings.
+     * @example
+     * // Delete one RequestedMeetings
+     * const RequestedMeetings = await prisma.requestedMeetings.delete({
+     *   where: {
+     *     // ... filter to delete one RequestedMeetings
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends RequestedMeetingsDeleteArgs>(
+      args: SelectSubset<T, RequestedMeetingsDeleteArgs>
+    ): CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>>
+
+    /**
+     * Update one RequestedMeetings.
+     * @param {RequestedMeetingsUpdateArgs} args - Arguments to update one RequestedMeetings.
+     * @example
+     * // Update one RequestedMeetings
+     * const requestedMeetings = await prisma.requestedMeetings.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends RequestedMeetingsUpdateArgs>(
+      args: SelectSubset<T, RequestedMeetingsUpdateArgs>
+    ): CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>>
+
+    /**
+     * Delete zero or more RequestedMeetings.
+     * @param {RequestedMeetingsDeleteManyArgs} args - Arguments to filter RequestedMeetings to delete.
+     * @example
+     * // Delete a few RequestedMeetings
+     * const { count } = await prisma.requestedMeetings.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends RequestedMeetingsDeleteManyArgs>(
+      args?: SelectSubset<T, RequestedMeetingsDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RequestedMeetings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestedMeetingsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RequestedMeetings
+     * const requestedMeetings = await prisma.requestedMeetings.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends RequestedMeetingsUpdateManyArgs>(
+      args: SelectSubset<T, RequestedMeetingsUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one RequestedMeetings.
+     * @param {RequestedMeetingsUpsertArgs} args - Arguments to update or create a RequestedMeetings.
+     * @example
+     * // Update or create a RequestedMeetings
+     * const requestedMeetings = await prisma.requestedMeetings.upsert({
+     *   create: {
+     *     // ... data to create a RequestedMeetings
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RequestedMeetings we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends RequestedMeetingsUpsertArgs>(
+      args: SelectSubset<T, RequestedMeetingsUpsertArgs>
+    ): CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>>
+
+    /**
+     * Find one RequestedMeetings that matches the filter or throw
+     * `NotFoundError` if no matches were found.
+     * @param {RequestedMeetingsFindUniqueOrThrowArgs} args - Arguments to find a RequestedMeetings
+     * @example
+     * // Get one RequestedMeetings
+     * const requestedMeetings = await prisma.requestedMeetings.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends RequestedMeetingsFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, RequestedMeetingsFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>>
+
+    /**
+     * Find the first RequestedMeetings that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestedMeetingsFindFirstOrThrowArgs} args - Arguments to find a RequestedMeetings
+     * @example
+     * // Get one RequestedMeetings
+     * const requestedMeetings = await prisma.requestedMeetings.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends RequestedMeetingsFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, RequestedMeetingsFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>>
+
+    /**
+     * Count the number of RequestedMeetings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestedMeetingsCountArgs} args - Arguments to filter RequestedMeetings to count.
+     * @example
+     * // Count the number of RequestedMeetings
+     * const count = await prisma.requestedMeetings.count({
+     *   where: {
+     *     // ... the filter for the RequestedMeetings we want to count
+     *   }
+     * })
+    **/
+    count<T extends RequestedMeetingsCountArgs>(
+      args?: Subset<T, RequestedMeetingsCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RequestedMeetingsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RequestedMeetings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestedMeetingsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RequestedMeetingsAggregateArgs>(args: Subset<T, RequestedMeetingsAggregateArgs>): PrismaPromise<GetRequestedMeetingsAggregateType<T>>
+
+    /**
+     * Group by RequestedMeetings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestedMeetingsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RequestedMeetingsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RequestedMeetingsGroupByArgs['orderBy'] }
+        : { orderBy?: RequestedMeetingsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RequestedMeetingsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRequestedMeetingsGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RequestedMeetings.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__RequestedMeetingsClient<T> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    Admin<T extends AdminArgs = {}>(args?: Subset<T, AdminArgs>): CheckSelect<T, Prisma__AdminClient<Admin | null >, Prisma__AdminClient<AdminGetPayload<T> | null >>;
+
+    Parent<T extends ParentArgs = {}>(args?: Subset<T, ParentArgs>): CheckSelect<T, Prisma__ParentClient<Parent | null >, Prisma__ParentClient<ParentGetPayload<T> | null >>;
+
+    Student<T extends StudentArgs = {}>(args?: Subset<T, StudentArgs>): CheckSelect<T, Prisma__StudentClient<Student | null >, Prisma__StudentClient<StudentGetPayload<T> | null >>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * RequestedMeetings base type for findUnique actions
+   */
+  export type RequestedMeetingsFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the RequestedMeetings
+     * 
+    **/
+    select?: RequestedMeetingsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: RequestedMeetingsInclude | null
+    /**
+     * Filter, which RequestedMeetings to fetch.
+     * 
+    **/
+    where: RequestedMeetingsWhereUniqueInput
+  }
+
+  /**
+   * RequestedMeetings: findUnique
+   */
+  export interface RequestedMeetingsFindUniqueArgs extends RequestedMeetingsFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * RequestedMeetings base type for findFirst actions
+   */
+  export type RequestedMeetingsFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the RequestedMeetings
+     * 
+    **/
+    select?: RequestedMeetingsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: RequestedMeetingsInclude | null
+    /**
+     * Filter, which RequestedMeetings to fetch.
+     * 
+    **/
+    where?: RequestedMeetingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RequestedMeetings to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<RequestedMeetingsOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RequestedMeetings.
+     * 
+    **/
+    cursor?: RequestedMeetingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RequestedMeetings from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RequestedMeetings.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RequestedMeetings.
+     * 
+    **/
+    distinct?: Enumerable<RequestedMeetingsScalarFieldEnum>
+  }
+
+  /**
+   * RequestedMeetings: findFirst
+   */
+  export interface RequestedMeetingsFindFirstArgs extends RequestedMeetingsFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * RequestedMeetings findMany
+   */
+  export type RequestedMeetingsFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the RequestedMeetings
+     * 
+    **/
+    select?: RequestedMeetingsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: RequestedMeetingsInclude | null
+    /**
+     * Filter, which RequestedMeetings to fetch.
+     * 
+    **/
+    where?: RequestedMeetingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RequestedMeetings to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<RequestedMeetingsOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RequestedMeetings.
+     * 
+    **/
+    cursor?: RequestedMeetingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RequestedMeetings from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RequestedMeetings.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<RequestedMeetingsScalarFieldEnum>
+  }
+
+
+  /**
+   * RequestedMeetings create
+   */
+  export type RequestedMeetingsCreateArgs = {
+    /**
+     * Select specific fields to fetch from the RequestedMeetings
+     * 
+    **/
+    select?: RequestedMeetingsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: RequestedMeetingsInclude | null
+    /**
+     * The data needed to create a RequestedMeetings.
+     * 
+    **/
+    data: XOR<RequestedMeetingsCreateInput, RequestedMeetingsUncheckedCreateInput>
+  }
+
+
+  /**
+   * RequestedMeetings createMany
+   */
+  export type RequestedMeetingsCreateManyArgs = {
+    /**
+     * The data used to create many RequestedMeetings.
+     * 
+    **/
+    data: Enumerable<RequestedMeetingsCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * RequestedMeetings update
+   */
+  export type RequestedMeetingsUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the RequestedMeetings
+     * 
+    **/
+    select?: RequestedMeetingsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: RequestedMeetingsInclude | null
+    /**
+     * The data needed to update a RequestedMeetings.
+     * 
+    **/
+    data: XOR<RequestedMeetingsUpdateInput, RequestedMeetingsUncheckedUpdateInput>
+    /**
+     * Choose, which RequestedMeetings to update.
+     * 
+    **/
+    where: RequestedMeetingsWhereUniqueInput
+  }
+
+
+  /**
+   * RequestedMeetings updateMany
+   */
+  export type RequestedMeetingsUpdateManyArgs = {
+    /**
+     * The data used to update RequestedMeetings.
+     * 
+    **/
+    data: XOR<RequestedMeetingsUpdateManyMutationInput, RequestedMeetingsUncheckedUpdateManyInput>
+    /**
+     * Filter which RequestedMeetings to update
+     * 
+    **/
+    where?: RequestedMeetingsWhereInput
+  }
+
+
+  /**
+   * RequestedMeetings upsert
+   */
+  export type RequestedMeetingsUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the RequestedMeetings
+     * 
+    **/
+    select?: RequestedMeetingsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: RequestedMeetingsInclude | null
+    /**
+     * The filter to search for the RequestedMeetings to update in case it exists.
+     * 
+    **/
+    where: RequestedMeetingsWhereUniqueInput
+    /**
+     * In case the RequestedMeetings found by the `where` argument doesn't exist, create a new RequestedMeetings with this data.
+     * 
+    **/
+    create: XOR<RequestedMeetingsCreateInput, RequestedMeetingsUncheckedCreateInput>
+    /**
+     * In case the RequestedMeetings was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<RequestedMeetingsUpdateInput, RequestedMeetingsUncheckedUpdateInput>
+  }
+
+
+  /**
+   * RequestedMeetings delete
+   */
+  export type RequestedMeetingsDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the RequestedMeetings
+     * 
+    **/
+    select?: RequestedMeetingsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: RequestedMeetingsInclude | null
+    /**
+     * Filter which RequestedMeetings to delete.
+     * 
+    **/
+    where: RequestedMeetingsWhereUniqueInput
+  }
+
+
+  /**
+   * RequestedMeetings deleteMany
+   */
+  export type RequestedMeetingsDeleteManyArgs = {
+    /**
+     * Filter which RequestedMeetings to delete
+     * 
+    **/
+    where?: RequestedMeetingsWhereInput
+  }
+
+
+  /**
+   * RequestedMeetings: findUniqueOrThrow
+   */
+  export type RequestedMeetingsFindUniqueOrThrowArgs = RequestedMeetingsFindUniqueArgsBase
+      
+
+  /**
+   * RequestedMeetings: findFirstOrThrow
+   */
+  export type RequestedMeetingsFindFirstOrThrowArgs = RequestedMeetingsFindFirstArgsBase
+      
+
+  /**
+   * RequestedMeetings without action
+   */
+  export type RequestedMeetingsArgs = {
+    /**
+     * Select specific fields to fetch from the RequestedMeetings
+     * 
+    **/
+    select?: RequestedMeetingsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: RequestedMeetingsInclude | null
+  }
+
+
+
+  /**
    * Model Meeting
    */
 
@@ -7030,6 +11182,7 @@ export namespace Prisma {
   export type MeetingAvgAggregateOutputType = {
     id: number | null
     adminId: number | null
+    facultyId: number | null
     studentId: number | null
     parentId: number | null
   }
@@ -7037,6 +11190,7 @@ export namespace Prisma {
   export type MeetingSumAggregateOutputType = {
     id: number | null
     adminId: number | null
+    facultyId: number | null
     studentId: number | null
     parentId: number | null
   }
@@ -7047,6 +11201,7 @@ export namespace Prisma {
     meetingStatus: boolean | null
     meetingReason: string | null
     adminId: number | null
+    facultyId: number | null
     studentId: number | null
     parentId: number | null
     meetingStartTime: string | null
@@ -7059,6 +11214,7 @@ export namespace Prisma {
     meetingStatus: boolean | null
     meetingReason: string | null
     adminId: number | null
+    facultyId: number | null
     studentId: number | null
     parentId: number | null
     meetingStartTime: string | null
@@ -7071,6 +11227,7 @@ export namespace Prisma {
     meetingStatus: number
     meetingReason: number
     adminId: number
+    facultyId: number
     studentId: number
     parentId: number
     meetingStartTime: number
@@ -7082,6 +11239,7 @@ export namespace Prisma {
   export type MeetingAvgAggregateInputType = {
     id?: true
     adminId?: true
+    facultyId?: true
     studentId?: true
     parentId?: true
   }
@@ -7089,6 +11247,7 @@ export namespace Prisma {
   export type MeetingSumAggregateInputType = {
     id?: true
     adminId?: true
+    facultyId?: true
     studentId?: true
     parentId?: true
   }
@@ -7099,6 +11258,7 @@ export namespace Prisma {
     meetingStatus?: true
     meetingReason?: true
     adminId?: true
+    facultyId?: true
     studentId?: true
     parentId?: true
     meetingStartTime?: true
@@ -7111,6 +11271,7 @@ export namespace Prisma {
     meetingStatus?: true
     meetingReason?: true
     adminId?: true
+    facultyId?: true
     studentId?: true
     parentId?: true
     meetingStartTime?: true
@@ -7123,6 +11284,7 @@ export namespace Prisma {
     meetingStatus?: true
     meetingReason?: true
     adminId?: true
+    facultyId?: true
     studentId?: true
     parentId?: true
     meetingStartTime?: true
@@ -7227,7 +11389,8 @@ export namespace Prisma {
     meetingDay: Date
     meetingStatus: boolean
     meetingReason: string | null
-    adminId: number
+    adminId: number | null
+    facultyId: number | null
     studentId: number
     parentId: number
     meetingStartTime: string
@@ -7259,11 +11422,13 @@ export namespace Prisma {
     meetingStatus?: boolean
     meetingReason?: boolean
     adminId?: boolean
+    facultyId?: boolean
     studentId?: boolean
     parentId?: boolean
     meetingStartTime?: boolean
     meetingEndTime?: boolean
     Admin?: boolean | AdminArgs
+    Faculty?: boolean | FacultyArgs
     Parent?: boolean | ParentArgs
     Student?: boolean | StudentArgs
     Feedback?: boolean | FeedbackFindManyArgs
@@ -7272,6 +11437,7 @@ export namespace Prisma {
 
   export type MeetingInclude = {
     Admin?: boolean | AdminArgs
+    Faculty?: boolean | FacultyArgs
     Parent?: boolean | ParentArgs
     Student?: boolean | StudentArgs
     Feedback?: boolean | FeedbackFindManyArgs
@@ -7289,7 +11455,8 @@ export namespace Prisma {
     ?'include' extends U
     ? Meeting  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Admin' ? AdminGetPayload<S['include'][P]> :
+        P extends 'Admin' ? AdminGetPayload<S['include'][P]> | null :
+        P extends 'Faculty' ? FacultyGetPayload<S['include'][P]> | null :
         P extends 'Parent' ? ParentGetPayload<S['include'][P]> :
         P extends 'Student' ? StudentGetPayload<S['include'][P]> :
         P extends 'Feedback' ? Array < FeedbackGetPayload<S['include'][P]>>  :
@@ -7298,7 +11465,8 @@ export namespace Prisma {
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Admin' ? AdminGetPayload<S['select'][P]> :
+        P extends 'Admin' ? AdminGetPayload<S['select'][P]> | null :
+        P extends 'Faculty' ? FacultyGetPayload<S['select'][P]> | null :
         P extends 'Parent' ? ParentGetPayload<S['select'][P]> :
         P extends 'Student' ? StudentGetPayload<S['select'][P]> :
         P extends 'Feedback' ? Array < FeedbackGetPayload<S['select'][P]>>  :
@@ -7678,6 +11846,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
     Admin<T extends AdminArgs = {}>(args?: Subset<T, AdminArgs>): CheckSelect<T, Prisma__AdminClient<Admin | null >, Prisma__AdminClient<AdminGetPayload<T> | null >>;
+
+    Faculty<T extends FacultyArgs = {}>(args?: Subset<T, FacultyArgs>): CheckSelect<T, Prisma__FacultyClient<Faculty | null >, Prisma__FacultyClient<FacultyGetPayload<T> | null >>;
 
     Parent<T extends ParentArgs = {}>(args?: Subset<T, ParentArgs>): CheckSelect<T, Prisma__ParentClient<Parent | null >, Prisma__ParentClient<ParentGetPayload<T> | null >>;
 
@@ -9014,6 +13184,34 @@ export namespace Prisma {
   export type AdminScalarFieldEnum = (typeof AdminScalarFieldEnum)[keyof typeof AdminScalarFieldEnum]
 
 
+  export const DayTimeScalarFieldEnum: {
+    id: 'id',
+    day: 'day',
+    startTime: 'startTime',
+    endTime: 'endTime',
+    adminId: 'adminId'
+  };
+
+  export type DayTimeScalarFieldEnum = (typeof DayTimeScalarFieldEnum)[keyof typeof DayTimeScalarFieldEnum]
+
+
+  export const DepartmentScalarFieldEnum: {
+    id: 'id',
+    departmentName: 'departmentName'
+  };
+
+  export type DepartmentScalarFieldEnum = (typeof DepartmentScalarFieldEnum)[keyof typeof DepartmentScalarFieldEnum]
+
+
+  export const FacultyScalarFieldEnum: {
+    id: 'id',
+    userName: 'userName',
+    departmentId: 'departmentId'
+  };
+
+  export type FacultyScalarFieldEnum = (typeof FacultyScalarFieldEnum)[keyof typeof FacultyScalarFieldEnum]
+
+
   export const FeedbackScalarFieldEnum: {
     id: 'id',
     meetingId: 'meetingId',
@@ -9030,6 +13228,7 @@ export namespace Prisma {
     meetingStatus: 'meetingStatus',
     meetingReason: 'meetingReason',
     adminId: 'adminId',
+    facultyId: 'facultyId',
     studentId: 'studentId',
     parentId: 'parentId',
     meetingStartTime: 'meetingStartTime',
@@ -9051,21 +13250,28 @@ export namespace Prisma {
   export type ParentScalarFieldEnum = (typeof ParentScalarFieldEnum)[keyof typeof ParentScalarFieldEnum]
 
 
-  export const QueryMode: {
-    default: 'default',
-    insensitive: 'insensitive'
-  };
-
-  export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
-
-
-  export const RoleScalarFieldEnum: {
+  export const RequestedMeetingsScalarFieldEnum: {
     id: 'id',
-    role: 'role',
+    meetingReason: 'meetingReason',
+    parentId: 'parentId',
+    studentId: 'studentId',
     adminId: 'adminId'
   };
 
-  export type RoleScalarFieldEnum = (typeof RoleScalarFieldEnum)[keyof typeof RoleScalarFieldEnum]
+  export type RequestedMeetingsScalarFieldEnum = (typeof RequestedMeetingsScalarFieldEnum)[keyof typeof RequestedMeetingsScalarFieldEnum]
+
+
+  export const ScheduleScalarFieldEnum: {
+    id: 'id',
+    day: 'day',
+    start: 'start',
+    end: 'end',
+    startTime: 'startTime',
+    EndTime: 'EndTime',
+    adminId: 'adminId'
+  };
+
+  export type ScheduleScalarFieldEnum = (typeof ScheduleScalarFieldEnum)[keyof typeof ScheduleScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -9131,6 +13337,7 @@ export namespace Prisma {
     parentPassword?: StringFilter | string
     Meeting?: MeetingListRelationFilter
     Student?: StudentListRelationFilter
+    RequestedMeetings?: RequestedMeetingsListRelationFilter
   }
 
   export type ParentOrderByWithRelationInput = {
@@ -9142,6 +13349,7 @@ export namespace Prisma {
     parentPassword?: SortOrder
     Meeting?: MeetingOrderByRelationAggregateInput
     Student?: StudentOrderByRelationAggregateInput
+    RequestedMeetings?: RequestedMeetingsOrderByRelationAggregateInput
   }
 
   export type ParentWhereUniqueInput = {
@@ -9188,7 +13396,9 @@ export namespace Prisma {
     adminEmail?: StringFilter | string
     adminDesignation?: StringNullableFilter | string | null
     Meeting?: MeetingListRelationFilter
-    Role?: RoleListRelationFilter
+    Schedule?: ScheduleListRelationFilter
+    RequestedMeetings?: RequestedMeetingsListRelationFilter
+    DayTime?: DayTimeListRelationFilter
   }
 
   export type AdminOrderByWithRelationInput = {
@@ -9200,7 +13410,9 @@ export namespace Prisma {
     adminEmail?: SortOrder
     adminDesignation?: SortOrder
     Meeting?: MeetingOrderByRelationAggregateInput
-    Role?: RoleOrderByRelationAggregateInput
+    Schedule?: ScheduleOrderByRelationAggregateInput
+    RequestedMeetings?: RequestedMeetingsOrderByRelationAggregateInput
+    DayTime?: DayTimeOrderByRelationAggregateInput
   }
 
   export type AdminWhereUniqueInput = {
@@ -9237,44 +13449,190 @@ export namespace Prisma {
     adminDesignation?: StringNullableWithAggregatesFilter | string | null
   }
 
-  export type RoleWhereInput = {
-    AND?: Enumerable<RoleWhereInput>
-    OR?: Enumerable<RoleWhereInput>
-    NOT?: Enumerable<RoleWhereInput>
+  export type DepartmentWhereInput = {
+    AND?: Enumerable<DepartmentWhereInput>
+    OR?: Enumerable<DepartmentWhereInput>
+    NOT?: Enumerable<DepartmentWhereInput>
     id?: IntFilter | number
-    role?: StringFilter | string
+    departmentName?: StringFilter | string
+    Faculty?: FacultyListRelationFilter
+  }
+
+  export type DepartmentOrderByWithRelationInput = {
+    id?: SortOrder
+    departmentName?: SortOrder
+    Faculty?: FacultyOrderByRelationAggregateInput
+  }
+
+  export type DepartmentWhereUniqueInput = {
+    id?: number
+  }
+
+  export type DepartmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    departmentName?: SortOrder
+    _count?: DepartmentCountOrderByAggregateInput
+    _avg?: DepartmentAvgOrderByAggregateInput
+    _max?: DepartmentMaxOrderByAggregateInput
+    _min?: DepartmentMinOrderByAggregateInput
+    _sum?: DepartmentSumOrderByAggregateInput
+  }
+
+  export type DepartmentScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<DepartmentScalarWhereWithAggregatesInput>
+    OR?: Enumerable<DepartmentScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<DepartmentScalarWhereWithAggregatesInput>
+    id?: IntWithAggregatesFilter | number
+    departmentName?: StringWithAggregatesFilter | string
+  }
+
+  export type FacultyWhereInput = {
+    AND?: Enumerable<FacultyWhereInput>
+    OR?: Enumerable<FacultyWhereInput>
+    NOT?: Enumerable<FacultyWhereInput>
+    id?: IntFilter | number
+    userName?: StringFilter | string
+    departmentId?: IntFilter | number
+    Meeting?: MeetingListRelationFilter
+    Department?: XOR<DepartmentRelationFilter, DepartmentWhereInput>
+  }
+
+  export type FacultyOrderByWithRelationInput = {
+    id?: SortOrder
+    userName?: SortOrder
+    departmentId?: SortOrder
+    Meeting?: MeetingOrderByRelationAggregateInput
+    Department?: DepartmentOrderByWithRelationInput
+  }
+
+  export type FacultyWhereUniqueInput = {
+    id?: number
+  }
+
+  export type FacultyOrderByWithAggregationInput = {
+    id?: SortOrder
+    userName?: SortOrder
+    departmentId?: SortOrder
+    _count?: FacultyCountOrderByAggregateInput
+    _avg?: FacultyAvgOrderByAggregateInput
+    _max?: FacultyMaxOrderByAggregateInput
+    _min?: FacultyMinOrderByAggregateInput
+    _sum?: FacultySumOrderByAggregateInput
+  }
+
+  export type FacultyScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<FacultyScalarWhereWithAggregatesInput>
+    OR?: Enumerable<FacultyScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<FacultyScalarWhereWithAggregatesInput>
+    id?: IntWithAggregatesFilter | number
+    userName?: StringWithAggregatesFilter | string
+    departmentId?: IntWithAggregatesFilter | number
+  }
+
+  export type ScheduleWhereInput = {
+    AND?: Enumerable<ScheduleWhereInput>
+    OR?: Enumerable<ScheduleWhereInput>
+    NOT?: Enumerable<ScheduleWhereInput>
+    id?: IntFilter | number
+    day?: IntFilter | number
+    start?: DateTimeFilter | Date | string
+    end?: DateTimeFilter | Date | string
+    startTime?: DateTimeFilter | Date | string
+    EndTime?: DateTimeFilter | Date | string
     adminId?: IntFilter | number
     Admin?: XOR<AdminRelationFilter, AdminWhereInput>
   }
 
-  export type RoleOrderByWithRelationInput = {
+  export type ScheduleOrderByWithRelationInput = {
     id?: SortOrder
-    role?: SortOrder
+    day?: SortOrder
+    start?: SortOrder
+    end?: SortOrder
+    startTime?: SortOrder
+    EndTime?: SortOrder
     adminId?: SortOrder
     Admin?: AdminOrderByWithRelationInput
   }
 
-  export type RoleWhereUniqueInput = {
+  export type ScheduleWhereUniqueInput = {
     id?: number
   }
 
-  export type RoleOrderByWithAggregationInput = {
+  export type ScheduleOrderByWithAggregationInput = {
     id?: SortOrder
-    role?: SortOrder
+    day?: SortOrder
+    start?: SortOrder
+    end?: SortOrder
+    startTime?: SortOrder
+    EndTime?: SortOrder
     adminId?: SortOrder
-    _count?: RoleCountOrderByAggregateInput
-    _avg?: RoleAvgOrderByAggregateInput
-    _max?: RoleMaxOrderByAggregateInput
-    _min?: RoleMinOrderByAggregateInput
-    _sum?: RoleSumOrderByAggregateInput
+    _count?: ScheduleCountOrderByAggregateInput
+    _avg?: ScheduleAvgOrderByAggregateInput
+    _max?: ScheduleMaxOrderByAggregateInput
+    _min?: ScheduleMinOrderByAggregateInput
+    _sum?: ScheduleSumOrderByAggregateInput
   }
 
-  export type RoleScalarWhereWithAggregatesInput = {
-    AND?: Enumerable<RoleScalarWhereWithAggregatesInput>
-    OR?: Enumerable<RoleScalarWhereWithAggregatesInput>
-    NOT?: Enumerable<RoleScalarWhereWithAggregatesInput>
+  export type ScheduleScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<ScheduleScalarWhereWithAggregatesInput>
+    OR?: Enumerable<ScheduleScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<ScheduleScalarWhereWithAggregatesInput>
     id?: IntWithAggregatesFilter | number
-    role?: StringWithAggregatesFilter | string
+    day?: IntWithAggregatesFilter | number
+    start?: DateTimeWithAggregatesFilter | Date | string
+    end?: DateTimeWithAggregatesFilter | Date | string
+    startTime?: DateTimeWithAggregatesFilter | Date | string
+    EndTime?: DateTimeWithAggregatesFilter | Date | string
+    adminId?: IntWithAggregatesFilter | number
+  }
+
+  export type DayTimeWhereInput = {
+    AND?: Enumerable<DayTimeWhereInput>
+    OR?: Enumerable<DayTimeWhereInput>
+    NOT?: Enumerable<DayTimeWhereInput>
+    id?: IntFilter | number
+    day?: IntFilter | number
+    startTime?: DateTimeFilter | Date | string
+    endTime?: DateTimeFilter | Date | string
+    adminId?: IntFilter | number
+    Admin?: XOR<AdminRelationFilter, AdminWhereInput>
+  }
+
+  export type DayTimeOrderByWithRelationInput = {
+    id?: SortOrder
+    day?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    adminId?: SortOrder
+    Admin?: AdminOrderByWithRelationInput
+  }
+
+  export type DayTimeWhereUniqueInput = {
+    id?: number
+    adminId?: number
+  }
+
+  export type DayTimeOrderByWithAggregationInput = {
+    id?: SortOrder
+    day?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    adminId?: SortOrder
+    _count?: DayTimeCountOrderByAggregateInput
+    _avg?: DayTimeAvgOrderByAggregateInput
+    _max?: DayTimeMaxOrderByAggregateInput
+    _min?: DayTimeMinOrderByAggregateInput
+    _sum?: DayTimeSumOrderByAggregateInput
+  }
+
+  export type DayTimeScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<DayTimeScalarWhereWithAggregatesInput>
+    OR?: Enumerable<DayTimeScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<DayTimeScalarWhereWithAggregatesInput>
+    id?: IntWithAggregatesFilter | number
+    day?: IntWithAggregatesFilter | number
+    startTime?: DateTimeWithAggregatesFilter | Date | string
+    endTime?: DateTimeWithAggregatesFilter | Date | string
     adminId?: IntWithAggregatesFilter | number
   }
 
@@ -9289,6 +13647,7 @@ export namespace Prisma {
     parentId?: IntFilter | number
     Parent?: XOR<ParentRelationFilter, ParentWhereInput>
     Meeting?: MeetingListRelationFilter
+    RequestedMeetings?: RequestedMeetingsListRelationFilter
     StudentInfo?: StudentInfoListRelationFilter
     Subject?: SubjectListRelationFilter
   }
@@ -9301,6 +13660,7 @@ export namespace Prisma {
     parentId?: SortOrder
     Parent?: ParentOrderByWithRelationInput
     Meeting?: MeetingOrderByRelationAggregateInput
+    RequestedMeetings?: RequestedMeetingsOrderByRelationAggregateInput
     StudentInfo?: StudentInfoOrderByRelationAggregateInput
     Subject?: SubjectOrderByRelationAggregateInput
   }
@@ -9413,6 +13773,59 @@ export namespace Prisma {
     studentId?: IntWithAggregatesFilter | number
   }
 
+  export type RequestedMeetingsWhereInput = {
+    AND?: Enumerable<RequestedMeetingsWhereInput>
+    OR?: Enumerable<RequestedMeetingsWhereInput>
+    NOT?: Enumerable<RequestedMeetingsWhereInput>
+    id?: IntFilter | number
+    meetingReason?: StringFilter | string
+    parentId?: IntFilter | number
+    studentId?: IntFilter | number
+    adminId?: IntFilter | number
+    Admin?: XOR<AdminRelationFilter, AdminWhereInput>
+    Parent?: XOR<ParentRelationFilter, ParentWhereInput>
+    Student?: XOR<StudentRelationFilter, StudentWhereInput>
+  }
+
+  export type RequestedMeetingsOrderByWithRelationInput = {
+    id?: SortOrder
+    meetingReason?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    adminId?: SortOrder
+    Admin?: AdminOrderByWithRelationInput
+    Parent?: ParentOrderByWithRelationInput
+    Student?: StudentOrderByWithRelationInput
+  }
+
+  export type RequestedMeetingsWhereUniqueInput = {
+    id?: number
+  }
+
+  export type RequestedMeetingsOrderByWithAggregationInput = {
+    id?: SortOrder
+    meetingReason?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    adminId?: SortOrder
+    _count?: RequestedMeetingsCountOrderByAggregateInput
+    _avg?: RequestedMeetingsAvgOrderByAggregateInput
+    _max?: RequestedMeetingsMaxOrderByAggregateInput
+    _min?: RequestedMeetingsMinOrderByAggregateInput
+    _sum?: RequestedMeetingsSumOrderByAggregateInput
+  }
+
+  export type RequestedMeetingsScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<RequestedMeetingsScalarWhereWithAggregatesInput>
+    OR?: Enumerable<RequestedMeetingsScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<RequestedMeetingsScalarWhereWithAggregatesInput>
+    id?: IntWithAggregatesFilter | number
+    meetingReason?: StringWithAggregatesFilter | string
+    parentId?: IntWithAggregatesFilter | number
+    studentId?: IntWithAggregatesFilter | number
+    adminId?: IntWithAggregatesFilter | number
+  }
+
   export type MeetingWhereInput = {
     AND?: Enumerable<MeetingWhereInput>
     OR?: Enumerable<MeetingWhereInput>
@@ -9421,12 +13834,14 @@ export namespace Prisma {
     meetingDay?: DateTimeFilter | Date | string
     meetingStatus?: BoolFilter | boolean
     meetingReason?: StringNullableFilter | string | null
-    adminId?: IntFilter | number
+    adminId?: IntNullableFilter | number | null
+    facultyId?: IntNullableFilter | number | null
     studentId?: IntFilter | number
     parentId?: IntFilter | number
     meetingStartTime?: StringFilter | string
     meetingEndTime?: StringFilter | string
-    Admin?: XOR<AdminRelationFilter, AdminWhereInput>
+    Admin?: XOR<AdminRelationFilter, AdminWhereInput> | null
+    Faculty?: XOR<FacultyRelationFilter, FacultyWhereInput> | null
     Parent?: XOR<ParentRelationFilter, ParentWhereInput>
     Student?: XOR<StudentRelationFilter, StudentWhereInput>
     Feedback?: FeedbackListRelationFilter
@@ -9438,11 +13853,13 @@ export namespace Prisma {
     meetingStatus?: SortOrder
     meetingReason?: SortOrder
     adminId?: SortOrder
+    facultyId?: SortOrder
     studentId?: SortOrder
     parentId?: SortOrder
     meetingStartTime?: SortOrder
     meetingEndTime?: SortOrder
     Admin?: AdminOrderByWithRelationInput
+    Faculty?: FacultyOrderByWithRelationInput
     Parent?: ParentOrderByWithRelationInput
     Student?: StudentOrderByWithRelationInput
     Feedback?: FeedbackOrderByRelationAggregateInput
@@ -9458,6 +13875,7 @@ export namespace Prisma {
     meetingStatus?: SortOrder
     meetingReason?: SortOrder
     adminId?: SortOrder
+    facultyId?: SortOrder
     studentId?: SortOrder
     parentId?: SortOrder
     meetingStartTime?: SortOrder
@@ -9477,7 +13895,8 @@ export namespace Prisma {
     meetingDay?: DateTimeWithAggregatesFilter | Date | string
     meetingStatus?: BoolWithAggregatesFilter | boolean
     meetingReason?: StringNullableWithAggregatesFilter | string | null
-    adminId?: IntWithAggregatesFilter | number
+    adminId?: IntNullableWithAggregatesFilter | number | null
+    facultyId?: IntNullableWithAggregatesFilter | number | null
     studentId?: IntWithAggregatesFilter | number
     parentId?: IntWithAggregatesFilter | number
     meetingStartTime?: StringWithAggregatesFilter | string
@@ -9537,6 +13956,7 @@ export namespace Prisma {
     parentPassword: string
     Meeting?: MeetingCreateNestedManyWithoutParentInput
     Student?: StudentCreateNestedManyWithoutParentInput
+    RequestedMeetings?: RequestedMeetingsCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateInput = {
@@ -9548,6 +13968,7 @@ export namespace Prisma {
     parentPassword: string
     Meeting?: MeetingUncheckedCreateNestedManyWithoutParentInput
     Student?: StudentUncheckedCreateNestedManyWithoutParentInput
+    RequestedMeetings?: RequestedMeetingsUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentUpdateInput = {
@@ -9558,6 +13979,7 @@ export namespace Prisma {
     parentPassword?: StringFieldUpdateOperationsInput | string
     Meeting?: MeetingUpdateManyWithoutParentNestedInput
     Student?: StudentUpdateManyWithoutParentNestedInput
+    RequestedMeetings?: RequestedMeetingsUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateInput = {
@@ -9569,6 +13991,7 @@ export namespace Prisma {
     parentPassword?: StringFieldUpdateOperationsInput | string
     Meeting?: MeetingUncheckedUpdateManyWithoutParentNestedInput
     Student?: StudentUncheckedUpdateManyWithoutParentNestedInput
+    RequestedMeetings?: RequestedMeetingsUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type ParentCreateManyInput = {
@@ -9605,7 +14028,9 @@ export namespace Prisma {
     adminEmail: string
     adminDesignation?: string | null
     Meeting?: MeetingCreateNestedManyWithoutAdminInput
-    Role?: RoleCreateNestedManyWithoutAdminInput
+    Schedule?: ScheduleCreateNestedManyWithoutAdminInput
+    RequestedMeetings?: RequestedMeetingsCreateNestedManyWithoutAdminInput
+    DayTime?: DayTimeCreateNestedManyWithoutAdminInput
   }
 
   export type AdminUncheckedCreateInput = {
@@ -9617,7 +14042,9 @@ export namespace Prisma {
     adminEmail: string
     adminDesignation?: string | null
     Meeting?: MeetingUncheckedCreateNestedManyWithoutAdminInput
-    Role?: RoleUncheckedCreateNestedManyWithoutAdminInput
+    Schedule?: ScheduleUncheckedCreateNestedManyWithoutAdminInput
+    RequestedMeetings?: RequestedMeetingsUncheckedCreateNestedManyWithoutAdminInput
+    DayTime?: DayTimeUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type AdminUpdateInput = {
@@ -9628,7 +14055,9 @@ export namespace Prisma {
     adminEmail?: StringFieldUpdateOperationsInput | string
     adminDesignation?: NullableStringFieldUpdateOperationsInput | string | null
     Meeting?: MeetingUpdateManyWithoutAdminNestedInput
-    Role?: RoleUpdateManyWithoutAdminNestedInput
+    Schedule?: ScheduleUpdateManyWithoutAdminNestedInput
+    RequestedMeetings?: RequestedMeetingsUpdateManyWithoutAdminNestedInput
+    DayTime?: DayTimeUpdateManyWithoutAdminNestedInput
   }
 
   export type AdminUncheckedUpdateInput = {
@@ -9640,7 +14069,9 @@ export namespace Prisma {
     adminEmail?: StringFieldUpdateOperationsInput | string
     adminDesignation?: NullableStringFieldUpdateOperationsInput | string | null
     Meeting?: MeetingUncheckedUpdateManyWithoutAdminNestedInput
-    Role?: RoleUncheckedUpdateManyWithoutAdminNestedInput
+    Schedule?: ScheduleUncheckedUpdateManyWithoutAdminNestedInput
+    RequestedMeetings?: RequestedMeetingsUncheckedUpdateManyWithoutAdminNestedInput
+    DayTime?: DayTimeUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type AdminCreateManyInput = {
@@ -9672,41 +14103,199 @@ export namespace Prisma {
     adminDesignation?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type RoleCreateInput = {
-    role: string
-    Admin: AdminCreateNestedOneWithoutRoleInput
+  export type DepartmentCreateInput = {
+    departmentName: string
+    Faculty?: FacultyCreateNestedManyWithoutDepartmentInput
   }
 
-  export type RoleUncheckedCreateInput = {
+  export type DepartmentUncheckedCreateInput = {
     id?: number
-    role: string
+    departmentName: string
+    Faculty?: FacultyUncheckedCreateNestedManyWithoutDepartmentInput
+  }
+
+  export type DepartmentUpdateInput = {
+    departmentName?: StringFieldUpdateOperationsInput | string
+    Faculty?: FacultyUpdateManyWithoutDepartmentNestedInput
+  }
+
+  export type DepartmentUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    departmentName?: StringFieldUpdateOperationsInput | string
+    Faculty?: FacultyUncheckedUpdateManyWithoutDepartmentNestedInput
+  }
+
+  export type DepartmentCreateManyInput = {
+    id?: number
+    departmentName: string
+  }
+
+  export type DepartmentUpdateManyMutationInput = {
+    departmentName?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DepartmentUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    departmentName?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type FacultyCreateInput = {
+    userName: string
+    Meeting?: MeetingCreateNestedManyWithoutFacultyInput
+    Department: DepartmentCreateNestedOneWithoutFacultyInput
+  }
+
+  export type FacultyUncheckedCreateInput = {
+    id?: number
+    userName: string
+    departmentId: number
+    Meeting?: MeetingUncheckedCreateNestedManyWithoutFacultyInput
+  }
+
+  export type FacultyUpdateInput = {
+    userName?: StringFieldUpdateOperationsInput | string
+    Meeting?: MeetingUpdateManyWithoutFacultyNestedInput
+    Department?: DepartmentUpdateOneRequiredWithoutFacultyNestedInput
+  }
+
+  export type FacultyUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userName?: StringFieldUpdateOperationsInput | string
+    departmentId?: IntFieldUpdateOperationsInput | number
+    Meeting?: MeetingUncheckedUpdateManyWithoutFacultyNestedInput
+  }
+
+  export type FacultyCreateManyInput = {
+    id?: number
+    userName: string
+    departmentId: number
+  }
+
+  export type FacultyUpdateManyMutationInput = {
+    userName?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type FacultyUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userName?: StringFieldUpdateOperationsInput | string
+    departmentId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type ScheduleCreateInput = {
+    day: number
+    start: Date | string
+    end: Date | string
+    startTime: Date | string
+    EndTime: Date | string
+    Admin: AdminCreateNestedOneWithoutScheduleInput
+  }
+
+  export type ScheduleUncheckedCreateInput = {
+    id?: number
+    day: number
+    start: Date | string
+    end: Date | string
+    startTime: Date | string
+    EndTime: Date | string
     adminId: number
   }
 
-  export type RoleUpdateInput = {
-    role?: StringFieldUpdateOperationsInput | string
-    Admin?: AdminUpdateOneRequiredWithoutRoleNestedInput
+  export type ScheduleUpdateInput = {
+    day?: IntFieldUpdateOperationsInput | number
+    start?: DateTimeFieldUpdateOperationsInput | Date | string
+    end?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    EndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    Admin?: AdminUpdateOneRequiredWithoutScheduleNestedInput
   }
 
-  export type RoleUncheckedUpdateInput = {
+  export type ScheduleUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    role?: StringFieldUpdateOperationsInput | string
+    day?: IntFieldUpdateOperationsInput | number
+    start?: DateTimeFieldUpdateOperationsInput | Date | string
+    end?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    EndTime?: DateTimeFieldUpdateOperationsInput | Date | string
     adminId?: IntFieldUpdateOperationsInput | number
   }
 
-  export type RoleCreateManyInput = {
+  export type ScheduleCreateManyInput = {
     id?: number
-    role: string
+    day: number
+    start: Date | string
+    end: Date | string
+    startTime: Date | string
+    EndTime: Date | string
     adminId: number
   }
 
-  export type RoleUpdateManyMutationInput = {
-    role?: StringFieldUpdateOperationsInput | string
+  export type ScheduleUpdateManyMutationInput = {
+    day?: IntFieldUpdateOperationsInput | number
+    start?: DateTimeFieldUpdateOperationsInput | Date | string
+    end?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    EndTime?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type RoleUncheckedUpdateManyInput = {
+  export type ScheduleUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    role?: StringFieldUpdateOperationsInput | string
+    day?: IntFieldUpdateOperationsInput | number
+    start?: DateTimeFieldUpdateOperationsInput | Date | string
+    end?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    EndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    adminId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type DayTimeCreateInput = {
+    day: number
+    startTime: Date | string
+    endTime: Date | string
+    Admin: AdminCreateNestedOneWithoutDayTimeInput
+  }
+
+  export type DayTimeUncheckedCreateInput = {
+    id?: number
+    day: number
+    startTime: Date | string
+    endTime: Date | string
+    adminId: number
+  }
+
+  export type DayTimeUpdateInput = {
+    day?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    Admin?: AdminUpdateOneRequiredWithoutDayTimeNestedInput
+  }
+
+  export type DayTimeUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    day?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    adminId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type DayTimeCreateManyInput = {
+    id?: number
+    day: number
+    startTime: Date | string
+    endTime: Date | string
+    adminId: number
+  }
+
+  export type DayTimeUpdateManyMutationInput = {
+    day?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DayTimeUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    day?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     adminId?: IntFieldUpdateOperationsInput | number
   }
 
@@ -9716,6 +14305,7 @@ export namespace Prisma {
     studentPassword: string
     Parent: ParentCreateNestedOneWithoutStudentInput
     Meeting?: MeetingCreateNestedManyWithoutStudentInput
+    RequestedMeetings?: RequestedMeetingsCreateNestedManyWithoutStudentInput
     StudentInfo?: StudentInfoCreateNestedManyWithoutStudentInput
     Subject?: SubjectCreateNestedManyWithoutStudentInput
   }
@@ -9727,6 +14317,7 @@ export namespace Prisma {
     studentPassword: string
     parentId: number
     Meeting?: MeetingUncheckedCreateNestedManyWithoutStudentInput
+    RequestedMeetings?: RequestedMeetingsUncheckedCreateNestedManyWithoutStudentInput
     StudentInfo?: StudentInfoUncheckedCreateNestedManyWithoutStudentInput
     Subject?: SubjectUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -9737,6 +14328,7 @@ export namespace Prisma {
     studentPassword?: StringFieldUpdateOperationsInput | string
     Parent?: ParentUpdateOneRequiredWithoutStudentNestedInput
     Meeting?: MeetingUpdateManyWithoutStudentNestedInput
+    RequestedMeetings?: RequestedMeetingsUpdateManyWithoutStudentNestedInput
     StudentInfo?: StudentInfoUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUpdateManyWithoutStudentNestedInput
   }
@@ -9748,6 +14340,7 @@ export namespace Prisma {
     studentPassword?: StringFieldUpdateOperationsInput | string
     parentId?: IntFieldUpdateOperationsInput | number
     Meeting?: MeetingUncheckedUpdateManyWithoutStudentNestedInput
+    RequestedMeetings?: RequestedMeetingsUncheckedUpdateManyWithoutStudentNestedInput
     StudentInfo?: StudentInfoUncheckedUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -9849,13 +14442,64 @@ export namespace Prisma {
     studentId?: IntFieldUpdateOperationsInput | number
   }
 
+  export type RequestedMeetingsCreateInput = {
+    meetingReason: string
+    Admin: AdminCreateNestedOneWithoutRequestedMeetingsInput
+    Parent: ParentCreateNestedOneWithoutRequestedMeetingsInput
+    Student: StudentCreateNestedOneWithoutRequestedMeetingsInput
+  }
+
+  export type RequestedMeetingsUncheckedCreateInput = {
+    id?: number
+    meetingReason: string
+    parentId: number
+    studentId: number
+    adminId: number
+  }
+
+  export type RequestedMeetingsUpdateInput = {
+    meetingReason?: StringFieldUpdateOperationsInput | string
+    Admin?: AdminUpdateOneRequiredWithoutRequestedMeetingsNestedInput
+    Parent?: ParentUpdateOneRequiredWithoutRequestedMeetingsNestedInput
+    Student?: StudentUpdateOneRequiredWithoutRequestedMeetingsNestedInput
+  }
+
+  export type RequestedMeetingsUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    meetingReason?: StringFieldUpdateOperationsInput | string
+    parentId?: IntFieldUpdateOperationsInput | number
+    studentId?: IntFieldUpdateOperationsInput | number
+    adminId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type RequestedMeetingsCreateManyInput = {
+    id?: number
+    meetingReason: string
+    parentId: number
+    studentId: number
+    adminId: number
+  }
+
+  export type RequestedMeetingsUpdateManyMutationInput = {
+    meetingReason?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type RequestedMeetingsUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    meetingReason?: StringFieldUpdateOperationsInput | string
+    parentId?: IntFieldUpdateOperationsInput | number
+    studentId?: IntFieldUpdateOperationsInput | number
+    adminId?: IntFieldUpdateOperationsInput | number
+  }
+
   export type MeetingCreateInput = {
     meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     meetingStartTime: string
     meetingEndTime: string
-    Admin: AdminCreateNestedOneWithoutMeetingInput
+    Admin?: AdminCreateNestedOneWithoutMeetingInput
+    Faculty?: FacultyCreateNestedOneWithoutMeetingInput
     Parent: ParentCreateNestedOneWithoutMeetingInput
     Student: StudentCreateNestedOneWithoutMeetingInput
     Feedback?: FeedbackCreateNestedManyWithoutMeetingInput
@@ -9866,7 +14510,8 @@ export namespace Prisma {
     meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
-    adminId: number
+    adminId?: number | null
+    facultyId?: number | null
     studentId: number
     parentId: number
     meetingStartTime: string
@@ -9880,7 +14525,8 @@ export namespace Prisma {
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingStartTime?: StringFieldUpdateOperationsInput | string
     meetingEndTime?: StringFieldUpdateOperationsInput | string
-    Admin?: AdminUpdateOneRequiredWithoutMeetingNestedInput
+    Admin?: AdminUpdateOneWithoutMeetingNestedInput
+    Faculty?: FacultyUpdateOneWithoutMeetingNestedInput
     Parent?: ParentUpdateOneRequiredWithoutMeetingNestedInput
     Student?: StudentUpdateOneRequiredWithoutMeetingNestedInput
     Feedback?: FeedbackUpdateManyWithoutMeetingNestedInput
@@ -9891,7 +14537,8 @@ export namespace Prisma {
     meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
-    adminId?: IntFieldUpdateOperationsInput | number
+    adminId?: NullableIntFieldUpdateOperationsInput | number | null
+    facultyId?: NullableIntFieldUpdateOperationsInput | number | null
     studentId?: IntFieldUpdateOperationsInput | number
     parentId?: IntFieldUpdateOperationsInput | number
     meetingStartTime?: StringFieldUpdateOperationsInput | string
@@ -9904,7 +14551,8 @@ export namespace Prisma {
     meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
-    adminId: number
+    adminId?: number | null
+    facultyId?: number | null
     studentId: number
     parentId: number
     meetingStartTime: string
@@ -9924,7 +14572,8 @@ export namespace Prisma {
     meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
-    adminId?: IntFieldUpdateOperationsInput | number
+    adminId?: NullableIntFieldUpdateOperationsInput | number | null
+    facultyId?: NullableIntFieldUpdateOperationsInput | number | null
     studentId?: IntFieldUpdateOperationsInput | number
     parentId?: IntFieldUpdateOperationsInput | number
     meetingStartTime?: StringFieldUpdateOperationsInput | string
@@ -9998,7 +14647,6 @@ export namespace Prisma {
     contains?: string
     startsWith?: string
     endsWith?: string
-    mode?: QueryMode
     not?: NestedStringFilter | string
   }
 
@@ -10014,11 +14662,21 @@ export namespace Prisma {
     none?: StudentWhereInput
   }
 
+  export type RequestedMeetingsListRelationFilter = {
+    every?: RequestedMeetingsWhereInput
+    some?: RequestedMeetingsWhereInput
+    none?: RequestedMeetingsWhereInput
+  }
+
   export type MeetingOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type StudentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RequestedMeetingsOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -10084,7 +14742,6 @@ export namespace Prisma {
     contains?: string
     startsWith?: string
     endsWith?: string
-    mode?: QueryMode
     not?: NestedStringWithAggregatesFilter | string
     _count?: NestedIntFilter
     _min?: NestedStringFilter
@@ -10102,17 +14759,26 @@ export namespace Prisma {
     contains?: string
     startsWith?: string
     endsWith?: string
-    mode?: QueryMode
     not?: NestedStringNullableFilter | string | null
   }
 
-  export type RoleListRelationFilter = {
-    every?: RoleWhereInput
-    some?: RoleWhereInput
-    none?: RoleWhereInput
+  export type ScheduleListRelationFilter = {
+    every?: ScheduleWhereInput
+    some?: ScheduleWhereInput
+    none?: ScheduleWhereInput
   }
 
-  export type RoleOrderByRelationAggregateInput = {
+  export type DayTimeListRelationFilter = {
+    every?: DayTimeWhereInput
+    some?: DayTimeWhereInput
+    none?: DayTimeWhereInput
+  }
+
+  export type ScheduleOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DayTimeOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -10165,11 +14831,87 @@ export namespace Prisma {
     contains?: string
     startsWith?: string
     endsWith?: string
-    mode?: QueryMode
     not?: NestedStringNullableWithAggregatesFilter | string | null
     _count?: NestedIntNullableFilter
     _min?: NestedStringNullableFilter
     _max?: NestedStringNullableFilter
+  }
+
+  export type FacultyListRelationFilter = {
+    every?: FacultyWhereInput
+    some?: FacultyWhereInput
+    none?: FacultyWhereInput
+  }
+
+  export type FacultyOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DepartmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    departmentName?: SortOrder
+  }
+
+  export type DepartmentAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type DepartmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    departmentName?: SortOrder
+  }
+
+  export type DepartmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    departmentName?: SortOrder
+  }
+
+  export type DepartmentSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type DepartmentRelationFilter = {
+    is?: DepartmentWhereInput
+    isNot?: DepartmentWhereInput
+  }
+
+  export type FacultyCountOrderByAggregateInput = {
+    id?: SortOrder
+    userName?: SortOrder
+    departmentId?: SortOrder
+  }
+
+  export type FacultyAvgOrderByAggregateInput = {
+    id?: SortOrder
+    departmentId?: SortOrder
+  }
+
+  export type FacultyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userName?: SortOrder
+    departmentId?: SortOrder
+  }
+
+  export type FacultyMinOrderByAggregateInput = {
+    id?: SortOrder
+    userName?: SortOrder
+    departmentId?: SortOrder
+  }
+
+  export type FacultySumOrderByAggregateInput = {
+    id?: SortOrder
+    departmentId?: SortOrder
+  }
+
+  export type DateTimeFilter = {
+    equals?: Date | string
+    in?: Enumerable<Date> | Enumerable<string>
+    notIn?: Enumerable<Date> | Enumerable<string>
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeFilter | Date | string
   }
 
   export type AdminRelationFilter = {
@@ -10177,31 +14919,95 @@ export namespace Prisma {
     isNot?: AdminWhereInput
   }
 
-  export type RoleCountOrderByAggregateInput = {
+  export type ScheduleCountOrderByAggregateInput = {
     id?: SortOrder
-    role?: SortOrder
+    day?: SortOrder
+    start?: SortOrder
+    end?: SortOrder
+    startTime?: SortOrder
+    EndTime?: SortOrder
     adminId?: SortOrder
   }
 
-  export type RoleAvgOrderByAggregateInput = {
+  export type ScheduleAvgOrderByAggregateInput = {
     id?: SortOrder
+    day?: SortOrder
     adminId?: SortOrder
   }
 
-  export type RoleMaxOrderByAggregateInput = {
+  export type ScheduleMaxOrderByAggregateInput = {
     id?: SortOrder
-    role?: SortOrder
+    day?: SortOrder
+    start?: SortOrder
+    end?: SortOrder
+    startTime?: SortOrder
+    EndTime?: SortOrder
     adminId?: SortOrder
   }
 
-  export type RoleMinOrderByAggregateInput = {
+  export type ScheduleMinOrderByAggregateInput = {
     id?: SortOrder
-    role?: SortOrder
+    day?: SortOrder
+    start?: SortOrder
+    end?: SortOrder
+    startTime?: SortOrder
+    EndTime?: SortOrder
     adminId?: SortOrder
   }
 
-  export type RoleSumOrderByAggregateInput = {
+  export type ScheduleSumOrderByAggregateInput = {
     id?: SortOrder
+    day?: SortOrder
+    adminId?: SortOrder
+  }
+
+  export type DateTimeWithAggregatesFilter = {
+    equals?: Date | string
+    in?: Enumerable<Date> | Enumerable<string>
+    notIn?: Enumerable<Date> | Enumerable<string>
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeWithAggregatesFilter | Date | string
+    _count?: NestedIntFilter
+    _min?: NestedDateTimeFilter
+    _max?: NestedDateTimeFilter
+  }
+
+  export type DayTimeCountOrderByAggregateInput = {
+    id?: SortOrder
+    day?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    adminId?: SortOrder
+  }
+
+  export type DayTimeAvgOrderByAggregateInput = {
+    id?: SortOrder
+    day?: SortOrder
+    adminId?: SortOrder
+  }
+
+  export type DayTimeMaxOrderByAggregateInput = {
+    id?: SortOrder
+    day?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    adminId?: SortOrder
+  }
+
+  export type DayTimeMinOrderByAggregateInput = {
+    id?: SortOrder
+    day?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    adminId?: SortOrder
+  }
+
+  export type DayTimeSumOrderByAggregateInput = {
+    id?: SortOrder
+    day?: SortOrder
     adminId?: SortOrder
   }
 
@@ -10365,15 +15171,58 @@ export namespace Prisma {
     studentId?: SortOrder
   }
 
-  export type DateTimeFilter = {
-    equals?: Date | string
-    in?: Enumerable<Date> | Enumerable<string>
-    notIn?: Enumerable<Date> | Enumerable<string>
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeFilter | Date | string
+  export type RequestedMeetingsCountOrderByAggregateInput = {
+    id?: SortOrder
+    meetingReason?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    adminId?: SortOrder
+  }
+
+  export type RequestedMeetingsAvgOrderByAggregateInput = {
+    id?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    adminId?: SortOrder
+  }
+
+  export type RequestedMeetingsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    meetingReason?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    adminId?: SortOrder
+  }
+
+  export type RequestedMeetingsMinOrderByAggregateInput = {
+    id?: SortOrder
+    meetingReason?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    adminId?: SortOrder
+  }
+
+  export type RequestedMeetingsSumOrderByAggregateInput = {
+    id?: SortOrder
+    parentId?: SortOrder
+    studentId?: SortOrder
+    adminId?: SortOrder
+  }
+
+  export type IntNullableFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableFilter | number | null
+  }
+
+  export type FacultyRelationFilter = {
+    is?: FacultyWhereInput | null
+    isNot?: FacultyWhereInput | null
   }
 
   export type FeedbackListRelationFilter = {
@@ -10392,6 +15241,7 @@ export namespace Prisma {
     meetingStatus?: SortOrder
     meetingReason?: SortOrder
     adminId?: SortOrder
+    facultyId?: SortOrder
     studentId?: SortOrder
     parentId?: SortOrder
     meetingStartTime?: SortOrder
@@ -10401,6 +15251,7 @@ export namespace Prisma {
   export type MeetingAvgOrderByAggregateInput = {
     id?: SortOrder
     adminId?: SortOrder
+    facultyId?: SortOrder
     studentId?: SortOrder
     parentId?: SortOrder
   }
@@ -10411,6 +15262,7 @@ export namespace Prisma {
     meetingStatus?: SortOrder
     meetingReason?: SortOrder
     adminId?: SortOrder
+    facultyId?: SortOrder
     studentId?: SortOrder
     parentId?: SortOrder
     meetingStartTime?: SortOrder
@@ -10423,6 +15275,7 @@ export namespace Prisma {
     meetingStatus?: SortOrder
     meetingReason?: SortOrder
     adminId?: SortOrder
+    facultyId?: SortOrder
     studentId?: SortOrder
     parentId?: SortOrder
     meetingStartTime?: SortOrder
@@ -10432,22 +15285,25 @@ export namespace Prisma {
   export type MeetingSumOrderByAggregateInput = {
     id?: SortOrder
     adminId?: SortOrder
+    facultyId?: SortOrder
     studentId?: SortOrder
     parentId?: SortOrder
   }
 
-  export type DateTimeWithAggregatesFilter = {
-    equals?: Date | string
-    in?: Enumerable<Date> | Enumerable<string>
-    notIn?: Enumerable<Date> | Enumerable<string>
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeWithAggregatesFilter | Date | string
-    _count?: NestedIntFilter
-    _min?: NestedDateTimeFilter
-    _max?: NestedDateTimeFilter
+  export type IntNullableWithAggregatesFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableWithAggregatesFilter | number | null
+    _count?: NestedIntNullableFilter
+    _avg?: NestedFloatNullableFilter
+    _sum?: NestedIntNullableFilter
+    _min?: NestedIntNullableFilter
+    _max?: NestedIntNullableFilter
   }
 
   export type MeetingRelationFilter = {
@@ -10500,6 +15356,13 @@ export namespace Prisma {
     connect?: Enumerable<StudentWhereUniqueInput>
   }
 
+  export type RequestedMeetingsCreateNestedManyWithoutParentInput = {
+    create?: XOR<Enumerable<RequestedMeetingsCreateWithoutParentInput>, Enumerable<RequestedMeetingsUncheckedCreateWithoutParentInput>>
+    connectOrCreate?: Enumerable<RequestedMeetingsCreateOrConnectWithoutParentInput>
+    createMany?: RequestedMeetingsCreateManyParentInputEnvelope
+    connect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+  }
+
   export type MeetingUncheckedCreateNestedManyWithoutParentInput = {
     create?: XOR<Enumerable<MeetingCreateWithoutParentInput>, Enumerable<MeetingUncheckedCreateWithoutParentInput>>
     connectOrCreate?: Enumerable<MeetingCreateOrConnectWithoutParentInput>
@@ -10512,6 +15375,13 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<StudentCreateOrConnectWithoutParentInput>
     createMany?: StudentCreateManyParentInputEnvelope
     connect?: Enumerable<StudentWhereUniqueInput>
+  }
+
+  export type RequestedMeetingsUncheckedCreateNestedManyWithoutParentInput = {
+    create?: XOR<Enumerable<RequestedMeetingsCreateWithoutParentInput>, Enumerable<RequestedMeetingsUncheckedCreateWithoutParentInput>>
+    connectOrCreate?: Enumerable<RequestedMeetingsCreateOrConnectWithoutParentInput>
+    createMany?: RequestedMeetingsCreateManyParentInputEnvelope
+    connect?: Enumerable<RequestedMeetingsWhereUniqueInput>
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -10544,6 +15414,20 @@ export namespace Prisma {
     update?: Enumerable<StudentUpdateWithWhereUniqueWithoutParentInput>
     updateMany?: Enumerable<StudentUpdateManyWithWhereWithoutParentInput>
     deleteMany?: Enumerable<StudentScalarWhereInput>
+  }
+
+  export type RequestedMeetingsUpdateManyWithoutParentNestedInput = {
+    create?: XOR<Enumerable<RequestedMeetingsCreateWithoutParentInput>, Enumerable<RequestedMeetingsUncheckedCreateWithoutParentInput>>
+    connectOrCreate?: Enumerable<RequestedMeetingsCreateOrConnectWithoutParentInput>
+    upsert?: Enumerable<RequestedMeetingsUpsertWithWhereUniqueWithoutParentInput>
+    createMany?: RequestedMeetingsCreateManyParentInputEnvelope
+    set?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    disconnect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    delete?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    connect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    update?: Enumerable<RequestedMeetingsUpdateWithWhereUniqueWithoutParentInput>
+    updateMany?: Enumerable<RequestedMeetingsUpdateManyWithWhereWithoutParentInput>
+    deleteMany?: Enumerable<RequestedMeetingsScalarWhereInput>
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -10582,6 +15466,20 @@ export namespace Prisma {
     deleteMany?: Enumerable<StudentScalarWhereInput>
   }
 
+  export type RequestedMeetingsUncheckedUpdateManyWithoutParentNestedInput = {
+    create?: XOR<Enumerable<RequestedMeetingsCreateWithoutParentInput>, Enumerable<RequestedMeetingsUncheckedCreateWithoutParentInput>>
+    connectOrCreate?: Enumerable<RequestedMeetingsCreateOrConnectWithoutParentInput>
+    upsert?: Enumerable<RequestedMeetingsUpsertWithWhereUniqueWithoutParentInput>
+    createMany?: RequestedMeetingsCreateManyParentInputEnvelope
+    set?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    disconnect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    delete?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    connect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    update?: Enumerable<RequestedMeetingsUpdateWithWhereUniqueWithoutParentInput>
+    updateMany?: Enumerable<RequestedMeetingsUpdateManyWithWhereWithoutParentInput>
+    deleteMany?: Enumerable<RequestedMeetingsScalarWhereInput>
+  }
+
   export type MeetingCreateNestedManyWithoutAdminInput = {
     create?: XOR<Enumerable<MeetingCreateWithoutAdminInput>, Enumerable<MeetingUncheckedCreateWithoutAdminInput>>
     connectOrCreate?: Enumerable<MeetingCreateOrConnectWithoutAdminInput>
@@ -10589,11 +15487,25 @@ export namespace Prisma {
     connect?: Enumerable<MeetingWhereUniqueInput>
   }
 
-  export type RoleCreateNestedManyWithoutAdminInput = {
-    create?: XOR<Enumerable<RoleCreateWithoutAdminInput>, Enumerable<RoleUncheckedCreateWithoutAdminInput>>
-    connectOrCreate?: Enumerable<RoleCreateOrConnectWithoutAdminInput>
-    createMany?: RoleCreateManyAdminInputEnvelope
-    connect?: Enumerable<RoleWhereUniqueInput>
+  export type ScheduleCreateNestedManyWithoutAdminInput = {
+    create?: XOR<Enumerable<ScheduleCreateWithoutAdminInput>, Enumerable<ScheduleUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<ScheduleCreateOrConnectWithoutAdminInput>
+    createMany?: ScheduleCreateManyAdminInputEnvelope
+    connect?: Enumerable<ScheduleWhereUniqueInput>
+  }
+
+  export type RequestedMeetingsCreateNestedManyWithoutAdminInput = {
+    create?: XOR<Enumerable<RequestedMeetingsCreateWithoutAdminInput>, Enumerable<RequestedMeetingsUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<RequestedMeetingsCreateOrConnectWithoutAdminInput>
+    createMany?: RequestedMeetingsCreateManyAdminInputEnvelope
+    connect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+  }
+
+  export type DayTimeCreateNestedManyWithoutAdminInput = {
+    create?: XOR<Enumerable<DayTimeCreateWithoutAdminInput>, Enumerable<DayTimeUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<DayTimeCreateOrConnectWithoutAdminInput>
+    createMany?: DayTimeCreateManyAdminInputEnvelope
+    connect?: Enumerable<DayTimeWhereUniqueInput>
   }
 
   export type MeetingUncheckedCreateNestedManyWithoutAdminInput = {
@@ -10603,11 +15515,25 @@ export namespace Prisma {
     connect?: Enumerable<MeetingWhereUniqueInput>
   }
 
-  export type RoleUncheckedCreateNestedManyWithoutAdminInput = {
-    create?: XOR<Enumerable<RoleCreateWithoutAdminInput>, Enumerable<RoleUncheckedCreateWithoutAdminInput>>
-    connectOrCreate?: Enumerable<RoleCreateOrConnectWithoutAdminInput>
-    createMany?: RoleCreateManyAdminInputEnvelope
-    connect?: Enumerable<RoleWhereUniqueInput>
+  export type ScheduleUncheckedCreateNestedManyWithoutAdminInput = {
+    create?: XOR<Enumerable<ScheduleCreateWithoutAdminInput>, Enumerable<ScheduleUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<ScheduleCreateOrConnectWithoutAdminInput>
+    createMany?: ScheduleCreateManyAdminInputEnvelope
+    connect?: Enumerable<ScheduleWhereUniqueInput>
+  }
+
+  export type RequestedMeetingsUncheckedCreateNestedManyWithoutAdminInput = {
+    create?: XOR<Enumerable<RequestedMeetingsCreateWithoutAdminInput>, Enumerable<RequestedMeetingsUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<RequestedMeetingsCreateOrConnectWithoutAdminInput>
+    createMany?: RequestedMeetingsCreateManyAdminInputEnvelope
+    connect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+  }
+
+  export type DayTimeUncheckedCreateNestedManyWithoutAdminInput = {
+    create?: XOR<Enumerable<DayTimeCreateWithoutAdminInput>, Enumerable<DayTimeUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<DayTimeCreateOrConnectWithoutAdminInput>
+    createMany?: DayTimeCreateManyAdminInputEnvelope
+    connect?: Enumerable<DayTimeWhereUniqueInput>
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -10628,18 +15554,46 @@ export namespace Prisma {
     deleteMany?: Enumerable<MeetingScalarWhereInput>
   }
 
-  export type RoleUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<Enumerable<RoleCreateWithoutAdminInput>, Enumerable<RoleUncheckedCreateWithoutAdminInput>>
-    connectOrCreate?: Enumerable<RoleCreateOrConnectWithoutAdminInput>
-    upsert?: Enumerable<RoleUpsertWithWhereUniqueWithoutAdminInput>
-    createMany?: RoleCreateManyAdminInputEnvelope
-    set?: Enumerable<RoleWhereUniqueInput>
-    disconnect?: Enumerable<RoleWhereUniqueInput>
-    delete?: Enumerable<RoleWhereUniqueInput>
-    connect?: Enumerable<RoleWhereUniqueInput>
-    update?: Enumerable<RoleUpdateWithWhereUniqueWithoutAdminInput>
-    updateMany?: Enumerable<RoleUpdateManyWithWhereWithoutAdminInput>
-    deleteMany?: Enumerable<RoleScalarWhereInput>
+  export type ScheduleUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<Enumerable<ScheduleCreateWithoutAdminInput>, Enumerable<ScheduleUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<ScheduleCreateOrConnectWithoutAdminInput>
+    upsert?: Enumerable<ScheduleUpsertWithWhereUniqueWithoutAdminInput>
+    createMany?: ScheduleCreateManyAdminInputEnvelope
+    set?: Enumerable<ScheduleWhereUniqueInput>
+    disconnect?: Enumerable<ScheduleWhereUniqueInput>
+    delete?: Enumerable<ScheduleWhereUniqueInput>
+    connect?: Enumerable<ScheduleWhereUniqueInput>
+    update?: Enumerable<ScheduleUpdateWithWhereUniqueWithoutAdminInput>
+    updateMany?: Enumerable<ScheduleUpdateManyWithWhereWithoutAdminInput>
+    deleteMany?: Enumerable<ScheduleScalarWhereInput>
+  }
+
+  export type RequestedMeetingsUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<Enumerable<RequestedMeetingsCreateWithoutAdminInput>, Enumerable<RequestedMeetingsUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<RequestedMeetingsCreateOrConnectWithoutAdminInput>
+    upsert?: Enumerable<RequestedMeetingsUpsertWithWhereUniqueWithoutAdminInput>
+    createMany?: RequestedMeetingsCreateManyAdminInputEnvelope
+    set?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    disconnect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    delete?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    connect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    update?: Enumerable<RequestedMeetingsUpdateWithWhereUniqueWithoutAdminInput>
+    updateMany?: Enumerable<RequestedMeetingsUpdateManyWithWhereWithoutAdminInput>
+    deleteMany?: Enumerable<RequestedMeetingsScalarWhereInput>
+  }
+
+  export type DayTimeUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<Enumerable<DayTimeCreateWithoutAdminInput>, Enumerable<DayTimeUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<DayTimeCreateOrConnectWithoutAdminInput>
+    upsert?: Enumerable<DayTimeUpsertWithWhereUniqueWithoutAdminInput>
+    createMany?: DayTimeCreateManyAdminInputEnvelope
+    set?: Enumerable<DayTimeWhereUniqueInput>
+    disconnect?: Enumerable<DayTimeWhereUniqueInput>
+    delete?: Enumerable<DayTimeWhereUniqueInput>
+    connect?: Enumerable<DayTimeWhereUniqueInput>
+    update?: Enumerable<DayTimeUpdateWithWhereUniqueWithoutAdminInput>
+    updateMany?: Enumerable<DayTimeUpdateManyWithWhereWithoutAdminInput>
+    deleteMany?: Enumerable<DayTimeScalarWhereInput>
   }
 
   export type MeetingUncheckedUpdateManyWithoutAdminNestedInput = {
@@ -10656,32 +15610,176 @@ export namespace Prisma {
     deleteMany?: Enumerable<MeetingScalarWhereInput>
   }
 
-  export type RoleUncheckedUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<Enumerable<RoleCreateWithoutAdminInput>, Enumerable<RoleUncheckedCreateWithoutAdminInput>>
-    connectOrCreate?: Enumerable<RoleCreateOrConnectWithoutAdminInput>
-    upsert?: Enumerable<RoleUpsertWithWhereUniqueWithoutAdminInput>
-    createMany?: RoleCreateManyAdminInputEnvelope
-    set?: Enumerable<RoleWhereUniqueInput>
-    disconnect?: Enumerable<RoleWhereUniqueInput>
-    delete?: Enumerable<RoleWhereUniqueInput>
-    connect?: Enumerable<RoleWhereUniqueInput>
-    update?: Enumerable<RoleUpdateWithWhereUniqueWithoutAdminInput>
-    updateMany?: Enumerable<RoleUpdateManyWithWhereWithoutAdminInput>
-    deleteMany?: Enumerable<RoleScalarWhereInput>
+  export type ScheduleUncheckedUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<Enumerable<ScheduleCreateWithoutAdminInput>, Enumerable<ScheduleUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<ScheduleCreateOrConnectWithoutAdminInput>
+    upsert?: Enumerable<ScheduleUpsertWithWhereUniqueWithoutAdminInput>
+    createMany?: ScheduleCreateManyAdminInputEnvelope
+    set?: Enumerable<ScheduleWhereUniqueInput>
+    disconnect?: Enumerable<ScheduleWhereUniqueInput>
+    delete?: Enumerable<ScheduleWhereUniqueInput>
+    connect?: Enumerable<ScheduleWhereUniqueInput>
+    update?: Enumerable<ScheduleUpdateWithWhereUniqueWithoutAdminInput>
+    updateMany?: Enumerable<ScheduleUpdateManyWithWhereWithoutAdminInput>
+    deleteMany?: Enumerable<ScheduleScalarWhereInput>
   }
 
-  export type AdminCreateNestedOneWithoutRoleInput = {
-    create?: XOR<AdminCreateWithoutRoleInput, AdminUncheckedCreateWithoutRoleInput>
-    connectOrCreate?: AdminCreateOrConnectWithoutRoleInput
+  export type RequestedMeetingsUncheckedUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<Enumerable<RequestedMeetingsCreateWithoutAdminInput>, Enumerable<RequestedMeetingsUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<RequestedMeetingsCreateOrConnectWithoutAdminInput>
+    upsert?: Enumerable<RequestedMeetingsUpsertWithWhereUniqueWithoutAdminInput>
+    createMany?: RequestedMeetingsCreateManyAdminInputEnvelope
+    set?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    disconnect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    delete?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    connect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    update?: Enumerable<RequestedMeetingsUpdateWithWhereUniqueWithoutAdminInput>
+    updateMany?: Enumerable<RequestedMeetingsUpdateManyWithWhereWithoutAdminInput>
+    deleteMany?: Enumerable<RequestedMeetingsScalarWhereInput>
+  }
+
+  export type DayTimeUncheckedUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<Enumerable<DayTimeCreateWithoutAdminInput>, Enumerable<DayTimeUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<DayTimeCreateOrConnectWithoutAdminInput>
+    upsert?: Enumerable<DayTimeUpsertWithWhereUniqueWithoutAdminInput>
+    createMany?: DayTimeCreateManyAdminInputEnvelope
+    set?: Enumerable<DayTimeWhereUniqueInput>
+    disconnect?: Enumerable<DayTimeWhereUniqueInput>
+    delete?: Enumerable<DayTimeWhereUniqueInput>
+    connect?: Enumerable<DayTimeWhereUniqueInput>
+    update?: Enumerable<DayTimeUpdateWithWhereUniqueWithoutAdminInput>
+    updateMany?: Enumerable<DayTimeUpdateManyWithWhereWithoutAdminInput>
+    deleteMany?: Enumerable<DayTimeScalarWhereInput>
+  }
+
+  export type FacultyCreateNestedManyWithoutDepartmentInput = {
+    create?: XOR<Enumerable<FacultyCreateWithoutDepartmentInput>, Enumerable<FacultyUncheckedCreateWithoutDepartmentInput>>
+    connectOrCreate?: Enumerable<FacultyCreateOrConnectWithoutDepartmentInput>
+    createMany?: FacultyCreateManyDepartmentInputEnvelope
+    connect?: Enumerable<FacultyWhereUniqueInput>
+  }
+
+  export type FacultyUncheckedCreateNestedManyWithoutDepartmentInput = {
+    create?: XOR<Enumerable<FacultyCreateWithoutDepartmentInput>, Enumerable<FacultyUncheckedCreateWithoutDepartmentInput>>
+    connectOrCreate?: Enumerable<FacultyCreateOrConnectWithoutDepartmentInput>
+    createMany?: FacultyCreateManyDepartmentInputEnvelope
+    connect?: Enumerable<FacultyWhereUniqueInput>
+  }
+
+  export type FacultyUpdateManyWithoutDepartmentNestedInput = {
+    create?: XOR<Enumerable<FacultyCreateWithoutDepartmentInput>, Enumerable<FacultyUncheckedCreateWithoutDepartmentInput>>
+    connectOrCreate?: Enumerable<FacultyCreateOrConnectWithoutDepartmentInput>
+    upsert?: Enumerable<FacultyUpsertWithWhereUniqueWithoutDepartmentInput>
+    createMany?: FacultyCreateManyDepartmentInputEnvelope
+    set?: Enumerable<FacultyWhereUniqueInput>
+    disconnect?: Enumerable<FacultyWhereUniqueInput>
+    delete?: Enumerable<FacultyWhereUniqueInput>
+    connect?: Enumerable<FacultyWhereUniqueInput>
+    update?: Enumerable<FacultyUpdateWithWhereUniqueWithoutDepartmentInput>
+    updateMany?: Enumerable<FacultyUpdateManyWithWhereWithoutDepartmentInput>
+    deleteMany?: Enumerable<FacultyScalarWhereInput>
+  }
+
+  export type FacultyUncheckedUpdateManyWithoutDepartmentNestedInput = {
+    create?: XOR<Enumerable<FacultyCreateWithoutDepartmentInput>, Enumerable<FacultyUncheckedCreateWithoutDepartmentInput>>
+    connectOrCreate?: Enumerable<FacultyCreateOrConnectWithoutDepartmentInput>
+    upsert?: Enumerable<FacultyUpsertWithWhereUniqueWithoutDepartmentInput>
+    createMany?: FacultyCreateManyDepartmentInputEnvelope
+    set?: Enumerable<FacultyWhereUniqueInput>
+    disconnect?: Enumerable<FacultyWhereUniqueInput>
+    delete?: Enumerable<FacultyWhereUniqueInput>
+    connect?: Enumerable<FacultyWhereUniqueInput>
+    update?: Enumerable<FacultyUpdateWithWhereUniqueWithoutDepartmentInput>
+    updateMany?: Enumerable<FacultyUpdateManyWithWhereWithoutDepartmentInput>
+    deleteMany?: Enumerable<FacultyScalarWhereInput>
+  }
+
+  export type MeetingCreateNestedManyWithoutFacultyInput = {
+    create?: XOR<Enumerable<MeetingCreateWithoutFacultyInput>, Enumerable<MeetingUncheckedCreateWithoutFacultyInput>>
+    connectOrCreate?: Enumerable<MeetingCreateOrConnectWithoutFacultyInput>
+    createMany?: MeetingCreateManyFacultyInputEnvelope
+    connect?: Enumerable<MeetingWhereUniqueInput>
+  }
+
+  export type DepartmentCreateNestedOneWithoutFacultyInput = {
+    create?: XOR<DepartmentCreateWithoutFacultyInput, DepartmentUncheckedCreateWithoutFacultyInput>
+    connectOrCreate?: DepartmentCreateOrConnectWithoutFacultyInput
+    connect?: DepartmentWhereUniqueInput
+  }
+
+  export type MeetingUncheckedCreateNestedManyWithoutFacultyInput = {
+    create?: XOR<Enumerable<MeetingCreateWithoutFacultyInput>, Enumerable<MeetingUncheckedCreateWithoutFacultyInput>>
+    connectOrCreate?: Enumerable<MeetingCreateOrConnectWithoutFacultyInput>
+    createMany?: MeetingCreateManyFacultyInputEnvelope
+    connect?: Enumerable<MeetingWhereUniqueInput>
+  }
+
+  export type MeetingUpdateManyWithoutFacultyNestedInput = {
+    create?: XOR<Enumerable<MeetingCreateWithoutFacultyInput>, Enumerable<MeetingUncheckedCreateWithoutFacultyInput>>
+    connectOrCreate?: Enumerable<MeetingCreateOrConnectWithoutFacultyInput>
+    upsert?: Enumerable<MeetingUpsertWithWhereUniqueWithoutFacultyInput>
+    createMany?: MeetingCreateManyFacultyInputEnvelope
+    set?: Enumerable<MeetingWhereUniqueInput>
+    disconnect?: Enumerable<MeetingWhereUniqueInput>
+    delete?: Enumerable<MeetingWhereUniqueInput>
+    connect?: Enumerable<MeetingWhereUniqueInput>
+    update?: Enumerable<MeetingUpdateWithWhereUniqueWithoutFacultyInput>
+    updateMany?: Enumerable<MeetingUpdateManyWithWhereWithoutFacultyInput>
+    deleteMany?: Enumerable<MeetingScalarWhereInput>
+  }
+
+  export type DepartmentUpdateOneRequiredWithoutFacultyNestedInput = {
+    create?: XOR<DepartmentCreateWithoutFacultyInput, DepartmentUncheckedCreateWithoutFacultyInput>
+    connectOrCreate?: DepartmentCreateOrConnectWithoutFacultyInput
+    upsert?: DepartmentUpsertWithoutFacultyInput
+    connect?: DepartmentWhereUniqueInput
+    update?: XOR<DepartmentUpdateWithoutFacultyInput, DepartmentUncheckedUpdateWithoutFacultyInput>
+  }
+
+  export type MeetingUncheckedUpdateManyWithoutFacultyNestedInput = {
+    create?: XOR<Enumerable<MeetingCreateWithoutFacultyInput>, Enumerable<MeetingUncheckedCreateWithoutFacultyInput>>
+    connectOrCreate?: Enumerable<MeetingCreateOrConnectWithoutFacultyInput>
+    upsert?: Enumerable<MeetingUpsertWithWhereUniqueWithoutFacultyInput>
+    createMany?: MeetingCreateManyFacultyInputEnvelope
+    set?: Enumerable<MeetingWhereUniqueInput>
+    disconnect?: Enumerable<MeetingWhereUniqueInput>
+    delete?: Enumerable<MeetingWhereUniqueInput>
+    connect?: Enumerable<MeetingWhereUniqueInput>
+    update?: Enumerable<MeetingUpdateWithWhereUniqueWithoutFacultyInput>
+    updateMany?: Enumerable<MeetingUpdateManyWithWhereWithoutFacultyInput>
+    deleteMany?: Enumerable<MeetingScalarWhereInput>
+  }
+
+  export type AdminCreateNestedOneWithoutScheduleInput = {
+    create?: XOR<AdminCreateWithoutScheduleInput, AdminUncheckedCreateWithoutScheduleInput>
+    connectOrCreate?: AdminCreateOrConnectWithoutScheduleInput
     connect?: AdminWhereUniqueInput
   }
 
-  export type AdminUpdateOneRequiredWithoutRoleNestedInput = {
-    create?: XOR<AdminCreateWithoutRoleInput, AdminUncheckedCreateWithoutRoleInput>
-    connectOrCreate?: AdminCreateOrConnectWithoutRoleInput
-    upsert?: AdminUpsertWithoutRoleInput
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
+  export type AdminUpdateOneRequiredWithoutScheduleNestedInput = {
+    create?: XOR<AdminCreateWithoutScheduleInput, AdminUncheckedCreateWithoutScheduleInput>
+    connectOrCreate?: AdminCreateOrConnectWithoutScheduleInput
+    upsert?: AdminUpsertWithoutScheduleInput
     connect?: AdminWhereUniqueInput
-    update?: XOR<AdminUpdateWithoutRoleInput, AdminUncheckedUpdateWithoutRoleInput>
+    update?: XOR<AdminUpdateWithoutScheduleInput, AdminUncheckedUpdateWithoutScheduleInput>
+  }
+
+  export type AdminCreateNestedOneWithoutDayTimeInput = {
+    create?: XOR<AdminCreateWithoutDayTimeInput, AdminUncheckedCreateWithoutDayTimeInput>
+    connectOrCreate?: AdminCreateOrConnectWithoutDayTimeInput
+    connect?: AdminWhereUniqueInput
+  }
+
+  export type AdminUpdateOneRequiredWithoutDayTimeNestedInput = {
+    create?: XOR<AdminCreateWithoutDayTimeInput, AdminUncheckedCreateWithoutDayTimeInput>
+    connectOrCreate?: AdminCreateOrConnectWithoutDayTimeInput
+    upsert?: AdminUpsertWithoutDayTimeInput
+    connect?: AdminWhereUniqueInput
+    update?: XOR<AdminUpdateWithoutDayTimeInput, AdminUncheckedUpdateWithoutDayTimeInput>
   }
 
   export type ParentCreateNestedOneWithoutStudentInput = {
@@ -10695,6 +15793,13 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<MeetingCreateOrConnectWithoutStudentInput>
     createMany?: MeetingCreateManyStudentInputEnvelope
     connect?: Enumerable<MeetingWhereUniqueInput>
+  }
+
+  export type RequestedMeetingsCreateNestedManyWithoutStudentInput = {
+    create?: XOR<Enumerable<RequestedMeetingsCreateWithoutStudentInput>, Enumerable<RequestedMeetingsUncheckedCreateWithoutStudentInput>>
+    connectOrCreate?: Enumerable<RequestedMeetingsCreateOrConnectWithoutStudentInput>
+    createMany?: RequestedMeetingsCreateManyStudentInputEnvelope
+    connect?: Enumerable<RequestedMeetingsWhereUniqueInput>
   }
 
   export type StudentInfoCreateNestedManyWithoutStudentInput = {
@@ -10716,6 +15821,13 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<MeetingCreateOrConnectWithoutStudentInput>
     createMany?: MeetingCreateManyStudentInputEnvelope
     connect?: Enumerable<MeetingWhereUniqueInput>
+  }
+
+  export type RequestedMeetingsUncheckedCreateNestedManyWithoutStudentInput = {
+    create?: XOR<Enumerable<RequestedMeetingsCreateWithoutStudentInput>, Enumerable<RequestedMeetingsUncheckedCreateWithoutStudentInput>>
+    connectOrCreate?: Enumerable<RequestedMeetingsCreateOrConnectWithoutStudentInput>
+    createMany?: RequestedMeetingsCreateManyStudentInputEnvelope
+    connect?: Enumerable<RequestedMeetingsWhereUniqueInput>
   }
 
   export type StudentInfoUncheckedCreateNestedManyWithoutStudentInput = {
@@ -10752,6 +15864,20 @@ export namespace Prisma {
     update?: Enumerable<MeetingUpdateWithWhereUniqueWithoutStudentInput>
     updateMany?: Enumerable<MeetingUpdateManyWithWhereWithoutStudentInput>
     deleteMany?: Enumerable<MeetingScalarWhereInput>
+  }
+
+  export type RequestedMeetingsUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<Enumerable<RequestedMeetingsCreateWithoutStudentInput>, Enumerable<RequestedMeetingsUncheckedCreateWithoutStudentInput>>
+    connectOrCreate?: Enumerable<RequestedMeetingsCreateOrConnectWithoutStudentInput>
+    upsert?: Enumerable<RequestedMeetingsUpsertWithWhereUniqueWithoutStudentInput>
+    createMany?: RequestedMeetingsCreateManyStudentInputEnvelope
+    set?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    disconnect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    delete?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    connect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    update?: Enumerable<RequestedMeetingsUpdateWithWhereUniqueWithoutStudentInput>
+    updateMany?: Enumerable<RequestedMeetingsUpdateManyWithWhereWithoutStudentInput>
+    deleteMany?: Enumerable<RequestedMeetingsScalarWhereInput>
   }
 
   export type StudentInfoUpdateManyWithoutStudentNestedInput = {
@@ -10794,6 +15920,20 @@ export namespace Prisma {
     update?: Enumerable<MeetingUpdateWithWhereUniqueWithoutStudentInput>
     updateMany?: Enumerable<MeetingUpdateManyWithWhereWithoutStudentInput>
     deleteMany?: Enumerable<MeetingScalarWhereInput>
+  }
+
+  export type RequestedMeetingsUncheckedUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<Enumerable<RequestedMeetingsCreateWithoutStudentInput>, Enumerable<RequestedMeetingsUncheckedCreateWithoutStudentInput>>
+    connectOrCreate?: Enumerable<RequestedMeetingsCreateOrConnectWithoutStudentInput>
+    upsert?: Enumerable<RequestedMeetingsUpsertWithWhereUniqueWithoutStudentInput>
+    createMany?: RequestedMeetingsCreateManyStudentInputEnvelope
+    set?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    disconnect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    delete?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    connect?: Enumerable<RequestedMeetingsWhereUniqueInput>
+    update?: Enumerable<RequestedMeetingsUpdateWithWhereUniqueWithoutStudentInput>
+    updateMany?: Enumerable<RequestedMeetingsUpdateManyWithWhereWithoutStudentInput>
+    deleteMany?: Enumerable<RequestedMeetingsScalarWhereInput>
   }
 
   export type StudentInfoUncheckedUpdateManyWithoutStudentNestedInput = {
@@ -10864,10 +16004,58 @@ export namespace Prisma {
     update?: XOR<StudentUpdateWithoutSubjectInput, StudentUncheckedUpdateWithoutSubjectInput>
   }
 
+  export type AdminCreateNestedOneWithoutRequestedMeetingsInput = {
+    create?: XOR<AdminCreateWithoutRequestedMeetingsInput, AdminUncheckedCreateWithoutRequestedMeetingsInput>
+    connectOrCreate?: AdminCreateOrConnectWithoutRequestedMeetingsInput
+    connect?: AdminWhereUniqueInput
+  }
+
+  export type ParentCreateNestedOneWithoutRequestedMeetingsInput = {
+    create?: XOR<ParentCreateWithoutRequestedMeetingsInput, ParentUncheckedCreateWithoutRequestedMeetingsInput>
+    connectOrCreate?: ParentCreateOrConnectWithoutRequestedMeetingsInput
+    connect?: ParentWhereUniqueInput
+  }
+
+  export type StudentCreateNestedOneWithoutRequestedMeetingsInput = {
+    create?: XOR<StudentCreateWithoutRequestedMeetingsInput, StudentUncheckedCreateWithoutRequestedMeetingsInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutRequestedMeetingsInput
+    connect?: StudentWhereUniqueInput
+  }
+
+  export type AdminUpdateOneRequiredWithoutRequestedMeetingsNestedInput = {
+    create?: XOR<AdminCreateWithoutRequestedMeetingsInput, AdminUncheckedCreateWithoutRequestedMeetingsInput>
+    connectOrCreate?: AdminCreateOrConnectWithoutRequestedMeetingsInput
+    upsert?: AdminUpsertWithoutRequestedMeetingsInput
+    connect?: AdminWhereUniqueInput
+    update?: XOR<AdminUpdateWithoutRequestedMeetingsInput, AdminUncheckedUpdateWithoutRequestedMeetingsInput>
+  }
+
+  export type ParentUpdateOneRequiredWithoutRequestedMeetingsNestedInput = {
+    create?: XOR<ParentCreateWithoutRequestedMeetingsInput, ParentUncheckedCreateWithoutRequestedMeetingsInput>
+    connectOrCreate?: ParentCreateOrConnectWithoutRequestedMeetingsInput
+    upsert?: ParentUpsertWithoutRequestedMeetingsInput
+    connect?: ParentWhereUniqueInput
+    update?: XOR<ParentUpdateWithoutRequestedMeetingsInput, ParentUncheckedUpdateWithoutRequestedMeetingsInput>
+  }
+
+  export type StudentUpdateOneRequiredWithoutRequestedMeetingsNestedInput = {
+    create?: XOR<StudentCreateWithoutRequestedMeetingsInput, StudentUncheckedCreateWithoutRequestedMeetingsInput>
+    connectOrCreate?: StudentCreateOrConnectWithoutRequestedMeetingsInput
+    upsert?: StudentUpsertWithoutRequestedMeetingsInput
+    connect?: StudentWhereUniqueInput
+    update?: XOR<StudentUpdateWithoutRequestedMeetingsInput, StudentUncheckedUpdateWithoutRequestedMeetingsInput>
+  }
+
   export type AdminCreateNestedOneWithoutMeetingInput = {
     create?: XOR<AdminCreateWithoutMeetingInput, AdminUncheckedCreateWithoutMeetingInput>
     connectOrCreate?: AdminCreateOrConnectWithoutMeetingInput
     connect?: AdminWhereUniqueInput
+  }
+
+  export type FacultyCreateNestedOneWithoutMeetingInput = {
+    create?: XOR<FacultyCreateWithoutMeetingInput, FacultyUncheckedCreateWithoutMeetingInput>
+    connectOrCreate?: FacultyCreateOrConnectWithoutMeetingInput
+    connect?: FacultyWhereUniqueInput
   }
 
   export type ParentCreateNestedOneWithoutMeetingInput = {
@@ -10896,16 +16084,24 @@ export namespace Prisma {
     connect?: Enumerable<FeedbackWhereUniqueInput>
   }
 
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
-  }
-
-  export type AdminUpdateOneRequiredWithoutMeetingNestedInput = {
+  export type AdminUpdateOneWithoutMeetingNestedInput = {
     create?: XOR<AdminCreateWithoutMeetingInput, AdminUncheckedCreateWithoutMeetingInput>
     connectOrCreate?: AdminCreateOrConnectWithoutMeetingInput
     upsert?: AdminUpsertWithoutMeetingInput
+    disconnect?: boolean
+    delete?: boolean
     connect?: AdminWhereUniqueInput
     update?: XOR<AdminUpdateWithoutMeetingInput, AdminUncheckedUpdateWithoutMeetingInput>
+  }
+
+  export type FacultyUpdateOneWithoutMeetingNestedInput = {
+    create?: XOR<FacultyCreateWithoutMeetingInput, FacultyUncheckedCreateWithoutMeetingInput>
+    connectOrCreate?: FacultyCreateOrConnectWithoutMeetingInput
+    upsert?: FacultyUpsertWithoutMeetingInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: FacultyWhereUniqueInput
+    update?: XOR<FacultyUpdateWithoutMeetingInput, FacultyUncheckedUpdateWithoutMeetingInput>
   }
 
   export type ParentUpdateOneRequiredWithoutMeetingNestedInput = {
@@ -10936,6 +16132,14 @@ export namespace Prisma {
     update?: Enumerable<FeedbackUpdateWithWhereUniqueWithoutMeetingInput>
     updateMany?: Enumerable<FeedbackUpdateManyWithWhereWithoutMeetingInput>
     deleteMany?: Enumerable<FeedbackScalarWhereInput>
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type FeedbackUncheckedUpdateManyWithoutMeetingNestedInput = {
@@ -11077,6 +16281,31 @@ export namespace Prisma {
     not?: NestedIntNullableFilter | number | null
   }
 
+  export type NestedDateTimeFilter = {
+    equals?: Date | string
+    in?: Enumerable<Date> | Enumerable<string>
+    notIn?: Enumerable<Date> | Enumerable<string>
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeFilter | Date | string
+  }
+
+  export type NestedDateTimeWithAggregatesFilter = {
+    equals?: Date | string
+    in?: Enumerable<Date> | Enumerable<string>
+    notIn?: Enumerable<Date> | Enumerable<string>
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeWithAggregatesFilter | Date | string
+    _count?: NestedIntFilter
+    _min?: NestedDateTimeFilter
+    _max?: NestedDateTimeFilter
+  }
+
   export type NestedBoolFilter = {
     equals?: boolean
     not?: NestedBoolFilter | boolean
@@ -11106,29 +16335,31 @@ export namespace Prisma {
     _max?: NestedBoolFilter
   }
 
-  export type NestedDateTimeFilter = {
-    equals?: Date | string
-    in?: Enumerable<Date> | Enumerable<string>
-    notIn?: Enumerable<Date> | Enumerable<string>
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeFilter | Date | string
+  export type NestedIntNullableWithAggregatesFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableWithAggregatesFilter | number | null
+    _count?: NestedIntNullableFilter
+    _avg?: NestedFloatNullableFilter
+    _sum?: NestedIntNullableFilter
+    _min?: NestedIntNullableFilter
+    _max?: NestedIntNullableFilter
   }
 
-  export type NestedDateTimeWithAggregatesFilter = {
-    equals?: Date | string
-    in?: Enumerable<Date> | Enumerable<string>
-    notIn?: Enumerable<Date> | Enumerable<string>
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeWithAggregatesFilter | Date | string
-    _count?: NestedIntFilter
-    _min?: NestedDateTimeFilter
-    _max?: NestedDateTimeFilter
+  export type NestedFloatNullableFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedFloatNullableFilter | number | null
   }
 
   export type MeetingCreateWithoutParentInput = {
@@ -11137,7 +16368,8 @@ export namespace Prisma {
     meetingReason?: string | null
     meetingStartTime: string
     meetingEndTime: string
-    Admin: AdminCreateNestedOneWithoutMeetingInput
+    Admin?: AdminCreateNestedOneWithoutMeetingInput
+    Faculty?: FacultyCreateNestedOneWithoutMeetingInput
     Student: StudentCreateNestedOneWithoutMeetingInput
     Feedback?: FeedbackCreateNestedManyWithoutMeetingInput
   }
@@ -11147,7 +16379,8 @@ export namespace Prisma {
     meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
-    adminId: number
+    adminId?: number | null
+    facultyId?: number | null
     studentId: number
     meetingStartTime: string
     meetingEndTime: string
@@ -11169,6 +16402,7 @@ export namespace Prisma {
     studentName: string
     studentPassword: string
     Meeting?: MeetingCreateNestedManyWithoutStudentInput
+    RequestedMeetings?: RequestedMeetingsCreateNestedManyWithoutStudentInput
     StudentInfo?: StudentInfoCreateNestedManyWithoutStudentInput
     Subject?: SubjectCreateNestedManyWithoutStudentInput
   }
@@ -11179,6 +16413,7 @@ export namespace Prisma {
     studentName: string
     studentPassword: string
     Meeting?: MeetingUncheckedCreateNestedManyWithoutStudentInput
+    RequestedMeetings?: RequestedMeetingsUncheckedCreateNestedManyWithoutStudentInput
     StudentInfo?: StudentInfoUncheckedCreateNestedManyWithoutStudentInput
     Subject?: SubjectUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -11190,6 +16425,29 @@ export namespace Prisma {
 
   export type StudentCreateManyParentInputEnvelope = {
     data: Enumerable<StudentCreateManyParentInput>
+    skipDuplicates?: boolean
+  }
+
+  export type RequestedMeetingsCreateWithoutParentInput = {
+    meetingReason: string
+    Admin: AdminCreateNestedOneWithoutRequestedMeetingsInput
+    Student: StudentCreateNestedOneWithoutRequestedMeetingsInput
+  }
+
+  export type RequestedMeetingsUncheckedCreateWithoutParentInput = {
+    id?: number
+    meetingReason: string
+    studentId: number
+    adminId: number
+  }
+
+  export type RequestedMeetingsCreateOrConnectWithoutParentInput = {
+    where: RequestedMeetingsWhereUniqueInput
+    create: XOR<RequestedMeetingsCreateWithoutParentInput, RequestedMeetingsUncheckedCreateWithoutParentInput>
+  }
+
+  export type RequestedMeetingsCreateManyParentInputEnvelope = {
+    data: Enumerable<RequestedMeetingsCreateManyParentInput>
     skipDuplicates?: boolean
   }
 
@@ -11217,7 +16475,8 @@ export namespace Prisma {
     meetingDay?: DateTimeFilter | Date | string
     meetingStatus?: BoolFilter | boolean
     meetingReason?: StringNullableFilter | string | null
-    adminId?: IntFilter | number
+    adminId?: IntNullableFilter | number | null
+    facultyId?: IntNullableFilter | number | null
     studentId?: IntFilter | number
     parentId?: IntFilter | number
     meetingStartTime?: StringFilter | string
@@ -11251,12 +16510,40 @@ export namespace Prisma {
     parentId?: IntFilter | number
   }
 
+  export type RequestedMeetingsUpsertWithWhereUniqueWithoutParentInput = {
+    where: RequestedMeetingsWhereUniqueInput
+    update: XOR<RequestedMeetingsUpdateWithoutParentInput, RequestedMeetingsUncheckedUpdateWithoutParentInput>
+    create: XOR<RequestedMeetingsCreateWithoutParentInput, RequestedMeetingsUncheckedCreateWithoutParentInput>
+  }
+
+  export type RequestedMeetingsUpdateWithWhereUniqueWithoutParentInput = {
+    where: RequestedMeetingsWhereUniqueInput
+    data: XOR<RequestedMeetingsUpdateWithoutParentInput, RequestedMeetingsUncheckedUpdateWithoutParentInput>
+  }
+
+  export type RequestedMeetingsUpdateManyWithWhereWithoutParentInput = {
+    where: RequestedMeetingsScalarWhereInput
+    data: XOR<RequestedMeetingsUpdateManyMutationInput, RequestedMeetingsUncheckedUpdateManyWithoutRequestedMeetingsInput>
+  }
+
+  export type RequestedMeetingsScalarWhereInput = {
+    AND?: Enumerable<RequestedMeetingsScalarWhereInput>
+    OR?: Enumerable<RequestedMeetingsScalarWhereInput>
+    NOT?: Enumerable<RequestedMeetingsScalarWhereInput>
+    id?: IntFilter | number
+    meetingReason?: StringFilter | string
+    parentId?: IntFilter | number
+    studentId?: IntFilter | number
+    adminId?: IntFilter | number
+  }
+
   export type MeetingCreateWithoutAdminInput = {
     meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
     meetingStartTime: string
     meetingEndTime: string
+    Faculty?: FacultyCreateNestedOneWithoutMeetingInput
     Parent: ParentCreateNestedOneWithoutMeetingInput
     Student: StudentCreateNestedOneWithoutMeetingInput
     Feedback?: FeedbackCreateNestedManyWithoutMeetingInput
@@ -11267,6 +16554,7 @@ export namespace Prisma {
     meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
+    facultyId?: number | null
     studentId: number
     parentId: number
     meetingStartTime: string
@@ -11284,22 +16572,76 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type RoleCreateWithoutAdminInput = {
-    role: string
+  export type ScheduleCreateWithoutAdminInput = {
+    day: number
+    start: Date | string
+    end: Date | string
+    startTime: Date | string
+    EndTime: Date | string
   }
 
-  export type RoleUncheckedCreateWithoutAdminInput = {
+  export type ScheduleUncheckedCreateWithoutAdminInput = {
     id?: number
-    role: string
+    day: number
+    start: Date | string
+    end: Date | string
+    startTime: Date | string
+    EndTime: Date | string
   }
 
-  export type RoleCreateOrConnectWithoutAdminInput = {
-    where: RoleWhereUniqueInput
-    create: XOR<RoleCreateWithoutAdminInput, RoleUncheckedCreateWithoutAdminInput>
+  export type ScheduleCreateOrConnectWithoutAdminInput = {
+    where: ScheduleWhereUniqueInput
+    create: XOR<ScheduleCreateWithoutAdminInput, ScheduleUncheckedCreateWithoutAdminInput>
   }
 
-  export type RoleCreateManyAdminInputEnvelope = {
-    data: Enumerable<RoleCreateManyAdminInput>
+  export type ScheduleCreateManyAdminInputEnvelope = {
+    data: Enumerable<ScheduleCreateManyAdminInput>
+    skipDuplicates?: boolean
+  }
+
+  export type RequestedMeetingsCreateWithoutAdminInput = {
+    meetingReason: string
+    Parent: ParentCreateNestedOneWithoutRequestedMeetingsInput
+    Student: StudentCreateNestedOneWithoutRequestedMeetingsInput
+  }
+
+  export type RequestedMeetingsUncheckedCreateWithoutAdminInput = {
+    id?: number
+    meetingReason: string
+    parentId: number
+    studentId: number
+  }
+
+  export type RequestedMeetingsCreateOrConnectWithoutAdminInput = {
+    where: RequestedMeetingsWhereUniqueInput
+    create: XOR<RequestedMeetingsCreateWithoutAdminInput, RequestedMeetingsUncheckedCreateWithoutAdminInput>
+  }
+
+  export type RequestedMeetingsCreateManyAdminInputEnvelope = {
+    data: Enumerable<RequestedMeetingsCreateManyAdminInput>
+    skipDuplicates?: boolean
+  }
+
+  export type DayTimeCreateWithoutAdminInput = {
+    day: number
+    startTime: Date | string
+    endTime: Date | string
+  }
+
+  export type DayTimeUncheckedCreateWithoutAdminInput = {
+    id?: number
+    day: number
+    startTime: Date | string
+    endTime: Date | string
+  }
+
+  export type DayTimeCreateOrConnectWithoutAdminInput = {
+    where: DayTimeWhereUniqueInput
+    create: XOR<DayTimeCreateWithoutAdminInput, DayTimeUncheckedCreateWithoutAdminInput>
+  }
+
+  export type DayTimeCreateManyAdminInputEnvelope = {
+    data: Enumerable<DayTimeCreateManyAdminInput>
     skipDuplicates?: boolean
   }
 
@@ -11319,32 +16661,204 @@ export namespace Prisma {
     data: XOR<MeetingUpdateManyMutationInput, MeetingUncheckedUpdateManyWithoutMeetingInput>
   }
 
-  export type RoleUpsertWithWhereUniqueWithoutAdminInput = {
-    where: RoleWhereUniqueInput
-    update: XOR<RoleUpdateWithoutAdminInput, RoleUncheckedUpdateWithoutAdminInput>
-    create: XOR<RoleCreateWithoutAdminInput, RoleUncheckedCreateWithoutAdminInput>
+  export type ScheduleUpsertWithWhereUniqueWithoutAdminInput = {
+    where: ScheduleWhereUniqueInput
+    update: XOR<ScheduleUpdateWithoutAdminInput, ScheduleUncheckedUpdateWithoutAdminInput>
+    create: XOR<ScheduleCreateWithoutAdminInput, ScheduleUncheckedCreateWithoutAdminInput>
   }
 
-  export type RoleUpdateWithWhereUniqueWithoutAdminInput = {
-    where: RoleWhereUniqueInput
-    data: XOR<RoleUpdateWithoutAdminInput, RoleUncheckedUpdateWithoutAdminInput>
+  export type ScheduleUpdateWithWhereUniqueWithoutAdminInput = {
+    where: ScheduleWhereUniqueInput
+    data: XOR<ScheduleUpdateWithoutAdminInput, ScheduleUncheckedUpdateWithoutAdminInput>
   }
 
-  export type RoleUpdateManyWithWhereWithoutAdminInput = {
-    where: RoleScalarWhereInput
-    data: XOR<RoleUpdateManyMutationInput, RoleUncheckedUpdateManyWithoutRoleInput>
+  export type ScheduleUpdateManyWithWhereWithoutAdminInput = {
+    where: ScheduleScalarWhereInput
+    data: XOR<ScheduleUpdateManyMutationInput, ScheduleUncheckedUpdateManyWithoutScheduleInput>
   }
 
-  export type RoleScalarWhereInput = {
-    AND?: Enumerable<RoleScalarWhereInput>
-    OR?: Enumerable<RoleScalarWhereInput>
-    NOT?: Enumerable<RoleScalarWhereInput>
+  export type ScheduleScalarWhereInput = {
+    AND?: Enumerable<ScheduleScalarWhereInput>
+    OR?: Enumerable<ScheduleScalarWhereInput>
+    NOT?: Enumerable<ScheduleScalarWhereInput>
     id?: IntFilter | number
-    role?: StringFilter | string
+    day?: IntFilter | number
+    start?: DateTimeFilter | Date | string
+    end?: DateTimeFilter | Date | string
+    startTime?: DateTimeFilter | Date | string
+    EndTime?: DateTimeFilter | Date | string
     adminId?: IntFilter | number
   }
 
-  export type AdminCreateWithoutRoleInput = {
+  export type RequestedMeetingsUpsertWithWhereUniqueWithoutAdminInput = {
+    where: RequestedMeetingsWhereUniqueInput
+    update: XOR<RequestedMeetingsUpdateWithoutAdminInput, RequestedMeetingsUncheckedUpdateWithoutAdminInput>
+    create: XOR<RequestedMeetingsCreateWithoutAdminInput, RequestedMeetingsUncheckedCreateWithoutAdminInput>
+  }
+
+  export type RequestedMeetingsUpdateWithWhereUniqueWithoutAdminInput = {
+    where: RequestedMeetingsWhereUniqueInput
+    data: XOR<RequestedMeetingsUpdateWithoutAdminInput, RequestedMeetingsUncheckedUpdateWithoutAdminInput>
+  }
+
+  export type RequestedMeetingsUpdateManyWithWhereWithoutAdminInput = {
+    where: RequestedMeetingsScalarWhereInput
+    data: XOR<RequestedMeetingsUpdateManyMutationInput, RequestedMeetingsUncheckedUpdateManyWithoutRequestedMeetingsInput>
+  }
+
+  export type DayTimeUpsertWithWhereUniqueWithoutAdminInput = {
+    where: DayTimeWhereUniqueInput
+    update: XOR<DayTimeUpdateWithoutAdminInput, DayTimeUncheckedUpdateWithoutAdminInput>
+    create: XOR<DayTimeCreateWithoutAdminInput, DayTimeUncheckedCreateWithoutAdminInput>
+  }
+
+  export type DayTimeUpdateWithWhereUniqueWithoutAdminInput = {
+    where: DayTimeWhereUniqueInput
+    data: XOR<DayTimeUpdateWithoutAdminInput, DayTimeUncheckedUpdateWithoutAdminInput>
+  }
+
+  export type DayTimeUpdateManyWithWhereWithoutAdminInput = {
+    where: DayTimeScalarWhereInput
+    data: XOR<DayTimeUpdateManyMutationInput, DayTimeUncheckedUpdateManyWithoutDayTimeInput>
+  }
+
+  export type DayTimeScalarWhereInput = {
+    AND?: Enumerable<DayTimeScalarWhereInput>
+    OR?: Enumerable<DayTimeScalarWhereInput>
+    NOT?: Enumerable<DayTimeScalarWhereInput>
+    id?: IntFilter | number
+    day?: IntFilter | number
+    startTime?: DateTimeFilter | Date | string
+    endTime?: DateTimeFilter | Date | string
+    adminId?: IntFilter | number
+  }
+
+  export type FacultyCreateWithoutDepartmentInput = {
+    userName: string
+    Meeting?: MeetingCreateNestedManyWithoutFacultyInput
+  }
+
+  export type FacultyUncheckedCreateWithoutDepartmentInput = {
+    id?: number
+    userName: string
+    Meeting?: MeetingUncheckedCreateNestedManyWithoutFacultyInput
+  }
+
+  export type FacultyCreateOrConnectWithoutDepartmentInput = {
+    where: FacultyWhereUniqueInput
+    create: XOR<FacultyCreateWithoutDepartmentInput, FacultyUncheckedCreateWithoutDepartmentInput>
+  }
+
+  export type FacultyCreateManyDepartmentInputEnvelope = {
+    data: Enumerable<FacultyCreateManyDepartmentInput>
+    skipDuplicates?: boolean
+  }
+
+  export type FacultyUpsertWithWhereUniqueWithoutDepartmentInput = {
+    where: FacultyWhereUniqueInput
+    update: XOR<FacultyUpdateWithoutDepartmentInput, FacultyUncheckedUpdateWithoutDepartmentInput>
+    create: XOR<FacultyCreateWithoutDepartmentInput, FacultyUncheckedCreateWithoutDepartmentInput>
+  }
+
+  export type FacultyUpdateWithWhereUniqueWithoutDepartmentInput = {
+    where: FacultyWhereUniqueInput
+    data: XOR<FacultyUpdateWithoutDepartmentInput, FacultyUncheckedUpdateWithoutDepartmentInput>
+  }
+
+  export type FacultyUpdateManyWithWhereWithoutDepartmentInput = {
+    where: FacultyScalarWhereInput
+    data: XOR<FacultyUpdateManyMutationInput, FacultyUncheckedUpdateManyWithoutFacultyInput>
+  }
+
+  export type FacultyScalarWhereInput = {
+    AND?: Enumerable<FacultyScalarWhereInput>
+    OR?: Enumerable<FacultyScalarWhereInput>
+    NOT?: Enumerable<FacultyScalarWhereInput>
+    id?: IntFilter | number
+    userName?: StringFilter | string
+    departmentId?: IntFilter | number
+  }
+
+  export type MeetingCreateWithoutFacultyInput = {
+    meetingDay: Date | string
+    meetingStatus: boolean
+    meetingReason?: string | null
+    meetingStartTime: string
+    meetingEndTime: string
+    Admin?: AdminCreateNestedOneWithoutMeetingInput
+    Parent: ParentCreateNestedOneWithoutMeetingInput
+    Student: StudentCreateNestedOneWithoutMeetingInput
+    Feedback?: FeedbackCreateNestedManyWithoutMeetingInput
+  }
+
+  export type MeetingUncheckedCreateWithoutFacultyInput = {
+    id?: number
+    meetingDay: Date | string
+    meetingStatus: boolean
+    meetingReason?: string | null
+    adminId?: number | null
+    studentId: number
+    parentId: number
+    meetingStartTime: string
+    meetingEndTime: string
+    Feedback?: FeedbackUncheckedCreateNestedManyWithoutMeetingInput
+  }
+
+  export type MeetingCreateOrConnectWithoutFacultyInput = {
+    where: MeetingWhereUniqueInput
+    create: XOR<MeetingCreateWithoutFacultyInput, MeetingUncheckedCreateWithoutFacultyInput>
+  }
+
+  export type MeetingCreateManyFacultyInputEnvelope = {
+    data: Enumerable<MeetingCreateManyFacultyInput>
+    skipDuplicates?: boolean
+  }
+
+  export type DepartmentCreateWithoutFacultyInput = {
+    departmentName: string
+  }
+
+  export type DepartmentUncheckedCreateWithoutFacultyInput = {
+    id?: number
+    departmentName: string
+  }
+
+  export type DepartmentCreateOrConnectWithoutFacultyInput = {
+    where: DepartmentWhereUniqueInput
+    create: XOR<DepartmentCreateWithoutFacultyInput, DepartmentUncheckedCreateWithoutFacultyInput>
+  }
+
+  export type MeetingUpsertWithWhereUniqueWithoutFacultyInput = {
+    where: MeetingWhereUniqueInput
+    update: XOR<MeetingUpdateWithoutFacultyInput, MeetingUncheckedUpdateWithoutFacultyInput>
+    create: XOR<MeetingCreateWithoutFacultyInput, MeetingUncheckedCreateWithoutFacultyInput>
+  }
+
+  export type MeetingUpdateWithWhereUniqueWithoutFacultyInput = {
+    where: MeetingWhereUniqueInput
+    data: XOR<MeetingUpdateWithoutFacultyInput, MeetingUncheckedUpdateWithoutFacultyInput>
+  }
+
+  export type MeetingUpdateManyWithWhereWithoutFacultyInput = {
+    where: MeetingScalarWhereInput
+    data: XOR<MeetingUpdateManyMutationInput, MeetingUncheckedUpdateManyWithoutMeetingInput>
+  }
+
+  export type DepartmentUpsertWithoutFacultyInput = {
+    update: XOR<DepartmentUpdateWithoutFacultyInput, DepartmentUncheckedUpdateWithoutFacultyInput>
+    create: XOR<DepartmentCreateWithoutFacultyInput, DepartmentUncheckedCreateWithoutFacultyInput>
+  }
+
+  export type DepartmentUpdateWithoutFacultyInput = {
+    departmentName?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DepartmentUncheckedUpdateWithoutFacultyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    departmentName?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type AdminCreateWithoutScheduleInput = {
     adminName: string
     adminPassword: string
     adminGender: string
@@ -11352,9 +16866,11 @@ export namespace Prisma {
     adminEmail: string
     adminDesignation?: string | null
     Meeting?: MeetingCreateNestedManyWithoutAdminInput
+    RequestedMeetings?: RequestedMeetingsCreateNestedManyWithoutAdminInput
+    DayTime?: DayTimeCreateNestedManyWithoutAdminInput
   }
 
-  export type AdminUncheckedCreateWithoutRoleInput = {
+  export type AdminUncheckedCreateWithoutScheduleInput = {
     id?: number
     adminName: string
     adminPassword: string
@@ -11363,19 +16879,21 @@ export namespace Prisma {
     adminEmail: string
     adminDesignation?: string | null
     Meeting?: MeetingUncheckedCreateNestedManyWithoutAdminInput
+    RequestedMeetings?: RequestedMeetingsUncheckedCreateNestedManyWithoutAdminInput
+    DayTime?: DayTimeUncheckedCreateNestedManyWithoutAdminInput
   }
 
-  export type AdminCreateOrConnectWithoutRoleInput = {
+  export type AdminCreateOrConnectWithoutScheduleInput = {
     where: AdminWhereUniqueInput
-    create: XOR<AdminCreateWithoutRoleInput, AdminUncheckedCreateWithoutRoleInput>
+    create: XOR<AdminCreateWithoutScheduleInput, AdminUncheckedCreateWithoutScheduleInput>
   }
 
-  export type AdminUpsertWithoutRoleInput = {
-    update: XOR<AdminUpdateWithoutRoleInput, AdminUncheckedUpdateWithoutRoleInput>
-    create: XOR<AdminCreateWithoutRoleInput, AdminUncheckedCreateWithoutRoleInput>
+  export type AdminUpsertWithoutScheduleInput = {
+    update: XOR<AdminUpdateWithoutScheduleInput, AdminUncheckedUpdateWithoutScheduleInput>
+    create: XOR<AdminCreateWithoutScheduleInput, AdminUncheckedCreateWithoutScheduleInput>
   }
 
-  export type AdminUpdateWithoutRoleInput = {
+  export type AdminUpdateWithoutScheduleInput = {
     adminName?: StringFieldUpdateOperationsInput | string
     adminPassword?: StringFieldUpdateOperationsInput | string
     adminGender?: StringFieldUpdateOperationsInput | string
@@ -11383,9 +16901,11 @@ export namespace Prisma {
     adminEmail?: StringFieldUpdateOperationsInput | string
     adminDesignation?: NullableStringFieldUpdateOperationsInput | string | null
     Meeting?: MeetingUpdateManyWithoutAdminNestedInput
+    RequestedMeetings?: RequestedMeetingsUpdateManyWithoutAdminNestedInput
+    DayTime?: DayTimeUpdateManyWithoutAdminNestedInput
   }
 
-  export type AdminUncheckedUpdateWithoutRoleInput = {
+  export type AdminUncheckedUpdateWithoutScheduleInput = {
     id?: IntFieldUpdateOperationsInput | number
     adminName?: StringFieldUpdateOperationsInput | string
     adminPassword?: StringFieldUpdateOperationsInput | string
@@ -11394,6 +16914,68 @@ export namespace Prisma {
     adminEmail?: StringFieldUpdateOperationsInput | string
     adminDesignation?: NullableStringFieldUpdateOperationsInput | string | null
     Meeting?: MeetingUncheckedUpdateManyWithoutAdminNestedInput
+    RequestedMeetings?: RequestedMeetingsUncheckedUpdateManyWithoutAdminNestedInput
+    DayTime?: DayTimeUncheckedUpdateManyWithoutAdminNestedInput
+  }
+
+  export type AdminCreateWithoutDayTimeInput = {
+    adminName: string
+    adminPassword: string
+    adminGender: string
+    adminCnic: string
+    adminEmail: string
+    adminDesignation?: string | null
+    Meeting?: MeetingCreateNestedManyWithoutAdminInput
+    Schedule?: ScheduleCreateNestedManyWithoutAdminInput
+    RequestedMeetings?: RequestedMeetingsCreateNestedManyWithoutAdminInput
+  }
+
+  export type AdminUncheckedCreateWithoutDayTimeInput = {
+    id?: number
+    adminName: string
+    adminPassword: string
+    adminGender: string
+    adminCnic: string
+    adminEmail: string
+    adminDesignation?: string | null
+    Meeting?: MeetingUncheckedCreateNestedManyWithoutAdminInput
+    Schedule?: ScheduleUncheckedCreateNestedManyWithoutAdminInput
+    RequestedMeetings?: RequestedMeetingsUncheckedCreateNestedManyWithoutAdminInput
+  }
+
+  export type AdminCreateOrConnectWithoutDayTimeInput = {
+    where: AdminWhereUniqueInput
+    create: XOR<AdminCreateWithoutDayTimeInput, AdminUncheckedCreateWithoutDayTimeInput>
+  }
+
+  export type AdminUpsertWithoutDayTimeInput = {
+    update: XOR<AdminUpdateWithoutDayTimeInput, AdminUncheckedUpdateWithoutDayTimeInput>
+    create: XOR<AdminCreateWithoutDayTimeInput, AdminUncheckedCreateWithoutDayTimeInput>
+  }
+
+  export type AdminUpdateWithoutDayTimeInput = {
+    adminName?: StringFieldUpdateOperationsInput | string
+    adminPassword?: StringFieldUpdateOperationsInput | string
+    adminGender?: StringFieldUpdateOperationsInput | string
+    adminCnic?: StringFieldUpdateOperationsInput | string
+    adminEmail?: StringFieldUpdateOperationsInput | string
+    adminDesignation?: NullableStringFieldUpdateOperationsInput | string | null
+    Meeting?: MeetingUpdateManyWithoutAdminNestedInput
+    Schedule?: ScheduleUpdateManyWithoutAdminNestedInput
+    RequestedMeetings?: RequestedMeetingsUpdateManyWithoutAdminNestedInput
+  }
+
+  export type AdminUncheckedUpdateWithoutDayTimeInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    adminName?: StringFieldUpdateOperationsInput | string
+    adminPassword?: StringFieldUpdateOperationsInput | string
+    adminGender?: StringFieldUpdateOperationsInput | string
+    adminCnic?: StringFieldUpdateOperationsInput | string
+    adminEmail?: StringFieldUpdateOperationsInput | string
+    adminDesignation?: NullableStringFieldUpdateOperationsInput | string | null
+    Meeting?: MeetingUncheckedUpdateManyWithoutAdminNestedInput
+    Schedule?: ScheduleUncheckedUpdateManyWithoutAdminNestedInput
+    RequestedMeetings?: RequestedMeetingsUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type ParentCreateWithoutStudentInput = {
@@ -11403,6 +16985,7 @@ export namespace Prisma {
     parentPhone: string
     parentPassword: string
     Meeting?: MeetingCreateNestedManyWithoutParentInput
+    RequestedMeetings?: RequestedMeetingsCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutStudentInput = {
@@ -11413,6 +16996,7 @@ export namespace Prisma {
     parentPhone: string
     parentPassword: string
     Meeting?: MeetingUncheckedCreateNestedManyWithoutParentInput
+    RequestedMeetings?: RequestedMeetingsUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutStudentInput = {
@@ -11426,7 +17010,8 @@ export namespace Prisma {
     meetingReason?: string | null
     meetingStartTime: string
     meetingEndTime: string
-    Admin: AdminCreateNestedOneWithoutMeetingInput
+    Admin?: AdminCreateNestedOneWithoutMeetingInput
+    Faculty?: FacultyCreateNestedOneWithoutMeetingInput
     Parent: ParentCreateNestedOneWithoutMeetingInput
     Feedback?: FeedbackCreateNestedManyWithoutMeetingInput
   }
@@ -11436,7 +17021,8 @@ export namespace Prisma {
     meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
-    adminId: number
+    adminId?: number | null
+    facultyId?: number | null
     parentId: number
     meetingStartTime: string
     meetingEndTime: string
@@ -11450,6 +17036,29 @@ export namespace Prisma {
 
   export type MeetingCreateManyStudentInputEnvelope = {
     data: Enumerable<MeetingCreateManyStudentInput>
+    skipDuplicates?: boolean
+  }
+
+  export type RequestedMeetingsCreateWithoutStudentInput = {
+    meetingReason: string
+    Admin: AdminCreateNestedOneWithoutRequestedMeetingsInput
+    Parent: ParentCreateNestedOneWithoutRequestedMeetingsInput
+  }
+
+  export type RequestedMeetingsUncheckedCreateWithoutStudentInput = {
+    id?: number
+    meetingReason: string
+    parentId: number
+    adminId: number
+  }
+
+  export type RequestedMeetingsCreateOrConnectWithoutStudentInput = {
+    where: RequestedMeetingsWhereUniqueInput
+    create: XOR<RequestedMeetingsCreateWithoutStudentInput, RequestedMeetingsUncheckedCreateWithoutStudentInput>
+  }
+
+  export type RequestedMeetingsCreateManyStudentInputEnvelope = {
+    data: Enumerable<RequestedMeetingsCreateManyStudentInput>
     skipDuplicates?: boolean
   }
 
@@ -11503,6 +17112,7 @@ export namespace Prisma {
     parentPhone?: StringFieldUpdateOperationsInput | string
     parentPassword?: StringFieldUpdateOperationsInput | string
     Meeting?: MeetingUpdateManyWithoutParentNestedInput
+    RequestedMeetings?: RequestedMeetingsUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutStudentInput = {
@@ -11513,6 +17123,7 @@ export namespace Prisma {
     parentPhone?: StringFieldUpdateOperationsInput | string
     parentPassword?: StringFieldUpdateOperationsInput | string
     Meeting?: MeetingUncheckedUpdateManyWithoutParentNestedInput
+    RequestedMeetings?: RequestedMeetingsUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type MeetingUpsertWithWhereUniqueWithoutStudentInput = {
@@ -11529,6 +17140,22 @@ export namespace Prisma {
   export type MeetingUpdateManyWithWhereWithoutStudentInput = {
     where: MeetingScalarWhereInput
     data: XOR<MeetingUpdateManyMutationInput, MeetingUncheckedUpdateManyWithoutMeetingInput>
+  }
+
+  export type RequestedMeetingsUpsertWithWhereUniqueWithoutStudentInput = {
+    where: RequestedMeetingsWhereUniqueInput
+    update: XOR<RequestedMeetingsUpdateWithoutStudentInput, RequestedMeetingsUncheckedUpdateWithoutStudentInput>
+    create: XOR<RequestedMeetingsCreateWithoutStudentInput, RequestedMeetingsUncheckedCreateWithoutStudentInput>
+  }
+
+  export type RequestedMeetingsUpdateWithWhereUniqueWithoutStudentInput = {
+    where: RequestedMeetingsWhereUniqueInput
+    data: XOR<RequestedMeetingsUpdateWithoutStudentInput, RequestedMeetingsUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type RequestedMeetingsUpdateManyWithWhereWithoutStudentInput = {
+    where: RequestedMeetingsScalarWhereInput
+    data: XOR<RequestedMeetingsUpdateManyMutationInput, RequestedMeetingsUncheckedUpdateManyWithoutRequestedMeetingsInput>
   }
 
   export type StudentInfoUpsertWithWhereUniqueWithoutStudentInput = {
@@ -11586,6 +17213,7 @@ export namespace Prisma {
     studentPassword: string
     Parent: ParentCreateNestedOneWithoutStudentInput
     Meeting?: MeetingCreateNestedManyWithoutStudentInput
+    RequestedMeetings?: RequestedMeetingsCreateNestedManyWithoutStudentInput
     Subject?: SubjectCreateNestedManyWithoutStudentInput
   }
 
@@ -11596,6 +17224,7 @@ export namespace Prisma {
     studentPassword: string
     parentId: number
     Meeting?: MeetingUncheckedCreateNestedManyWithoutStudentInput
+    RequestedMeetings?: RequestedMeetingsUncheckedCreateNestedManyWithoutStudentInput
     Subject?: SubjectUncheckedCreateNestedManyWithoutStudentInput
   }
 
@@ -11615,6 +17244,7 @@ export namespace Prisma {
     studentPassword?: StringFieldUpdateOperationsInput | string
     Parent?: ParentUpdateOneRequiredWithoutStudentNestedInput
     Meeting?: MeetingUpdateManyWithoutStudentNestedInput
+    RequestedMeetings?: RequestedMeetingsUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUpdateManyWithoutStudentNestedInput
   }
 
@@ -11625,6 +17255,7 @@ export namespace Prisma {
     studentPassword?: StringFieldUpdateOperationsInput | string
     parentId?: IntFieldUpdateOperationsInput | number
     Meeting?: MeetingUncheckedUpdateManyWithoutStudentNestedInput
+    RequestedMeetings?: RequestedMeetingsUncheckedUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUncheckedUpdateManyWithoutStudentNestedInput
   }
 
@@ -11634,6 +17265,7 @@ export namespace Prisma {
     studentPassword: string
     Parent: ParentCreateNestedOneWithoutStudentInput
     Meeting?: MeetingCreateNestedManyWithoutStudentInput
+    RequestedMeetings?: RequestedMeetingsCreateNestedManyWithoutStudentInput
     StudentInfo?: StudentInfoCreateNestedManyWithoutStudentInput
   }
 
@@ -11644,6 +17276,7 @@ export namespace Prisma {
     studentPassword: string
     parentId: number
     Meeting?: MeetingUncheckedCreateNestedManyWithoutStudentInput
+    RequestedMeetings?: RequestedMeetingsUncheckedCreateNestedManyWithoutStudentInput
     StudentInfo?: StudentInfoUncheckedCreateNestedManyWithoutStudentInput
   }
 
@@ -11663,6 +17296,7 @@ export namespace Prisma {
     studentPassword?: StringFieldUpdateOperationsInput | string
     Parent?: ParentUpdateOneRequiredWithoutStudentNestedInput
     Meeting?: MeetingUpdateManyWithoutStudentNestedInput
+    RequestedMeetings?: RequestedMeetingsUpdateManyWithoutStudentNestedInput
     StudentInfo?: StudentInfoUpdateManyWithoutStudentNestedInput
   }
 
@@ -11673,7 +17307,172 @@ export namespace Prisma {
     studentPassword?: StringFieldUpdateOperationsInput | string
     parentId?: IntFieldUpdateOperationsInput | number
     Meeting?: MeetingUncheckedUpdateManyWithoutStudentNestedInput
+    RequestedMeetings?: RequestedMeetingsUncheckedUpdateManyWithoutStudentNestedInput
     StudentInfo?: StudentInfoUncheckedUpdateManyWithoutStudentNestedInput
+  }
+
+  export type AdminCreateWithoutRequestedMeetingsInput = {
+    adminName: string
+    adminPassword: string
+    adminGender: string
+    adminCnic: string
+    adminEmail: string
+    adminDesignation?: string | null
+    Meeting?: MeetingCreateNestedManyWithoutAdminInput
+    Schedule?: ScheduleCreateNestedManyWithoutAdminInput
+    DayTime?: DayTimeCreateNestedManyWithoutAdminInput
+  }
+
+  export type AdminUncheckedCreateWithoutRequestedMeetingsInput = {
+    id?: number
+    adminName: string
+    adminPassword: string
+    adminGender: string
+    adminCnic: string
+    adminEmail: string
+    adminDesignation?: string | null
+    Meeting?: MeetingUncheckedCreateNestedManyWithoutAdminInput
+    Schedule?: ScheduleUncheckedCreateNestedManyWithoutAdminInput
+    DayTime?: DayTimeUncheckedCreateNestedManyWithoutAdminInput
+  }
+
+  export type AdminCreateOrConnectWithoutRequestedMeetingsInput = {
+    where: AdminWhereUniqueInput
+    create: XOR<AdminCreateWithoutRequestedMeetingsInput, AdminUncheckedCreateWithoutRequestedMeetingsInput>
+  }
+
+  export type ParentCreateWithoutRequestedMeetingsInput = {
+    parentEmail: string
+    parentName: string
+    parentCnic: string
+    parentPhone: string
+    parentPassword: string
+    Meeting?: MeetingCreateNestedManyWithoutParentInput
+    Student?: StudentCreateNestedManyWithoutParentInput
+  }
+
+  export type ParentUncheckedCreateWithoutRequestedMeetingsInput = {
+    id?: number
+    parentEmail: string
+    parentName: string
+    parentCnic: string
+    parentPhone: string
+    parentPassword: string
+    Meeting?: MeetingUncheckedCreateNestedManyWithoutParentInput
+    Student?: StudentUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type ParentCreateOrConnectWithoutRequestedMeetingsInput = {
+    where: ParentWhereUniqueInput
+    create: XOR<ParentCreateWithoutRequestedMeetingsInput, ParentUncheckedCreateWithoutRequestedMeetingsInput>
+  }
+
+  export type StudentCreateWithoutRequestedMeetingsInput = {
+    studentRegNo: string
+    studentName: string
+    studentPassword: string
+    Parent: ParentCreateNestedOneWithoutStudentInput
+    Meeting?: MeetingCreateNestedManyWithoutStudentInput
+    StudentInfo?: StudentInfoCreateNestedManyWithoutStudentInput
+    Subject?: SubjectCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentUncheckedCreateWithoutRequestedMeetingsInput = {
+    id?: number
+    studentRegNo: string
+    studentName: string
+    studentPassword: string
+    parentId: number
+    Meeting?: MeetingUncheckedCreateNestedManyWithoutStudentInput
+    StudentInfo?: StudentInfoUncheckedCreateNestedManyWithoutStudentInput
+    Subject?: SubjectUncheckedCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentCreateOrConnectWithoutRequestedMeetingsInput = {
+    where: StudentWhereUniqueInput
+    create: XOR<StudentCreateWithoutRequestedMeetingsInput, StudentUncheckedCreateWithoutRequestedMeetingsInput>
+  }
+
+  export type AdminUpsertWithoutRequestedMeetingsInput = {
+    update: XOR<AdminUpdateWithoutRequestedMeetingsInput, AdminUncheckedUpdateWithoutRequestedMeetingsInput>
+    create: XOR<AdminCreateWithoutRequestedMeetingsInput, AdminUncheckedCreateWithoutRequestedMeetingsInput>
+  }
+
+  export type AdminUpdateWithoutRequestedMeetingsInput = {
+    adminName?: StringFieldUpdateOperationsInput | string
+    adminPassword?: StringFieldUpdateOperationsInput | string
+    adminGender?: StringFieldUpdateOperationsInput | string
+    adminCnic?: StringFieldUpdateOperationsInput | string
+    adminEmail?: StringFieldUpdateOperationsInput | string
+    adminDesignation?: NullableStringFieldUpdateOperationsInput | string | null
+    Meeting?: MeetingUpdateManyWithoutAdminNestedInput
+    Schedule?: ScheduleUpdateManyWithoutAdminNestedInput
+    DayTime?: DayTimeUpdateManyWithoutAdminNestedInput
+  }
+
+  export type AdminUncheckedUpdateWithoutRequestedMeetingsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    adminName?: StringFieldUpdateOperationsInput | string
+    adminPassword?: StringFieldUpdateOperationsInput | string
+    adminGender?: StringFieldUpdateOperationsInput | string
+    adminCnic?: StringFieldUpdateOperationsInput | string
+    adminEmail?: StringFieldUpdateOperationsInput | string
+    adminDesignation?: NullableStringFieldUpdateOperationsInput | string | null
+    Meeting?: MeetingUncheckedUpdateManyWithoutAdminNestedInput
+    Schedule?: ScheduleUncheckedUpdateManyWithoutAdminNestedInput
+    DayTime?: DayTimeUncheckedUpdateManyWithoutAdminNestedInput
+  }
+
+  export type ParentUpsertWithoutRequestedMeetingsInput = {
+    update: XOR<ParentUpdateWithoutRequestedMeetingsInput, ParentUncheckedUpdateWithoutRequestedMeetingsInput>
+    create: XOR<ParentCreateWithoutRequestedMeetingsInput, ParentUncheckedCreateWithoutRequestedMeetingsInput>
+  }
+
+  export type ParentUpdateWithoutRequestedMeetingsInput = {
+    parentEmail?: StringFieldUpdateOperationsInput | string
+    parentName?: StringFieldUpdateOperationsInput | string
+    parentCnic?: StringFieldUpdateOperationsInput | string
+    parentPhone?: StringFieldUpdateOperationsInput | string
+    parentPassword?: StringFieldUpdateOperationsInput | string
+    Meeting?: MeetingUpdateManyWithoutParentNestedInput
+    Student?: StudentUpdateManyWithoutParentNestedInput
+  }
+
+  export type ParentUncheckedUpdateWithoutRequestedMeetingsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    parentEmail?: StringFieldUpdateOperationsInput | string
+    parentName?: StringFieldUpdateOperationsInput | string
+    parentCnic?: StringFieldUpdateOperationsInput | string
+    parentPhone?: StringFieldUpdateOperationsInput | string
+    parentPassword?: StringFieldUpdateOperationsInput | string
+    Meeting?: MeetingUncheckedUpdateManyWithoutParentNestedInput
+    Student?: StudentUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type StudentUpsertWithoutRequestedMeetingsInput = {
+    update: XOR<StudentUpdateWithoutRequestedMeetingsInput, StudentUncheckedUpdateWithoutRequestedMeetingsInput>
+    create: XOR<StudentCreateWithoutRequestedMeetingsInput, StudentUncheckedCreateWithoutRequestedMeetingsInput>
+  }
+
+  export type StudentUpdateWithoutRequestedMeetingsInput = {
+    studentRegNo?: StringFieldUpdateOperationsInput | string
+    studentName?: StringFieldUpdateOperationsInput | string
+    studentPassword?: StringFieldUpdateOperationsInput | string
+    Parent?: ParentUpdateOneRequiredWithoutStudentNestedInput
+    Meeting?: MeetingUpdateManyWithoutStudentNestedInput
+    StudentInfo?: StudentInfoUpdateManyWithoutStudentNestedInput
+    Subject?: SubjectUpdateManyWithoutStudentNestedInput
+  }
+
+  export type StudentUncheckedUpdateWithoutRequestedMeetingsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    studentRegNo?: StringFieldUpdateOperationsInput | string
+    studentName?: StringFieldUpdateOperationsInput | string
+    studentPassword?: StringFieldUpdateOperationsInput | string
+    parentId?: IntFieldUpdateOperationsInput | number
+    Meeting?: MeetingUncheckedUpdateManyWithoutStudentNestedInput
+    StudentInfo?: StudentInfoUncheckedUpdateManyWithoutStudentNestedInput
+    Subject?: SubjectUncheckedUpdateManyWithoutStudentNestedInput
   }
 
   export type AdminCreateWithoutMeetingInput = {
@@ -11683,7 +17482,9 @@ export namespace Prisma {
     adminCnic: string
     adminEmail: string
     adminDesignation?: string | null
-    Role?: RoleCreateNestedManyWithoutAdminInput
+    Schedule?: ScheduleCreateNestedManyWithoutAdminInput
+    RequestedMeetings?: RequestedMeetingsCreateNestedManyWithoutAdminInput
+    DayTime?: DayTimeCreateNestedManyWithoutAdminInput
   }
 
   export type AdminUncheckedCreateWithoutMeetingInput = {
@@ -11694,12 +17495,30 @@ export namespace Prisma {
     adminCnic: string
     adminEmail: string
     adminDesignation?: string | null
-    Role?: RoleUncheckedCreateNestedManyWithoutAdminInput
+    Schedule?: ScheduleUncheckedCreateNestedManyWithoutAdminInput
+    RequestedMeetings?: RequestedMeetingsUncheckedCreateNestedManyWithoutAdminInput
+    DayTime?: DayTimeUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type AdminCreateOrConnectWithoutMeetingInput = {
     where: AdminWhereUniqueInput
     create: XOR<AdminCreateWithoutMeetingInput, AdminUncheckedCreateWithoutMeetingInput>
+  }
+
+  export type FacultyCreateWithoutMeetingInput = {
+    userName: string
+    Department: DepartmentCreateNestedOneWithoutFacultyInput
+  }
+
+  export type FacultyUncheckedCreateWithoutMeetingInput = {
+    id?: number
+    userName: string
+    departmentId: number
+  }
+
+  export type FacultyCreateOrConnectWithoutMeetingInput = {
+    where: FacultyWhereUniqueInput
+    create: XOR<FacultyCreateWithoutMeetingInput, FacultyUncheckedCreateWithoutMeetingInput>
   }
 
   export type ParentCreateWithoutMeetingInput = {
@@ -11709,6 +17528,7 @@ export namespace Prisma {
     parentPhone: string
     parentPassword: string
     Student?: StudentCreateNestedManyWithoutParentInput
+    RequestedMeetings?: RequestedMeetingsCreateNestedManyWithoutParentInput
   }
 
   export type ParentUncheckedCreateWithoutMeetingInput = {
@@ -11719,6 +17539,7 @@ export namespace Prisma {
     parentPhone: string
     parentPassword: string
     Student?: StudentUncheckedCreateNestedManyWithoutParentInput
+    RequestedMeetings?: RequestedMeetingsUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ParentCreateOrConnectWithoutMeetingInput = {
@@ -11731,6 +17552,7 @@ export namespace Prisma {
     studentName: string
     studentPassword: string
     Parent: ParentCreateNestedOneWithoutStudentInput
+    RequestedMeetings?: RequestedMeetingsCreateNestedManyWithoutStudentInput
     StudentInfo?: StudentInfoCreateNestedManyWithoutStudentInput
     Subject?: SubjectCreateNestedManyWithoutStudentInput
   }
@@ -11741,6 +17563,7 @@ export namespace Prisma {
     studentName: string
     studentPassword: string
     parentId: number
+    RequestedMeetings?: RequestedMeetingsUncheckedCreateNestedManyWithoutStudentInput
     StudentInfo?: StudentInfoUncheckedCreateNestedManyWithoutStudentInput
     Subject?: SubjectUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -11783,7 +17606,9 @@ export namespace Prisma {
     adminCnic?: StringFieldUpdateOperationsInput | string
     adminEmail?: StringFieldUpdateOperationsInput | string
     adminDesignation?: NullableStringFieldUpdateOperationsInput | string | null
-    Role?: RoleUpdateManyWithoutAdminNestedInput
+    Schedule?: ScheduleUpdateManyWithoutAdminNestedInput
+    RequestedMeetings?: RequestedMeetingsUpdateManyWithoutAdminNestedInput
+    DayTime?: DayTimeUpdateManyWithoutAdminNestedInput
   }
 
   export type AdminUncheckedUpdateWithoutMeetingInput = {
@@ -11794,7 +17619,25 @@ export namespace Prisma {
     adminCnic?: StringFieldUpdateOperationsInput | string
     adminEmail?: StringFieldUpdateOperationsInput | string
     adminDesignation?: NullableStringFieldUpdateOperationsInput | string | null
-    Role?: RoleUncheckedUpdateManyWithoutAdminNestedInput
+    Schedule?: ScheduleUncheckedUpdateManyWithoutAdminNestedInput
+    RequestedMeetings?: RequestedMeetingsUncheckedUpdateManyWithoutAdminNestedInput
+    DayTime?: DayTimeUncheckedUpdateManyWithoutAdminNestedInput
+  }
+
+  export type FacultyUpsertWithoutMeetingInput = {
+    update: XOR<FacultyUpdateWithoutMeetingInput, FacultyUncheckedUpdateWithoutMeetingInput>
+    create: XOR<FacultyCreateWithoutMeetingInput, FacultyUncheckedCreateWithoutMeetingInput>
+  }
+
+  export type FacultyUpdateWithoutMeetingInput = {
+    userName?: StringFieldUpdateOperationsInput | string
+    Department?: DepartmentUpdateOneRequiredWithoutFacultyNestedInput
+  }
+
+  export type FacultyUncheckedUpdateWithoutMeetingInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userName?: StringFieldUpdateOperationsInput | string
+    departmentId?: IntFieldUpdateOperationsInput | number
   }
 
   export type ParentUpsertWithoutMeetingInput = {
@@ -11809,6 +17652,7 @@ export namespace Prisma {
     parentPhone?: StringFieldUpdateOperationsInput | string
     parentPassword?: StringFieldUpdateOperationsInput | string
     Student?: StudentUpdateManyWithoutParentNestedInput
+    RequestedMeetings?: RequestedMeetingsUpdateManyWithoutParentNestedInput
   }
 
   export type ParentUncheckedUpdateWithoutMeetingInput = {
@@ -11819,6 +17663,7 @@ export namespace Prisma {
     parentPhone?: StringFieldUpdateOperationsInput | string
     parentPassword?: StringFieldUpdateOperationsInput | string
     Student?: StudentUncheckedUpdateManyWithoutParentNestedInput
+    RequestedMeetings?: RequestedMeetingsUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type StudentUpsertWithoutMeetingInput = {
@@ -11831,6 +17676,7 @@ export namespace Prisma {
     studentName?: StringFieldUpdateOperationsInput | string
     studentPassword?: StringFieldUpdateOperationsInput | string
     Parent?: ParentUpdateOneRequiredWithoutStudentNestedInput
+    RequestedMeetings?: RequestedMeetingsUpdateManyWithoutStudentNestedInput
     StudentInfo?: StudentInfoUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUpdateManyWithoutStudentNestedInput
   }
@@ -11841,6 +17687,7 @@ export namespace Prisma {
     studentName?: StringFieldUpdateOperationsInput | string
     studentPassword?: StringFieldUpdateOperationsInput | string
     parentId?: IntFieldUpdateOperationsInput | number
+    RequestedMeetings?: RequestedMeetingsUncheckedUpdateManyWithoutStudentNestedInput
     StudentInfo?: StudentInfoUncheckedUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -11877,7 +17724,8 @@ export namespace Prisma {
     meetingReason?: string | null
     meetingStartTime: string
     meetingEndTime: string
-    Admin: AdminCreateNestedOneWithoutMeetingInput
+    Admin?: AdminCreateNestedOneWithoutMeetingInput
+    Faculty?: FacultyCreateNestedOneWithoutMeetingInput
     Parent: ParentCreateNestedOneWithoutMeetingInput
     Student: StudentCreateNestedOneWithoutMeetingInput
   }
@@ -11887,7 +17735,8 @@ export namespace Prisma {
     meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
-    adminId: number
+    adminId?: number | null
+    facultyId?: number | null
     studentId: number
     parentId: number
     meetingStartTime: string
@@ -11910,7 +17759,8 @@ export namespace Prisma {
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingStartTime?: StringFieldUpdateOperationsInput | string
     meetingEndTime?: StringFieldUpdateOperationsInput | string
-    Admin?: AdminUpdateOneRequiredWithoutMeetingNestedInput
+    Admin?: AdminUpdateOneWithoutMeetingNestedInput
+    Faculty?: FacultyUpdateOneWithoutMeetingNestedInput
     Parent?: ParentUpdateOneRequiredWithoutMeetingNestedInput
     Student?: StudentUpdateOneRequiredWithoutMeetingNestedInput
   }
@@ -11920,7 +17770,8 @@ export namespace Prisma {
     meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
-    adminId?: IntFieldUpdateOperationsInput | number
+    adminId?: NullableIntFieldUpdateOperationsInput | number | null
+    facultyId?: NullableIntFieldUpdateOperationsInput | number | null
     studentId?: IntFieldUpdateOperationsInput | number
     parentId?: IntFieldUpdateOperationsInput | number
     meetingStartTime?: StringFieldUpdateOperationsInput | string
@@ -11932,7 +17783,8 @@ export namespace Prisma {
     meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
-    adminId: number
+    adminId?: number | null
+    facultyId?: number | null
     studentId: number
     meetingStartTime: string
     meetingEndTime: string
@@ -11945,13 +17797,21 @@ export namespace Prisma {
     studentPassword: string
   }
 
+  export type RequestedMeetingsCreateManyParentInput = {
+    id?: number
+    meetingReason: string
+    studentId: number
+    adminId: number
+  }
+
   export type MeetingUpdateWithoutParentInput = {
     meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingStartTime?: StringFieldUpdateOperationsInput | string
     meetingEndTime?: StringFieldUpdateOperationsInput | string
-    Admin?: AdminUpdateOneRequiredWithoutMeetingNestedInput
+    Admin?: AdminUpdateOneWithoutMeetingNestedInput
+    Faculty?: FacultyUpdateOneWithoutMeetingNestedInput
     Student?: StudentUpdateOneRequiredWithoutMeetingNestedInput
     Feedback?: FeedbackUpdateManyWithoutMeetingNestedInput
   }
@@ -11961,7 +17821,8 @@ export namespace Prisma {
     meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
-    adminId?: IntFieldUpdateOperationsInput | number
+    adminId?: NullableIntFieldUpdateOperationsInput | number | null
+    facultyId?: NullableIntFieldUpdateOperationsInput | number | null
     studentId?: IntFieldUpdateOperationsInput | number
     meetingStartTime?: StringFieldUpdateOperationsInput | string
     meetingEndTime?: StringFieldUpdateOperationsInput | string
@@ -11973,7 +17834,8 @@ export namespace Prisma {
     meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
-    adminId?: IntFieldUpdateOperationsInput | number
+    adminId?: NullableIntFieldUpdateOperationsInput | number | null
+    facultyId?: NullableIntFieldUpdateOperationsInput | number | null
     studentId?: IntFieldUpdateOperationsInput | number
     meetingStartTime?: StringFieldUpdateOperationsInput | string
     meetingEndTime?: StringFieldUpdateOperationsInput | string
@@ -11984,6 +17846,7 @@ export namespace Prisma {
     studentName?: StringFieldUpdateOperationsInput | string
     studentPassword?: StringFieldUpdateOperationsInput | string
     Meeting?: MeetingUpdateManyWithoutStudentNestedInput
+    RequestedMeetings?: RequestedMeetingsUpdateManyWithoutStudentNestedInput
     StudentInfo?: StudentInfoUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUpdateManyWithoutStudentNestedInput
   }
@@ -11994,6 +17857,7 @@ export namespace Prisma {
     studentName?: StringFieldUpdateOperationsInput | string
     studentPassword?: StringFieldUpdateOperationsInput | string
     Meeting?: MeetingUncheckedUpdateManyWithoutStudentNestedInput
+    RequestedMeetings?: RequestedMeetingsUncheckedUpdateManyWithoutStudentNestedInput
     StudentInfo?: StudentInfoUncheckedUpdateManyWithoutStudentNestedInput
     Subject?: SubjectUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -12005,20 +17869,59 @@ export namespace Prisma {
     studentPassword?: StringFieldUpdateOperationsInput | string
   }
 
+  export type RequestedMeetingsUpdateWithoutParentInput = {
+    meetingReason?: StringFieldUpdateOperationsInput | string
+    Admin?: AdminUpdateOneRequiredWithoutRequestedMeetingsNestedInput
+    Student?: StudentUpdateOneRequiredWithoutRequestedMeetingsNestedInput
+  }
+
+  export type RequestedMeetingsUncheckedUpdateWithoutParentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    meetingReason?: StringFieldUpdateOperationsInput | string
+    studentId?: IntFieldUpdateOperationsInput | number
+    adminId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type RequestedMeetingsUncheckedUpdateManyWithoutRequestedMeetingsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    meetingReason?: StringFieldUpdateOperationsInput | string
+    studentId?: IntFieldUpdateOperationsInput | number
+    adminId?: IntFieldUpdateOperationsInput | number
+  }
+
   export type MeetingCreateManyAdminInput = {
     id?: number
     meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
+    facultyId?: number | null
     studentId: number
     parentId: number
     meetingStartTime: string
     meetingEndTime: string
   }
 
-  export type RoleCreateManyAdminInput = {
+  export type ScheduleCreateManyAdminInput = {
     id?: number
-    role: string
+    day: number
+    start: Date | string
+    end: Date | string
+    startTime: Date | string
+    EndTime: Date | string
+  }
+
+  export type RequestedMeetingsCreateManyAdminInput = {
+    id?: number
+    meetingReason: string
+    parentId: number
+    studentId: number
+  }
+
+  export type DayTimeCreateManyAdminInput = {
+    id?: number
+    day: number
+    startTime: Date | string
+    endTime: Date | string
   }
 
   export type MeetingUpdateWithoutAdminInput = {
@@ -12027,6 +17930,7 @@ export namespace Prisma {
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingStartTime?: StringFieldUpdateOperationsInput | string
     meetingEndTime?: StringFieldUpdateOperationsInput | string
+    Faculty?: FacultyUpdateOneWithoutMeetingNestedInput
     Parent?: ParentUpdateOneRequiredWithoutMeetingNestedInput
     Student?: StudentUpdateOneRequiredWithoutMeetingNestedInput
     Feedback?: FeedbackUpdateManyWithoutMeetingNestedInput
@@ -12037,6 +17941,7 @@ export namespace Prisma {
     meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableIntFieldUpdateOperationsInput | number | null
     studentId?: IntFieldUpdateOperationsInput | number
     parentId?: IntFieldUpdateOperationsInput | number
     meetingStartTime?: StringFieldUpdateOperationsInput | string
@@ -12044,18 +17949,121 @@ export namespace Prisma {
     Feedback?: FeedbackUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
-  export type RoleUpdateWithoutAdminInput = {
-    role?: StringFieldUpdateOperationsInput | string
+  export type ScheduleUpdateWithoutAdminInput = {
+    day?: IntFieldUpdateOperationsInput | number
+    start?: DateTimeFieldUpdateOperationsInput | Date | string
+    end?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    EndTime?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type RoleUncheckedUpdateWithoutAdminInput = {
+  export type ScheduleUncheckedUpdateWithoutAdminInput = {
     id?: IntFieldUpdateOperationsInput | number
-    role?: StringFieldUpdateOperationsInput | string
+    day?: IntFieldUpdateOperationsInput | number
+    start?: DateTimeFieldUpdateOperationsInput | Date | string
+    end?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    EndTime?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type RoleUncheckedUpdateManyWithoutRoleInput = {
+  export type ScheduleUncheckedUpdateManyWithoutScheduleInput = {
     id?: IntFieldUpdateOperationsInput | number
-    role?: StringFieldUpdateOperationsInput | string
+    day?: IntFieldUpdateOperationsInput | number
+    start?: DateTimeFieldUpdateOperationsInput | Date | string
+    end?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    EndTime?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RequestedMeetingsUpdateWithoutAdminInput = {
+    meetingReason?: StringFieldUpdateOperationsInput | string
+    Parent?: ParentUpdateOneRequiredWithoutRequestedMeetingsNestedInput
+    Student?: StudentUpdateOneRequiredWithoutRequestedMeetingsNestedInput
+  }
+
+  export type RequestedMeetingsUncheckedUpdateWithoutAdminInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    meetingReason?: StringFieldUpdateOperationsInput | string
+    parentId?: IntFieldUpdateOperationsInput | number
+    studentId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type DayTimeUpdateWithoutAdminInput = {
+    day?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DayTimeUncheckedUpdateWithoutAdminInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    day?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DayTimeUncheckedUpdateManyWithoutDayTimeInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    day?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FacultyCreateManyDepartmentInput = {
+    id?: number
+    userName: string
+  }
+
+  export type FacultyUpdateWithoutDepartmentInput = {
+    userName?: StringFieldUpdateOperationsInput | string
+    Meeting?: MeetingUpdateManyWithoutFacultyNestedInput
+  }
+
+  export type FacultyUncheckedUpdateWithoutDepartmentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userName?: StringFieldUpdateOperationsInput | string
+    Meeting?: MeetingUncheckedUpdateManyWithoutFacultyNestedInput
+  }
+
+  export type FacultyUncheckedUpdateManyWithoutFacultyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userName?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type MeetingCreateManyFacultyInput = {
+    id?: number
+    meetingDay: Date | string
+    meetingStatus: boolean
+    meetingReason?: string | null
+    adminId?: number | null
+    studentId: number
+    parentId: number
+    meetingStartTime: string
+    meetingEndTime: string
+  }
+
+  export type MeetingUpdateWithoutFacultyInput = {
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStatus?: BoolFieldUpdateOperationsInput | boolean
+    meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
+    Admin?: AdminUpdateOneWithoutMeetingNestedInput
+    Parent?: ParentUpdateOneRequiredWithoutMeetingNestedInput
+    Student?: StudentUpdateOneRequiredWithoutMeetingNestedInput
+    Feedback?: FeedbackUpdateManyWithoutMeetingNestedInput
+  }
+
+  export type MeetingUncheckedUpdateWithoutFacultyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
+    meetingStatus?: BoolFieldUpdateOperationsInput | boolean
+    meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
+    adminId?: NullableIntFieldUpdateOperationsInput | number | null
+    studentId?: IntFieldUpdateOperationsInput | number
+    parentId?: IntFieldUpdateOperationsInput | number
+    meetingStartTime?: StringFieldUpdateOperationsInput | string
+    meetingEndTime?: StringFieldUpdateOperationsInput | string
+    Feedback?: FeedbackUncheckedUpdateManyWithoutMeetingNestedInput
   }
 
   export type MeetingCreateManyStudentInput = {
@@ -12063,10 +18071,18 @@ export namespace Prisma {
     meetingDay: Date | string
     meetingStatus: boolean
     meetingReason?: string | null
-    adminId: number
+    adminId?: number | null
+    facultyId?: number | null
     parentId: number
     meetingStartTime: string
     meetingEndTime: string
+  }
+
+  export type RequestedMeetingsCreateManyStudentInput = {
+    id?: number
+    meetingReason: string
+    parentId: number
+    adminId: number
   }
 
   export type StudentInfoCreateManyStudentInput = {
@@ -12084,7 +18100,8 @@ export namespace Prisma {
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
     meetingStartTime?: StringFieldUpdateOperationsInput | string
     meetingEndTime?: StringFieldUpdateOperationsInput | string
-    Admin?: AdminUpdateOneRequiredWithoutMeetingNestedInput
+    Admin?: AdminUpdateOneWithoutMeetingNestedInput
+    Faculty?: FacultyUpdateOneWithoutMeetingNestedInput
     Parent?: ParentUpdateOneRequiredWithoutMeetingNestedInput
     Feedback?: FeedbackUpdateManyWithoutMeetingNestedInput
   }
@@ -12094,11 +18111,25 @@ export namespace Prisma {
     meetingDay?: DateTimeFieldUpdateOperationsInput | Date | string
     meetingStatus?: BoolFieldUpdateOperationsInput | boolean
     meetingReason?: NullableStringFieldUpdateOperationsInput | string | null
-    adminId?: IntFieldUpdateOperationsInput | number
+    adminId?: NullableIntFieldUpdateOperationsInput | number | null
+    facultyId?: NullableIntFieldUpdateOperationsInput | number | null
     parentId?: IntFieldUpdateOperationsInput | number
     meetingStartTime?: StringFieldUpdateOperationsInput | string
     meetingEndTime?: StringFieldUpdateOperationsInput | string
     Feedback?: FeedbackUncheckedUpdateManyWithoutMeetingNestedInput
+  }
+
+  export type RequestedMeetingsUpdateWithoutStudentInput = {
+    meetingReason?: StringFieldUpdateOperationsInput | string
+    Admin?: AdminUpdateOneRequiredWithoutRequestedMeetingsNestedInput
+    Parent?: ParentUpdateOneRequiredWithoutRequestedMeetingsNestedInput
+  }
+
+  export type RequestedMeetingsUncheckedUpdateWithoutStudentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    meetingReason?: StringFieldUpdateOperationsInput | string
+    parentId?: IntFieldUpdateOperationsInput | number
+    adminId?: IntFieldUpdateOperationsInput | number
   }
 
   export type StudentInfoUpdateWithoutStudentInput = {

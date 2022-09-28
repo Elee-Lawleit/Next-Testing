@@ -15,7 +15,6 @@ import {
   faLock,
 } from "@fortawesome/free-solid-svg-icons";
 import useAddParentMutation from "hooks/parent/use-add-parent-mutation";
-import Spinner from "components/Spinner";
 import { toast } from "react-hot-toast";
 import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 
@@ -62,13 +61,13 @@ const Signup = ({session}) => {
   //when rendering the otp component  
   if(promiseInProgress.promiseInProgress){
     console.log("loading because of promise tracker");
-    return (<Spinner/>)
+    return (toast.loading("Please wait"))
   }
   
   //waiting for signup
   if(isLoading){
     console.log("loading because of mutation");
-    return (<Spinner/>)
+    return (toast.loading("Please wait"))
   }
 
   if(typeof window !== "undefined"){

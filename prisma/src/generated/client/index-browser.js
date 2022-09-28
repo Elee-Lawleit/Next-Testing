@@ -98,6 +98,25 @@ exports.Prisma.AdminScalarFieldEnum = makeEnum({
   adminDesignation: 'adminDesignation'
 });
 
+exports.Prisma.DayTimeScalarFieldEnum = makeEnum({
+  id: 'id',
+  day: 'day',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  adminId: 'adminId'
+});
+
+exports.Prisma.DepartmentScalarFieldEnum = makeEnum({
+  id: 'id',
+  departmentName: 'departmentName'
+});
+
+exports.Prisma.FacultyScalarFieldEnum = makeEnum({
+  id: 'id',
+  userName: 'userName',
+  departmentId: 'departmentId'
+});
+
 exports.Prisma.FeedbackScalarFieldEnum = makeEnum({
   id: 'id',
   meetingId: 'meetingId',
@@ -111,6 +130,7 @@ exports.Prisma.MeetingScalarFieldEnum = makeEnum({
   meetingStatus: 'meetingStatus',
   meetingReason: 'meetingReason',
   adminId: 'adminId',
+  facultyId: 'facultyId',
   studentId: 'studentId',
   parentId: 'parentId',
   meetingStartTime: 'meetingStartTime',
@@ -126,14 +146,21 @@ exports.Prisma.ParentScalarFieldEnum = makeEnum({
   parentPassword: 'parentPassword'
 });
 
-exports.Prisma.QueryMode = makeEnum({
-  default: 'default',
-  insensitive: 'insensitive'
+exports.Prisma.RequestedMeetingsScalarFieldEnum = makeEnum({
+  id: 'id',
+  meetingReason: 'meetingReason',
+  parentId: 'parentId',
+  studentId: 'studentId',
+  adminId: 'adminId'
 });
 
-exports.Prisma.RoleScalarFieldEnum = makeEnum({
+exports.Prisma.ScheduleScalarFieldEnum = makeEnum({
   id: 'id',
-  role: 'role',
+  day: 'day',
+  start: 'start',
+  end: 'end',
+  startTime: 'startTime',
+  EndTime: 'EndTime',
   adminId: 'adminId'
 });
 
@@ -172,10 +199,14 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.ModelName = makeEnum({
   Parent: 'Parent',
   Admin: 'Admin',
-  Role: 'Role',
+  Department: 'Department',
+  Faculty: 'Faculty',
+  Schedule: 'Schedule',
+  DayTime: 'DayTime',
   Student: 'Student',
   StudentInfo: 'StudentInfo',
   Subject: 'Subject',
+  RequestedMeetings: 'RequestedMeetings',
   Meeting: 'Meeting',
   Feedback: 'Feedback'
 });

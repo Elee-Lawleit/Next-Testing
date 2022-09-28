@@ -7,50 +7,84 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model Parent {
-  id             Int       @id @default(autoincrement())
-  parentEmail    String    @unique
-  parentName     String
-  parentCnic     String    @unique
-  parentPhone    String
-  parentPassword String
-  Meeting        Meeting[]
-  Student        Student[]
+  id                Int                 @id @default(autoincrement())
+  parentEmail       String              @unique
+  parentName        String
+  parentCnic        String              @unique
+  parentPhone       String
+  parentPassword    String
+  Meeting           Meeting[]
+  Student           Student[]
+  RequestedMeetings RequestedMeetings[]
 }
 
 model Admin {
-  id               Int       @id @default(autoincrement())
-  adminName        String
-  adminPassword    String
-  adminGender      String
-  adminCnic        String @unique
-  adminEmail       String   @unique
-  adminDesignation String?
-  Meeting          Meeting[]
-  Role             Role[]
+  id                Int                 @id @default(autoincrement())
+  adminName         String
+  adminPassword     String
+  adminGender       String
+  adminCnic         String              @unique
+  adminEmail        String              @unique
+  adminDesignation  String?
+  Meeting           Meeting[]
+  Schedule          Schedule[]
+  RequestedMeetings RequestedMeetings[]
+  DayTime           DayTime[]
 }
 
-model Role {
-  id      Int    @id @default(autoincrement())
-  role    String
-  adminId Int
-  Admin   Admin  @relation(fields: [adminId], references: [id])
+model Department {
+  id             Int       @id @default(autoincrement())
+  departmentName String // Acountant + Datacell + ProjectCommettee
+  Faculty        Faculty[]
+}
+
+model Faculty {
+  id           Int       @id @default(autoincrement())
+  userName     String
+  departmentId Int
+  Meeting      Meeting[]
+
+  Department Department @relation(fields: [departmentId], references: [id])
+}
+
+model Schedule {
+  id        Int      @id @default(autoincrement())
+  day       Int //monday  monday
+  start     DateTime @db.Time()
+  end       DateTime @db.Time()
+  startTime DateTime
+  EndTime   DateTime
+  adminId   Int
+
+  Admin Admin @relation(fields: [adminId], references: [id])
+}
+
+model DayTime {
+  id        Int      @id @default(autoincrement())
+  day       Int
+  startTime DateTime @db.Time()
+  endTime   DateTime @db.Time()
+  adminId   Int      @unique
+
+  Admin Admin @relation(fields: [adminId], references: [id])
 }
 
 model Student {
-  id              Int          @id @default(autoincrement())
-  studentRegNo    String       @unique
-  studentName     String       @unique
-  studentPassword String
-  parentId        Int
-  Parent          Parent       @relation(fields: [parentId], references: [id])
-  Meeting         Meeting[]
-  StudentInfo     StudentInfo[]
-  Subject         Subject[]
+  id                Int                 @id @default(autoincrement())
+  studentRegNo      String              @unique
+  studentName       String              @unique
+  studentPassword   String
+  parentId          Int
+  Parent            Parent              @relation(fields: [parentId], references: [id])
+  Meeting           Meeting[]
+  RequestedMeetings RequestedMeetings[]
+  StudentInfo       StudentInfo[]
+  Subject           Subject[]
 }
 
 model StudentInfo {
@@ -68,17 +102,31 @@ model Subject {
   @@id([subjectName, studentId])
 }
 
+model RequestedMeetings {
+  id            Int    @id @default(autoincrement())
+  meetingReason String
+  parentId      Int
+  studentId     Int
+  adminId       Int
+
+  Admin   Admin   @relation(fields: [adminId], references: [id])
+  Parent  Parent  @relation(fields: [parentId], references: [id])
+  Student Student @relation(fields: [studentId], references: [id])
+}
+
 model Meeting {
   id               Int        @id @default(autoincrement())
   meetingDay       DateTime   @db.Date
   meetingStatus    Boolean
   meetingReason    String?
-  adminId          Int
+  adminId          Int?
+  facultyId        Int?
   studentId        Int
   parentId         Int
   meetingStartTime String
   meetingEndTime   String
-  Admin            Admin      @relation(fields: [adminId], references: [id])
+  Admin            Admin?     @relation(fields: [adminId], references: [id])
+  Faculty          Faculty?   @relation(fields: [facultyId], references: [id])
   Parent           Parent     @relation(fields: [parentId], references: [id])
   Student          Student    @relation(fields: [studentId], references: [id])
   Feedback         Feedback[]

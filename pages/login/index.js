@@ -26,20 +26,23 @@ const Login = ({session}) => {
   });
 
   const onLogin = async (data) => {
+    console.log("INside login file");
     try {
-      const res = await trackPromise(signIn("credentials", {
+      const res = await signIn("credentials", {
         username: data.username,
         password: data.password,
         role: data.role,
         redirect: false,
-      }));
+      });
 
       console.log("THis is response: ", res);
       
       if (res.ok) {
         toast.success("Logged In")
-        router.push("/");
-        return;
+        router.push("/dashboard");
+      }
+      else{
+        toast.error("couldn't log in, try again later")
       }
     } catch (error) {
       console.log("This is error: ", error);

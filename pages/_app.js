@@ -21,6 +21,8 @@ function MyApp({ Component, pageProps, session }) {
   
   const [opened, setOpened] = useState(false);
 
+  const data = "Some importatnt data";
+
   return (
     <SessionProvider session={session}>
       <Toaster />

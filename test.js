@@ -282,8 +282,8 @@ console.log("False Meetings: ", falseByWeek, "True Meetings: ", trueByWeek, "Tot
 
 
 // step 1.
-//     SELECT "meetingDay" 
-//     FROM Meeting 
+//     SELECT "meetingDay"
+//     FROM Meeting
 //     WHERE "meetingStatus" === false;
 
 
@@ -293,8 +293,8 @@ console.log("False Meetings: ", falseByWeek, "True Meetings: ", trueByWeek, "Tot
 
 
 
-// psqlQuery = "SELECT TO_CHAR(SELECT meetingDay 
-//     FROM Meeting 
-//     WHERE meetingStatus = false 
-//     AND 
+// psqlQuery = "SELECT TO_CHAR(SELECT meetingDay
+//     FROM Meeting
+//     WHERE meetingStatus = false
+//     AND
 //     SELECT (EXTRACT MONTH FROM meetingDay), 'W')";

@@ -15,13 +15,19 @@ import {
   Notification,
   LoadingOverlay,
   Button,
+  NavLink,
 } from '@mantine/core';
 import { Calendar } from '@mantine/dates';
 import useFetchMeetings from 'hooks/meetings/use-fetch-meetings';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
+import {useRouter} from 'next/router';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faWaveSquare, faHome } from '@fortawesome/free-solid-svg-icons';
 
 const AppSkeloton = ({ children, ...props }) => {
+
+  const router = useRouter();
 
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
@@ -57,27 +63,16 @@ const AppSkeloton = ({ children, ...props }) => {
             <div className='h-max'>
               <h1 className='font-bold'>Logo goes here</h1>
             </div>
-            <div>
-            <ul className='list-none mt-4'>
-              <li>
-                <Link href=''>
-                <Button>
-                  Dashboard
-                </Button>
+            <div className='flex flex-col'>
+                <Link href='/'>
+                  <NavLink  component='a' label="Home" active={router.pathname === "/"} icon={<FontAwesomeIcon icon={faHome}/>}/>
                 </Link>
-                </li>
-              <li><span></span> Second</li>
-              <li>Third</li>
-            </ul>
-            </div>
-            <hr className='h-1' />
-            <div>
-              <ul>
-              <li>More List Items</li>
-              <li>MOre</li>
-              <li>Even more</li>
-              {props.session && <li><Button onClick={signOut}>Logout</Button></li>}
-              </ul>
+                <Link href='/dashboard'>
+              <NavLink component='a' label="Dashboard" active={router.pathname === "/dashboard"} icon={<FontAwesomeIcon icon={faWaveSquare} />} />
+                </Link>
+            {props.session && <Link href='#'>
+                  <NavLink onClick={signOut}  component='a' label="Logout" active={router.pathname === "/logout"}/>
+                </Link>}
             </div>
         </Navbar>
       }
@@ -100,7 +95,8 @@ const AppSkeloton = ({ children, ...props }) => {
               <ScrollArea style={{ height: 270 }}>
                 <LoadingOverlay visible={isLoading} />
                 {data?.meetings?.Meeting?.map((meeting) => {
-                  return <Notification key={meeting.id} title="meeting notification" disallowClose>
+                  return <Notification key={meeting.id} title="meeting notification" disallowClose
+                  >
                     {meeting.meetingReason}
                   </Notification>
                 })}
