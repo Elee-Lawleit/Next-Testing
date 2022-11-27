@@ -173,7 +173,7 @@ export type Feedback = {
 export class PrismaClient<
   T extends Prisma.PrismaClientOptions = Prisma.PrismaClientOptions,
   U = 'log' extends keyof T ? T['log'] extends Array<Prisma.LogLevel | Prisma.LogDefinition> ? Prisma.GetEvents<T['log']> : never : never,
-  GlobalReject = 'rejectOnNotFound' extends keyof T
+  GlobalReject extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined = 'rejectOnNotFound' extends keyof T
     ? T['rejectOnNotFound']
     : false
       > {
@@ -294,7 +294,7 @@ export class PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
    */
-  $transaction<P extends PrismaPromise<any>[]>(arg: [...P]): Promise<UnwrapTuple<P>>;
+  $transaction<P extends PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): Promise<UnwrapTuple<P>>;
 
       /**
    * `prisma.parent`: Exposes CRUD operations for the **Parent** model.
@@ -449,14 +449,15 @@ export namespace Prisma {
   /**
    * Metrics 
    */
-  export import Metrics = runtime.Metrics
-  export import Metric = runtime.Metric
-  export import MetricHistogram = runtime.MetricHistogram
-  export import MetricHistogramBucket = runtime.MetricHistogramBucket
+  export type Metrics = runtime.Metrics
+  export type Metric<T> = runtime.Metric<T>
+  export type MetricHistogram = runtime.MetricHistogram
+  export type MetricHistogramBucket = runtime.MetricHistogramBucket
+
 
   /**
-   * Prisma Client JS version: 4.3.0
-   * Query Engine version: c875e43600dfe042452e0b868f7a48b817b9640b
+   * Prisma Client JS version: 4.6.1
+   * Query Engine version: 694eea289a8462c80264df36757e4fdc129b1b32
    */
   export type PrismaVersion = {
     client: string
@@ -675,7 +676,7 @@ export namespace Prisma {
   ? False
   : T extends Date
   ? False
-  : T extends Buffer
+  : T extends Uint8Array
   ? False
   : T extends BigInt
   ? False
@@ -759,6 +760,16 @@ export namespace Prisma {
   type _Record<K extends keyof any, T> = {
     [P in K]: T;
   };
+
+  // cause typescript not to expand types and preserve names
+  type NoExpand<T> = T extends unknown ? T : never;
+
+  // this type assumes the passed object is entirely optional
+  type AtLeast<O extends object, K extends string> = NoExpand<
+    O extends unknown
+    ? | (K extends keyof O ? { [P in K]: O[P] } & O : O)
+      | {[P in keyof O as P extends K ? K : never]-?: O[P]} & O
+    : never>;
 
   type _Strict<U, _U = U> = U extends unknown ? U & OptionalFlat<_Record<Exclude<Keys<_U>, keyof U>, never>> : never;
 
@@ -873,7 +884,7 @@ export namespace Prisma {
   type ExcludeUnderscoreKeys<T extends string> = T extends `_${string}` ? never : T
 
 
-  export import FieldRef = runtime.FieldRef
+  export type FieldRef<Model, FieldType> = runtime.FieldRef<Model, FieldType>
 
   type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRef<Model, FieldType>
 
@@ -1028,7 +1039,7 @@ export namespace Prisma {
     | 'findRaw'
 
   /**
-   * These options are being passed in to the middleware as "params"
+   * These options are being passed into the middleware as "params"
    */
   export type MiddlewareParams = {
     model?: ModelName
@@ -1075,23 +1086,18 @@ export namespace Prisma {
     RequestedMeetings?: boolean | ParentCountOutputTypeCountRequestedMeetingsArgs
   }
 
-  export type ParentCountOutputTypeGetPayload<
-    S extends boolean | null | undefined | ParentCountOutputTypeArgs,
-    U = keyof S
-      > = S extends true
-        ? ParentCountOutputType
-    : S extends undefined
-    ? never
-    : S extends ParentCountOutputTypeArgs
-    ?'include' extends U
+  export type ParentCountOutputTypeGetPayload<S extends boolean | null | undefined | ParentCountOutputTypeArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? ParentCountOutputType :
+    S extends undefined ? never :
+    S extends { include: any } & (ParentCountOutputTypeArgs)
     ? ParentCountOutputType 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (ParentCountOutputTypeArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
     P extends keyof ParentCountOutputType ? ParentCountOutputType[P] : never
   } 
-    : ParentCountOutputType
-  : ParentCountOutputType
+      : ParentCountOutputType
 
 
 
@@ -1154,23 +1160,18 @@ export namespace Prisma {
     DayTime?: boolean | AdminCountOutputTypeCountDayTimeArgs
   }
 
-  export type AdminCountOutputTypeGetPayload<
-    S extends boolean | null | undefined | AdminCountOutputTypeArgs,
-    U = keyof S
-      > = S extends true
-        ? AdminCountOutputType
-    : S extends undefined
-    ? never
-    : S extends AdminCountOutputTypeArgs
-    ?'include' extends U
+  export type AdminCountOutputTypeGetPayload<S extends boolean | null | undefined | AdminCountOutputTypeArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? AdminCountOutputType :
+    S extends undefined ? never :
+    S extends { include: any } & (AdminCountOutputTypeArgs)
     ? AdminCountOutputType 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (AdminCountOutputTypeArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
     P extends keyof AdminCountOutputType ? AdminCountOutputType[P] : never
   } 
-    : AdminCountOutputType
-  : AdminCountOutputType
+      : AdminCountOutputType
 
 
 
@@ -1235,23 +1236,18 @@ export namespace Prisma {
     Faculty?: boolean | DepartmentCountOutputTypeCountFacultyArgs
   }
 
-  export type DepartmentCountOutputTypeGetPayload<
-    S extends boolean | null | undefined | DepartmentCountOutputTypeArgs,
-    U = keyof S
-      > = S extends true
-        ? DepartmentCountOutputType
-    : S extends undefined
-    ? never
-    : S extends DepartmentCountOutputTypeArgs
-    ?'include' extends U
+  export type DepartmentCountOutputTypeGetPayload<S extends boolean | null | undefined | DepartmentCountOutputTypeArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? DepartmentCountOutputType :
+    S extends undefined ? never :
+    S extends { include: any } & (DepartmentCountOutputTypeArgs)
     ? DepartmentCountOutputType 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (DepartmentCountOutputTypeArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
     P extends keyof DepartmentCountOutputType ? DepartmentCountOutputType[P] : never
   } 
-    : DepartmentCountOutputType
-  : DepartmentCountOutputType
+      : DepartmentCountOutputType
 
 
 
@@ -1292,23 +1288,18 @@ export namespace Prisma {
     Meeting?: boolean | FacultyCountOutputTypeCountMeetingArgs
   }
 
-  export type FacultyCountOutputTypeGetPayload<
-    S extends boolean | null | undefined | FacultyCountOutputTypeArgs,
-    U = keyof S
-      > = S extends true
-        ? FacultyCountOutputType
-    : S extends undefined
-    ? never
-    : S extends FacultyCountOutputTypeArgs
-    ?'include' extends U
+  export type FacultyCountOutputTypeGetPayload<S extends boolean | null | undefined | FacultyCountOutputTypeArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? FacultyCountOutputType :
+    S extends undefined ? never :
+    S extends { include: any } & (FacultyCountOutputTypeArgs)
     ? FacultyCountOutputType 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (FacultyCountOutputTypeArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
     P extends keyof FacultyCountOutputType ? FacultyCountOutputType[P] : never
   } 
-    : FacultyCountOutputType
-  : FacultyCountOutputType
+      : FacultyCountOutputType
 
 
 
@@ -1355,23 +1346,18 @@ export namespace Prisma {
     Subject?: boolean | StudentCountOutputTypeCountSubjectArgs
   }
 
-  export type StudentCountOutputTypeGetPayload<
-    S extends boolean | null | undefined | StudentCountOutputTypeArgs,
-    U = keyof S
-      > = S extends true
-        ? StudentCountOutputType
-    : S extends undefined
-    ? never
-    : S extends StudentCountOutputTypeArgs
-    ?'include' extends U
+  export type StudentCountOutputTypeGetPayload<S extends boolean | null | undefined | StudentCountOutputTypeArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? StudentCountOutputType :
+    S extends undefined ? never :
+    S extends { include: any } & (StudentCountOutputTypeArgs)
     ? StudentCountOutputType 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (StudentCountOutputTypeArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
     P extends keyof StudentCountOutputType ? StudentCountOutputType[P] : never
   } 
-    : StudentCountOutputType
-  : StudentCountOutputType
+      : StudentCountOutputType
 
 
 
@@ -1436,23 +1422,18 @@ export namespace Prisma {
     Feedback?: boolean | MeetingCountOutputTypeCountFeedbackArgs
   }
 
-  export type MeetingCountOutputTypeGetPayload<
-    S extends boolean | null | undefined | MeetingCountOutputTypeArgs,
-    U = keyof S
-      > = S extends true
-        ? MeetingCountOutputType
-    : S extends undefined
-    ? never
-    : S extends MeetingCountOutputTypeArgs
-    ?'include' extends U
+  export type MeetingCountOutputTypeGetPayload<S extends boolean | null | undefined | MeetingCountOutputTypeArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? MeetingCountOutputType :
+    S extends undefined ? never :
+    S extends { include: any } & (MeetingCountOutputTypeArgs)
     ? MeetingCountOutputType 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (MeetingCountOutputTypeArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
     P extends keyof MeetingCountOutputType ? MeetingCountOutputType[P] : never
   } 
-    : MeetingCountOutputType
-  : MeetingCountOutputType
+      : MeetingCountOutputType
 
 
 
@@ -1703,39 +1684,35 @@ export namespace Prisma {
     _count?: boolean | ParentCountOutputTypeArgs
   }
 
+
   export type ParentInclude = {
     Meeting?: boolean | MeetingFindManyArgs
     Student?: boolean | StudentFindManyArgs
     RequestedMeetings?: boolean | RequestedMeetingsFindManyArgs
     _count?: boolean | ParentCountOutputTypeArgs
-  }
+  } 
 
-  export type ParentGetPayload<
-    S extends boolean | null | undefined | ParentArgs,
-    U = keyof S
-      > = S extends true
-        ? Parent
-    : S extends undefined
-    ? never
-    : S extends ParentArgs | ParentFindManyArgs
-    ?'include' extends U
+  export type ParentGetPayload<S extends boolean | null | undefined | ParentArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Parent :
+    S extends undefined ? never :
+    S extends { include: any } & (ParentArgs | ParentFindManyArgs)
     ? Parent  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Meeting' ? Array < MeetingGetPayload<S['include'][P]>>  :
-        P extends 'Student' ? Array < StudentGetPayload<S['include'][P]>>  :
-        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<S['include'][P]>>  :
-        P extends '_count' ? ParentCountOutputTypeGetPayload<S['include'][P]> :  never
+        P extends 'Meeting' ? Array < MeetingGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'Student' ? Array < StudentGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends '_count' ? ParentCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (ParentArgs | ParentFindManyArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Meeting' ? Array < MeetingGetPayload<S['select'][P]>>  :
-        P extends 'Student' ? Array < StudentGetPayload<S['select'][P]>>  :
-        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<S['select'][P]>>  :
-        P extends '_count' ? ParentCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Parent ? Parent[P] : never
+        P extends 'Meeting' ? Array < MeetingGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'Student' ? Array < StudentGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends '_count' ? ParentCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Parent ? Parent[P] : never
   } 
-    : Parent
-  : Parent
+      : Parent
 
 
   type ParentCountArgs = Merge<
@@ -1744,7 +1721,7 @@ export namespace Prisma {
     }
   >
 
-  export interface ParentDelegate<GlobalRejectSettings> {
+  export interface ParentDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one Parent that matches the filter.
      * @param {ParentFindUniqueArgs} args - Arguments to find a Parent
@@ -1758,7 +1735,7 @@ export namespace Prisma {
     **/
     findUnique<T extends ParentFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, ParentFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Parent'> extends True ? CheckSelect<T, Prisma__ParentClient<Parent>, Prisma__ParentClient<ParentGetPayload<T>>> : CheckSelect<T, Prisma__ParentClient<Parent | null >, Prisma__ParentClient<ParentGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Parent'> extends True ? Prisma__ParentClient<ParentGetPayload<T>> : Prisma__ParentClient<ParentGetPayload<T> | null, null>
 
     /**
      * Find the first Parent that matches the filter.
@@ -1775,7 +1752,7 @@ export namespace Prisma {
     **/
     findFirst<T extends ParentFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, ParentFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Parent'> extends True ? CheckSelect<T, Prisma__ParentClient<Parent>, Prisma__ParentClient<ParentGetPayload<T>>> : CheckSelect<T, Prisma__ParentClient<Parent | null >, Prisma__ParentClient<ParentGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Parent'> extends True ? Prisma__ParentClient<ParentGetPayload<T>> : Prisma__ParentClient<ParentGetPayload<T> | null, null>
 
     /**
      * Find zero or more Parents that matches the filter.
@@ -1795,7 +1772,7 @@ export namespace Prisma {
     **/
     findMany<T extends ParentFindManyArgs>(
       args?: SelectSubset<T, ParentFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Parent>>, PrismaPromise<Array<ParentGetPayload<T>>>>
+    ): PrismaPromise<Array<ParentGetPayload<T>>>
 
     /**
      * Create a Parent.
@@ -1811,7 +1788,7 @@ export namespace Prisma {
     **/
     create<T extends ParentCreateArgs>(
       args: SelectSubset<T, ParentCreateArgs>
-    ): CheckSelect<T, Prisma__ParentClient<Parent>, Prisma__ParentClient<ParentGetPayload<T>>>
+    ): Prisma__ParentClient<ParentGetPayload<T>>
 
     /**
      * Create many Parents.
@@ -1843,7 +1820,7 @@ export namespace Prisma {
     **/
     delete<T extends ParentDeleteArgs>(
       args: SelectSubset<T, ParentDeleteArgs>
-    ): CheckSelect<T, Prisma__ParentClient<Parent>, Prisma__ParentClient<ParentGetPayload<T>>>
+    ): Prisma__ParentClient<ParentGetPayload<T>>
 
     /**
      * Update one Parent.
@@ -1862,7 +1839,7 @@ export namespace Prisma {
     **/
     update<T extends ParentUpdateArgs>(
       args: SelectSubset<T, ParentUpdateArgs>
-    ): CheckSelect<T, Prisma__ParentClient<Parent>, Prisma__ParentClient<ParentGetPayload<T>>>
+    ): Prisma__ParentClient<ParentGetPayload<T>>
 
     /**
      * Delete zero or more Parents.
@@ -1920,7 +1897,7 @@ export namespace Prisma {
     **/
     upsert<T extends ParentUpsertArgs>(
       args: SelectSubset<T, ParentUpsertArgs>
-    ): CheckSelect<T, Prisma__ParentClient<Parent>, Prisma__ParentClient<ParentGetPayload<T>>>
+    ): Prisma__ParentClient<ParentGetPayload<T>>
 
     /**
      * Find one Parent that matches the filter or throw
@@ -1936,7 +1913,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends ParentFindUniqueOrThrowArgs>(
       args?: SelectSubset<T, ParentFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__ParentClient<Parent>, Prisma__ParentClient<ParentGetPayload<T>>>
+    ): Prisma__ParentClient<ParentGetPayload<T>>
 
     /**
      * Find the first Parent that matches the filter or
@@ -1954,7 +1931,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends ParentFindFirstOrThrowArgs>(
       args?: SelectSubset<T, ParentFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__ParentClient<Parent>, Prisma__ParentClient<ParentGetPayload<T>>>
+    ): Prisma__ParentClient<ParentGetPayload<T>>
 
     /**
      * Count the number of Parents.
@@ -2090,7 +2067,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__ParentClient<T> implements PrismaPromise<T> {
+  export class Prisma__ParentClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -2107,11 +2084,11 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    Meeting<T extends MeetingFindManyArgs = {}>(args?: Subset<T, MeetingFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Meeting>>, PrismaPromise<Array<MeetingGetPayload<T>>>>;
+    Meeting<T extends MeetingFindManyArgs= {}>(args?: Subset<T, MeetingFindManyArgs>): PrismaPromise<Array<MeetingGetPayload<T>>| Null>;
 
-    Student<T extends StudentFindManyArgs = {}>(args?: Subset<T, StudentFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Student>>, PrismaPromise<Array<StudentGetPayload<T>>>>;
+    Student<T extends StudentFindManyArgs= {}>(args?: Subset<T, StudentFindManyArgs>): PrismaPromise<Array<StudentGetPayload<T>>| Null>;
 
-    RequestedMeetings<T extends RequestedMeetingsFindManyArgs = {}>(args?: Subset<T, RequestedMeetingsFindManyArgs>): CheckSelect<T, PrismaPromise<Array<RequestedMeetings>>, PrismaPromise<Array<RequestedMeetingsGetPayload<T>>>>;
+    RequestedMeetings<T extends RequestedMeetingsFindManyArgs= {}>(args?: Subset<T, RequestedMeetingsFindManyArgs>): PrismaPromise<Array<RequestedMeetingsGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -2695,42 +2672,38 @@ export namespace Prisma {
     _count?: boolean | AdminCountOutputTypeArgs
   }
 
+
   export type AdminInclude = {
     Meeting?: boolean | MeetingFindManyArgs
     Schedule?: boolean | ScheduleFindManyArgs
     RequestedMeetings?: boolean | RequestedMeetingsFindManyArgs
     DayTime?: boolean | DayTimeFindManyArgs
     _count?: boolean | AdminCountOutputTypeArgs
-  }
+  } 
 
-  export type AdminGetPayload<
-    S extends boolean | null | undefined | AdminArgs,
-    U = keyof S
-      > = S extends true
-        ? Admin
-    : S extends undefined
-    ? never
-    : S extends AdminArgs | AdminFindManyArgs
-    ?'include' extends U
+  export type AdminGetPayload<S extends boolean | null | undefined | AdminArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Admin :
+    S extends undefined ? never :
+    S extends { include: any } & (AdminArgs | AdminFindManyArgs)
     ? Admin  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Meeting' ? Array < MeetingGetPayload<S['include'][P]>>  :
-        P extends 'Schedule' ? Array < ScheduleGetPayload<S['include'][P]>>  :
-        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<S['include'][P]>>  :
-        P extends 'DayTime' ? Array < DayTimeGetPayload<S['include'][P]>>  :
-        P extends '_count' ? AdminCountOutputTypeGetPayload<S['include'][P]> :  never
+        P extends 'Meeting' ? Array < MeetingGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'Schedule' ? Array < ScheduleGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'DayTime' ? Array < DayTimeGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends '_count' ? AdminCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (AdminArgs | AdminFindManyArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Meeting' ? Array < MeetingGetPayload<S['select'][P]>>  :
-        P extends 'Schedule' ? Array < ScheduleGetPayload<S['select'][P]>>  :
-        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<S['select'][P]>>  :
-        P extends 'DayTime' ? Array < DayTimeGetPayload<S['select'][P]>>  :
-        P extends '_count' ? AdminCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Admin ? Admin[P] : never
+        P extends 'Meeting' ? Array < MeetingGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'Schedule' ? Array < ScheduleGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'DayTime' ? Array < DayTimeGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends '_count' ? AdminCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Admin ? Admin[P] : never
   } 
-    : Admin
-  : Admin
+      : Admin
 
 
   type AdminCountArgs = Merge<
@@ -2739,7 +2712,7 @@ export namespace Prisma {
     }
   >
 
-  export interface AdminDelegate<GlobalRejectSettings> {
+  export interface AdminDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one Admin that matches the filter.
      * @param {AdminFindUniqueArgs} args - Arguments to find a Admin
@@ -2753,7 +2726,7 @@ export namespace Prisma {
     **/
     findUnique<T extends AdminFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, AdminFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Admin'> extends True ? CheckSelect<T, Prisma__AdminClient<Admin>, Prisma__AdminClient<AdminGetPayload<T>>> : CheckSelect<T, Prisma__AdminClient<Admin | null >, Prisma__AdminClient<AdminGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Admin'> extends True ? Prisma__AdminClient<AdminGetPayload<T>> : Prisma__AdminClient<AdminGetPayload<T> | null, null>
 
     /**
      * Find the first Admin that matches the filter.
@@ -2770,7 +2743,7 @@ export namespace Prisma {
     **/
     findFirst<T extends AdminFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, AdminFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Admin'> extends True ? CheckSelect<T, Prisma__AdminClient<Admin>, Prisma__AdminClient<AdminGetPayload<T>>> : CheckSelect<T, Prisma__AdminClient<Admin | null >, Prisma__AdminClient<AdminGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Admin'> extends True ? Prisma__AdminClient<AdminGetPayload<T>> : Prisma__AdminClient<AdminGetPayload<T> | null, null>
 
     /**
      * Find zero or more Admins that matches the filter.
@@ -2790,7 +2763,7 @@ export namespace Prisma {
     **/
     findMany<T extends AdminFindManyArgs>(
       args?: SelectSubset<T, AdminFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Admin>>, PrismaPromise<Array<AdminGetPayload<T>>>>
+    ): PrismaPromise<Array<AdminGetPayload<T>>>
 
     /**
      * Create a Admin.
@@ -2806,7 +2779,7 @@ export namespace Prisma {
     **/
     create<T extends AdminCreateArgs>(
       args: SelectSubset<T, AdminCreateArgs>
-    ): CheckSelect<T, Prisma__AdminClient<Admin>, Prisma__AdminClient<AdminGetPayload<T>>>
+    ): Prisma__AdminClient<AdminGetPayload<T>>
 
     /**
      * Create many Admins.
@@ -2838,7 +2811,7 @@ export namespace Prisma {
     **/
     delete<T extends AdminDeleteArgs>(
       args: SelectSubset<T, AdminDeleteArgs>
-    ): CheckSelect<T, Prisma__AdminClient<Admin>, Prisma__AdminClient<AdminGetPayload<T>>>
+    ): Prisma__AdminClient<AdminGetPayload<T>>
 
     /**
      * Update one Admin.
@@ -2857,7 +2830,7 @@ export namespace Prisma {
     **/
     update<T extends AdminUpdateArgs>(
       args: SelectSubset<T, AdminUpdateArgs>
-    ): CheckSelect<T, Prisma__AdminClient<Admin>, Prisma__AdminClient<AdminGetPayload<T>>>
+    ): Prisma__AdminClient<AdminGetPayload<T>>
 
     /**
      * Delete zero or more Admins.
@@ -2915,7 +2888,7 @@ export namespace Prisma {
     **/
     upsert<T extends AdminUpsertArgs>(
       args: SelectSubset<T, AdminUpsertArgs>
-    ): CheckSelect<T, Prisma__AdminClient<Admin>, Prisma__AdminClient<AdminGetPayload<T>>>
+    ): Prisma__AdminClient<AdminGetPayload<T>>
 
     /**
      * Find one Admin that matches the filter or throw
@@ -2931,7 +2904,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends AdminFindUniqueOrThrowArgs>(
       args?: SelectSubset<T, AdminFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__AdminClient<Admin>, Prisma__AdminClient<AdminGetPayload<T>>>
+    ): Prisma__AdminClient<AdminGetPayload<T>>
 
     /**
      * Find the first Admin that matches the filter or
@@ -2949,7 +2922,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends AdminFindFirstOrThrowArgs>(
       args?: SelectSubset<T, AdminFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__AdminClient<Admin>, Prisma__AdminClient<AdminGetPayload<T>>>
+    ): Prisma__AdminClient<AdminGetPayload<T>>
 
     /**
      * Count the number of Admins.
@@ -3085,7 +3058,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__AdminClient<T> implements PrismaPromise<T> {
+  export class Prisma__AdminClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -3102,13 +3075,13 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    Meeting<T extends MeetingFindManyArgs = {}>(args?: Subset<T, MeetingFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Meeting>>, PrismaPromise<Array<MeetingGetPayload<T>>>>;
+    Meeting<T extends MeetingFindManyArgs= {}>(args?: Subset<T, MeetingFindManyArgs>): PrismaPromise<Array<MeetingGetPayload<T>>| Null>;
 
-    Schedule<T extends ScheduleFindManyArgs = {}>(args?: Subset<T, ScheduleFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Schedule>>, PrismaPromise<Array<ScheduleGetPayload<T>>>>;
+    Schedule<T extends ScheduleFindManyArgs= {}>(args?: Subset<T, ScheduleFindManyArgs>): PrismaPromise<Array<ScheduleGetPayload<T>>| Null>;
 
-    RequestedMeetings<T extends RequestedMeetingsFindManyArgs = {}>(args?: Subset<T, RequestedMeetingsFindManyArgs>): CheckSelect<T, PrismaPromise<Array<RequestedMeetings>>, PrismaPromise<Array<RequestedMeetingsGetPayload<T>>>>;
+    RequestedMeetings<T extends RequestedMeetingsFindManyArgs= {}>(args?: Subset<T, RequestedMeetingsFindManyArgs>): PrismaPromise<Array<RequestedMeetingsGetPayload<T>>| Null>;
 
-    DayTime<T extends DayTimeFindManyArgs = {}>(args?: Subset<T, DayTimeFindManyArgs>): CheckSelect<T, PrismaPromise<Array<DayTime>>, PrismaPromise<Array<DayTimeGetPayload<T>>>>;
+    DayTime<T extends DayTimeFindManyArgs= {}>(args?: Subset<T, DayTimeFindManyArgs>): PrismaPromise<Array<DayTimeGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -3649,33 +3622,29 @@ export namespace Prisma {
     _count?: boolean | DepartmentCountOutputTypeArgs
   }
 
+
   export type DepartmentInclude = {
     Faculty?: boolean | FacultyFindManyArgs
     _count?: boolean | DepartmentCountOutputTypeArgs
-  }
+  } 
 
-  export type DepartmentGetPayload<
-    S extends boolean | null | undefined | DepartmentArgs,
-    U = keyof S
-      > = S extends true
-        ? Department
-    : S extends undefined
-    ? never
-    : S extends DepartmentArgs | DepartmentFindManyArgs
-    ?'include' extends U
+  export type DepartmentGetPayload<S extends boolean | null | undefined | DepartmentArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Department :
+    S extends undefined ? never :
+    S extends { include: any } & (DepartmentArgs | DepartmentFindManyArgs)
     ? Department  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Faculty' ? Array < FacultyGetPayload<S['include'][P]>>  :
-        P extends '_count' ? DepartmentCountOutputTypeGetPayload<S['include'][P]> :  never
+        P extends 'Faculty' ? Array < FacultyGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends '_count' ? DepartmentCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (DepartmentArgs | DepartmentFindManyArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Faculty' ? Array < FacultyGetPayload<S['select'][P]>>  :
-        P extends '_count' ? DepartmentCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Department ? Department[P] : never
+        P extends 'Faculty' ? Array < FacultyGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends '_count' ? DepartmentCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Department ? Department[P] : never
   } 
-    : Department
-  : Department
+      : Department
 
 
   type DepartmentCountArgs = Merge<
@@ -3684,7 +3653,7 @@ export namespace Prisma {
     }
   >
 
-  export interface DepartmentDelegate<GlobalRejectSettings> {
+  export interface DepartmentDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one Department that matches the filter.
      * @param {DepartmentFindUniqueArgs} args - Arguments to find a Department
@@ -3698,7 +3667,7 @@ export namespace Prisma {
     **/
     findUnique<T extends DepartmentFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, DepartmentFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Department'> extends True ? CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>> : CheckSelect<T, Prisma__DepartmentClient<Department | null >, Prisma__DepartmentClient<DepartmentGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Department'> extends True ? Prisma__DepartmentClient<DepartmentGetPayload<T>> : Prisma__DepartmentClient<DepartmentGetPayload<T> | null, null>
 
     /**
      * Find the first Department that matches the filter.
@@ -3715,7 +3684,7 @@ export namespace Prisma {
     **/
     findFirst<T extends DepartmentFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, DepartmentFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Department'> extends True ? CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>> : CheckSelect<T, Prisma__DepartmentClient<Department | null >, Prisma__DepartmentClient<DepartmentGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Department'> extends True ? Prisma__DepartmentClient<DepartmentGetPayload<T>> : Prisma__DepartmentClient<DepartmentGetPayload<T> | null, null>
 
     /**
      * Find zero or more Departments that matches the filter.
@@ -3735,7 +3704,7 @@ export namespace Prisma {
     **/
     findMany<T extends DepartmentFindManyArgs>(
       args?: SelectSubset<T, DepartmentFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Department>>, PrismaPromise<Array<DepartmentGetPayload<T>>>>
+    ): PrismaPromise<Array<DepartmentGetPayload<T>>>
 
     /**
      * Create a Department.
@@ -3751,7 +3720,7 @@ export namespace Prisma {
     **/
     create<T extends DepartmentCreateArgs>(
       args: SelectSubset<T, DepartmentCreateArgs>
-    ): CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>>
+    ): Prisma__DepartmentClient<DepartmentGetPayload<T>>
 
     /**
      * Create many Departments.
@@ -3783,7 +3752,7 @@ export namespace Prisma {
     **/
     delete<T extends DepartmentDeleteArgs>(
       args: SelectSubset<T, DepartmentDeleteArgs>
-    ): CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>>
+    ): Prisma__DepartmentClient<DepartmentGetPayload<T>>
 
     /**
      * Update one Department.
@@ -3802,7 +3771,7 @@ export namespace Prisma {
     **/
     update<T extends DepartmentUpdateArgs>(
       args: SelectSubset<T, DepartmentUpdateArgs>
-    ): CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>>
+    ): Prisma__DepartmentClient<DepartmentGetPayload<T>>
 
     /**
      * Delete zero or more Departments.
@@ -3860,7 +3829,7 @@ export namespace Prisma {
     **/
     upsert<T extends DepartmentUpsertArgs>(
       args: SelectSubset<T, DepartmentUpsertArgs>
-    ): CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>>
+    ): Prisma__DepartmentClient<DepartmentGetPayload<T>>
 
     /**
      * Find one Department that matches the filter or throw
@@ -3876,7 +3845,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends DepartmentFindUniqueOrThrowArgs>(
       args?: SelectSubset<T, DepartmentFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>>
+    ): Prisma__DepartmentClient<DepartmentGetPayload<T>>
 
     /**
      * Find the first Department that matches the filter or
@@ -3894,7 +3863,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends DepartmentFindFirstOrThrowArgs>(
       args?: SelectSubset<T, DepartmentFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__DepartmentClient<Department>, Prisma__DepartmentClient<DepartmentGetPayload<T>>>
+    ): Prisma__DepartmentClient<DepartmentGetPayload<T>>
 
     /**
      * Count the number of Departments.
@@ -4030,7 +3999,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__DepartmentClient<T> implements PrismaPromise<T> {
+  export class Prisma__DepartmentClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -4047,7 +4016,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    Faculty<T extends FacultyFindManyArgs = {}>(args?: Subset<T, FacultyFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Faculty>>, PrismaPromise<Array<FacultyGetPayload<T>>>>;
+    Faculty<T extends FacultyFindManyArgs= {}>(args?: Subset<T, FacultyFindManyArgs>): PrismaPromise<Array<FacultyGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -4601,36 +4570,32 @@ export namespace Prisma {
     _count?: boolean | FacultyCountOutputTypeArgs
   }
 
+
   export type FacultyInclude = {
     Meeting?: boolean | MeetingFindManyArgs
     Department?: boolean | DepartmentArgs
     _count?: boolean | FacultyCountOutputTypeArgs
-  }
+  } 
 
-  export type FacultyGetPayload<
-    S extends boolean | null | undefined | FacultyArgs,
-    U = keyof S
-      > = S extends true
-        ? Faculty
-    : S extends undefined
-    ? never
-    : S extends FacultyArgs | FacultyFindManyArgs
-    ?'include' extends U
+  export type FacultyGetPayload<S extends boolean | null | undefined | FacultyArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Faculty :
+    S extends undefined ? never :
+    S extends { include: any } & (FacultyArgs | FacultyFindManyArgs)
     ? Faculty  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Meeting' ? Array < MeetingGetPayload<S['include'][P]>>  :
-        P extends 'Department' ? DepartmentGetPayload<S['include'][P]> :
-        P extends '_count' ? FacultyCountOutputTypeGetPayload<S['include'][P]> :  never
+        P extends 'Meeting' ? Array < MeetingGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'Department' ? DepartmentGetPayload<Exclude<S['include'], undefined | null>[P]> :
+        P extends '_count' ? FacultyCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (FacultyArgs | FacultyFindManyArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Meeting' ? Array < MeetingGetPayload<S['select'][P]>>  :
-        P extends 'Department' ? DepartmentGetPayload<S['select'][P]> :
-        P extends '_count' ? FacultyCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Faculty ? Faculty[P] : never
+        P extends 'Meeting' ? Array < MeetingGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'Department' ? DepartmentGetPayload<Exclude<S['select'], undefined | null>[P]> :
+        P extends '_count' ? FacultyCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Faculty ? Faculty[P] : never
   } 
-    : Faculty
-  : Faculty
+      : Faculty
 
 
   type FacultyCountArgs = Merge<
@@ -4639,7 +4604,7 @@ export namespace Prisma {
     }
   >
 
-  export interface FacultyDelegate<GlobalRejectSettings> {
+  export interface FacultyDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one Faculty that matches the filter.
      * @param {FacultyFindUniqueArgs} args - Arguments to find a Faculty
@@ -4653,7 +4618,7 @@ export namespace Prisma {
     **/
     findUnique<T extends FacultyFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, FacultyFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Faculty'> extends True ? CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>> : CheckSelect<T, Prisma__FacultyClient<Faculty | null >, Prisma__FacultyClient<FacultyGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Faculty'> extends True ? Prisma__FacultyClient<FacultyGetPayload<T>> : Prisma__FacultyClient<FacultyGetPayload<T> | null, null>
 
     /**
      * Find the first Faculty that matches the filter.
@@ -4670,7 +4635,7 @@ export namespace Prisma {
     **/
     findFirst<T extends FacultyFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, FacultyFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Faculty'> extends True ? CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>> : CheckSelect<T, Prisma__FacultyClient<Faculty | null >, Prisma__FacultyClient<FacultyGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Faculty'> extends True ? Prisma__FacultyClient<FacultyGetPayload<T>> : Prisma__FacultyClient<FacultyGetPayload<T> | null, null>
 
     /**
      * Find zero or more Faculties that matches the filter.
@@ -4690,7 +4655,7 @@ export namespace Prisma {
     **/
     findMany<T extends FacultyFindManyArgs>(
       args?: SelectSubset<T, FacultyFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Faculty>>, PrismaPromise<Array<FacultyGetPayload<T>>>>
+    ): PrismaPromise<Array<FacultyGetPayload<T>>>
 
     /**
      * Create a Faculty.
@@ -4706,7 +4671,7 @@ export namespace Prisma {
     **/
     create<T extends FacultyCreateArgs>(
       args: SelectSubset<T, FacultyCreateArgs>
-    ): CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>>
+    ): Prisma__FacultyClient<FacultyGetPayload<T>>
 
     /**
      * Create many Faculties.
@@ -4738,7 +4703,7 @@ export namespace Prisma {
     **/
     delete<T extends FacultyDeleteArgs>(
       args: SelectSubset<T, FacultyDeleteArgs>
-    ): CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>>
+    ): Prisma__FacultyClient<FacultyGetPayload<T>>
 
     /**
      * Update one Faculty.
@@ -4757,7 +4722,7 @@ export namespace Prisma {
     **/
     update<T extends FacultyUpdateArgs>(
       args: SelectSubset<T, FacultyUpdateArgs>
-    ): CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>>
+    ): Prisma__FacultyClient<FacultyGetPayload<T>>
 
     /**
      * Delete zero or more Faculties.
@@ -4815,7 +4780,7 @@ export namespace Prisma {
     **/
     upsert<T extends FacultyUpsertArgs>(
       args: SelectSubset<T, FacultyUpsertArgs>
-    ): CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>>
+    ): Prisma__FacultyClient<FacultyGetPayload<T>>
 
     /**
      * Find one Faculty that matches the filter or throw
@@ -4831,7 +4796,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends FacultyFindUniqueOrThrowArgs>(
       args?: SelectSubset<T, FacultyFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>>
+    ): Prisma__FacultyClient<FacultyGetPayload<T>>
 
     /**
      * Find the first Faculty that matches the filter or
@@ -4849,7 +4814,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends FacultyFindFirstOrThrowArgs>(
       args?: SelectSubset<T, FacultyFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__FacultyClient<Faculty>, Prisma__FacultyClient<FacultyGetPayload<T>>>
+    ): Prisma__FacultyClient<FacultyGetPayload<T>>
 
     /**
      * Count the number of Faculties.
@@ -4985,7 +4950,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__FacultyClient<T> implements PrismaPromise<T> {
+  export class Prisma__FacultyClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -5002,9 +4967,9 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    Meeting<T extends MeetingFindManyArgs = {}>(args?: Subset<T, MeetingFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Meeting>>, PrismaPromise<Array<MeetingGetPayload<T>>>>;
+    Meeting<T extends MeetingFindManyArgs= {}>(args?: Subset<T, MeetingFindManyArgs>): PrismaPromise<Array<MeetingGetPayload<T>>| Null>;
 
-    Department<T extends DepartmentArgs = {}>(args?: Subset<T, DepartmentArgs>): CheckSelect<T, Prisma__DepartmentClient<Department | null >, Prisma__DepartmentClient<DepartmentGetPayload<T> | null >>;
+    Department<T extends DepartmentArgs= {}>(args?: Subset<T, DepartmentArgs>): Prisma__DepartmentClient<DepartmentGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -5592,30 +5557,26 @@ export namespace Prisma {
     Admin?: boolean | AdminArgs
   }
 
+
   export type ScheduleInclude = {
     Admin?: boolean | AdminArgs
-  }
+  } 
 
-  export type ScheduleGetPayload<
-    S extends boolean | null | undefined | ScheduleArgs,
-    U = keyof S
-      > = S extends true
-        ? Schedule
-    : S extends undefined
-    ? never
-    : S extends ScheduleArgs | ScheduleFindManyArgs
-    ?'include' extends U
+  export type ScheduleGetPayload<S extends boolean | null | undefined | ScheduleArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Schedule :
+    S extends undefined ? never :
+    S extends { include: any } & (ScheduleArgs | ScheduleFindManyArgs)
     ? Schedule  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Admin' ? AdminGetPayload<S['include'][P]> :  never
+        P extends 'Admin' ? AdminGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (ScheduleArgs | ScheduleFindManyArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Admin' ? AdminGetPayload<S['select'][P]> :  P extends keyof Schedule ? Schedule[P] : never
+        P extends 'Admin' ? AdminGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Schedule ? Schedule[P] : never
   } 
-    : Schedule
-  : Schedule
+      : Schedule
 
 
   type ScheduleCountArgs = Merge<
@@ -5624,7 +5585,7 @@ export namespace Prisma {
     }
   >
 
-  export interface ScheduleDelegate<GlobalRejectSettings> {
+  export interface ScheduleDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one Schedule that matches the filter.
      * @param {ScheduleFindUniqueArgs} args - Arguments to find a Schedule
@@ -5638,7 +5599,7 @@ export namespace Prisma {
     **/
     findUnique<T extends ScheduleFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, ScheduleFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Schedule'> extends True ? CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>> : CheckSelect<T, Prisma__ScheduleClient<Schedule | null >, Prisma__ScheduleClient<ScheduleGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Schedule'> extends True ? Prisma__ScheduleClient<ScheduleGetPayload<T>> : Prisma__ScheduleClient<ScheduleGetPayload<T> | null, null>
 
     /**
      * Find the first Schedule that matches the filter.
@@ -5655,7 +5616,7 @@ export namespace Prisma {
     **/
     findFirst<T extends ScheduleFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, ScheduleFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Schedule'> extends True ? CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>> : CheckSelect<T, Prisma__ScheduleClient<Schedule | null >, Prisma__ScheduleClient<ScheduleGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Schedule'> extends True ? Prisma__ScheduleClient<ScheduleGetPayload<T>> : Prisma__ScheduleClient<ScheduleGetPayload<T> | null, null>
 
     /**
      * Find zero or more Schedules that matches the filter.
@@ -5675,7 +5636,7 @@ export namespace Prisma {
     **/
     findMany<T extends ScheduleFindManyArgs>(
       args?: SelectSubset<T, ScheduleFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Schedule>>, PrismaPromise<Array<ScheduleGetPayload<T>>>>
+    ): PrismaPromise<Array<ScheduleGetPayload<T>>>
 
     /**
      * Create a Schedule.
@@ -5691,7 +5652,7 @@ export namespace Prisma {
     **/
     create<T extends ScheduleCreateArgs>(
       args: SelectSubset<T, ScheduleCreateArgs>
-    ): CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>>
+    ): Prisma__ScheduleClient<ScheduleGetPayload<T>>
 
     /**
      * Create many Schedules.
@@ -5723,7 +5684,7 @@ export namespace Prisma {
     **/
     delete<T extends ScheduleDeleteArgs>(
       args: SelectSubset<T, ScheduleDeleteArgs>
-    ): CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>>
+    ): Prisma__ScheduleClient<ScheduleGetPayload<T>>
 
     /**
      * Update one Schedule.
@@ -5742,7 +5703,7 @@ export namespace Prisma {
     **/
     update<T extends ScheduleUpdateArgs>(
       args: SelectSubset<T, ScheduleUpdateArgs>
-    ): CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>>
+    ): Prisma__ScheduleClient<ScheduleGetPayload<T>>
 
     /**
      * Delete zero or more Schedules.
@@ -5800,7 +5761,7 @@ export namespace Prisma {
     **/
     upsert<T extends ScheduleUpsertArgs>(
       args: SelectSubset<T, ScheduleUpsertArgs>
-    ): CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>>
+    ): Prisma__ScheduleClient<ScheduleGetPayload<T>>
 
     /**
      * Find one Schedule that matches the filter or throw
@@ -5816,7 +5777,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends ScheduleFindUniqueOrThrowArgs>(
       args?: SelectSubset<T, ScheduleFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>>
+    ): Prisma__ScheduleClient<ScheduleGetPayload<T>>
 
     /**
      * Find the first Schedule that matches the filter or
@@ -5834,7 +5795,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends ScheduleFindFirstOrThrowArgs>(
       args?: SelectSubset<T, ScheduleFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__ScheduleClient<Schedule>, Prisma__ScheduleClient<ScheduleGetPayload<T>>>
+    ): Prisma__ScheduleClient<ScheduleGetPayload<T>>
 
     /**
      * Count the number of Schedules.
@@ -5970,7 +5931,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__ScheduleClient<T> implements PrismaPromise<T> {
+  export class Prisma__ScheduleClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -5987,7 +5948,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    Admin<T extends AdminArgs = {}>(args?: Subset<T, AdminArgs>): CheckSelect<T, Prisma__AdminClient<Admin | null >, Prisma__AdminClient<AdminGetPayload<T> | null >>;
+    Admin<T extends AdminArgs= {}>(args?: Subset<T, AdminArgs>): Prisma__AdminClient<AdminGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -6559,30 +6520,26 @@ export namespace Prisma {
     Admin?: boolean | AdminArgs
   }
 
+
   export type DayTimeInclude = {
     Admin?: boolean | AdminArgs
-  }
+  } 
 
-  export type DayTimeGetPayload<
-    S extends boolean | null | undefined | DayTimeArgs,
-    U = keyof S
-      > = S extends true
-        ? DayTime
-    : S extends undefined
-    ? never
-    : S extends DayTimeArgs | DayTimeFindManyArgs
-    ?'include' extends U
+  export type DayTimeGetPayload<S extends boolean | null | undefined | DayTimeArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? DayTime :
+    S extends undefined ? never :
+    S extends { include: any } & (DayTimeArgs | DayTimeFindManyArgs)
     ? DayTime  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Admin' ? AdminGetPayload<S['include'][P]> :  never
+        P extends 'Admin' ? AdminGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (DayTimeArgs | DayTimeFindManyArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Admin' ? AdminGetPayload<S['select'][P]> :  P extends keyof DayTime ? DayTime[P] : never
+        P extends 'Admin' ? AdminGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof DayTime ? DayTime[P] : never
   } 
-    : DayTime
-  : DayTime
+      : DayTime
 
 
   type DayTimeCountArgs = Merge<
@@ -6591,7 +6548,7 @@ export namespace Prisma {
     }
   >
 
-  export interface DayTimeDelegate<GlobalRejectSettings> {
+  export interface DayTimeDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one DayTime that matches the filter.
      * @param {DayTimeFindUniqueArgs} args - Arguments to find a DayTime
@@ -6605,7 +6562,7 @@ export namespace Prisma {
     **/
     findUnique<T extends DayTimeFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, DayTimeFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'DayTime'> extends True ? CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>> : CheckSelect<T, Prisma__DayTimeClient<DayTime | null >, Prisma__DayTimeClient<DayTimeGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'DayTime'> extends True ? Prisma__DayTimeClient<DayTimeGetPayload<T>> : Prisma__DayTimeClient<DayTimeGetPayload<T> | null, null>
 
     /**
      * Find the first DayTime that matches the filter.
@@ -6622,7 +6579,7 @@ export namespace Prisma {
     **/
     findFirst<T extends DayTimeFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, DayTimeFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'DayTime'> extends True ? CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>> : CheckSelect<T, Prisma__DayTimeClient<DayTime | null >, Prisma__DayTimeClient<DayTimeGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'DayTime'> extends True ? Prisma__DayTimeClient<DayTimeGetPayload<T>> : Prisma__DayTimeClient<DayTimeGetPayload<T> | null, null>
 
     /**
      * Find zero or more DayTimes that matches the filter.
@@ -6642,7 +6599,7 @@ export namespace Prisma {
     **/
     findMany<T extends DayTimeFindManyArgs>(
       args?: SelectSubset<T, DayTimeFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<DayTime>>, PrismaPromise<Array<DayTimeGetPayload<T>>>>
+    ): PrismaPromise<Array<DayTimeGetPayload<T>>>
 
     /**
      * Create a DayTime.
@@ -6658,7 +6615,7 @@ export namespace Prisma {
     **/
     create<T extends DayTimeCreateArgs>(
       args: SelectSubset<T, DayTimeCreateArgs>
-    ): CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>>
+    ): Prisma__DayTimeClient<DayTimeGetPayload<T>>
 
     /**
      * Create many DayTimes.
@@ -6690,7 +6647,7 @@ export namespace Prisma {
     **/
     delete<T extends DayTimeDeleteArgs>(
       args: SelectSubset<T, DayTimeDeleteArgs>
-    ): CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>>
+    ): Prisma__DayTimeClient<DayTimeGetPayload<T>>
 
     /**
      * Update one DayTime.
@@ -6709,7 +6666,7 @@ export namespace Prisma {
     **/
     update<T extends DayTimeUpdateArgs>(
       args: SelectSubset<T, DayTimeUpdateArgs>
-    ): CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>>
+    ): Prisma__DayTimeClient<DayTimeGetPayload<T>>
 
     /**
      * Delete zero or more DayTimes.
@@ -6767,7 +6724,7 @@ export namespace Prisma {
     **/
     upsert<T extends DayTimeUpsertArgs>(
       args: SelectSubset<T, DayTimeUpsertArgs>
-    ): CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>>
+    ): Prisma__DayTimeClient<DayTimeGetPayload<T>>
 
     /**
      * Find one DayTime that matches the filter or throw
@@ -6783,7 +6740,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends DayTimeFindUniqueOrThrowArgs>(
       args?: SelectSubset<T, DayTimeFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>>
+    ): Prisma__DayTimeClient<DayTimeGetPayload<T>>
 
     /**
      * Find the first DayTime that matches the filter or
@@ -6801,7 +6758,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends DayTimeFindFirstOrThrowArgs>(
       args?: SelectSubset<T, DayTimeFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__DayTimeClient<DayTime>, Prisma__DayTimeClient<DayTimeGetPayload<T>>>
+    ): Prisma__DayTimeClient<DayTimeGetPayload<T>>
 
     /**
      * Count the number of DayTimes.
@@ -6937,7 +6894,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__DayTimeClient<T> implements PrismaPromise<T> {
+  export class Prisma__DayTimeClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -6954,7 +6911,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    Admin<T extends AdminArgs = {}>(args?: Subset<T, AdminArgs>): CheckSelect<T, Prisma__AdminClient<Admin | null >, Prisma__AdminClient<AdminGetPayload<T> | null >>;
+    Admin<T extends AdminArgs= {}>(args?: Subset<T, AdminArgs>): Prisma__AdminClient<AdminGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -7527,6 +7484,7 @@ export namespace Prisma {
     _count?: boolean | StudentCountOutputTypeArgs
   }
 
+
   export type StudentInclude = {
     Parent?: boolean | ParentArgs
     Meeting?: boolean | MeetingFindManyArgs
@@ -7534,38 +7492,33 @@ export namespace Prisma {
     StudentInfo?: boolean | StudentInfoFindManyArgs
     Subject?: boolean | SubjectFindManyArgs
     _count?: boolean | StudentCountOutputTypeArgs
-  }
+  } 
 
-  export type StudentGetPayload<
-    S extends boolean | null | undefined | StudentArgs,
-    U = keyof S
-      > = S extends true
-        ? Student
-    : S extends undefined
-    ? never
-    : S extends StudentArgs | StudentFindManyArgs
-    ?'include' extends U
+  export type StudentGetPayload<S extends boolean | null | undefined | StudentArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Student :
+    S extends undefined ? never :
+    S extends { include: any } & (StudentArgs | StudentFindManyArgs)
     ? Student  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Parent' ? ParentGetPayload<S['include'][P]> :
-        P extends 'Meeting' ? Array < MeetingGetPayload<S['include'][P]>>  :
-        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<S['include'][P]>>  :
-        P extends 'StudentInfo' ? Array < StudentInfoGetPayload<S['include'][P]>>  :
-        P extends 'Subject' ? Array < SubjectGetPayload<S['include'][P]>>  :
-        P extends '_count' ? StudentCountOutputTypeGetPayload<S['include'][P]> :  never
+        P extends 'Parent' ? ParentGetPayload<Exclude<S['include'], undefined | null>[P]> :
+        P extends 'Meeting' ? Array < MeetingGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'StudentInfo' ? Array < StudentInfoGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'Subject' ? Array < SubjectGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends '_count' ? StudentCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (StudentArgs | StudentFindManyArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Parent' ? ParentGetPayload<S['select'][P]> :
-        P extends 'Meeting' ? Array < MeetingGetPayload<S['select'][P]>>  :
-        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<S['select'][P]>>  :
-        P extends 'StudentInfo' ? Array < StudentInfoGetPayload<S['select'][P]>>  :
-        P extends 'Subject' ? Array < SubjectGetPayload<S['select'][P]>>  :
-        P extends '_count' ? StudentCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Student ? Student[P] : never
+        P extends 'Parent' ? ParentGetPayload<Exclude<S['select'], undefined | null>[P]> :
+        P extends 'Meeting' ? Array < MeetingGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'RequestedMeetings' ? Array < RequestedMeetingsGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'StudentInfo' ? Array < StudentInfoGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'Subject' ? Array < SubjectGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends '_count' ? StudentCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Student ? Student[P] : never
   } 
-    : Student
-  : Student
+      : Student
 
 
   type StudentCountArgs = Merge<
@@ -7574,7 +7527,7 @@ export namespace Prisma {
     }
   >
 
-  export interface StudentDelegate<GlobalRejectSettings> {
+  export interface StudentDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one Student that matches the filter.
      * @param {StudentFindUniqueArgs} args - Arguments to find a Student
@@ -7588,7 +7541,7 @@ export namespace Prisma {
     **/
     findUnique<T extends StudentFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, StudentFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Student'> extends True ? CheckSelect<T, Prisma__StudentClient<Student>, Prisma__StudentClient<StudentGetPayload<T>>> : CheckSelect<T, Prisma__StudentClient<Student | null >, Prisma__StudentClient<StudentGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Student'> extends True ? Prisma__StudentClient<StudentGetPayload<T>> : Prisma__StudentClient<StudentGetPayload<T> | null, null>
 
     /**
      * Find the first Student that matches the filter.
@@ -7605,7 +7558,7 @@ export namespace Prisma {
     **/
     findFirst<T extends StudentFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, StudentFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Student'> extends True ? CheckSelect<T, Prisma__StudentClient<Student>, Prisma__StudentClient<StudentGetPayload<T>>> : CheckSelect<T, Prisma__StudentClient<Student | null >, Prisma__StudentClient<StudentGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Student'> extends True ? Prisma__StudentClient<StudentGetPayload<T>> : Prisma__StudentClient<StudentGetPayload<T> | null, null>
 
     /**
      * Find zero or more Students that matches the filter.
@@ -7625,7 +7578,7 @@ export namespace Prisma {
     **/
     findMany<T extends StudentFindManyArgs>(
       args?: SelectSubset<T, StudentFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Student>>, PrismaPromise<Array<StudentGetPayload<T>>>>
+    ): PrismaPromise<Array<StudentGetPayload<T>>>
 
     /**
      * Create a Student.
@@ -7641,7 +7594,7 @@ export namespace Prisma {
     **/
     create<T extends StudentCreateArgs>(
       args: SelectSubset<T, StudentCreateArgs>
-    ): CheckSelect<T, Prisma__StudentClient<Student>, Prisma__StudentClient<StudentGetPayload<T>>>
+    ): Prisma__StudentClient<StudentGetPayload<T>>
 
     /**
      * Create many Students.
@@ -7673,7 +7626,7 @@ export namespace Prisma {
     **/
     delete<T extends StudentDeleteArgs>(
       args: SelectSubset<T, StudentDeleteArgs>
-    ): CheckSelect<T, Prisma__StudentClient<Student>, Prisma__StudentClient<StudentGetPayload<T>>>
+    ): Prisma__StudentClient<StudentGetPayload<T>>
 
     /**
      * Update one Student.
@@ -7692,7 +7645,7 @@ export namespace Prisma {
     **/
     update<T extends StudentUpdateArgs>(
       args: SelectSubset<T, StudentUpdateArgs>
-    ): CheckSelect<T, Prisma__StudentClient<Student>, Prisma__StudentClient<StudentGetPayload<T>>>
+    ): Prisma__StudentClient<StudentGetPayload<T>>
 
     /**
      * Delete zero or more Students.
@@ -7750,7 +7703,7 @@ export namespace Prisma {
     **/
     upsert<T extends StudentUpsertArgs>(
       args: SelectSubset<T, StudentUpsertArgs>
-    ): CheckSelect<T, Prisma__StudentClient<Student>, Prisma__StudentClient<StudentGetPayload<T>>>
+    ): Prisma__StudentClient<StudentGetPayload<T>>
 
     /**
      * Find one Student that matches the filter or throw
@@ -7766,7 +7719,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends StudentFindUniqueOrThrowArgs>(
       args?: SelectSubset<T, StudentFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__StudentClient<Student>, Prisma__StudentClient<StudentGetPayload<T>>>
+    ): Prisma__StudentClient<StudentGetPayload<T>>
 
     /**
      * Find the first Student that matches the filter or
@@ -7784,7 +7737,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends StudentFindFirstOrThrowArgs>(
       args?: SelectSubset<T, StudentFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__StudentClient<Student>, Prisma__StudentClient<StudentGetPayload<T>>>
+    ): Prisma__StudentClient<StudentGetPayload<T>>
 
     /**
      * Count the number of Students.
@@ -7920,7 +7873,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__StudentClient<T> implements PrismaPromise<T> {
+  export class Prisma__StudentClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -7937,15 +7890,15 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    Parent<T extends ParentArgs = {}>(args?: Subset<T, ParentArgs>): CheckSelect<T, Prisma__ParentClient<Parent | null >, Prisma__ParentClient<ParentGetPayload<T> | null >>;
+    Parent<T extends ParentArgs= {}>(args?: Subset<T, ParentArgs>): Prisma__ParentClient<ParentGetPayload<T> | Null>;
 
-    Meeting<T extends MeetingFindManyArgs = {}>(args?: Subset<T, MeetingFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Meeting>>, PrismaPromise<Array<MeetingGetPayload<T>>>>;
+    Meeting<T extends MeetingFindManyArgs= {}>(args?: Subset<T, MeetingFindManyArgs>): PrismaPromise<Array<MeetingGetPayload<T>>| Null>;
 
-    RequestedMeetings<T extends RequestedMeetingsFindManyArgs = {}>(args?: Subset<T, RequestedMeetingsFindManyArgs>): CheckSelect<T, PrismaPromise<Array<RequestedMeetings>>, PrismaPromise<Array<RequestedMeetingsGetPayload<T>>>>;
+    RequestedMeetings<T extends RequestedMeetingsFindManyArgs= {}>(args?: Subset<T, RequestedMeetingsFindManyArgs>): PrismaPromise<Array<RequestedMeetingsGetPayload<T>>| Null>;
 
-    StudentInfo<T extends StudentInfoFindManyArgs = {}>(args?: Subset<T, StudentInfoFindManyArgs>): CheckSelect<T, PrismaPromise<Array<StudentInfo>>, PrismaPromise<Array<StudentInfoGetPayload<T>>>>;
+    StudentInfo<T extends StudentInfoFindManyArgs= {}>(args?: Subset<T, StudentInfoFindManyArgs>): PrismaPromise<Array<StudentInfoGetPayload<T>>| Null>;
 
-    Subject<T extends SubjectFindManyArgs = {}>(args?: Subset<T, SubjectFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Subject>>, PrismaPromise<Array<SubjectGetPayload<T>>>>;
+    Subject<T extends SubjectFindManyArgs= {}>(args?: Subset<T, SubjectFindManyArgs>): PrismaPromise<Array<SubjectGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -8497,30 +8450,26 @@ export namespace Prisma {
     Student?: boolean | StudentArgs
   }
 
+
   export type StudentInfoInclude = {
     Student?: boolean | StudentArgs
-  }
+  } 
 
-  export type StudentInfoGetPayload<
-    S extends boolean | null | undefined | StudentInfoArgs,
-    U = keyof S
-      > = S extends true
-        ? StudentInfo
-    : S extends undefined
-    ? never
-    : S extends StudentInfoArgs | StudentInfoFindManyArgs
-    ?'include' extends U
+  export type StudentInfoGetPayload<S extends boolean | null | undefined | StudentInfoArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? StudentInfo :
+    S extends undefined ? never :
+    S extends { include: any } & (StudentInfoArgs | StudentInfoFindManyArgs)
     ? StudentInfo  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Student' ? StudentGetPayload<S['include'][P]> :  never
+        P extends 'Student' ? StudentGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (StudentInfoArgs | StudentInfoFindManyArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Student' ? StudentGetPayload<S['select'][P]> :  P extends keyof StudentInfo ? StudentInfo[P] : never
+        P extends 'Student' ? StudentGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof StudentInfo ? StudentInfo[P] : never
   } 
-    : StudentInfo
-  : StudentInfo
+      : StudentInfo
 
 
   type StudentInfoCountArgs = Merge<
@@ -8529,7 +8478,7 @@ export namespace Prisma {
     }
   >
 
-  export interface StudentInfoDelegate<GlobalRejectSettings> {
+  export interface StudentInfoDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one StudentInfo that matches the filter.
      * @param {StudentInfoFindUniqueArgs} args - Arguments to find a StudentInfo
@@ -8543,7 +8492,7 @@ export namespace Prisma {
     **/
     findUnique<T extends StudentInfoFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, StudentInfoFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'StudentInfo'> extends True ? CheckSelect<T, Prisma__StudentInfoClient<StudentInfo>, Prisma__StudentInfoClient<StudentInfoGetPayload<T>>> : CheckSelect<T, Prisma__StudentInfoClient<StudentInfo | null >, Prisma__StudentInfoClient<StudentInfoGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'StudentInfo'> extends True ? Prisma__StudentInfoClient<StudentInfoGetPayload<T>> : Prisma__StudentInfoClient<StudentInfoGetPayload<T> | null, null>
 
     /**
      * Find the first StudentInfo that matches the filter.
@@ -8560,7 +8509,7 @@ export namespace Prisma {
     **/
     findFirst<T extends StudentInfoFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, StudentInfoFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'StudentInfo'> extends True ? CheckSelect<T, Prisma__StudentInfoClient<StudentInfo>, Prisma__StudentInfoClient<StudentInfoGetPayload<T>>> : CheckSelect<T, Prisma__StudentInfoClient<StudentInfo | null >, Prisma__StudentInfoClient<StudentInfoGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'StudentInfo'> extends True ? Prisma__StudentInfoClient<StudentInfoGetPayload<T>> : Prisma__StudentInfoClient<StudentInfoGetPayload<T> | null, null>
 
     /**
      * Find zero or more StudentInfos that matches the filter.
@@ -8580,7 +8529,7 @@ export namespace Prisma {
     **/
     findMany<T extends StudentInfoFindManyArgs>(
       args?: SelectSubset<T, StudentInfoFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<StudentInfo>>, PrismaPromise<Array<StudentInfoGetPayload<T>>>>
+    ): PrismaPromise<Array<StudentInfoGetPayload<T>>>
 
     /**
      * Create a StudentInfo.
@@ -8596,7 +8545,7 @@ export namespace Prisma {
     **/
     create<T extends StudentInfoCreateArgs>(
       args: SelectSubset<T, StudentInfoCreateArgs>
-    ): CheckSelect<T, Prisma__StudentInfoClient<StudentInfo>, Prisma__StudentInfoClient<StudentInfoGetPayload<T>>>
+    ): Prisma__StudentInfoClient<StudentInfoGetPayload<T>>
 
     /**
      * Create many StudentInfos.
@@ -8628,7 +8577,7 @@ export namespace Prisma {
     **/
     delete<T extends StudentInfoDeleteArgs>(
       args: SelectSubset<T, StudentInfoDeleteArgs>
-    ): CheckSelect<T, Prisma__StudentInfoClient<StudentInfo>, Prisma__StudentInfoClient<StudentInfoGetPayload<T>>>
+    ): Prisma__StudentInfoClient<StudentInfoGetPayload<T>>
 
     /**
      * Update one StudentInfo.
@@ -8647,7 +8596,7 @@ export namespace Prisma {
     **/
     update<T extends StudentInfoUpdateArgs>(
       args: SelectSubset<T, StudentInfoUpdateArgs>
-    ): CheckSelect<T, Prisma__StudentInfoClient<StudentInfo>, Prisma__StudentInfoClient<StudentInfoGetPayload<T>>>
+    ): Prisma__StudentInfoClient<StudentInfoGetPayload<T>>
 
     /**
      * Delete zero or more StudentInfos.
@@ -8705,7 +8654,7 @@ export namespace Prisma {
     **/
     upsert<T extends StudentInfoUpsertArgs>(
       args: SelectSubset<T, StudentInfoUpsertArgs>
-    ): CheckSelect<T, Prisma__StudentInfoClient<StudentInfo>, Prisma__StudentInfoClient<StudentInfoGetPayload<T>>>
+    ): Prisma__StudentInfoClient<StudentInfoGetPayload<T>>
 
     /**
      * Find one StudentInfo that matches the filter or throw
@@ -8721,7 +8670,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends StudentInfoFindUniqueOrThrowArgs>(
       args?: SelectSubset<T, StudentInfoFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__StudentInfoClient<StudentInfo>, Prisma__StudentInfoClient<StudentInfoGetPayload<T>>>
+    ): Prisma__StudentInfoClient<StudentInfoGetPayload<T>>
 
     /**
      * Find the first StudentInfo that matches the filter or
@@ -8739,7 +8688,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends StudentInfoFindFirstOrThrowArgs>(
       args?: SelectSubset<T, StudentInfoFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__StudentInfoClient<StudentInfo>, Prisma__StudentInfoClient<StudentInfoGetPayload<T>>>
+    ): Prisma__StudentInfoClient<StudentInfoGetPayload<T>>
 
     /**
      * Count the number of StudentInfos.
@@ -8875,7 +8824,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__StudentInfoClient<T> implements PrismaPromise<T> {
+  export class Prisma__StudentInfoClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -8892,7 +8841,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    Student<T extends StudentArgs = {}>(args?: Subset<T, StudentArgs>): CheckSelect<T, Prisma__StudentClient<Student | null >, Prisma__StudentClient<StudentGetPayload<T> | null >>;
+    Student<T extends StudentArgs= {}>(args?: Subset<T, StudentArgs>): Prisma__StudentClient<StudentGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -9432,30 +9381,26 @@ export namespace Prisma {
     Student?: boolean | StudentArgs
   }
 
+
   export type SubjectInclude = {
     Student?: boolean | StudentArgs
-  }
+  } 
 
-  export type SubjectGetPayload<
-    S extends boolean | null | undefined | SubjectArgs,
-    U = keyof S
-      > = S extends true
-        ? Subject
-    : S extends undefined
-    ? never
-    : S extends SubjectArgs | SubjectFindManyArgs
-    ?'include' extends U
+  export type SubjectGetPayload<S extends boolean | null | undefined | SubjectArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Subject :
+    S extends undefined ? never :
+    S extends { include: any } & (SubjectArgs | SubjectFindManyArgs)
     ? Subject  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Student' ? StudentGetPayload<S['include'][P]> :  never
+        P extends 'Student' ? StudentGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (SubjectArgs | SubjectFindManyArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Student' ? StudentGetPayload<S['select'][P]> :  P extends keyof Subject ? Subject[P] : never
+        P extends 'Student' ? StudentGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Subject ? Subject[P] : never
   } 
-    : Subject
-  : Subject
+      : Subject
 
 
   type SubjectCountArgs = Merge<
@@ -9464,7 +9409,7 @@ export namespace Prisma {
     }
   >
 
-  export interface SubjectDelegate<GlobalRejectSettings> {
+  export interface SubjectDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one Subject that matches the filter.
      * @param {SubjectFindUniqueArgs} args - Arguments to find a Subject
@@ -9478,7 +9423,7 @@ export namespace Prisma {
     **/
     findUnique<T extends SubjectFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, SubjectFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Subject'> extends True ? CheckSelect<T, Prisma__SubjectClient<Subject>, Prisma__SubjectClient<SubjectGetPayload<T>>> : CheckSelect<T, Prisma__SubjectClient<Subject | null >, Prisma__SubjectClient<SubjectGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Subject'> extends True ? Prisma__SubjectClient<SubjectGetPayload<T>> : Prisma__SubjectClient<SubjectGetPayload<T> | null, null>
 
     /**
      * Find the first Subject that matches the filter.
@@ -9495,7 +9440,7 @@ export namespace Prisma {
     **/
     findFirst<T extends SubjectFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, SubjectFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Subject'> extends True ? CheckSelect<T, Prisma__SubjectClient<Subject>, Prisma__SubjectClient<SubjectGetPayload<T>>> : CheckSelect<T, Prisma__SubjectClient<Subject | null >, Prisma__SubjectClient<SubjectGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Subject'> extends True ? Prisma__SubjectClient<SubjectGetPayload<T>> : Prisma__SubjectClient<SubjectGetPayload<T> | null, null>
 
     /**
      * Find zero or more Subjects that matches the filter.
@@ -9515,7 +9460,7 @@ export namespace Prisma {
     **/
     findMany<T extends SubjectFindManyArgs>(
       args?: SelectSubset<T, SubjectFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Subject>>, PrismaPromise<Array<SubjectGetPayload<T>>>>
+    ): PrismaPromise<Array<SubjectGetPayload<T>>>
 
     /**
      * Create a Subject.
@@ -9531,7 +9476,7 @@ export namespace Prisma {
     **/
     create<T extends SubjectCreateArgs>(
       args: SelectSubset<T, SubjectCreateArgs>
-    ): CheckSelect<T, Prisma__SubjectClient<Subject>, Prisma__SubjectClient<SubjectGetPayload<T>>>
+    ): Prisma__SubjectClient<SubjectGetPayload<T>>
 
     /**
      * Create many Subjects.
@@ -9563,7 +9508,7 @@ export namespace Prisma {
     **/
     delete<T extends SubjectDeleteArgs>(
       args: SelectSubset<T, SubjectDeleteArgs>
-    ): CheckSelect<T, Prisma__SubjectClient<Subject>, Prisma__SubjectClient<SubjectGetPayload<T>>>
+    ): Prisma__SubjectClient<SubjectGetPayload<T>>
 
     /**
      * Update one Subject.
@@ -9582,7 +9527,7 @@ export namespace Prisma {
     **/
     update<T extends SubjectUpdateArgs>(
       args: SelectSubset<T, SubjectUpdateArgs>
-    ): CheckSelect<T, Prisma__SubjectClient<Subject>, Prisma__SubjectClient<SubjectGetPayload<T>>>
+    ): Prisma__SubjectClient<SubjectGetPayload<T>>
 
     /**
      * Delete zero or more Subjects.
@@ -9640,7 +9585,7 @@ export namespace Prisma {
     **/
     upsert<T extends SubjectUpsertArgs>(
       args: SelectSubset<T, SubjectUpsertArgs>
-    ): CheckSelect<T, Prisma__SubjectClient<Subject>, Prisma__SubjectClient<SubjectGetPayload<T>>>
+    ): Prisma__SubjectClient<SubjectGetPayload<T>>
 
     /**
      * Find one Subject that matches the filter or throw
@@ -9656,7 +9601,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends SubjectFindUniqueOrThrowArgs>(
       args?: SelectSubset<T, SubjectFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__SubjectClient<Subject>, Prisma__SubjectClient<SubjectGetPayload<T>>>
+    ): Prisma__SubjectClient<SubjectGetPayload<T>>
 
     /**
      * Find the first Subject that matches the filter or
@@ -9674,7 +9619,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends SubjectFindFirstOrThrowArgs>(
       args?: SelectSubset<T, SubjectFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__SubjectClient<Subject>, Prisma__SubjectClient<SubjectGetPayload<T>>>
+    ): Prisma__SubjectClient<SubjectGetPayload<T>>
 
     /**
      * Count the number of Subjects.
@@ -9810,7 +9755,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__SubjectClient<T> implements PrismaPromise<T> {
+  export class Prisma__SubjectClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -9827,7 +9772,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    Student<T extends StudentArgs = {}>(args?: Subset<T, StudentArgs>): CheckSelect<T, Prisma__StudentClient<Student | null >, Prisma__StudentClient<StudentGetPayload<T> | null >>;
+    Student<T extends StudentArgs= {}>(args?: Subset<T, StudentArgs>): Prisma__StudentClient<StudentGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -10405,36 +10350,32 @@ export namespace Prisma {
     Student?: boolean | StudentArgs
   }
 
+
   export type RequestedMeetingsInclude = {
     Admin?: boolean | AdminArgs
     Parent?: boolean | ParentArgs
     Student?: boolean | StudentArgs
-  }
+  } 
 
-  export type RequestedMeetingsGetPayload<
-    S extends boolean | null | undefined | RequestedMeetingsArgs,
-    U = keyof S
-      > = S extends true
-        ? RequestedMeetings
-    : S extends undefined
-    ? never
-    : S extends RequestedMeetingsArgs | RequestedMeetingsFindManyArgs
-    ?'include' extends U
+  export type RequestedMeetingsGetPayload<S extends boolean | null | undefined | RequestedMeetingsArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? RequestedMeetings :
+    S extends undefined ? never :
+    S extends { include: any } & (RequestedMeetingsArgs | RequestedMeetingsFindManyArgs)
     ? RequestedMeetings  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Admin' ? AdminGetPayload<S['include'][P]> :
-        P extends 'Parent' ? ParentGetPayload<S['include'][P]> :
-        P extends 'Student' ? StudentGetPayload<S['include'][P]> :  never
+        P extends 'Admin' ? AdminGetPayload<Exclude<S['include'], undefined | null>[P]> :
+        P extends 'Parent' ? ParentGetPayload<Exclude<S['include'], undefined | null>[P]> :
+        P extends 'Student' ? StudentGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (RequestedMeetingsArgs | RequestedMeetingsFindManyArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Admin' ? AdminGetPayload<S['select'][P]> :
-        P extends 'Parent' ? ParentGetPayload<S['select'][P]> :
-        P extends 'Student' ? StudentGetPayload<S['select'][P]> :  P extends keyof RequestedMeetings ? RequestedMeetings[P] : never
+        P extends 'Admin' ? AdminGetPayload<Exclude<S['select'], undefined | null>[P]> :
+        P extends 'Parent' ? ParentGetPayload<Exclude<S['select'], undefined | null>[P]> :
+        P extends 'Student' ? StudentGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof RequestedMeetings ? RequestedMeetings[P] : never
   } 
-    : RequestedMeetings
-  : RequestedMeetings
+      : RequestedMeetings
 
 
   type RequestedMeetingsCountArgs = Merge<
@@ -10443,7 +10384,7 @@ export namespace Prisma {
     }
   >
 
-  export interface RequestedMeetingsDelegate<GlobalRejectSettings> {
+  export interface RequestedMeetingsDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one RequestedMeetings that matches the filter.
      * @param {RequestedMeetingsFindUniqueArgs} args - Arguments to find a RequestedMeetings
@@ -10457,7 +10398,7 @@ export namespace Prisma {
     **/
     findUnique<T extends RequestedMeetingsFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, RequestedMeetingsFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'RequestedMeetings'> extends True ? CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>> : CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings | null >, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'RequestedMeetings'> extends True ? Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>> : Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T> | null, null>
 
     /**
      * Find the first RequestedMeetings that matches the filter.
@@ -10474,7 +10415,7 @@ export namespace Prisma {
     **/
     findFirst<T extends RequestedMeetingsFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, RequestedMeetingsFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'RequestedMeetings'> extends True ? CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>> : CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings | null >, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'RequestedMeetings'> extends True ? Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>> : Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T> | null, null>
 
     /**
      * Find zero or more RequestedMeetings that matches the filter.
@@ -10494,7 +10435,7 @@ export namespace Prisma {
     **/
     findMany<T extends RequestedMeetingsFindManyArgs>(
       args?: SelectSubset<T, RequestedMeetingsFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<RequestedMeetings>>, PrismaPromise<Array<RequestedMeetingsGetPayload<T>>>>
+    ): PrismaPromise<Array<RequestedMeetingsGetPayload<T>>>
 
     /**
      * Create a RequestedMeetings.
@@ -10510,7 +10451,7 @@ export namespace Prisma {
     **/
     create<T extends RequestedMeetingsCreateArgs>(
       args: SelectSubset<T, RequestedMeetingsCreateArgs>
-    ): CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>>
+    ): Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>
 
     /**
      * Create many RequestedMeetings.
@@ -10542,7 +10483,7 @@ export namespace Prisma {
     **/
     delete<T extends RequestedMeetingsDeleteArgs>(
       args: SelectSubset<T, RequestedMeetingsDeleteArgs>
-    ): CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>>
+    ): Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>
 
     /**
      * Update one RequestedMeetings.
@@ -10561,7 +10502,7 @@ export namespace Prisma {
     **/
     update<T extends RequestedMeetingsUpdateArgs>(
       args: SelectSubset<T, RequestedMeetingsUpdateArgs>
-    ): CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>>
+    ): Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>
 
     /**
      * Delete zero or more RequestedMeetings.
@@ -10619,7 +10560,7 @@ export namespace Prisma {
     **/
     upsert<T extends RequestedMeetingsUpsertArgs>(
       args: SelectSubset<T, RequestedMeetingsUpsertArgs>
-    ): CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>>
+    ): Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>
 
     /**
      * Find one RequestedMeetings that matches the filter or throw
@@ -10635,7 +10576,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends RequestedMeetingsFindUniqueOrThrowArgs>(
       args?: SelectSubset<T, RequestedMeetingsFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>>
+    ): Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>
 
     /**
      * Find the first RequestedMeetings that matches the filter or
@@ -10653,7 +10594,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends RequestedMeetingsFindFirstOrThrowArgs>(
       args?: SelectSubset<T, RequestedMeetingsFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__RequestedMeetingsClient<RequestedMeetings>, Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>>
+    ): Prisma__RequestedMeetingsClient<RequestedMeetingsGetPayload<T>>
 
     /**
      * Count the number of RequestedMeetings.
@@ -10789,7 +10730,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__RequestedMeetingsClient<T> implements PrismaPromise<T> {
+  export class Prisma__RequestedMeetingsClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -10806,11 +10747,11 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    Admin<T extends AdminArgs = {}>(args?: Subset<T, AdminArgs>): CheckSelect<T, Prisma__AdminClient<Admin | null >, Prisma__AdminClient<AdminGetPayload<T> | null >>;
+    Admin<T extends AdminArgs= {}>(args?: Subset<T, AdminArgs>): Prisma__AdminClient<AdminGetPayload<T> | Null>;
 
-    Parent<T extends ParentArgs = {}>(args?: Subset<T, ParentArgs>): CheckSelect<T, Prisma__ParentClient<Parent | null >, Prisma__ParentClient<ParentGetPayload<T> | null >>;
+    Parent<T extends ParentArgs= {}>(args?: Subset<T, ParentArgs>): Prisma__ParentClient<ParentGetPayload<T> | Null>;
 
-    Student<T extends StudentArgs = {}>(args?: Subset<T, StudentArgs>): CheckSelect<T, Prisma__StudentClient<Student | null >, Prisma__StudentClient<StudentGetPayload<T> | null >>;
+    Student<T extends StudentArgs= {}>(args?: Subset<T, StudentArgs>): Prisma__StudentClient<StudentGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -11435,6 +11376,7 @@ export namespace Prisma {
     _count?: boolean | MeetingCountOutputTypeArgs
   }
 
+
   export type MeetingInclude = {
     Admin?: boolean | AdminArgs
     Faculty?: boolean | FacultyArgs
@@ -11442,38 +11384,33 @@ export namespace Prisma {
     Student?: boolean | StudentArgs
     Feedback?: boolean | FeedbackFindManyArgs
     _count?: boolean | MeetingCountOutputTypeArgs
-  }
+  } 
 
-  export type MeetingGetPayload<
-    S extends boolean | null | undefined | MeetingArgs,
-    U = keyof S
-      > = S extends true
-        ? Meeting
-    : S extends undefined
-    ? never
-    : S extends MeetingArgs | MeetingFindManyArgs
-    ?'include' extends U
+  export type MeetingGetPayload<S extends boolean | null | undefined | MeetingArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Meeting :
+    S extends undefined ? never :
+    S extends { include: any } & (MeetingArgs | MeetingFindManyArgs)
     ? Meeting  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Admin' ? AdminGetPayload<S['include'][P]> | null :
-        P extends 'Faculty' ? FacultyGetPayload<S['include'][P]> | null :
-        P extends 'Parent' ? ParentGetPayload<S['include'][P]> :
-        P extends 'Student' ? StudentGetPayload<S['include'][P]> :
-        P extends 'Feedback' ? Array < FeedbackGetPayload<S['include'][P]>>  :
-        P extends '_count' ? MeetingCountOutputTypeGetPayload<S['include'][P]> :  never
+        P extends 'Admin' ? AdminGetPayload<Exclude<S['include'], undefined | null>[P]> | null :
+        P extends 'Faculty' ? FacultyGetPayload<Exclude<S['include'], undefined | null>[P]> | null :
+        P extends 'Parent' ? ParentGetPayload<Exclude<S['include'], undefined | null>[P]> :
+        P extends 'Student' ? StudentGetPayload<Exclude<S['include'], undefined | null>[P]> :
+        P extends 'Feedback' ? Array < FeedbackGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends '_count' ? MeetingCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (MeetingArgs | MeetingFindManyArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Admin' ? AdminGetPayload<S['select'][P]> | null :
-        P extends 'Faculty' ? FacultyGetPayload<S['select'][P]> | null :
-        P extends 'Parent' ? ParentGetPayload<S['select'][P]> :
-        P extends 'Student' ? StudentGetPayload<S['select'][P]> :
-        P extends 'Feedback' ? Array < FeedbackGetPayload<S['select'][P]>>  :
-        P extends '_count' ? MeetingCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Meeting ? Meeting[P] : never
+        P extends 'Admin' ? AdminGetPayload<Exclude<S['select'], undefined | null>[P]> | null :
+        P extends 'Faculty' ? FacultyGetPayload<Exclude<S['select'], undefined | null>[P]> | null :
+        P extends 'Parent' ? ParentGetPayload<Exclude<S['select'], undefined | null>[P]> :
+        P extends 'Student' ? StudentGetPayload<Exclude<S['select'], undefined | null>[P]> :
+        P extends 'Feedback' ? Array < FeedbackGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends '_count' ? MeetingCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Meeting ? Meeting[P] : never
   } 
-    : Meeting
-  : Meeting
+      : Meeting
 
 
   type MeetingCountArgs = Merge<
@@ -11482,7 +11419,7 @@ export namespace Prisma {
     }
   >
 
-  export interface MeetingDelegate<GlobalRejectSettings> {
+  export interface MeetingDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one Meeting that matches the filter.
      * @param {MeetingFindUniqueArgs} args - Arguments to find a Meeting
@@ -11496,7 +11433,7 @@ export namespace Prisma {
     **/
     findUnique<T extends MeetingFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, MeetingFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Meeting'> extends True ? CheckSelect<T, Prisma__MeetingClient<Meeting>, Prisma__MeetingClient<MeetingGetPayload<T>>> : CheckSelect<T, Prisma__MeetingClient<Meeting | null >, Prisma__MeetingClient<MeetingGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Meeting'> extends True ? Prisma__MeetingClient<MeetingGetPayload<T>> : Prisma__MeetingClient<MeetingGetPayload<T> | null, null>
 
     /**
      * Find the first Meeting that matches the filter.
@@ -11513,7 +11450,7 @@ export namespace Prisma {
     **/
     findFirst<T extends MeetingFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, MeetingFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Meeting'> extends True ? CheckSelect<T, Prisma__MeetingClient<Meeting>, Prisma__MeetingClient<MeetingGetPayload<T>>> : CheckSelect<T, Prisma__MeetingClient<Meeting | null >, Prisma__MeetingClient<MeetingGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Meeting'> extends True ? Prisma__MeetingClient<MeetingGetPayload<T>> : Prisma__MeetingClient<MeetingGetPayload<T> | null, null>
 
     /**
      * Find zero or more Meetings that matches the filter.
@@ -11533,7 +11470,7 @@ export namespace Prisma {
     **/
     findMany<T extends MeetingFindManyArgs>(
       args?: SelectSubset<T, MeetingFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Meeting>>, PrismaPromise<Array<MeetingGetPayload<T>>>>
+    ): PrismaPromise<Array<MeetingGetPayload<T>>>
 
     /**
      * Create a Meeting.
@@ -11549,7 +11486,7 @@ export namespace Prisma {
     **/
     create<T extends MeetingCreateArgs>(
       args: SelectSubset<T, MeetingCreateArgs>
-    ): CheckSelect<T, Prisma__MeetingClient<Meeting>, Prisma__MeetingClient<MeetingGetPayload<T>>>
+    ): Prisma__MeetingClient<MeetingGetPayload<T>>
 
     /**
      * Create many Meetings.
@@ -11581,7 +11518,7 @@ export namespace Prisma {
     **/
     delete<T extends MeetingDeleteArgs>(
       args: SelectSubset<T, MeetingDeleteArgs>
-    ): CheckSelect<T, Prisma__MeetingClient<Meeting>, Prisma__MeetingClient<MeetingGetPayload<T>>>
+    ): Prisma__MeetingClient<MeetingGetPayload<T>>
 
     /**
      * Update one Meeting.
@@ -11600,7 +11537,7 @@ export namespace Prisma {
     **/
     update<T extends MeetingUpdateArgs>(
       args: SelectSubset<T, MeetingUpdateArgs>
-    ): CheckSelect<T, Prisma__MeetingClient<Meeting>, Prisma__MeetingClient<MeetingGetPayload<T>>>
+    ): Prisma__MeetingClient<MeetingGetPayload<T>>
 
     /**
      * Delete zero or more Meetings.
@@ -11658,7 +11595,7 @@ export namespace Prisma {
     **/
     upsert<T extends MeetingUpsertArgs>(
       args: SelectSubset<T, MeetingUpsertArgs>
-    ): CheckSelect<T, Prisma__MeetingClient<Meeting>, Prisma__MeetingClient<MeetingGetPayload<T>>>
+    ): Prisma__MeetingClient<MeetingGetPayload<T>>
 
     /**
      * Find one Meeting that matches the filter or throw
@@ -11674,7 +11611,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends MeetingFindUniqueOrThrowArgs>(
       args?: SelectSubset<T, MeetingFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__MeetingClient<Meeting>, Prisma__MeetingClient<MeetingGetPayload<T>>>
+    ): Prisma__MeetingClient<MeetingGetPayload<T>>
 
     /**
      * Find the first Meeting that matches the filter or
@@ -11692,7 +11629,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends MeetingFindFirstOrThrowArgs>(
       args?: SelectSubset<T, MeetingFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__MeetingClient<Meeting>, Prisma__MeetingClient<MeetingGetPayload<T>>>
+    ): Prisma__MeetingClient<MeetingGetPayload<T>>
 
     /**
      * Count the number of Meetings.
@@ -11828,7 +11765,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__MeetingClient<T> implements PrismaPromise<T> {
+  export class Prisma__MeetingClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -11845,15 +11782,15 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    Admin<T extends AdminArgs = {}>(args?: Subset<T, AdminArgs>): CheckSelect<T, Prisma__AdminClient<Admin | null >, Prisma__AdminClient<AdminGetPayload<T> | null >>;
+    Admin<T extends AdminArgs= {}>(args?: Subset<T, AdminArgs>): Prisma__AdminClient<AdminGetPayload<T> | Null>;
 
-    Faculty<T extends FacultyArgs = {}>(args?: Subset<T, FacultyArgs>): CheckSelect<T, Prisma__FacultyClient<Faculty | null >, Prisma__FacultyClient<FacultyGetPayload<T> | null >>;
+    Faculty<T extends FacultyArgs= {}>(args?: Subset<T, FacultyArgs>): Prisma__FacultyClient<FacultyGetPayload<T> | Null>;
 
-    Parent<T extends ParentArgs = {}>(args?: Subset<T, ParentArgs>): CheckSelect<T, Prisma__ParentClient<Parent | null >, Prisma__ParentClient<ParentGetPayload<T> | null >>;
+    Parent<T extends ParentArgs= {}>(args?: Subset<T, ParentArgs>): Prisma__ParentClient<ParentGetPayload<T> | Null>;
 
-    Student<T extends StudentArgs = {}>(args?: Subset<T, StudentArgs>): CheckSelect<T, Prisma__StudentClient<Student | null >, Prisma__StudentClient<StudentGetPayload<T> | null >>;
+    Student<T extends StudentArgs= {}>(args?: Subset<T, StudentArgs>): Prisma__StudentClient<StudentGetPayload<T> | Null>;
 
-    Feedback<T extends FeedbackFindManyArgs = {}>(args?: Subset<T, FeedbackFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Feedback>>, PrismaPromise<Array<FeedbackGetPayload<T>>>>;
+    Feedback<T extends FeedbackFindManyArgs= {}>(args?: Subset<T, FeedbackFindManyArgs>): PrismaPromise<Array<FeedbackGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -12413,30 +12350,26 @@ export namespace Prisma {
     Meeting?: boolean | MeetingArgs
   }
 
+
   export type FeedbackInclude = {
     Meeting?: boolean | MeetingArgs
-  }
+  } 
 
-  export type FeedbackGetPayload<
-    S extends boolean | null | undefined | FeedbackArgs,
-    U = keyof S
-      > = S extends true
-        ? Feedback
-    : S extends undefined
-    ? never
-    : S extends FeedbackArgs | FeedbackFindManyArgs
-    ?'include' extends U
+  export type FeedbackGetPayload<S extends boolean | null | undefined | FeedbackArgs, U = keyof S> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Feedback :
+    S extends undefined ? never :
+    S extends { include: any } & (FeedbackArgs | FeedbackFindManyArgs)
     ? Feedback  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Meeting' ? MeetingGetPayload<S['include'][P]> :  never
+        P extends 'Meeting' ? MeetingGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
-    : 'select' extends U
-    ? {
+    : S extends { select: any } & (FeedbackArgs | FeedbackFindManyArgs)
+      ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Meeting' ? MeetingGetPayload<S['select'][P]> :  P extends keyof Feedback ? Feedback[P] : never
+        P extends 'Meeting' ? MeetingGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Feedback ? Feedback[P] : never
   } 
-    : Feedback
-  : Feedback
+      : Feedback
 
 
   type FeedbackCountArgs = Merge<
@@ -12445,7 +12378,7 @@ export namespace Prisma {
     }
   >
 
-  export interface FeedbackDelegate<GlobalRejectSettings> {
+  export interface FeedbackDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one Feedback that matches the filter.
      * @param {FeedbackFindUniqueArgs} args - Arguments to find a Feedback
@@ -12459,7 +12392,7 @@ export namespace Prisma {
     **/
     findUnique<T extends FeedbackFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, FeedbackFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Feedback'> extends True ? CheckSelect<T, Prisma__FeedbackClient<Feedback>, Prisma__FeedbackClient<FeedbackGetPayload<T>>> : CheckSelect<T, Prisma__FeedbackClient<Feedback | null >, Prisma__FeedbackClient<FeedbackGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Feedback'> extends True ? Prisma__FeedbackClient<FeedbackGetPayload<T>> : Prisma__FeedbackClient<FeedbackGetPayload<T> | null, null>
 
     /**
      * Find the first Feedback that matches the filter.
@@ -12476,7 +12409,7 @@ export namespace Prisma {
     **/
     findFirst<T extends FeedbackFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, FeedbackFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Feedback'> extends True ? CheckSelect<T, Prisma__FeedbackClient<Feedback>, Prisma__FeedbackClient<FeedbackGetPayload<T>>> : CheckSelect<T, Prisma__FeedbackClient<Feedback | null >, Prisma__FeedbackClient<FeedbackGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Feedback'> extends True ? Prisma__FeedbackClient<FeedbackGetPayload<T>> : Prisma__FeedbackClient<FeedbackGetPayload<T> | null, null>
 
     /**
      * Find zero or more Feedbacks that matches the filter.
@@ -12496,7 +12429,7 @@ export namespace Prisma {
     **/
     findMany<T extends FeedbackFindManyArgs>(
       args?: SelectSubset<T, FeedbackFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Feedback>>, PrismaPromise<Array<FeedbackGetPayload<T>>>>
+    ): PrismaPromise<Array<FeedbackGetPayload<T>>>
 
     /**
      * Create a Feedback.
@@ -12512,7 +12445,7 @@ export namespace Prisma {
     **/
     create<T extends FeedbackCreateArgs>(
       args: SelectSubset<T, FeedbackCreateArgs>
-    ): CheckSelect<T, Prisma__FeedbackClient<Feedback>, Prisma__FeedbackClient<FeedbackGetPayload<T>>>
+    ): Prisma__FeedbackClient<FeedbackGetPayload<T>>
 
     /**
      * Create many Feedbacks.
@@ -12544,7 +12477,7 @@ export namespace Prisma {
     **/
     delete<T extends FeedbackDeleteArgs>(
       args: SelectSubset<T, FeedbackDeleteArgs>
-    ): CheckSelect<T, Prisma__FeedbackClient<Feedback>, Prisma__FeedbackClient<FeedbackGetPayload<T>>>
+    ): Prisma__FeedbackClient<FeedbackGetPayload<T>>
 
     /**
      * Update one Feedback.
@@ -12563,7 +12496,7 @@ export namespace Prisma {
     **/
     update<T extends FeedbackUpdateArgs>(
       args: SelectSubset<T, FeedbackUpdateArgs>
-    ): CheckSelect<T, Prisma__FeedbackClient<Feedback>, Prisma__FeedbackClient<FeedbackGetPayload<T>>>
+    ): Prisma__FeedbackClient<FeedbackGetPayload<T>>
 
     /**
      * Delete zero or more Feedbacks.
@@ -12621,7 +12554,7 @@ export namespace Prisma {
     **/
     upsert<T extends FeedbackUpsertArgs>(
       args: SelectSubset<T, FeedbackUpsertArgs>
-    ): CheckSelect<T, Prisma__FeedbackClient<Feedback>, Prisma__FeedbackClient<FeedbackGetPayload<T>>>
+    ): Prisma__FeedbackClient<FeedbackGetPayload<T>>
 
     /**
      * Find one Feedback that matches the filter or throw
@@ -12637,7 +12570,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends FeedbackFindUniqueOrThrowArgs>(
       args?: SelectSubset<T, FeedbackFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__FeedbackClient<Feedback>, Prisma__FeedbackClient<FeedbackGetPayload<T>>>
+    ): Prisma__FeedbackClient<FeedbackGetPayload<T>>
 
     /**
      * Find the first Feedback that matches the filter or
@@ -12655,7 +12588,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends FeedbackFindFirstOrThrowArgs>(
       args?: SelectSubset<T, FeedbackFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__FeedbackClient<Feedback>, Prisma__FeedbackClient<FeedbackGetPayload<T>>>
+    ): Prisma__FeedbackClient<FeedbackGetPayload<T>>
 
     /**
      * Count the number of Feedbacks.
@@ -12791,7 +12724,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__FeedbackClient<T> implements PrismaPromise<T> {
+  export class Prisma__FeedbackClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -12808,7 +12741,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    Meeting<T extends MeetingArgs = {}>(args?: Subset<T, MeetingArgs>): CheckSelect<T, Prisma__MeetingClient<Meeting | null >, Prisma__MeetingClient<MeetingGetPayload<T> | null >>;
+    Meeting<T extends MeetingArgs= {}>(args?: Subset<T, MeetingArgs>): Prisma__MeetingClient<MeetingGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -13248,6 +13181,14 @@ export namespace Prisma {
   };
 
   export type ParentScalarFieldEnum = (typeof ParentScalarFieldEnum)[keyof typeof ParentScalarFieldEnum]
+
+
+  export const QueryMode: {
+    default: 'default',
+    insensitive: 'insensitive'
+  };
+
+  export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
   export const RequestedMeetingsScalarFieldEnum: {
@@ -14647,6 +14588,7 @@ export namespace Prisma {
     contains?: string
     startsWith?: string
     endsWith?: string
+    mode?: QueryMode
     not?: NestedStringFilter | string
   }
 
@@ -14742,6 +14684,7 @@ export namespace Prisma {
     contains?: string
     startsWith?: string
     endsWith?: string
+    mode?: QueryMode
     not?: NestedStringWithAggregatesFilter | string
     _count?: NestedIntFilter
     _min?: NestedStringFilter
@@ -14759,6 +14702,7 @@ export namespace Prisma {
     contains?: string
     startsWith?: string
     endsWith?: string
+    mode?: QueryMode
     not?: NestedStringNullableFilter | string | null
   }
 
@@ -14831,6 +14775,7 @@ export namespace Prisma {
     contains?: string
     startsWith?: string
     endsWith?: string
+    mode?: QueryMode
     not?: NestedStringNullableWithAggregatesFilter | string | null
     _count?: NestedIntNullableFilter
     _min?: NestedStringNullableFilter

@@ -31,25 +31,28 @@ export const authOptions = {
           return null;
         }
 
+        
+
         const userRole = credentials.role;
         // console.log("THE ADMIN MODEL IS: ", prisma.admin);
 
+        console.log("Type is: ", typeof credentials.username, typeof credentials.password);
 
         if (credentials.role === "parent") {
+          console.log("INside parent if")
           var user = await prisma.parent.findFirst({
             where: {
               parentName: credentials.username,
-              parentPassword: credentials.password
+              parentPassword: credentials.password,
             }
           });
         }
 
         if (credentials.role === "admin") {
-          console.log("THE ADMIN IF IS WORKING")
           var user = await prisma.admin.findFirst({
             where: {
-              adminName: credentials.username,
-              adminPassword: credentials.password
+              adminName: credentials.username.toString(),
+              adminPassword: credentials.password.toString()
             }
           });
         }
@@ -57,13 +60,13 @@ export const authOptions = {
           console.log("Inside student: ", credentials)
           var user = await prisma.student.findFirst({
             where: {
-              studentName: credentials.username,
-              studentPassword: credentials.password
+              studentName: credentials.username.toString(),
+              studentPassword: credentials.password.toString()
             }
           });
         }
 
-        // console.log("This is user object returned from database: ", user);
+        console.log("This is user object returned from database: ", user);
 
         // console.log("This USer: ", user.adminName || user.parentName || user.studentName);
 

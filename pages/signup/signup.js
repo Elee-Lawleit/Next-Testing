@@ -13,19 +13,20 @@ import {
   faIdCard,
   faPhone,
   faLock,
+  faRightToBracket
 } from "@fortawesome/free-solid-svg-icons";
 import useAddParentMutation from "hooks/parent/use-add-parent-mutation";
 import { toast } from "react-hot-toast";
-import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 
 
-const Signup = ({session}) => {
+const Signup = ({ session }) => {
 
-  const promiseInProgress = usePromiseTracker();
+
+  //used for rendering the otp component
   const [payload, setPayload] = useState();
 
-  //dynamically creating a component
-  const SignUp = dynamic(() => trackPromise(import("components/Use-otp")), {
+  //dynamically importing otp component
+  const SignUp = dynamic(() => import("components/Use-otp"), {
     ssr: false
   });
 
@@ -55,34 +56,37 @@ const Signup = ({session}) => {
           toast.error("Error adding parent.");
         },
       }
-      );
-    };
-  
-  //when rendering the otp component  
-  if(promiseInProgress.promiseInProgress){
-    console.log("loading because of promise tracker");
-    return (toast.loading("Please wait"))
-  }
-  
+    );
+  };
+
+
   //waiting for signup
-  if(isLoading){
+
+  //****** EDIT THIS: THIS CAN BE DONE VIA MANTINE LOADING OVERLAY ******//
+  if (isLoading) {
     console.log("loading because of mutation");
     return (toast.loading("Please wait"))
   }
 
-  if(typeof window !== "undefined"){
-    if(session){
+  if (typeof window !== "undefined") {
+    if (session) {
       router.push("/")
     }
   }
-    
+
 
   return (
 
     <>
-      {!payload && <SignUp setPayload={setPayload}  />}
-      {payload && <div className="flex flex-col items-center justify-center h-screen overflow-hidden">
-        <form onSubmit={handleSubmit(onSignup)} className="justify-center w-9/12 gap-2 md:w-3/6 form-control">
+      {/* This is the otp component */}
+      {!payload && <SignUp setPayload={setPayload} />}
+
+      {payload && <div className="h-screen w-full flex flex-col gap-6 px-6 justify-center items-center bg-bglayer bg-no-repeat bg-cover">
+        <div className="flex items-center gap-2">
+          <h1 className="text-xl lg:text-2xl font-bold font-['Hack']">Sign Up</h1>
+          <FontAwesomeIcon icon={faRightToBracket} />
+        </div>
+        <form onSubmit={handleSubmit(onSignup)} className="justify-center gap-2 form-control w-full max-w-md xl:max-w-lg">
           <div className="relative">
             <input
               type="text"
@@ -90,7 +94,7 @@ const Signup = ({session}) => {
               id=""
               placeholder="Username..."
               className={clsx(
-                "input input-primary input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                "input input-primary rounded-md input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
                 errors?.username && "input-error"
               )}
               {...register("username")}
@@ -107,7 +111,7 @@ const Signup = ({session}) => {
               id=""
               placeholder="Email..."
               className={clsx(
-                "input input-primary input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                "input input-primary rounded-md input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
                 errors?.email && "input-error"
               )}
               {...register("email")}
@@ -117,7 +121,6 @@ const Signup = ({session}) => {
               className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
             />
           </div>
-
           <div className="relative">
             <input
               type="text"
@@ -125,7 +128,7 @@ const Signup = ({session}) => {
               id=""
               placeholder="CNIC..."
               className={clsx(
-                "input input-primary input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                "input input-primary rounded-md input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
                 errors?.cnic && "input-error"
               )}
               {...register("cnic")}
@@ -135,7 +138,6 @@ const Signup = ({session}) => {
               className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
             />
           </div>
-
           <div className="relative">
             <input
               type="text"
@@ -143,7 +145,7 @@ const Signup = ({session}) => {
               id=""
               placeholder="Phone..."
               className={clsx(
-                "input input-primary input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                "input input-primary rounded-md input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
                 errors?.phone && "input-error"
               )}
               {...register("phone")}
@@ -160,7 +162,7 @@ const Signup = ({session}) => {
               id=""
               placeholder="Password..."
               className={clsx(
-                "input input-primary input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                "input input-primary rounded-md input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
                 errors?.password && "input-error"
               )}
               {...register("password")}
@@ -180,6 +182,7 @@ const Signup = ({session}) => {
             />
           </div>
         </form>
+
         <div className="mt-2">
           <span className="text-gray-500">
             Already have an account?{" "}

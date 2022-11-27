@@ -6,3 +6,35 @@
     background: rgba(169, 85, 247, 0.096) !important;
     color: rgb(168 85 247 ) !important;
 }
+
+[data-selected="true"]{
+    background-color: rgb(168 85 247) !important;
+}
+
+
+
+
+/* for date picker input border */
+
+/* when empty */
+.mantine-1klne3t:focus,
+.mantine-1klne3t:focus-within{
+    border-color: rgb(155, 111, 196);
+}
+/* with some date selected */
+.mantine-1v3u1sh:focus,
+.mantine-1v3u1sh:focus-within{
+    border-color: rgb(155, 111, 196);
+}
+
+
+/* for select input border */
+.mantine-qew57g:focus,
+.mantine-qew57g:focus-within{
+    border-color: rgb(155, 111, 196);
+}
+
+.mantine-1g5p8t1:focus,
+.mantine-1g5p8t1:focus-within{
+    border-color: rgb(155, 111, 196);
+}

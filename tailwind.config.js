@@ -7,7 +7,15 @@ module.exports = {
     'node_modules/react-daisyui/dist/**/*.js'
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'Roboto' : ['Roboto', 'sans-serif'],
+        'Hack' : ['Hack', 'sans-serif']
+      },
+      backgroundImage:{
+        'bglayer' : 'url(../assets/layers/bglayer.svg)'
+      }
+    },
   },
   plugins: [require("daisyui")],
   daisyui: {

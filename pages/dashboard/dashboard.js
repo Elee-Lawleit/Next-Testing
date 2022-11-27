@@ -1,27 +1,18 @@
 import AppSkeloton from "components/AppSkeleton";
-import dayjs from "dayjs";
 import useFetchTotalMeetings from "hooks/meetings/use-fetch-total-meetings-for-user";
 import React from "react";
 import dynamic from "next/dynamic";
 import {
-    Divider,
     ScrollArea,
     Notification,
-    Button,
-    useMantineTheme
 } from "@mantine/core";
 import Link from "next/link";
-import themes from "daisyui/src/colors/themes";
 import useFetchMeetingStats from "hooks/meetings/use-fetch-meeting-stats";
+import { useRouter } from "next/router";
 
 export default function ({ session }) {
 
-    
-    const theme = useMantineTheme();
-    
-    const hour = dayjs().get("hour")
-    const min = dayjs().get("minute")
-    console.log(typeof (min));
+    const router = useRouter();
     
     //fetch total meetings
     const { data, isLoading } = useFetchTotalMeetings(session?.user?.id, session?.user?.role);
@@ -31,8 +22,12 @@ export default function ({ session }) {
     //fetch meeting stats
     const { data: statsData, isLoading: areStatsLoading } = useFetchMeetingStats(session?.user?.id, session?.user?.role)
 
-    console.log("meeting stats are: ", statsData);
+    // console.log("meeting stats are: ", statsData);
 
+
+    const Time = dynamic(()=> import("components/Time"), {
+        ssr: false
+    });
 
     //import meetings chart
     const MeetingAreaChart = dynamic(() => import("components/MeetingAreaChart/"), {
@@ -42,6 +37,7 @@ export default function ({ session }) {
         ssr: false
     })
     
+
     console.log("This is data on dashboard", data);
     return (
         <AppSkeloton session={session}>
@@ -49,7 +45,7 @@ export default function ({ session }) {
 
                 {/* Hello div */}
                 <div className="shadow-sm bg-white flex flex-col justify-between p-2 gap-2">
-                    <div className="flex gap-1 font-medium text-xs text-gray-500">
+                    {/* <div className="flex gap-1 font-medium text-xs text-gray-500">
                         <p>
                             {new Date().toDateString()}
                         </p>
@@ -57,8 +53,9 @@ export default function ({ session }) {
                         <p>
                             {hour.toString().length == 1 ? `0${hour}` : hour}:{min.toString().length == 1 ? `0${min}` : min}
                         </p>
-                    </div>
+                    </div> */}
 
+                    <Time/>
                     <div>
                         <h1 className="text-2xl font-semibold text-gray-700">Hello Mr. {session?.user?.name}</h1>
                     </div>

@@ -1,5 +1,4 @@
 import { PrismaClient } from "/prisma/src/generated/client";
-import React from 'react'
 const prisma = new PrismaClient();
 
 const handler = async(req, res) => {
@@ -55,9 +54,9 @@ const handler = async(req, res) => {
     }
     
 
-    // console.log("Meetings are: ", meetings);
+    console.log("Meetings are: ", meetings);
 
-    if(!meetings.Meeting.length) return res.status(204).json();
+    // if(!meetings.Meeting.length) return res.status(204).json();
 
   return res.status(200).json({meetings: meetings});
 }

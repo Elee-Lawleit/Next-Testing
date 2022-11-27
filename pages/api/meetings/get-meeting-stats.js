@@ -1,5 +1,4 @@
 import { PrismaClient } from "/prisma/src/generated/client";
-import React from 'react'
 const prisma = new PrismaClient();
 
 const handler = async (req, res) => {
@@ -25,12 +24,12 @@ const handler = async (req, res) => {
                         AND: [
                             {
                                 meetingDay: {
-                                    gte: new Date(`2022-${month}-01`)
+                                    gte: new Date(`2022-${month+1}-01`)
                                 }
                             },
                             {
                                 meetingDay: {
-                                    lte: new Date("2022-9-30")
+                                    lte: new Date(`2022-${month+1}-30`)
                                 }
                             }
                         ]
