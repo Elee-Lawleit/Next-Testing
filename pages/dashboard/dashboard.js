@@ -9,8 +9,9 @@ import {
 import Link from "next/link";
 import useFetchMeetingStats from "hooks/meetings/use-fetch-meeting-stats";
 import { useRouter } from "next/router";
+import dashboard from ".";
 
-export default function ({ session }) {
+const Dashboard =  ({ session }) => {
 
     const router = useRouter();
     
@@ -105,3 +106,5 @@ export default function ({ session }) {
         </AppSkeloton>
     )
 }
+
+export default Dashboard;

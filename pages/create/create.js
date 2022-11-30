@@ -3,20 +3,30 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { meetingSchema } from "schemas/meetingSchema";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLessThanEqual, faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
+import {
+  faLessThanEqual,
+  faCalendarCheck,
+  faClose,
+} from "@fortawesome/free-solid-svg-icons";
 import { DatePicker, TimeRangeInput } from "@mantine/dates";
-import { useState } from "react";
-import { Badge, CloseButton, NativeSelect, NumberInput, Textarea, TextInput } from "@mantine/core";
-import { useMantineTheme } from "@mantine/core";
-import useSelectStudents from "hooks/students/use-select-students";
+import { useState, useEffect } from "react";
+import {
+  NativeSelect,
+  NumberInput,
+  Textarea,
+  TextInput,
+} from "@mantine/core";
+import useSelectStudentsGPA from "hooks/students/use-select-students-gpa";
+import useSelectStudentsAtt from "hooks/students/use-select-students-att";
+import dayjs from "dayjs";
+import objectSupport from "dayjs/plugin/objectSupport";
 
-export default function ({ session }) {
-  const theme = useMantineTheme();
-  const [meetingMethod, setMeetingMethod] = useState("");
+const Create = ({ session }) => {
+  
+  const [meetingMethod, setMeetingMethod] = useState();
   const [bulkReason, setBulkReason] = useState("");
-  const [gpa, setGpa] = useState(null);
-
-
+  const [gpa, setGpa] = useState(2.5);
+  const [attendane, setAttendance] = useState(75);
 
   const {
     register,
@@ -28,24 +38,40 @@ export default function ({ session }) {
 
   });
 
-  const {data: students, isLoading, isError} = useSelectStudents(gpa);
+  const { data: students, isLoading, isError } = useSelectStudentsGPA(gpa);
+  const { data: studentsAtt, isLoading: loadingAtt, isError: errorAtt } = useSelectStudentsAtt(attendane);
 
-  const studs = students?.students?.map((student) => {
-    return student.Student.studentRegNo;
-  })
-  
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [selectedStudentsAtt, setSelectedStudentsAtt] = useState([]);
+
+  useEffect(() => {
+    setSelectedStudents(
+      students?.students?.map((student) => student.Student.studentRegNo)
+    );
+
+    console.log("gpa value: ", gpa);
+  }, [gpa, students]);
+
+  useEffect(()=>{
+    setSelectedStudentsAtt(studentsAtt?.students?.map((student) => student.Student.studentRegNo));
+  }, [attendane, studentsAtt])
 
   const onCreate = async (data) => {
-    //does some meaningful stuff
+    //does some database stuff
     console.log("onCreate function running on form submit");
-    data.students = studs;
+    bulkReason === "Attendance" ? data.students = selectedStudentsAtt : data.students = selectedStudents;
     console.log("Meeting form data: ", data);
-
+    // console.log("start time is: ", data.time[0].getHours() + ":" + data.time[0].getMinutes())
+    // console.log("start time is: ", data.time[1].getHours() + ":"+ data.time[1].getMinutes())
   };
 
 
 
+  
+  
 
+
+  console.log(errors);
 
   return (
     <AppSkeloton session={session}>
@@ -76,8 +102,8 @@ export default function ({ session }) {
                     }
                     onChange={onChange}
                     allowLevelChange={false}
-                    // minDate={dayjs()}
-                    // maxDate={dayjs().add(dayjs.duration({ 'days': 30 }))}
+                    minDate={new Date()}
+                    error={errors?.date ? "this field is required" : false}
                     withAsterisk
                   />
                 )}
@@ -92,11 +118,12 @@ export default function ({ session }) {
                     label="Choose meeting time"
                     description="meeting time should be an hour max"
                     onChange={onChange}
+                    error={errors?.time ? (errors?.time?.message === "end time should be greater" ? "start time should be less than starting" : "this field is required") : false}
                     clearable
                     withAsterisk
                   />
                 )}
-                />
+              />
             </div>
             <div>
               <NativeSelect
@@ -104,15 +131,11 @@ export default function ({ session }) {
                 label="How do you want to arrange the meeting?"
                 description="Choose one"
                 withAsterisk
-                // onChange={(event) =>
-                //   {setMeetingMethod(event.currentTarget.value)
-                //     console.log("HTML element target value is: ", event.target);
-                //   }
-                // }
                 {...register("meetingCriteria", {
                   onChange: (event) =>
                     setMeetingMethod(event.currentTarget.value),
                 })}
+                error={errors?.meetingCriteria? "Please select one" : false}
               />
             </div>
 
@@ -121,7 +144,8 @@ export default function ({ session }) {
                 placeholder="xx-ARID-xxxx"
                 label="Enter arid number"
                 withAsterisk
-                {...register("resgistration number")}
+                {...register("resgistrationNumber")}
+                error={errors?.resgistrationNumber? "this field is required" : false}
               />
             )}
             {meetingMethod === "Bulk Meeting" && (
@@ -130,49 +154,114 @@ export default function ({ session }) {
                 label="Choose meeting criteria"
                 desccription="Choose one"
                 withAsterisk
-                {...register("meetingWay", {
+                {...register("bulkWay", {
                   onChange: (event) => setBulkReason(event.currentTarget.value),
                 })}
               />
             )}
 
-            {bulkReason === "Attendance" && (
-              <NumberInput
-                max={100}
-                min={0}
-                defaultValue={75}
-                icon={<FontAwesomeIcon icon={faLessThanEqual} className="text-sm" />}
-                {...register("reasonBulk")}
-              />
-            )}
-            {bulkReason === "GPA" && (
-              <Controller
-              name="reason"
-              control={control}
-                render={({ field: { onChange } }) => (
-                <NumberInput
-                  max={4.0}
-                  min={0.0}
-                  precision={2}
-                  defaultValue={2.5}
-                  value={gpa}
-                  step={0.5}
-                    icon={<FontAwesomeIcon icon={faLessThanEqual} className="text-sm" />}
-                  onChange={(event)=> setGpa(event)}
+            {bulkReason === "Attendance" && meetingMethod !== "Individual Meeting" && (
+               <>
+                <Controller
+                  name="attendance"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <NumberInput
+                      max={100}
+                      min={0}
+                      defaultValue={75}
+                      icon={
+                        <FontAwesomeIcon icon={faLessThanEqual} className="text-sm" />
+                      }
+                      onChange={(event)=>setAttendance(event)}
+                    />
+                  )}
                 />
+                {students && (
+                  <div className="min-h-6">
+                    <p className="text-xs text-gray-400 mb-1">
+                      Selected Students
+                    </p>
+                    {selectedStudentsAtt?.map((stud) => {
+                      return (
+                        <span
+                          key={stud}
+                          className="bg-purple-500 text-white text-sm font-medium mr-2 px-2.5 py-0.5 rounded"
+                        >
+                          {stud}
+                          <button
+                            type="button"
+                            title="exclude student"
+                            className="ml-1"
+                            onClick={(event) =>
+                              setSelectedStudents(
+                                selectedStudents.filter((stud) => stud != event.currentTarget.parentNode.textContent)
+                              )
+                            }
+                          >
+                            <FontAwesomeIcon icon={faClose} className="hover:text-red-600" />
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
                 )}
-              />
+              </>
             )}
-
-            {gpa && students &&
-              <div className="min-h-6">
-                <p className="text-xs text-gray-400 mb-1">Selected Students</p>
-                {students?.students?.map((student) => {
-                  return <Badge radius="xs" p="xs" ml="xs">{student.Student.studentRegNo}</Badge>;
-                })}
-
-              </div>
-            }
+            {bulkReason === "GPA" && meetingMethod !== "Individual Meeting" && (
+              <>
+                <Controller
+                  name="gpa"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <NumberInput
+                      max={4.0}
+                      min={0.0}
+                      precision={2}
+                      defaultValue={2.5}
+                      value={gpa}
+                      step={0.5}
+                      icon={
+                        <FontAwesomeIcon
+                          icon={faLessThanEqual}
+                          className="text-sm"
+                        />
+                      }
+                      onChange={(event) => setGpa(event)}
+                    />
+                  )}
+                />
+                {students && (
+                  <div className="min-h-6">
+                    <p className="text-xs text-gray-400 mb-1">
+                      Selected Students
+                    </p>
+                    {selectedStudents?.map((stud) => {
+                      return (
+                        <span
+                          key={stud}
+                          className="bg-purple-500 text-white text-sm font-medium mr-2 px-2.5 py-0.5 rounded"
+                        >
+                          {stud}
+                          <button
+                            type="button"
+                            title="exclude student"
+                            className="ml-1"
+                            onClick={(event) =>
+                              setSelectedStudents(
+                                selectedStudents.filter((stud) => stud != event.currentTarget.parentNode.textContent)
+                              )
+                            }
+                          >
+                            <FontAwesomeIcon icon={faClose} className="hover:text-red-600" />
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            )}
             <Textarea
               label="Enter meeting reason"
               description="Enter atleast 30 characters"
@@ -197,4 +286,6 @@ export default function ({ session }) {
       </div>
     </AppSkeloton>
   );
-}
+};
+
+export default Create;

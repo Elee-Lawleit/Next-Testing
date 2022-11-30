@@ -27,6 +27,12 @@
     border-color: rgb(155, 111, 196);
 }
 
+/* for time picker when empty */
+.mantine-gqmpge:focus,
+.mantine-gqmpge:focus-within{
+    border-color: rgb(155, 111, 196);
+}
+
 
 /* for select input border */
 .mantine-qew57g:focus,
@@ -36,5 +42,10 @@
 
 .mantine-1g5p8t1:focus,
 .mantine-1g5p8t1:focus-within{
+    border-color: rgb(155, 111, 196);
+}
+
+.mantine-1x5wn0z:focus,
+.mantine-1x5wn0z:focus-within{
     border-color: rgb(155, 111, 196);
 }
