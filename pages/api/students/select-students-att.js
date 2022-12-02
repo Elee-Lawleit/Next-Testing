@@ -33,7 +33,7 @@ const handler = async (req, res) => {
         }
     })
 
-    console.log("Students returend for attendance: ", students);
+    // console.log("Students returend for attendance: ", students);
 
     return res.status(200).json({ students: students })
 }

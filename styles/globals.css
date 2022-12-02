@@ -49,3 +49,21 @@
 .mantine-1x5wn0z:focus-within{
     border-color: rgb(155, 111, 196);
 }
+
+/* time range picker */
+.mantine-1nvi3eg:focus,
+.mantine-1nvi3eg:focus-within{
+    border-color: rgb(155, 111, 196);
+}
+
+/* native select */
+.mantine-1sdawtx:focus,
+.mantine-1sdawtx:focus-within{
+    border-color: rgb(155, 111, 196);
+}
+
+/* textarea when focused */
+.mantine-4btq4a:focus,
+.mantine-4btq4a:focus-within{
+    border-color: rgb(155, 111, 196);
+}

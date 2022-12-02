@@ -11,20 +11,21 @@ import {
 import { DatePicker, TimeRangeInput } from "@mantine/dates";
 import { useState, useEffect } from "react";
 import {
+  LoadingOverlay,
   NativeSelect,
   NumberInput,
   Textarea,
   TextInput,
+  useMantineTheme,
 } from "@mantine/core";
 import useSelectStudentsGPA from "hooks/students/use-select-students-gpa";
 import useSelectStudentsAtt from "hooks/students/use-select-students-att";
-import dayjs from "dayjs";
-import objectSupport from "dayjs/plugin/objectSupport";
+import useCreateMeetingMutation from "hooks/meetings/use-create-meeting";
+import toast from "react-hot-toast";
 
 const Create = ({ session }) => {
-  
-  const [meetingMethod, setMeetingMethod] = useState();
-  const [bulkReason, setBulkReason] = useState("");
+  const theme = useMantineTheme();
+
   const [gpa, setGpa] = useState(2.5);
   const [attendane, setAttendance] = useState(75);
 
@@ -32,14 +33,32 @@ const Create = ({ session }) => {
     register,
     formState: { errors },
     handleSubmit,
+    watch,
+    unregister,
     control,
   } = useForm({
     resolver: yupResolver(meetingSchema),
-
   });
+  const meetingCriteria = watch("meetingCriteria");
+  const bulkReason = watch("bulkReason");
+
+  useEffect(() => {
+    if(meetingCriteria === "Individual Meeting"){
+      unregister("bulkReason");
+    }
+    if(meetingCriteria === "Bulk Meeting"){
+      unregister("registrationNumber");
+    }
+  }, [meetingCriteria, bulkReason])
+  
+
 
   const { data: students, isLoading, isError } = useSelectStudentsGPA(gpa);
-  const { data: studentsAtt, isLoading: loadingAtt, isError: errorAtt } = useSelectStudentsAtt(attendane);
+  const {
+    data: studentsAtt,
+    isLoading: loadingAtt,
+    isError: errorAtt,
+  } = useSelectStudentsAtt(attendane);
 
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [selectedStudentsAtt, setSelectedStudentsAtt] = useState([]);
@@ -48,30 +67,41 @@ const Create = ({ session }) => {
     setSelectedStudents(
       students?.students?.map((student) => student.Student.studentRegNo)
     );
-
-    console.log("gpa value: ", gpa);
   }, [gpa, students]);
 
-  useEffect(()=>{
-    setSelectedStudentsAtt(studentsAtt?.students?.map((student) => student.Student.studentRegNo));
-  }, [attendane, studentsAtt])
+  useEffect(() => {
+    setSelectedStudentsAtt(
+      studentsAtt?.students?.map((student) => student.Student.studentRegNo)
+    );
+  }, [attendane, studentsAtt]);
+
+  const { mutate: createMeeting, isLoading: isSettingMeeting } =
+    useCreateMeetingMutation();
 
   const onCreate = async (data) => {
-    //does some database stuff
-    console.log("onCreate function running on form submit");
-    bulkReason === "Attendance" ? data.students = selectedStudentsAtt : data.students = selectedStudents;
-    console.log("Meeting form data: ", data);
-    // console.log("start time is: ", data.time[0].getHours() + ":" + data.time[0].getMinutes())
-    // console.log("start time is: ", data.time[1].getHours() + ":"+ data.time[1].getMinutes())
+
+    if(meetingCriteria === "Bulk Meeting"){
+      bulkReason === "Attendance"
+        ? (data.students = selectedStudentsAtt)
+        : (data.students = selectedStudents);
+    }
+
+
+    console.log(data);
+    createMeeting(
+      {
+        ...data,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Meeting created.");
+        },
+        onError: () => {
+          toast.error("Could not create meeting");
+        },
+      }
+    );
   };
-
-
-
-  
-  
-
-
-  console.log(errors);
 
   return (
     <AppSkeloton session={session}>
@@ -86,8 +116,9 @@ const Create = ({ session }) => {
         <div>
           <form
             onSubmit={handleSubmit(onCreate)}
-            className="gap-2 form-control w-full"
+            className="gap-2 form-control w-full relative"
           >
+            <LoadingOverlay visible={isSettingMeeting} />
             <div>
               <Controller
                 control={control}
@@ -117,8 +148,15 @@ const Create = ({ session }) => {
                   <TimeRangeInput
                     label="Choose meeting time"
                     description="meeting time should be an hour max"
+                    // format="12"
                     onChange={onChange}
-                    error={errors?.time ? (errors?.time?.message === "end time should be greater" ? "start time should be less than starting" : "this field is required") : false}
+                    error={
+                      errors?.time
+                        ? errors?.time?.message === "end time should be greater"
+                          ? "start time should be less than starting"
+                          : "this field is required"
+                        : false
+                    }
                     clearable
                     withAsterisk
                   />
@@ -132,104 +170,106 @@ const Create = ({ session }) => {
                 description="Choose one"
                 withAsterisk
                 {...register("meetingCriteria", {
-                  onChange: (event) =>
-                    setMeetingMethod(event.currentTarget.value),
+                  onChange: (event) => meetingCriteria = event.currentTarget.value
                 })}
-                error={errors?.meetingCriteria? "Please select one" : false}
+                error={errors?.meetingCriteria ? "Please select one" : false}
               />
             </div>
 
-            {meetingMethod === "Individual Meeting" && (
+            {meetingCriteria === "Individual Meeting" && (
               <TextInput
                 placeholder="xx-ARID-xxxx"
                 label="Enter arid number"
                 withAsterisk
-                {...register("resgistrationNumber")}
-                error={errors?.resgistrationNumber? "this field is required" : false}
+                {...register("registrationNumber")}
+                error={
+                  errors?.resgistrationNumber ? "this field is required" : false
+                }
               />
             )}
-            {meetingMethod === "Bulk Meeting" && (
+            {meetingCriteria === "Bulk Meeting" && (
               <NativeSelect
                 data={["...", "Attendance", "GPA"]}
                 label="Choose meeting criteria"
                 desccription="Choose one"
                 withAsterisk
-                {...register("bulkWay", {
-                  onChange: (event) => setBulkReason(event.currentTarget.value),
+                {...register("bulkReason", {
+                  onChange: (event) => bulkReason = event.currentTarget.value
                 })}
+                error={errors?.bulkReason ? "Please select one" : false}
               />
             )}
 
-            {bulkReason === "Attendance" && meetingMethod !== "Individual Meeting" && (
-               <>
-                <Controller
-                  name="attendance"
-                  control={control}
-                  render={({ field: { onChange } }) => (
-                    <NumberInput
-                      max={100}
-                      min={0}
-                      defaultValue={75}
-                      icon={
-                        <FontAwesomeIcon icon={faLessThanEqual} className="text-sm" />
-                      }
-                      onChange={(event)=>setAttendance(event)}
-                    />
-                  )}
-                />
-                {students && (
-                  <div className="min-h-6">
-                    <p className="text-xs text-gray-400 mb-1">
-                      Selected Students
-                    </p>
-                    {selectedStudentsAtt?.map((stud) => {
-                      return (
-                        <span
-                          key={stud}
-                          className="bg-purple-500 text-white text-sm font-medium mr-2 px-2.5 py-0.5 rounded"
-                        >
-                          {stud}
-                          <button
-                            type="button"
-                            title="exclude student"
-                            className="ml-1"
-                            onClick={(event) =>
-                              setSelectedStudents(
-                                selectedStudents.filter((stud) => stud != event.currentTarget.parentNode.textContent)
-                              )
-                            }
+            {bulkReason === "Attendance" &&
+              meetingCriteria !== "Individual Meeting" && (
+                <>
+                  <NumberInput
+                    max={100}
+                    min={0}
+                    defaultValue={75}
+                    icon={
+                      <FontAwesomeIcon
+                        icon={faLessThanEqual}
+                        className="text-sm"
+                      />
+                    }
+                    onChange={(event) => setAttendance(event)}
+                  />
+                  {students && (
+                    <div className="min-h-6">
+                      <p className="text-xs text-gray-400 mb-1">
+                        Selected Students
+                      </p>
+                      {selectedStudentsAtt?.map((stud) => {
+                        return (
+                          <span
+                            key={stud}
+                            className="bg-purple-500 text-white text-sm font-medium mr-2 px-2.5 py-0.5 rounded"
                           >
-                            <FontAwesomeIcon icon={faClose} className="hover:text-red-600" />
-                          </button>
-                        </span>
-                      );
-                    })}
-                  </div>
-                )}
-              </>
-            )}
-            {bulkReason === "GPA" && meetingMethod !== "Individual Meeting" && (
-              <>
-                <Controller
-                  name="gpa"
-                  control={control}
-                  render={({ field: { onChange } }) => (
-                    <NumberInput
-                      max={4.0}
-                      min={0.0}
-                      precision={2}
-                      defaultValue={2.5}
-                      value={gpa}
-                      step={0.5}
-                      icon={
-                        <FontAwesomeIcon
-                          icon={faLessThanEqual}
-                          className="text-sm"
-                        />
-                      }
-                      onChange={(event) => setGpa(event)}
-                    />
+                            {stud}
+                            <button
+                              type="button"
+                              title="exclude student"
+                              className="ml-1"
+                              onClick={(event) =>
+                                setSelectedStudentsAtt(
+                                  selectedStudentsAtt.filter(
+                                    (stud) =>
+                                      stud !=
+                                      event.currentTarget.parentNode.textContent
+                                  )
+                                )
+                              }
+                            >
+                              <FontAwesomeIcon
+                                icon={faClose}
+                                className="hover:text-red-600"
+                              />
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
                   )}
+                </>
+              )}
+            {bulkReason === "GPA" && meetingCriteria !== "Individual Meeting" && (
+              <>
+                <NumberInput
+                  max={4.0}
+                  min={0.0}
+                  precision={2}
+                  defaultValue={2.5}
+                  value={gpa}
+                  step={0.5}
+                  icon={
+                    <FontAwesomeIcon
+                      icon={faLessThanEqual}
+                      className="text-sm"
+                    />
+                  }
+                  onChange={(event) => setGpa(event)}
+                  error={errors?.gpa ? "this field is required" : false}
                 />
                 {students && (
                   <div className="min-h-6">
@@ -249,11 +289,18 @@ const Create = ({ session }) => {
                             className="ml-1"
                             onClick={(event) =>
                               setSelectedStudents(
-                                selectedStudents.filter((stud) => stud != event.currentTarget.parentNode.textContent)
+                                selectedStudents.filter(
+                                  (stud) =>
+                                    stud !=
+                                    event.currentTarget.parentNode.textContent
+                                )
                               )
                             }
                           >
-                            <FontAwesomeIcon icon={faClose} className="hover:text-red-600" />
+                            <FontAwesomeIcon
+                              icon={faClose}
+                              className="hover:text-red-600"
+                            />
                           </button>
                         </span>
                       );
@@ -270,7 +317,14 @@ const Create = ({ session }) => {
               minRows={3}
               maxRows={5}
               withAsterisk
-              {...register("reasonMeeting")}
+              {...register("reason")}
+              error={
+                errors?.reason
+                  ? errors?.reason?.message === "30-characters"
+                    ? "reason should be at least be 30 characters long"
+                    : "this field is required"
+                  : false
+              }
             />
             <div className="text-center text-white">
               <input

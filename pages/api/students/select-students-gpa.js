@@ -24,7 +24,7 @@ const handler = async(req, res) => {
     }
   })
 
-  console.log("Students returend: ", students);
+  // console.log("Students returend: ", students);
 
   return res.status(200).json({students: students })
 }
