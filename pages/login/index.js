@@ -98,9 +98,9 @@ const Login = ({ session }) => {
           <div className="flex justify-center">
             <select name="" id="" {...register("role")} className={clsx("w-full select select-bordered select-primary select-sm rounded-md lg:select-md", errors?.role && "select-error")}>
               <option value="" defaultChecked>Select Role</option>
-              <option value="admin">Admin</option>
-              <option value="parent">Parent</option>
-              <option value="student">Student</option>
+              <option value="Admin">Admin</option>
+              <option value="Parent">Parent</option>
+              <option value="Student">Student</option>
             </select>
           </div>
           <div className="text-center text-white">

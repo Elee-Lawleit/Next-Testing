@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "prisma/src/generated/client"
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
@@ -11,21 +11,31 @@ export default async function handler(req, res) {
       });
     }
 
-    const { username, email, cnic, phone, password } = req.body;
+    const { username, email, cnic, password, fname, lname } = req.body;
 
-    if(!username || !email || !cnic || !phone || !password){
+    if(!username || !email || !cnic || !password || !fname || !lname){
       return res.status(403).json({error: "Please fill in all the fields"});
     }
 
     await prisma.parent.create({
       data: {
-        parentName: username,
-        parentEmail: email,
-        parentCnic: cnic,
-        parentPhone: phone,
-        parentPassword: password,
+        firstName: fname,
+        lastName: lname,
+        email: email,
+        cnic: cnic,
+        address: "Rawalpindi",
+        userlogin: {
+          create: {
+            userName: username,
+            password: password,
+            email: email,
+            role: "Parent"
+          }
+        }
       },
     });
+
+
 
     res.status(200).json({
       msg: "Parent added.",

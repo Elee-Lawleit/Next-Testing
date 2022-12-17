@@ -4,13 +4,14 @@ import axios from "axios";
 
 export default function useAddParentMutation() {
   return useMutation(
-    async ({ username, email, cnic, phone, password }) => {
+    async ({ username, email, cnic, password, fname, lname }) => {
       return await axios.post("/api/parent/add-parent", {
         username,
         email,
         cnic,
-        phone,
         password,
+        fname,
+        lname,
       });
     },
     {

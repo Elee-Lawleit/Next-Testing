@@ -14,6 +14,7 @@ import {
   LoadingOverlay,
   NativeSelect,
   NumberInput,
+  Radio,
   Textarea,
   TextInput,
   useMantineTheme,
@@ -21,13 +22,17 @@ import {
 import useSelectStudentsGPA from "hooks/students/use-select-students-gpa";
 import useSelectStudentsAtt from "hooks/students/use-select-students-att";
 import useCreateMeetingMutation from "hooks/meetings/use-create-meeting";
+import useFetchTimeSlots from "hooks/admin/use-fetch-timeslots";
 import toast from "react-hot-toast";
+import duration from "dayjs/plugin/duration";
+import dayjs from "dayjs";
+import clsx from "clsx";
 
 const Create = ({ session }) => {
   const theme = useMantineTheme();
 
   const [gpa, setGpa] = useState(2.5);
-  const [attendane, setAttendance] = useState(75);
+  const [attendance, setAttendance] = useState(75);
 
   const {
     register,
@@ -50,33 +55,34 @@ const Create = ({ session }) => {
       unregister("registrationNumber");
     }
   }, [meetingCriteria, bulkReason])
-  
-
 
   const { data: students, isLoading, isError } = useSelectStudentsGPA(gpa);
-  const {
-    data: studentsAtt,
-    isLoading: loadingAtt,
-    isError: errorAtt,
-  } = useSelectStudentsAtt(attendane);
+  const { data: studentsAtt, isLoading: loadingAtt, isError: errorAtt } = useSelectStudentsAtt(attendance);
+  const {data: timeSlots, isLoading: tsLoading, isError: tsError} = useFetchTimeSlots(session.user.id);
 
+  console.log("Time: ", dayjs(timeSlots?.timeSlots[0]?.startTime).subtract(5, 'hours').hour());
+  
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [selectedStudentsAtt, setSelectedStudentsAtt] = useState([]);
 
   useEffect(() => {
     setSelectedStudents(
-      students?.students?.map((student) => student.Student.studentRegNo)
+      students?.students?.map((student) => student.regNo)
     );
   }, [gpa, students]);
 
   useEffect(() => {
     setSelectedStudentsAtt(
-      studentsAtt?.students?.map((student) => student.Student.studentRegNo)
+      studentsAtt?.students?.map((student) => student.regNo)
     );
-  }, [attendane, studentsAtt]);
+  }, [attendance, studentsAtt]);
 
   const { mutate: createMeeting, isLoading: isSettingMeeting } =
     useCreateMeetingMutation();
+
+    console.log("Error: ", errors)
+
+    let framewokrs = ["React", "Angular", "Vue", "NextJs"];
 
   const onCreate = async (data) => {
 
@@ -85,7 +91,6 @@ const Create = ({ session }) => {
         ? (data.students = selectedStudentsAtt)
         : (data.students = selectedStudents);
     }
-
 
     console.log(data);
     createMeeting(
@@ -141,27 +146,29 @@ const Create = ({ session }) => {
               />
             </div>
             <div>
-              <Controller
-                control={control}
-                name="time"
-                render={({ field: { onChange } }) => (
-                  <TimeRangeInput
-                    label="Choose meeting time"
-                    description="meeting time should be an hour max"
-                    // format="12"
-                    onChange={onChange}
-                    error={
-                      errors?.time
-                        ? errors?.time?.message === "end time should be greater"
-                          ? "start time should be less than starting"
-                          : "this field is required"
-                        : false
-                    }
-                    clearable
-                    withAsterisk
-                  />
-                )}
-              />
+                <div className="flex flex-col gap-3">
+                  <div>
+                    <p className="text-sm font-semibold">Select meeting time</p>
+                  </div>
+                  <div className="flex gap-3">
+                  {
+                      timeSlots?.timeSlots?.map((ts) =>
+                        <Radio value={[dayjs(ts.startTime), dayjs(ts.endTime)]}
+                          label={
+                            dayjs(ts.startTime).subtract(5, 'hours').hour() + ":" +
+                            dayjs(ts.startTime).subtract(5, 'hours').minute() + " - " +
+                            dayjs(ts.endTime).subtract(5, 'hours').hour() + ":" +
+                            dayjs(ts.endTime).subtract(5, 'hours').minute()
+                          }
+                          {...register("time")}
+                        />
+                      )
+                        }
+                  </div>
+                  <div>
+                    <p className={clsx("text-red-400 hidden text-xs", errors?.time && "block")}>Select meeting time</p>
+                  </div>
+                </div>
             </div>
             <div>
               <NativeSelect

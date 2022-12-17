@@ -21,22 +21,37 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: "Please fill in all the fields" });
     }
 
+    console.log("Time is: ", time + "\t" + "And type is: ", typeof time)
+
     if (registrationNumber) {
-      await prisma.meeting.create({
-        data: {
-          meetingDay: date,
-          meetingStartTime: time[0],
-          meetingEndTime: time[1],
-          meetingStatus: false,
-          meetingReason: reason,
-          parentId: 2,
-          studentId: 1,
+
+      const parentId = await prisma.student.findFirst({
+        where: {
+          regNo: registrationNumber,
         },
-      });
+        select: {
+          parent: {
+            select: {
+              cnic: true
+            }
+          }
+        }
+      })
+
+      console.log("parentId is: ", parentId);
+
+    //   await prisma.meeting.create({
+    //     data: {
+    //       reason: reason,
+    //       status: "pending",
+    //       regNo: registrationNumber,
+    //       parentId: ,
+    //     },
+    //   });
     }
 
     if (students) {
-      students.forEach(async (element) => {
+      students.forEach(async () => {
         await prisma.meeting.create({
           data: {
             meetingDay: date,
@@ -51,9 +66,10 @@ export default async function handler(req, res) {
       });
     }
 
-        res.status(200).json({
-            msg: "Meeting created",
-        });
+    res.status(200).json({
+      msg: "Meeting created",
+    });
+    prisma.$disconnect();
   } catch (err) {
     console.log(err);
     res.status(500).json({

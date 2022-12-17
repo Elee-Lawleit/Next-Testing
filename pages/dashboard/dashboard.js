@@ -9,16 +9,19 @@ import {
 import Link from "next/link";
 import useFetchMeetingStats from "hooks/meetings/use-fetch-meeting-stats";
 import { useRouter } from "next/router";
-import dashboard from ".";
 
 const Dashboard =  ({ session }) => {
+
 
     const router = useRouter();
     
     //fetch total meetings
     const { data, isLoading } = useFetchTotalMeetings(session?.user?.id, session?.user?.role);
+    console.log("total meetings are: ", data?.count)
 
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+    console.log(session)
     
     //fetch meeting stats
     const { data: statsData, isLoading: areStatsLoading } = useFetchMeetingStats(session?.user?.id, session?.user?.role)
@@ -62,7 +65,7 @@ const Dashboard =  ({ session }) => {
                     </div>
 
                     <div className="font-medium text-gray-500">
-                        <p>You have <span className="text-purple-500"> {data?.meetings} meetings </span>today</p>
+                        <p>You have <span className="text-purple-500"> {data?.count} meetings </span>today</p>
                     </div>
 
                 </div>

@@ -37,18 +37,11 @@ const AppSkeloton = ({ children, ...props }) => {
   const [date, setDate] = useState(new Date());
 
 
-  //will send date string to database
-  //not converting date to 'date.toDateString()' anymore bc I changed the type to Date Object in database
+
   const { isLoading, data } = useFetchMeetings(date, props.session?.user?.id, props.session?.user?.role);
 
-  //checking whether session is accessible inside app skele
-  // console.log("Session inside app skele is: ", props.session);
-  // console.log("The user role is: ", props.session?.user?.role);
-
-  // console.log("Data on app skele is: ", data?.meetings);
-  // console.log("CHildren are: ", children);
-
-  // console.log("Meetings inside app skele are: ", typeof (data?.meetings?.Meeting))
+  console.log("Meetings are: ", data?.meetings);
+  console.log(props.session)
 
   return (
     <MediaQuery>
@@ -102,10 +95,10 @@ const AppSkeloton = ({ children, ...props }) => {
               <Text className='font-bold'>Upcoming Meetings</Text>
               <ScrollArea style={{ height: 270 }}>
                 <LoadingOverlay visible={isLoading} />
-                {data?.meetings?.Meeting?.map((meeting) => {
-                  return <Notification key={meeting.id} title="meeting notification" disallowClose
+                {data?.meetings?.map((meeting) => {
+                  return <Notification key={meeting.mid} title="meeting notification" disallowClose
                   className='before:bg-purple-500'>
-                    {meeting.meetingReason}
+                    {meeting.reason}
                   </Notification>
                 })}
                 {!data && !isLoading && <Text>No upcoming meetings!</Text>}

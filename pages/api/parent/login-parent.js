@@ -3,6 +3,10 @@ import withProtect from "middleware/withProtect";
 import jwt from "jsonwebtoken"
 const prisma = new PrismaClient();
 
+
+//  NOT USING THIS FILE, BUT KEEP IT HERE 
+//  NEED THIS FOR THE MIDDLE WARE EXAMPLE
+
 const handler = async (req, res) => {
   try {
     const { method } = req;

@@ -7,10 +7,7 @@ dayjs.extend(objectSupport);
 export const meetingSchema = yup.object().shape({
     date: yup.date().required(),
     
-    time: yup.array().of(yup.date()).length(2).required("time is a required field").test("is-greater", "end time should be greater", (time) => {
-        if (!time) {return;}
-        return dayjs({ h: time[0].getHours(), m: time[0].getMinutes() }).isBefore(dayjs({ h: time[1].getHours(), m: time[1].getMinutes() })) ? true : false
-    }),
+    time: yup.string().required(),
 
     meetingCriteria: yup.mixed().oneOf(["Individual Meeting", "Bulk Meeting"]),
 

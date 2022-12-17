@@ -17,6 +17,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import useAddParentMutation from "hooks/parent/use-add-parent-mutation";
 import { toast } from "react-hot-toast";
+import { LoadingOverlay } from "@mantine/core";
 
 
 const Signup = ({ session }) => {
@@ -40,9 +41,10 @@ const Signup = ({ session }) => {
     resolver: yupResolver(signUpSchema),
   });
 
-  const { mutate: addParent, isLoading } = useAddParentMutation();
+  const { mutate: addParent, isLoading, isError } = useAddParentMutation();
 
   const onSignup = (data) => {
+    console.log(data)
     addParent(
       {
         ...data,
@@ -59,14 +61,8 @@ const Signup = ({ session }) => {
     );
   };
 
+  console.log("Error: ", isError)
 
-  //waiting for signup
-
-  //****** EDIT THIS: THIS CAN BE DONE VIA MANTINE LOADING OVERLAY ******//
-  if (isLoading) {
-    console.log("loading because of mutation");
-    return (toast.loading("Please wait"))
-  }
 
   if (typeof window !== "undefined") {
     if (session) {
@@ -87,6 +83,7 @@ const Signup = ({ session }) => {
           <FontAwesomeIcon icon={faRightToBracket} />
         </div>
         <form onSubmit={handleSubmit(onSignup)} className="justify-center gap-2 form-control w-full max-w-md xl:max-w-lg">
+            <LoadingOverlay visible={isLoading}/>
           <div className="relative">
             <input
               type="text"
@@ -94,14 +91,14 @@ const Signup = ({ session }) => {
               id=""
               placeholder="Username..."
               className={clsx(
-                "input input-primary rounded-md input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                "input input-primary rounded-md input-md placeholder:italic placeholder:pl-1 indent-5 w-full",
                 errors?.username && "input-error"
               )}
               {...register("username")}
             />
             <FontAwesomeIcon
               icon={faUser}
-              className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
+              className="absolute ml-1 text-gray-800 top-4 md:xl:top-4 left-2"
             />
           </div>
           <div className="relative">
@@ -111,14 +108,48 @@ const Signup = ({ session }) => {
               id=""
               placeholder="Email..."
               className={clsx(
-                "input input-primary rounded-md input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                "input input-primary rounded-md input-md placeholder:italic placeholder:pl-1 indent-5 w-full",
                 errors?.email && "input-error"
               )}
               {...register("email")}
             />
             <FontAwesomeIcon
               icon={faEnvelope}
-              className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
+              className="absolute ml-1 text-gray-800 top-4 md:xl:top-4 left-2"
+            />
+          </div>
+          <div className="relative">
+            <input
+              type="text"
+              name=""
+              id=""
+              placeholder="Firstname..."
+              className={clsx(
+                "input input-primary rounded-md input-md placeholder:italic placeholder:pl-1 indent-5 w-full",
+                errors?.fname && "input-error"
+              )}
+              {...register("fname")}
+            />
+            <FontAwesomeIcon
+              icon={faEnvelope}
+              className="absolute ml-1 text-gray-800 top-4 md:xl:top-4 left-2"
+            />
+          </div>
+          <div className="relative">
+            <input
+              type="text"
+              name=""
+              id=""
+              placeholder="Lastname..."
+              className={clsx(
+                "input input-primary rounded-md input-md placeholder:italic placeholder:pl-1 indent-5 w-full",
+                errors?.lname && "input-error"
+              )}
+              {...register("lname")}
+            />
+            <FontAwesomeIcon
+              icon={faEnvelope}
+              className="absolute ml-1 text-gray-800 top-4 md:xl:top-4 left-2"
             />
           </div>
           <div className="relative">
@@ -128,31 +159,14 @@ const Signup = ({ session }) => {
               id=""
               placeholder="CNIC..."
               className={clsx(
-                "input input-primary rounded-md input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                "input input-primary rounded-md input-md placeholder:italic placeholder:pl-1 indent-5 w-full",
                 errors?.cnic && "input-error"
               )}
               {...register("cnic")}
             />
             <FontAwesomeIcon
               icon={faIdCard}
-              className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
-            />
-          </div>
-          <div className="relative">
-            <input
-              type="text"
-              name=""
-              id=""
-              placeholder="Phone..."
-              className={clsx(
-                "input input-primary rounded-md input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
-                errors?.phone && "input-error"
-              )}
-              {...register("phone")}
-            />
-            <FontAwesomeIcon
-              icon={faPhone}
-              className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
+              className="absolute ml-1 text-gray-800 top-4 md:xl:top-4 left-2"
             />
           </div>
           <div className="relative">
@@ -162,14 +176,14 @@ const Signup = ({ session }) => {
               id=""
               placeholder="Password..."
               className={clsx(
-                "input input-primary rounded-md input-md xl:input-lg placeholder:italic placeholder:pl-1 indent-5 w-full",
+                "input input-primary rounded-md input-md placeholder:italic placeholder:pl-1 indent-5 w-full",
                 errors?.password && "input-error"
               )}
               {...register("password")}
             />
             <FontAwesomeIcon
               icon={faLock}
-              className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
+              className="absolute ml-1 text-gray-800 top-4 md:xl:top-4 left-2"
             />
           </div>
           <div className="text-center text-white">

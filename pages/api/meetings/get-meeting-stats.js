@@ -11,53 +11,53 @@ const handler = async (req, res) => {
     const { dayString, userId, userRole } = req.query;
 
     const month = new Date().getMonth();
-    console.log("The value of month is: ", month);
+    // console.log("The value of month is: ", month);
 
     if (userRole === "admin") {
         var meetings = await prisma.admin.findFirst({
             where: {
-                id: parseInt(userId),
+                cnic: userId,
             },
             select: {
-                Meeting: {
-                    where: {
-                        AND: [
-                            {
-                                meetingDay: {
-                                    gte: new Date(`2022-${month+1}-01`)
-                                }
-                            },
-                            {
-                                meetingDay: {
-                                    lte: new Date(`2022-${month+1}-30`)
-                                }
+                meeting: {
+                    include : {
+                        timeslot:{
+                            where: {
+                                AND: [
+                                    {
+                                        date: { lte: new Date(`2022-${month + 1}-30`) }
+                                    },
+                                    {
+                                        date: { gte: new Date(`2022-${month + 1}-30`) }
+                                    }
+                                ]
                             }
-                        ]
+                        }
                     }
                 }
             }
         })
     }
     if (userRole === "parent") {
-        var meetings = await prisma.parent.findUnique({
+        var meetings = await prisma.parent.findFirst({
             where: {
-                id: parseInt(userId),
+                cnic: userId,
             },
             select: {
-                Meeting: {
-                    where: {
-                        AND: [
-                            {
-                                meetingDay: {
-                                    lte: new Date(`2022-${month + 1}-30`)
-                                }
-                            },
-                            {
-                                meetingDay: {
-                                    gte: new Date(`2022-${month + 1}-01`)
-                                }
-                            },
-                        ]
+                meeting: {
+                    include: {
+                        timeslot: {
+                            where: {
+                                AND: [
+                                    {
+                                        date: { lte: new Date(`2022-${month + 1}-30`) }
+                                    },
+                                    {
+                                        date: { gte: new Date(`2022-${month + 1}-30`) }
+                                    }
+                                ]
+                            }
+                        }
                     }
                 }
             }
@@ -69,20 +69,20 @@ const handler = async (req, res) => {
                 id: parseInt(userId),
             },
             select: {
-                Meeting: {
-                    where: {
-                        AND: [
-                            {
-                                meetingDay: {
-                                    gte: new Date(`2022-${month}-01`)
-                                }
-                            },
-                            {
-                                meetingDay: {
-                                    lte: new Date(`2022-${month}-30`)
-                                }
+                meeting: {
+                    include: {
+                        timeslot: {
+                            where: {
+                                AND: [
+                                    {
+                                        date: { lte: new Date(`2022-${month + 1}-30`) }
+                                    },
+                                    {
+                                        date: { gte: new Date(`2022-${month + 1}-30`) }
+                                    }
+                                ]
                             }
-                        ]
+                        }
                     }
                 }
             }

@@ -15,18 +15,13 @@ const handler = async(req, res) => {
     return res.status(403).json({ error: "Please fill in the gpa field" });
   }
 
-  let students = await prisma.studentInfo.findMany({
+  let students = await prisma.cgpa.findMany({
     where:{
-      infoCgpa: {lte: parseFloat(gpa)}
+      cgpa: {lte: parseFloat(gpa)}
     },
-    select: {
-      Student: true
-    }
   })
 
-  // console.log("Students returend: ", students);
-
-  return res.status(200).json({students: students })
+  return res.status(200).json({students})
 }
 
 export default handler;

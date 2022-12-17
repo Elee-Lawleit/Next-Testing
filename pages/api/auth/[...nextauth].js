@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaClient } from "/prisma/src/generated/client"
+import { PrismaClient } from "/prisma/src/generated/client";
 
 const prisma = new PrismaClient();
 
@@ -24,59 +24,38 @@ export const authOptions = {
       },
       authorize: async (credentials) => {
 
-        console.log("Credentials: ", credentials)
-
-        if (!credentials.username || !credentials.password || !credentials.role) {
-          console.log("Inside error if");
+        if (
+          !credentials.username ||
+          !credentials.password ||
+          !credentials.role
+        ) {
           return null;
         }
 
-        
-
         const userRole = credentials.role;
-        // console.log("THE ADMIN MODEL IS: ", prisma.admin);
 
-        console.log("Type is: ", typeof credentials.username, typeof credentials.password);
-
-        if (credentials.role === "parent") {
-          console.log("INside parent if")
-          var user = await prisma.parent.findFirst({
-            where: {
-              parentName: credentials.username,
-              parentPassword: credentials.password,
-            }
-          });
-        }
-
-        if (credentials.role === "admin") {
-          var user = await prisma.admin.findFirst({
-            where: {
-              adminName: credentials.username.toString(),
-              adminPassword: credentials.password.toString()
-            }
-          });
-        }
-        if (credentials.role === "student") {
-          console.log("Inside student: ", credentials)
-          var user = await prisma.student.findFirst({
-            where: {
-              studentName: credentials.username.toString(),
-              studentPassword: credentials.password.toString()
-            }
-          });
-        }
-
-        console.log("This is user object returned from database: ", user);
-
-        // console.log("This USer: ", user.adminName || user.parentName || user.studentName);
-
+        let user = await prisma.userlogin.findFirst({
+          where: {
+            role: credentials.role,
+            userName: credentials.username,
+            password: credentials.password,
+          },
+          include:{
+            parent: true,
+            admin: true,
+            student: true
+          }
+        });
 
         if (user) {
-          // console.log("Inside user if");
+          const uniqueIdentifier = user.regNo || user.parentId || user.adminId;
+          const name = user.parent?.firstName || user.admin?.firstName || user.student?.firstName
+          console.log("User: ", user)
+
           return {
-            id: user.id,
-            name: user.parentName || user.studentName || user.adminName,
-            role: userRole
+            id: uniqueIdentifier,
+            role: userRole,
+            name: name
           };
         }
         return null;
@@ -89,15 +68,18 @@ export const authOptions = {
         //attaching id inside token here because next-auth automatically deletes id field
         //because it's sensitive I guess
         //didn't have to reattach the username here to token
-        token.id = user.id;
-        token.role = user.role
+        // token.id = user.id;
+        token.id= user.id;
+        token.role = user.role;
+        token.name = user.name;
       }
       return token;
     },
     session: ({ session, token }) => {
       if (session?.user) {
         session.user.id = token.id;
-        session.user.role = token.role
+        session.user.role = token.role;
+        session.user.name = token.name;
       }
       return session;
     },

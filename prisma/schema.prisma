@@ -1,8 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "./src/generated/client"
-
-  //to use where in _count
+  provider        = "prisma-client-js"
+  output          = "./src/generated/client"
   previewFeatures = ["filteredRelationCount"]
 }
 
@@ -11,131 +9,167 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Parent {
-  id                Int                 @id @default(autoincrement())
-  parentEmail       String              @unique
-  parentName        String
-  parentCnic        String              @unique
-  parentPhone       String
-  parentPassword    String
-  Meeting           Meeting[]
-  Student           Student[]
-  RequestedMeetings RequestedMeetings[]
+model parent {
+  cnic        String        @id @db.VarChar(13)
+  firstName   String        @db.VarChar(128)
+  lastName    String        @db.VarChar(128)
+  email       String        @db.VarChar(128)
+  address     String        @db.VarChar(300)
+  history     history[]
+  meeting     meeting[]
+  student     student[]
+  userlogin   userlogin?
+  waitinglist waitinglist[]
 }
 
-model Admin {
-  id                Int                 @id @default(autoincrement())
-  adminName         String
-  adminPassword     String
-  adminGender       String
-  adminCnic         String              @unique
-  adminEmail        String              @unique
-  adminDesignation  String?
-  Meeting           Meeting[]
-  Schedule          Schedule[]
-  RequestedMeetings RequestedMeetings[]
-  DayTime           DayTime[]
+model admin {
+  cnic        String        @id @db.VarChar(13)
+  firstName   String        @db.VarChar(128)
+  lastName    String        @db.VarChar(128)
+  email       String        @db.VarChar(128)
+  gender      String        @db.Char(1)
+  phone       String        @db.VarChar(13)
+  role        String        @db.VarChar(30)
+  desgination String        @db.VarChar(30)
+  history     history[]
+  meeting     meeting[]
+  timeslot    timeslot[]
+  userlogin   userlogin?
+  waitinglist waitinglist[]
 }
 
-model Department {
-  id             Int       @id @default(autoincrement())
-  departmentName String // Acountant + Datacell + ProjectCommettee
-  Faculty        Faculty[]
+model timeslot {
+  tsid         Int      @id @default(autoincrement())
+  date         DateTime @db.Date
+  startTime    DateTime @db.Time(6)
+  endTime      DateTime @db.Time(6)
+  availibility Boolean
+  adminId      String   @db.VarChar(13)
+  admin        admin    @relation(fields: [adminId], references: [cnic])
+  meeting      meeting?
 }
 
-model Faculty {
-  id           Int       @id @default(autoincrement())
-  userName     String
-  departmentId Int
-  Meeting      Meeting[]
-
-  Department Department @relation(fields: [departmentId], references: [id])
+model student {
+  regNo         String          @id @db.VarChar(30)
+  firstName     String          @db.VarChar(128)
+  lastName      String          @db.VarChar(128)
+  email         String          @db.VarChar(128)
+  gender        String          @db.Char(1)
+  birthdate     DateTime        @db.Date
+  studentCnic   String          @db.VarChar(13)
+  class         String          @db.VarChar(30)
+  section       String          @db.VarChar(30)
+  parentId      String?         @db.VarChar(13)
+  parent        parent?         @relation(fields: [parentId], references: [cnic])
+  attendance    attendance[]
+  cgpa          cgpa?
+  disciplinary  disciplinary[]
+  failedsubject failedsubject[]
+  history       history[]
+  meeting       meeting[]
+  userlogin     userlogin?
+  waiinglist    waitinglist[]
 }
 
-model Schedule {
-  id        Int      @id @default(autoincrement())
-  day       Int //monday  monday
-  start     DateTime @db.Time()
-  end       DateTime @db.Time()
-  startTime DateTime
-  EndTime   DateTime
-  adminId   Int
-
-  Admin Admin @relation(fields: [adminId], references: [id])
+model attendance {
+  sid        Int     @id @default(autoincrement())
+  subject    String  @db.VarChar(30)
+  percentage Int
+  regNo      String  @db.VarChar(30)
+  student    student @relation(fields: [regNo], references: [regNo])
 }
 
-model DayTime {
-  id        Int      @id @default(autoincrement())
-  day       Int
-  startTime DateTime @db.Time()
-  endTime   DateTime @db.Time()
-  adminId   Int      @unique
-
-  Admin Admin @relation(fields: [adminId], references: [id])
+model cgpa {
+  id      Int     @id @default(autoincrement())
+  cgpa    Float
+  regNo   String  @unique @db.VarChar(30)
+  student student @relation(fields: [regNo], references: [regNo])
 }
 
-model Student {
-  id                Int                 @id @default(autoincrement())
-  studentRegNo      String              @unique
-  studentName       String              @unique
-  studentPassword   String
-  parentId          Int
-  Parent            Parent              @relation(fields: [parentId], references: [id])
-  Meeting           Meeting[]
-  RequestedMeetings RequestedMeetings[]
-  StudentInfo       StudentInfo[]
-  Subject           Subject[]
+model disciplinary {
+  id      Int     @id @default(autoincrement())
+  actions String  @db.VarChar(300)
+  regNo   String  @db.VarChar(30)
+  student student @relation(fields: [regNo], references: [regNo])
 }
 
-model StudentInfo {
-  infoCgpa       Float
-  infoAttendance Boolean
-  studentId      Int     @id
-  Student        Student @relation(fields: [studentId], references: [id])
+model failedsubject {
+  id       Int     @id @default(autoincrement())
+  semester String  @db.VarChar(300)
+  subject  String  @db.VarChar(30)
+  grade    String  @db.Char(2)
+  regNo    String  @db.VarChar(30)
+  student  student @relation(fields: [regNo], references: [regNo])
 }
 
-model Subject {
-  subjectName String
-  studentId   Int
-  Student     Student @relation(fields: [studentId], references: [id])
-
-  @@id([subjectName, studentId])
+model meeting {
+  mid       Int      @id @default(autoincrement())
+  reason    String   @db.VarChar(300)
+  status    Status
+  referedTo String   @db.VarChar(30)
+  tsid      Int      @unique
+  regNo     String   @db.VarChar(30)
+  adminId   String   @db.VarChar(13)
+  parentId  String   @db.VarChar(13)
+  admin     admin    @relation(fields: [adminId], references: [cnic])
+  parent    parent   @relation(fields: [parentId], references: [cnic])
+  student   student  @relation(fields: [regNo], references: [regNo])
+  timeslot  timeslot @relation(fields: [tsid], references: [tsid])
 }
 
-model RequestedMeetings {
-  id            Int    @id @default(autoincrement())
-  meetingReason String
-  parentId      Int
-  studentId     Int
-  adminId       Int
-
-  Admin   Admin   @relation(fields: [adminId], references: [id])
-  Parent  Parent  @relation(fields: [parentId], references: [id])
-  Student Student @relation(fields: [studentId], references: [id])
+model waitinglist {
+  id       Int      @id @default(autoincrement())
+  reason   String   @db.VarChar(300)
+  date     DateTime @db.Date
+  tsid     Int
+  regNo    String   @db.VarChar(30)
+  adminId  String   @db.VarChar(13)
+  parentId String   @db.VarChar(13)
+  admin    admin    @relation(fields: [adminId], references: [cnic])
+  parent   parent   @relation(fields: [parentId], references: [cnic])
+  student  student  @relation(fields: [regNo], references: [regNo])
 }
 
-model Meeting {
-  id               Int        @id @default(autoincrement())
-  meetingDay       DateTime   @db.Date
-  meetingStatus    Boolean
-  meetingReason    String?
-  adminId          Int?
-  facultyId        Int?
-  studentId        Int
-  parentId         Int
-  meetingStartTime String
-  meetingEndTime   String
-  Admin            Admin?     @relation(fields: [adminId], references: [id])
-  Faculty          Faculty?   @relation(fields: [facultyId], references: [id])
-  Parent           Parent     @relation(fields: [parentId], references: [id])
-  Student          Student    @relation(fields: [studentId], references: [id])
-  Feedback         Feedback[]
+model history {
+  hid       Int      @id @default(autoincrement())
+  date      DateTime @db.Date
+  startTime DateTime @db.Time(6)
+  endTime   DateTime @db.Time(6)
+  reason    String   @db.VarChar(300)
+  status    Status
+  referedTo String   @db.VarChar(30)
+  feedback  String?  @db.VarChar(300)
+  rating    Int?
+  regNo     String   @db.VarChar(30)
+  adminId   String   @db.VarChar(13)
+  parentId  String   @db.VarChar(13)
+  admin     admin    @relation(fields: [adminId], references: [cnic])
+  parent    parent   @relation(fields: [parentId], references: [cnic])
+  student   student  @relation(fields: [regNo], references: [regNo])
 }
 
-model Feedback {
-  id            Int     @id @default(autoincrement())
-  meetingId     Int
-  adminRemarks  String?
-  parentRemarks String?
-  Meeting       Meeting @relation(fields: [meetingId], references: [id])
+model userlogin {
+  id       Int      @id @default(autoincrement())
+  userName String   @db.VarChar(128)
+  password String   @db.VarChar(128)
+  email    String   @db.VarChar(128)
+  role     Role
+  regNo    String?  @unique(map: "unique_regno") @db.VarChar(30)
+  adminId  String?  @unique(map: "unique_adminid") @db.VarChar(13)
+  parentId String?  @unique(map: "unique_parentid") @db.VarChar(13)
+  admin    admin?   @relation(fields: [adminId], references: [cnic], onDelete: NoAction, onUpdate: NoAction, map: "ad_fk")
+  parent   parent?  @relation(fields: [parentId], references: [cnic], onDelete: NoAction, onUpdate: NoAction, map: "pr_fk")
+  student  student? @relation(fields: [regNo], references: [regNo], onDelete: NoAction, onUpdate: NoAction, map: "st_fk")
+}
+
+enum Status {
+  held
+  pending
+  completed
+}
+
+enum Role {
+  Admin
+  Parent
+  Student
 }
