@@ -90,7 +90,7 @@ const handler = async (req, res) => {
     }
 
 
-    console.log("Meetings stats are: ", meetings);
+    // console.log("Meetings stats are: ", meetings);
 
     // if (!meetings.Meeting.length) return res.status(204).json();
 

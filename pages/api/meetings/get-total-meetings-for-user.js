@@ -21,7 +21,7 @@ const handler = async (req, res) => {
                                          AND t.date = ${new Date()}::DATE
                                          AND m.tsid = t.tsid`;
 
-    console.log("Meeting count is: ", meetings)
+    // console.log("Meeting count is: ", meetings)
 
     const count = meetings[0].count;
     

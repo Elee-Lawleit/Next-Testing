@@ -5,7 +5,6 @@ import objectSupport from "dayjs/plugin/objectSupport";
 dayjs.extend(objectSupport);
 
 export const meetingSchema = yup.object().shape({
-    date: yup.date().required(),
     
     time: yup.string().required(),
 

@@ -33,6 +33,7 @@ const Create = ({ session }) => {
 
   const [gpa, setGpa] = useState(2.5);
   const [attendance, setAttendance] = useState(75);
+  const [subject, setSubject] = useState("default");
 
   const {
     register,
@@ -57,10 +58,10 @@ const Create = ({ session }) => {
   }, [meetingCriteria, bulkReason])
 
   const { data: students, isLoading, isError } = useSelectStudentsGPA(gpa);
-  const { data: studentsAtt, isLoading: loadingAtt, isError: errorAtt } = useSelectStudentsAtt(attendance);
+  const { data: studentsAtt, isLoading: loadingAtt, isError: errorAtt } = useSelectStudentsAtt(attendance, subject);
   const {data: timeSlots, isLoading: tsLoading, isError: tsError} = useFetchTimeSlots(session.user.id);
 
-  console.log("Time: ", dayjs(timeSlots?.timeSlots[0]?.startTime).subtract(5, 'hours').hour());
+  // console.log("Time: ", dayjs(timeSlots?.timeSlots[0]?.startTime).subtract(5, 'hours').hour());
   
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [selectedStudentsAtt, setSelectedStudentsAtt] = useState([]);
@@ -75,14 +76,12 @@ const Create = ({ session }) => {
     setSelectedStudentsAtt(
       studentsAtt?.students?.map((student) => student.regNo)
     );
-  }, [attendance, studentsAtt]);
+  }, [attendance, studentsAtt, subject]);
 
-  const { mutate: createMeeting, isLoading: isSettingMeeting } =
-    useCreateMeetingMutation();
+  const { mutate: createMeeting, isLoading: isSettingMeeting } = useCreateMeetingMutation();
 
-    console.log("Error: ", errors)
+  console.log("Error: ", errors)
 
-    let framewokrs = ["React", "Angular", "Vue", "NextJs"];
 
   const onCreate = async (data) => {
 
@@ -91,6 +90,7 @@ const Create = ({ session }) => {
         ? (data.students = selectedStudentsAtt)
         : (data.students = selectedStudents);
     }
+    data.userId = session.user.id;
 
     console.log(data);
     createMeeting(
@@ -110,9 +110,9 @@ const Create = ({ session }) => {
 
   return (
     <AppSkeloton session={session}>
-      <div className="min-h-full flex flex-col gap-3">
+      <div className="flex flex-col min-h-full gap-3">
         <div>
-          <h1 className="text-xl lg:text-2xl font-bold font-Hack text-center mt-3 flex justify-center items-center gap-3">
+          <h1 className="flex items-center justify-center gap-3 mt-3 text-xl font-bold text-center lg:text-2xl font-Hack">
             Set a Meeting
             <FontAwesomeIcon icon={faCalendarCheck} />
           </h1>
@@ -121,47 +121,29 @@ const Create = ({ session }) => {
         <div>
           <form
             onSubmit={handleSubmit(onCreate)}
-            className="gap-2 form-control w-full relative"
+            className="relative w-full gap-2 form-control"
           >
             <LoadingOverlay visible={isSettingMeeting} />
-            <div>
-              <Controller
-                control={control}
-                name="date"
-                render={({ field: { onChange } }) => (
-                  <DatePicker
-                    placeholder="Pick meeting day"
-                    label="Meeting day"
-                    initialMonth={new Date()}
-                    excludeDate={(date) =>
-                      date.getDay() === 0 || date.getDay() === 6
-                    }
-                    onChange={onChange}
-                    allowLevelChange={false}
-                    minDate={new Date()}
-                    error={errors?.date ? "this field is required" : false}
-                    withAsterisk
-                  />
-                )}
-              />
-            </div>
-            <div>
+            <div className="mt-2">
                 <div className="flex flex-col gap-3">
                   <div>
-                    <p className="text-sm font-semibold">Select meeting time</p>
+                    <p className="text-sm font-regular">Select meeting time</p>
                   </div>
-                  <div className="flex gap-3">
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
                   {
                       timeSlots?.timeSlots?.map((ts) =>
-                        <Radio value={[dayjs(ts.startTime), dayjs(ts.endTime)]}
-                          label={
-                            dayjs(ts.startTime).subtract(5, 'hours').hour() + ":" +
-                            dayjs(ts.startTime).subtract(5, 'hours').minute() + " - " +
-                            dayjs(ts.endTime).subtract(5, 'hours').hour() + ":" +
-                            dayjs(ts.endTime).subtract(5, 'hours').minute()
-                          }
-                          {...register("time")}
-                        />
+                        <div className="flex flex-col items-center justify-center col-span-1 gap-0">
+                          <Radio value={[ts.startTime, ts.endTime, ts.date]}
+                            label={
+                              dayjs(ts.startTime).subtract(5, 'hours').hour() + ":" +
+                              dayjs(ts.startTime).subtract(5, 'hours').minute() + " - " +
+                              dayjs(ts.endTime).subtract(5, 'hours').hour() + ":" +
+                              dayjs(ts.endTime).subtract(5, 'hours').minute()
+                            }
+                            {...register("time")}
+                          />
+                          <p className="ml-10 text-xs">{new Date(ts.date).toDateString()}</p>
+                        </div>
                       )
                         }
                   </div>
@@ -222,9 +204,15 @@ const Create = ({ session }) => {
                     }
                     onChange={(event) => setAttendance(event)}
                   />
+                  <TextInput
+                    placeholder="Modern Programming Languages..."
+                    label="Enter subject"
+                    withAsterisk
+                    onChange={(event)=>setSubject(event.currentTarget.value)}
+                  />
                   {students && (
                     <div className="min-h-6">
-                      <p className="text-xs text-gray-400 mb-1">
+                      <p className="mb-1 text-xs text-gray-400">
                         Selected Students
                       </p>
                       {selectedStudentsAtt?.map((stud) => {
@@ -280,7 +268,7 @@ const Create = ({ session }) => {
                 />
                 {students && (
                   <div className="min-h-6">
-                    <p className="text-xs text-gray-400 mb-1">
+                    <p className="mb-1 text-xs text-gray-400">
                       Selected Students
                     </p>
                     {selectedStudents?.map((stud) => {

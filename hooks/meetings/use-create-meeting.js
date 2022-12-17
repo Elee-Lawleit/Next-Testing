@@ -4,15 +4,14 @@ import axios from "axios";
 const useCreateMeetingMutation = () => {
 
     return useMutation(
-        async({date, reason, registrationNumber, time, students})=>{
-            // console.log("Time: ", time, "regno:", registrationNumber);
+        async({date, reason, registrationNumber, time, students, userId})=>{
             return await axios.post("/api/meetings/create-meeting", {
-                date, reason, registrationNumber, time, students
+                date, reason, registrationNumber, time, students, userId
             });
         },
         {
             onSuccess: async (res, variables, context) => {
-                console.log("Parent added");
+                console.log("Meeting created successfully");
             },
             onError: (err, variables, context) => {
                 console.log(err);

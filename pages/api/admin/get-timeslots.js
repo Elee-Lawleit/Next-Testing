@@ -1,6 +1,5 @@
 import { PrismaClient } from "/prisma/src/generated/client";
 const prisma = new PrismaClient();
-import dayjs from "dayjs";
 
 const handler = async (req, res) => {
 
@@ -14,16 +13,17 @@ const handler = async (req, res) => {
     const timeSlots = await prisma.timeslot.findMany({
         where: {
             adminId: userId,
-            // date: {gte: new Date()},
+            date: {gte: new Date()},
             availibility: true
         },
         select: {
             startTime: true,
-            endTime: true
+            endTime: true,
+            date: true
         }
     })
 
-    console.log("Timeslots: ", timeSlots);
+    // console.log("Timeslots: ", timeSlots);
 
     // if (!meetings.Meeting.length) return res.status(204).json();
 

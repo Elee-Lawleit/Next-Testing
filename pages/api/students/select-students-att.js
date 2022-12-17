@@ -9,15 +9,16 @@ const handler = async (req, res) => {
         return res.status(405).json({ error: "Method not allowed" })
     }
 
-    const { attendance } = req.query;
+    const { attendance, subject } = req.query;
 
-    if (!attendance) {
-        return res.status(403).json({ error: "Please fill in the attendance field" });
+    if (!attendance || !subject) {
+        return res.status(403).json({ error: "Please fill in all the fields" });
     }
 
     let students = await prisma.attendance.findMany({
         where: {
-            percentage: {lte: parseInt(attendance)}
+            percentage: {lte: parseInt(attendance)},
+            subject: subject
         },
     })
 

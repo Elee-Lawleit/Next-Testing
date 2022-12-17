@@ -69,6 +69,9 @@ const AppSkeloton = ({ children, ...props }) => {
               <Link href='/create'>
                 <NavLink component='a' label="Create Meeting" active={router.pathname === "/create"} icon={<FontAwesomeIcon icon={faHourglass} />} />
               </Link>
+              <Link href='/create'>
+                <NavLink component='a' label="Meetings" active={router.pathname === "/meetings"} icon={<FontAwesomeIcon icon={faHourglass} />} />
+              </Link>
               {props.session && <Link href='#'>
                 <NavLink onClick={signOut} component='a' label="Logout" active={router.pathname === "/logout"} />
               </Link>}
@@ -101,7 +104,7 @@ const AppSkeloton = ({ children, ...props }) => {
                     {meeting.reason}
                   </Notification>
                 })}
-                {!data && !isLoading && <Text>No upcoming meetings!</Text>}
+                {!data.meetings && !isLoading && <Text>No upcoming meetings!</Text>}
               </ScrollArea>
             </Stack>
           </Aside>
