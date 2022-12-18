@@ -51,15 +51,15 @@ const Login = ({ session }) => {
   // }
 
   return (
-    <div className="h-screen w-full flex flex-col px-4 justify-center items-center m-auto bg-bglayer bg-no-repeat bg-cover gap-7">
+    <div className="flex flex-col items-center justify-center w-full h-screen px-4 m-auto bg-no-repeat bg-cover bg-bglayer gap-7">
       {/* Container div to give border */}
-      <div className="w-full max-w-md xl:max-w-lg flex flex-col gap-9 p-5">
+      <div className="flex flex-col w-full max-w-md p-5 xl:max-w-lg gap-9">
         <div className="flex items-center gap-2 m-auto">
-          <h1 className="text-xl lg:text-2xl font-bold font-Hack">Login</h1>
+          <h1 className="text-xl font-bold lg:text-2xl font-Hack">Login</h1>
           <FontAwesomeIcon icon={faLock} />
         </div>
 
-        <form onSubmit={handleSubmit(onLogin)} className="gap-2 form-control w-full">
+        <form onSubmit={handleSubmit(onLogin)} className="w-full gap-2 form-control">
           <div className="relative">
             <input
               type="text"

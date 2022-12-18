@@ -65,5 +65,10 @@
 /* textarea when focused */
 .mantine-4btq4a:focus,
 .mantine-4btq4a:focus-within{
+    border-color: #d6cddf18;
+}
+/* textarea when focused */
+.mantine-4btq4a:focus,
+.mantine-4btq4a:focus-within{
     border-color: rgb(155, 111, 196);
 }

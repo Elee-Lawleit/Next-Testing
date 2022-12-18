@@ -14,10 +14,10 @@
 let data;
 const falseMeetings = [];
 const trueMeetings = [];
-Meeting.forEach( meeting => {
-   data = meeting.meetingStatus ? trueMeetings.push(Math.ceil(new Date(meeting.meetingDay).getDate() / 7)) : falseMeetings.push(Math.ceil(new Date(meeting.meetingDay).getDate() / 7))
-   console.log(data);
-});
+// Meeting.forEach( meeting => {
+//    data = meeting.meetingStatus ? trueMeetings.push(Math.ceil(new Date(meeting.meetingDay).getDate() / 7)) : falseMeetings.push(Math.ceil(new Date(meeting.meetingDay).getDate() / 7))
+//    console.log(data);
+// });
 
 console.log("Pending Meetings: ", falseMeetings, "Attended Meetings: ", trueMeetings);
 

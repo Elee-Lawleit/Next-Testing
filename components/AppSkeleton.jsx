@@ -40,7 +40,7 @@ const AppSkeloton = ({ children, ...props }) => {
 
   const { isLoading, data } = useFetchMeetings(date, props.session?.user?.id, props.session?.user?.role);
 
-  console.log("Meetings are: ", data?.meetings);
+  // console.log("Meetings are: ", data?.meetings);
   console.log(props.session)
 
   return (
@@ -69,7 +69,7 @@ const AppSkeloton = ({ children, ...props }) => {
               <Link href='/create'>
                 <NavLink component='a' label="Create Meeting" active={router.pathname === "/create"} icon={<FontAwesomeIcon icon={faHourglass} />} />
               </Link>
-              <Link href='/create'>
+              <Link href='/meetings'>
                 <NavLink component='a' label="Meetings" active={router.pathname === "/meetings"} icon={<FontAwesomeIcon icon={faHourglass} />} />
               </Link>
               {props.session && <Link href='#'>
@@ -89,22 +89,23 @@ const AppSkeloton = ({ children, ...props }) => {
                 firstDayOfWeek='monday'
                 month={new Date(date)}
                 weekendDays={[0, 6]}
-                className="m-auto shadow rounded-md"
+                className="m-auto rounded-md shadow"
                 value={date}
                 onChange={setDate}
-                excludeDate={(date) => date.getDay() === 0 || date.getDay() === 6}
+                // excludeDate={(date) => date.getDay() === 0 || date.getDay() === 6}
               />
               <Divider />
               <Text className='font-bold'>Upcoming Meetings</Text>
               <ScrollArea style={{ height: 270 }}>
                 <LoadingOverlay visible={isLoading} />
                 {data?.meetings?.map((meeting) => {
+                  console.log("MID---------", meeting.mid);
                   return <Notification key={meeting.mid} title="meeting notification" disallowClose
                   className='before:bg-purple-500'>
                     {meeting.reason}
                   </Notification>
                 })}
-                {!data.meetings && !isLoading && <Text>No upcoming meetings!</Text>}
+                {!data?.meetings && !isLoading && <p>No upcoming meetings!</p>}
               </ScrollArea>
             </Stack>
           </Aside>
@@ -112,7 +113,7 @@ const AppSkeloton = ({ children, ...props }) => {
         }
         header={
           <Header height={70} p="md">
-            <div className="flex items-center h-full justify-around">
+            <div className="flex items-center justify-around h-full">
               <MediaQuery largerThan="md" styles={{ display: 'none' }}>
                 <Burger
                   opened={opened}
@@ -122,7 +123,7 @@ const AppSkeloton = ({ children, ...props }) => {
                   mr="xl"
                 />
               </MediaQuery>
-              <Text className='m-auto text-lg font-extrabold font-Hack text-center'>BIIT Appointment System</Text>
+              <Text className='m-auto text-lg font-extrabold text-center font-Hack'>BIIT Appointment System</Text>
               <MediaQuery largerThan="md" styles={{ display: 'none' }}>
                 <button
                   className={clsx("text-gray-400 text-lg ml-6", asideOpened && "text-purple-600")}
