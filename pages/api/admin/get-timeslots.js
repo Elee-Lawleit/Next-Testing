@@ -19,7 +19,8 @@ const handler = async (req, res) => {
         select: {
             startTime: true,
             endTime: true,
-            date: true
+            date: true,
+            tsid: true
         }
     })
 
@@ -27,9 +28,9 @@ const handler = async (req, res) => {
 
     // if (!meetings.Meeting.length) return res.status(204).json();
 
+    await prisma.$disconnect();
+
     return res.status(200).json({ timeSlots });
 }
-
-prisma.$disconnect();
 
 export default handler;

@@ -55,7 +55,9 @@ const handler = async (req, res) => {
     }
     
     const accessToken = jwt.sign({id: user.id, timeStamp: new Date().getTime()}, "very unique secret key")
-
+    
+    await prisma.$disconnect();
+    
     return res.status(200).json({
       msg: "Signed up successfully.",
       token: accessToken,

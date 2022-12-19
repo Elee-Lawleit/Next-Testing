@@ -27,10 +27,10 @@ function MyApp({ Component, pageProps, session }) {
 
   useEffect(() => {
     Router.events.on("routeChangeStart", (url)=>{ 
-      loadingBar.current.continuousStart();
+      loadingBar.current?.continuousStart();
     })
     Router.events.on("routeChangeComplete", (url)=>{
-      loadingBar.current.complete();
+      loadingBar.current?.complete();
     })
     Router.events.on("routeChangeError", (url)=>{
 
@@ -49,7 +49,10 @@ function MyApp({ Component, pageProps, session }) {
       <LoadingBar color="purple" ref={loadingBar}/>
       <QueryClientProvider client={queryClient}>
           {/* <Header session={session}/> */}
-          <MantineProvider theme={{
+          <MantineProvider
+           withGlobalStyles
+           withNormalizeCSS
+           theme={{
             colorScheme: "light", 
             colors: {
               purple: ["#9c27b0", "#f3e5f5", "#e1bee7", "#ce93d8", "#ba68c8", "#ab47bc", "#9c27b0", "#8e24aa", "#7b1fa2", "#6a1b9a", "#4a148c"]

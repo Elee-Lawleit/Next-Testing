@@ -24,6 +24,8 @@ const handler = async (req, res) => {
     // console.log("Meeting count is: ", meetings)
 
     const count = meetings[0].count;
+
+    await prisma.$disconnect();
     
     //well, the feature just came out, so
     return res.status(200).json({ count });

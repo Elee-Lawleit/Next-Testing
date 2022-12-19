@@ -73,8 +73,8 @@ const handler = async(req, res) => {
 
     // if(!meetings.Meeting.length) return res.status(204).json();
 
+  await prisma.$disconnect();
   return res.status(200).json({meetings});
 }
-
 
 export default handler;

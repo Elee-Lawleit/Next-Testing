@@ -65,7 +65,7 @@ const Dashboard =  ({ session }) => {
                     </div>
 
                     <div className="font-medium text-gray-500">
-                        <p>You have <span className="text-purple-500"> {data?.count} meetings </span>today</p>
+                        <p>You have <span className="text-purple-500"> {data?.count} meeting(s) </span>today</p>
                     </div>
 
                 </div>

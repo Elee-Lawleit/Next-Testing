@@ -99,13 +99,12 @@ const AppSkeloton = ({ children, ...props }) => {
               <ScrollArea style={{ height: 270 }}>
                 <LoadingOverlay visible={isLoading} />
                 {data?.meetings?.map((meeting) => {
-                  console.log("MID---------", meeting.mid);
                   return <Notification key={meeting.mid} title="meeting notification" disallowClose
                   className='before:bg-purple-500'>
                     {meeting.reason}
                   </Notification>
                 })}
-                {!data?.meetings && !isLoading && <p>No upcoming meetings!</p>}
+                {!isLoading && data?.meetings?.length === 0  && <p>No upcoming meetings!</p>}
               </ScrollArea>
             </Stack>
           </Aside>
