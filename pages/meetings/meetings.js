@@ -88,7 +88,7 @@ const Meetings = ({ session }) => {
   const updateFeedback = (meetingId, feedback, rating)=>{
     updateMeetingFeedback({ meetingId, feedback, rating }, {
       onSuccess: () => {
-        queryClient.refetchQueries("completed-meetings");
+        queryClient.refetchQueries("all-meetings");
         toast.success("Meeting feedback updated");
       },
       onError: () => {
@@ -337,7 +337,7 @@ const Meetings = ({ session }) => {
             className="bg-purple-500 hover:bg-purple-600"
             onClick={() => {
               // console.log("meeting is in map: ", meeting.mid, " ", meeting.reason)
-              referMeeting(statusModal?.mid, referalRef.current.value)
+              referMeeting(referModal?.mid, referalRef.current.value)
             }}
           >Refer</Button>
           <Button

@@ -1,5 +1,4 @@
 import { PrismaClient } from "/prisma/src/generated/client";
-import dayjs from "dayjs";
 const prisma = new PrismaClient();
 
 const handler = async(req, res) => {
@@ -22,56 +21,6 @@ const handler = async(req, res) => {
                                                 OR m."adminId" = ${userId}) 
                                          AND t.date = ${new Date(dayString)}::DATE
                                          AND m.tsid = t.tsid`;
-        // var meetings = await prisma.meeting.findMany({
-        //     where: {
-        //         OR:[
-        //             {
-        //                 regNo: userId
-        //             },
-        //             {
-        //                 parentId: userId
-        //             },
-        //             {
-        //                 adminId: userId
-        //             }
-        //         ],
-        //     },
-        //     include:{
-        //         timeslot: {
-        //             is: {
-        //                 date: new Date(dayString)
-        //             }
-        //         }}
-        // })
-
-        // let meetings = await prisma.timeslot.findFirst({
-        //     where : {
-        //         date: new Date(dayString)
-        //     },
-        //     select : {
-        //         meeting: {
-        //             where: {
-        //                 OR: [
-        //                     {
-        //                         regNo: userId
-        //                     },
-        //                     {
-        //                         parentId: userId
-        //                     },
-        //                     {
-        //                         adminId: userId
-        //                     }
-        //                 ],
-        //             }
-        //         }
-        //     }
-        // })
-    
-    
-
-    // console.log("Meetings are: ", meetings);
-
-    // if(!meetings.Meeting.length) return res.status(204).json();
 
   await prisma.$disconnect();
   return res.status(200).json({meetings});

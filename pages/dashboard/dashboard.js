@@ -7,7 +7,6 @@ import {
     Notification,
 } from "@mantine/core";
 import Link from "next/link";
-import useFetchMeetingStats from "hooks/meetings/use-fetch-meeting-stats";
 import { useRouter } from "next/router";
 
 const Dashboard =  ({ session }) => {
@@ -20,13 +19,6 @@ const Dashboard =  ({ session }) => {
     console.log("total meetings are: ", data?.count)
 
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-
-    console.log(session)
-    
-    //fetch meeting stats
-    const { data: statsData, isLoading: areStatsLoading } = useFetchMeetingStats(session?.user?.id, session?.user?.role)
-
-    // console.log("meeting stats are: ", statsData);
 
 
     const Time = dynamic(()=> import("components/Time"), {
@@ -88,7 +80,7 @@ const Dashboard =  ({ session }) => {
                     <div className="relative text-center font-semibold text-lg mt-2">
                         Meeting Analysis ({months[new Date().getMonth()]})
                     </div>
-                    <MeetingAreaChart />
+                    <MeetingAreaChart session={session}/>
                 </div>
 
                 {/* Meeting Satisfaction Pie Chart div */}
@@ -98,7 +90,7 @@ const Dashboard =  ({ session }) => {
                             Parent satisfaction rate
                         </p>
                     </div>
-                    <MeetingPieChart />
+                    <MeetingPieChart session={session} />
                 </div>
 
 

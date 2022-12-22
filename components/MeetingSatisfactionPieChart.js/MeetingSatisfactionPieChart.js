@@ -1,14 +1,10 @@
+import useFetchMeetingsRatings from "hooks/meetings/use-get-meetings-ratings";
 import { useCallback, useState } from "react";
 import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
 
-//sample data... these are gonna be pulled from database
-const data = [
-    { name: "Satisfied", value: 40 },
-    { name: "Average", value: 10 },
-    { name: "Dissatisfied", value: 2 },
-];
 
 const renderActiveShape = (props) => {
+
     const RADIAN = Math.PI / 180;
     const {
         cx,
@@ -81,7 +77,24 @@ const renderActiveShape = (props) => {
     );
 };
 
-export default function MeetingSatisfactionPieChart() {
+export default function MeetingSatisfactionPieChart({ session }) {
+
+    const{data: ratings, isLoading, isError} = useFetchMeetingsRatings(session.user.id);
+
+    const one = ratings?.ratings.filter((rating) => rating.rating == 1)
+    const two = ratings?.ratings.filter((rating) => rating.rating == 2)
+    const three = ratings?.ratings.filter((rating) => rating.rating == 3)
+    const four = ratings?.ratings.filter((rating) => rating.rating == 4)
+    const five = ratings?.ratings.filter((rating) => rating.rating == 5)
+
+    const data = [
+        { name: "Very Dissatisfied", value: one != null ? one[0]?.rating: 0 },
+        { name: "Dissatisfied", value: two != null ? two[0]?.rating : 0 },
+        { name: "Average", value: three != null ? three[0]?.rating : 0 },
+        { name: "Satisfied", value: four != null ? four[0]?.rating : 0 },
+        { name: "Very Satisfied", value: five != null ? five[0]?.rating : 0 },
+    ];
+
     const [activeIndex, setActiveIndex] = useState(0);
     const onPieEnter = useCallback(
         (_, index) => {

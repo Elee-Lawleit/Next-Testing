@@ -1,5 +1,4 @@
 import { PrismaClient } from "prisma/src/generated/client";
-import dayjs from "dayjs";
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
