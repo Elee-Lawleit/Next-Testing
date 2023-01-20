@@ -97,7 +97,8 @@ exports.Prisma.AdminScalarFieldEnum = makeEnum({
   gender: 'gender',
   phone: 'phone',
   role: 'role',
-  desgination: 'desgination'
+  desgination: 'desgination',
+  generalavail: 'generalavail'
 });
 
 exports.Prisma.AttendanceScalarFieldEnum = makeEnum({
@@ -223,7 +224,8 @@ exports.Prisma.WaitinglistScalarFieldEnum = makeEnum({
 exports.Role = makeEnum({
   Admin: 'Admin',
   Parent: 'Parent',
-  Student: 'Student'
+  Student: 'Student',
+  Director: 'Director'
 });
 
 exports.Status = makeEnum({

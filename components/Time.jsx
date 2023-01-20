@@ -11,7 +11,7 @@ const Time = () => {
           <p>
               {new Date().toDateString()}
           </p>
-          <Divider my="2px" orientation="vertical" />
+          <Divider size="xs" mb="sm" orientation="vertical" />
           <p>
               {hour.toString().length == 1 ? `0${hour}` : hour}:{min.toString().length == 1 ? `0${min}` : min}
           </p>

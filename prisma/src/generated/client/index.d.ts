@@ -37,6 +37,7 @@ export type admin = {
   phone: string
   role: string
   desgination: string
+  generalavail: boolean | null
 }
 
 /**
@@ -186,7 +187,8 @@ export type userlogin = {
 export const Role: {
   Admin: 'Admin',
   Parent: 'Parent',
-  Student: 'Student'
+  Student: 'Student',
+  Director: 'Director'
 };
 
 export type Role = (typeof Role)[keyof typeof Role]
@@ -1122,14 +1124,12 @@ export namespace Prisma {
   export type ParentCountOutputType = {
     history: number
     meeting: number
-    student: number
     waitinglist: number
   }
 
   export type ParentCountOutputTypeSelect = {
     history?: boolean | ParentCountOutputTypeCountHistoryArgs
     meeting?: boolean | ParentCountOutputTypeCountMeetingArgs
-    student?: boolean | ParentCountOutputTypeCountStudentArgs
     waitinglist?: boolean | ParentCountOutputTypeCountWaitinglistArgs
   }
 
@@ -1176,14 +1176,6 @@ export namespace Prisma {
    */
   export type ParentCountOutputTypeCountMeetingArgs = {
     where?: meetingWhereInput
-  }
-
-
-  /**
-   * ParentCountOutputType without action
-   */
-  export type ParentCountOutputTypeCountStudentArgs = {
-    where?: studentWhereInput
   }
 
 
@@ -1557,7 +1549,6 @@ export namespace Prisma {
     address?: boolean
     history?: boolean | historyFindManyArgs
     meeting?: boolean | meetingFindManyArgs
-    student?: boolean | studentFindManyArgs
     userlogin?: boolean | userloginArgs
     waitinglist?: boolean | waitinglistFindManyArgs
     _count?: boolean | ParentCountOutputTypeArgs
@@ -1567,7 +1558,6 @@ export namespace Prisma {
   export type parentInclude = {
     history?: boolean | historyFindManyArgs
     meeting?: boolean | meetingFindManyArgs
-    student?: boolean | studentFindManyArgs
     userlogin?: boolean | userloginArgs
     waitinglist?: boolean | waitinglistFindManyArgs
     _count?: boolean | ParentCountOutputTypeArgs
@@ -1582,7 +1572,6 @@ export namespace Prisma {
     [P in TrueKeys<S['include']>]:
         P extends 'history' ? Array < historyGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends 'meeting' ? Array < meetingGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'student' ? Array < studentGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends 'userlogin' ? userloginGetPayload<Exclude<S['include'], undefined | null>[P]> | null :
         P extends 'waitinglist' ? Array < waitinglistGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends '_count' ? ParentCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
@@ -1592,7 +1581,6 @@ export namespace Prisma {
     [P in TrueKeys<S['select']>]:
         P extends 'history' ? Array < historyGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends 'meeting' ? Array < meetingGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'student' ? Array < studentGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends 'userlogin' ? userloginGetPayload<Exclude<S['select'], undefined | null>[P]> | null :
         P extends 'waitinglist' ? Array < waitinglistGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends '_count' ? ParentCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof parent ? parent[P] : never
@@ -1973,8 +1961,6 @@ export namespace Prisma {
 
     meeting<T extends meetingFindManyArgs= {}>(args?: Subset<T, meetingFindManyArgs>): PrismaPromise<Array<meetingGetPayload<T>>| Null>;
 
-    student<T extends studentFindManyArgs= {}>(args?: Subset<T, studentFindManyArgs>): PrismaPromise<Array<studentGetPayload<T>>| Null>;
-
     userlogin<T extends userloginArgs= {}>(args?: Subset<T, userloginArgs>): Prisma__userloginClient<userloginGetPayload<T> | Null>;
 
     waitinglist<T extends waitinglistFindManyArgs= {}>(args?: Subset<T, waitinglistFindManyArgs>): PrismaPromise<Array<waitinglistGetPayload<T>>| Null>;
@@ -2353,6 +2339,7 @@ export namespace Prisma {
     phone: string | null
     role: string | null
     desgination: string | null
+    generalavail: boolean | null
   }
 
   export type AdminMaxAggregateOutputType = {
@@ -2364,6 +2351,7 @@ export namespace Prisma {
     phone: string | null
     role: string | null
     desgination: string | null
+    generalavail: boolean | null
   }
 
   export type AdminCountAggregateOutputType = {
@@ -2375,6 +2363,7 @@ export namespace Prisma {
     phone: number
     role: number
     desgination: number
+    generalavail: number
     _all: number
   }
 
@@ -2388,6 +2377,7 @@ export namespace Prisma {
     phone?: true
     role?: true
     desgination?: true
+    generalavail?: true
   }
 
   export type AdminMaxAggregateInputType = {
@@ -2399,6 +2389,7 @@ export namespace Prisma {
     phone?: true
     role?: true
     desgination?: true
+    generalavail?: true
   }
 
   export type AdminCountAggregateInputType = {
@@ -2410,6 +2401,7 @@ export namespace Prisma {
     phone?: true
     role?: true
     desgination?: true
+    generalavail?: true
     _all?: true
   }
 
@@ -2500,6 +2492,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail: boolean | null
     _count: AdminCountAggregateOutputType | null
     _min: AdminMinAggregateOutputType | null
     _max: AdminMaxAggregateOutputType | null
@@ -2528,6 +2521,7 @@ export namespace Prisma {
     phone?: boolean
     role?: boolean
     desgination?: boolean
+    generalavail?: boolean
     history?: boolean | historyFindManyArgs
     meeting?: boolean | meetingFindManyArgs
     timeslot?: boolean | timeslotFindManyArgs
@@ -4486,7 +4480,6 @@ export namespace Prisma {
     class?: boolean
     section?: boolean
     parentId?: boolean
-    parent?: boolean | parentArgs
     attendance?: boolean | attendanceFindManyArgs
     cgpa?: boolean | cgpaArgs
     disciplinary?: boolean | disciplinaryFindManyArgs
@@ -4500,7 +4493,6 @@ export namespace Prisma {
 
 
   export type studentInclude = {
-    parent?: boolean | parentArgs
     attendance?: boolean | attendanceFindManyArgs
     cgpa?: boolean | cgpaArgs
     disciplinary?: boolean | disciplinaryFindManyArgs
@@ -4519,7 +4511,6 @@ export namespace Prisma {
     S extends { include: any } & (studentArgs | studentFindManyArgs)
     ? student  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'parent' ? parentGetPayload<Exclude<S['include'], undefined | null>[P]> | null :
         P extends 'attendance' ? Array < attendanceGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends 'cgpa' ? cgpaGetPayload<Exclude<S['include'], undefined | null>[P]> | null :
         P extends 'disciplinary' ? Array < disciplinaryGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
@@ -4533,7 +4524,6 @@ export namespace Prisma {
     : S extends { select: any } & (studentArgs | studentFindManyArgs)
       ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'parent' ? parentGetPayload<Exclude<S['select'], undefined | null>[P]> | null :
         P extends 'attendance' ? Array < attendanceGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends 'cgpa' ? cgpaGetPayload<Exclude<S['select'], undefined | null>[P]> | null :
         P extends 'disciplinary' ? Array < disciplinaryGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
@@ -4915,8 +4905,6 @@ export namespace Prisma {
     private _requestPromise?;
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
-
-    parent<T extends parentArgs= {}>(args?: Subset<T, parentArgs>): Prisma__parentClient<parentGetPayload<T> | Null>;
 
     attendance<T extends attendanceFindManyArgs= {}>(args?: Subset<T, attendanceFindManyArgs>): PrismaPromise<Array<attendanceGetPayload<T>>| Null>;
 
@@ -13097,7 +13085,8 @@ export namespace Prisma {
     gender: 'gender',
     phone: 'phone',
     role: 'role',
-    desgination: 'desgination'
+    desgination: 'desgination',
+    generalavail: 'generalavail'
   };
 
   export type AdminScalarFieldEnum = (typeof AdminScalarFieldEnum)[keyof typeof AdminScalarFieldEnum]
@@ -13282,7 +13271,6 @@ export namespace Prisma {
     address?: StringFilter | string
     history?: HistoryListRelationFilter
     meeting?: MeetingListRelationFilter
-    student?: StudentListRelationFilter
     userlogin?: XOR<UserloginRelationFilter, userloginWhereInput> | null
     waitinglist?: WaitinglistListRelationFilter
   }
@@ -13295,7 +13283,6 @@ export namespace Prisma {
     address?: SortOrder
     history?: historyOrderByRelationAggregateInput
     meeting?: meetingOrderByRelationAggregateInput
-    student?: studentOrderByRelationAggregateInput
     userlogin?: userloginOrderByWithRelationInput
     waitinglist?: waitinglistOrderByRelationAggregateInput
   }
@@ -13338,6 +13325,7 @@ export namespace Prisma {
     phone?: StringFilter | string
     role?: StringFilter | string
     desgination?: StringFilter | string
+    generalavail?: BoolNullableFilter | boolean | null
     history?: HistoryListRelationFilter
     meeting?: MeetingListRelationFilter
     timeslot?: TimeslotListRelationFilter
@@ -13354,6 +13342,7 @@ export namespace Prisma {
     phone?: SortOrder
     role?: SortOrder
     desgination?: SortOrder
+    generalavail?: SortOrder
     history?: historyOrderByRelationAggregateInput
     meeting?: meetingOrderByRelationAggregateInput
     timeslot?: timeslotOrderByRelationAggregateInput
@@ -13374,6 +13363,7 @@ export namespace Prisma {
     phone?: SortOrder
     role?: SortOrder
     desgination?: SortOrder
+    generalavail?: SortOrder
     _count?: adminCountOrderByAggregateInput
     _max?: adminMaxOrderByAggregateInput
     _min?: adminMinOrderByAggregateInput
@@ -13391,6 +13381,7 @@ export namespace Prisma {
     phone?: StringWithAggregatesFilter | string
     role?: StringWithAggregatesFilter | string
     desgination?: StringWithAggregatesFilter | string
+    generalavail?: BoolNullableWithAggregatesFilter | boolean | null
   }
 
   export type timeslotWhereInput = {
@@ -13462,7 +13453,6 @@ export namespace Prisma {
     class?: StringFilter | string
     section?: StringFilter | string
     parentId?: StringNullableFilter | string | null
-    parent?: XOR<ParentRelationFilter, parentWhereInput> | null
     attendance?: AttendanceListRelationFilter
     cgpa?: XOR<CgpaRelationFilter, cgpaWhereInput> | null
     disciplinary?: DisciplinaryListRelationFilter
@@ -13484,7 +13474,6 @@ export namespace Prisma {
     class?: SortOrder
     section?: SortOrder
     parentId?: SortOrder
-    parent?: parentOrderByWithRelationInput
     attendance?: attendanceOrderByRelationAggregateInput
     cgpa?: cgpaOrderByWithRelationInput
     disciplinary?: disciplinaryOrderByRelationAggregateInput
@@ -13994,7 +13983,6 @@ export namespace Prisma {
     address: string
     history?: historyCreateNestedManyWithoutParentInput
     meeting?: meetingCreateNestedManyWithoutParentInput
-    student?: studentCreateNestedManyWithoutParentInput
     userlogin?: userloginCreateNestedOneWithoutParentInput
     waitinglist?: waitinglistCreateNestedManyWithoutParentInput
   }
@@ -14007,7 +13995,6 @@ export namespace Prisma {
     address: string
     history?: historyUncheckedCreateNestedManyWithoutParentInput
     meeting?: meetingUncheckedCreateNestedManyWithoutParentInput
-    student?: studentUncheckedCreateNestedManyWithoutParentInput
     userlogin?: userloginUncheckedCreateNestedOneWithoutParentInput
     waitinglist?: waitinglistUncheckedCreateNestedManyWithoutParentInput
   }
@@ -14020,7 +14007,6 @@ export namespace Prisma {
     address?: StringFieldUpdateOperationsInput | string
     history?: historyUpdateManyWithoutParentNestedInput
     meeting?: meetingUpdateManyWithoutParentNestedInput
-    student?: studentUpdateManyWithoutParentNestedInput
     userlogin?: userloginUpdateOneWithoutParentNestedInput
     waitinglist?: waitinglistUpdateManyWithoutParentNestedInput
   }
@@ -14033,7 +14019,6 @@ export namespace Prisma {
     address?: StringFieldUpdateOperationsInput | string
     history?: historyUncheckedUpdateManyWithoutParentNestedInput
     meeting?: meetingUncheckedUpdateManyWithoutParentNestedInput
-    student?: studentUncheckedUpdateManyWithoutParentNestedInput
     userlogin?: userloginUncheckedUpdateOneWithoutParentNestedInput
     waitinglist?: waitinglistUncheckedUpdateManyWithoutParentNestedInput
   }
@@ -14071,6 +14056,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail?: boolean | null
     history?: historyCreateNestedManyWithoutAdminInput
     meeting?: meetingCreateNestedManyWithoutAdminInput
     timeslot?: timeslotCreateNestedManyWithoutAdminInput
@@ -14087,6 +14073,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail?: boolean | null
     history?: historyUncheckedCreateNestedManyWithoutAdminInput
     meeting?: meetingUncheckedCreateNestedManyWithoutAdminInput
     timeslot?: timeslotUncheckedCreateNestedManyWithoutAdminInput
@@ -14103,6 +14090,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUpdateManyWithoutAdminNestedInput
     meeting?: meetingUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUpdateManyWithoutAdminNestedInput
@@ -14119,6 +14107,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUncheckedUpdateManyWithoutAdminNestedInput
     meeting?: meetingUncheckedUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUncheckedUpdateManyWithoutAdminNestedInput
@@ -14135,6 +14124,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail?: boolean | null
   }
 
   export type adminUpdateManyMutationInput = {
@@ -14146,6 +14136,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type adminUncheckedUpdateManyInput = {
@@ -14157,6 +14148,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
   export type timeslotCreateInput = {
@@ -14232,7 +14224,7 @@ export namespace Prisma {
     studentCnic: string
     class: string
     section: string
-    parent?: parentCreateNestedOneWithoutStudentInput
+    parentId?: string | null
     attendance?: attendanceCreateNestedManyWithoutStudentInput
     cgpa?: cgpaCreateNestedOneWithoutStudentInput
     disciplinary?: disciplinaryCreateNestedManyWithoutStudentInput
@@ -14274,7 +14266,7 @@ export namespace Prisma {
     studentCnic?: StringFieldUpdateOperationsInput | string
     class?: StringFieldUpdateOperationsInput | string
     section?: StringFieldUpdateOperationsInput | string
-    parent?: parentUpdateOneWithoutStudentNestedInput
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     attendance?: attendanceUpdateManyWithoutStudentNestedInput
     cgpa?: cgpaUpdateOneWithoutStudentNestedInput
     disciplinary?: disciplinaryUpdateManyWithoutStudentNestedInput
@@ -14329,6 +14321,7 @@ export namespace Prisma {
     studentCnic?: StringFieldUpdateOperationsInput | string
     class?: StringFieldUpdateOperationsInput | string
     section?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type studentUncheckedUpdateManyInput = {
@@ -14848,12 +14841,6 @@ export namespace Prisma {
     none?: meetingWhereInput
   }
 
-  export type StudentListRelationFilter = {
-    every?: studentWhereInput
-    some?: studentWhereInput
-    none?: studentWhereInput
-  }
-
   export type UserloginRelationFilter = {
     is?: userloginWhereInput | null
     isNot?: userloginWhereInput | null
@@ -14870,10 +14857,6 @@ export namespace Prisma {
   }
 
   export type meetingOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type studentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -14923,6 +14906,11 @@ export namespace Prisma {
     _max?: NestedStringFilter
   }
 
+  export type BoolNullableFilter = {
+    equals?: boolean | null
+    not?: NestedBoolNullableFilter | boolean | null
+  }
+
   export type TimeslotListRelationFilter = {
     every?: timeslotWhereInput
     some?: timeslotWhereInput
@@ -14942,6 +14930,7 @@ export namespace Prisma {
     phone?: SortOrder
     role?: SortOrder
     desgination?: SortOrder
+    generalavail?: SortOrder
   }
 
   export type adminMaxOrderByAggregateInput = {
@@ -14953,6 +14942,7 @@ export namespace Prisma {
     phone?: SortOrder
     role?: SortOrder
     desgination?: SortOrder
+    generalavail?: SortOrder
   }
 
   export type adminMinOrderByAggregateInput = {
@@ -14964,6 +14954,15 @@ export namespace Prisma {
     phone?: SortOrder
     role?: SortOrder
     desgination?: SortOrder
+    generalavail?: SortOrder
+  }
+
+  export type BoolNullableWithAggregatesFilter = {
+    equals?: boolean | null
+    not?: NestedBoolNullableWithAggregatesFilter | boolean | null
+    _count?: NestedIntNullableFilter
+    _min?: NestedBoolNullableFilter
+    _max?: NestedBoolNullableFilter
   }
 
   export type IntFilter = {
@@ -15089,11 +15088,6 @@ export namespace Prisma {
     endsWith?: string
     mode?: QueryMode
     not?: NestedStringNullableFilter | string | null
-  }
-
-  export type ParentRelationFilter = {
-    is?: parentWhereInput | null
-    isNot?: parentWhereInput | null
   }
 
   export type AttendanceListRelationFilter = {
@@ -15342,6 +15336,11 @@ export namespace Prisma {
     in?: Enumerable<Status>
     notIn?: Enumerable<Status>
     not?: NestedEnumStatusFilter | Status
+  }
+
+  export type ParentRelationFilter = {
+    is?: parentWhereInput | null
+    isNot?: parentWhereInput | null
   }
 
   export type TimeslotRelationFilter = {
@@ -15596,13 +15595,6 @@ export namespace Prisma {
     connect?: Enumerable<meetingWhereUniqueInput>
   }
 
-  export type studentCreateNestedManyWithoutParentInput = {
-    create?: XOR<Enumerable<studentCreateWithoutParentInput>, Enumerable<studentUncheckedCreateWithoutParentInput>>
-    connectOrCreate?: Enumerable<studentCreateOrConnectWithoutParentInput>
-    createMany?: studentCreateManyParentInputEnvelope
-    connect?: Enumerable<studentWhereUniqueInput>
-  }
-
   export type userloginCreateNestedOneWithoutParentInput = {
     create?: XOR<userloginCreateWithoutParentInput, userloginUncheckedCreateWithoutParentInput>
     connectOrCreate?: userloginCreateOrConnectWithoutParentInput
@@ -15628,13 +15620,6 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<meetingCreateOrConnectWithoutParentInput>
     createMany?: meetingCreateManyParentInputEnvelope
     connect?: Enumerable<meetingWhereUniqueInput>
-  }
-
-  export type studentUncheckedCreateNestedManyWithoutParentInput = {
-    create?: XOR<Enumerable<studentCreateWithoutParentInput>, Enumerable<studentUncheckedCreateWithoutParentInput>>
-    connectOrCreate?: Enumerable<studentCreateOrConnectWithoutParentInput>
-    createMany?: studentCreateManyParentInputEnvelope
-    connect?: Enumerable<studentWhereUniqueInput>
   }
 
   export type userloginUncheckedCreateNestedOneWithoutParentInput = {
@@ -15680,20 +15665,6 @@ export namespace Prisma {
     update?: Enumerable<meetingUpdateWithWhereUniqueWithoutParentInput>
     updateMany?: Enumerable<meetingUpdateManyWithWhereWithoutParentInput>
     deleteMany?: Enumerable<meetingScalarWhereInput>
-  }
-
-  export type studentUpdateManyWithoutParentNestedInput = {
-    create?: XOR<Enumerable<studentCreateWithoutParentInput>, Enumerable<studentUncheckedCreateWithoutParentInput>>
-    connectOrCreate?: Enumerable<studentCreateOrConnectWithoutParentInput>
-    upsert?: Enumerable<studentUpsertWithWhereUniqueWithoutParentInput>
-    createMany?: studentCreateManyParentInputEnvelope
-    set?: Enumerable<studentWhereUniqueInput>
-    disconnect?: Enumerable<studentWhereUniqueInput>
-    delete?: Enumerable<studentWhereUniqueInput>
-    connect?: Enumerable<studentWhereUniqueInput>
-    update?: Enumerable<studentUpdateWithWhereUniqueWithoutParentInput>
-    updateMany?: Enumerable<studentUpdateManyWithWhereWithoutParentInput>
-    deleteMany?: Enumerable<studentScalarWhereInput>
   }
 
   export type userloginUpdateOneWithoutParentNestedInput = {
@@ -15746,20 +15717,6 @@ export namespace Prisma {
     update?: Enumerable<meetingUpdateWithWhereUniqueWithoutParentInput>
     updateMany?: Enumerable<meetingUpdateManyWithWhereWithoutParentInput>
     deleteMany?: Enumerable<meetingScalarWhereInput>
-  }
-
-  export type studentUncheckedUpdateManyWithoutParentNestedInput = {
-    create?: XOR<Enumerable<studentCreateWithoutParentInput>, Enumerable<studentUncheckedCreateWithoutParentInput>>
-    connectOrCreate?: Enumerable<studentCreateOrConnectWithoutParentInput>
-    upsert?: Enumerable<studentUpsertWithWhereUniqueWithoutParentInput>
-    createMany?: studentCreateManyParentInputEnvelope
-    set?: Enumerable<studentWhereUniqueInput>
-    disconnect?: Enumerable<studentWhereUniqueInput>
-    delete?: Enumerable<studentWhereUniqueInput>
-    connect?: Enumerable<studentWhereUniqueInput>
-    update?: Enumerable<studentUpdateWithWhereUniqueWithoutParentInput>
-    updateMany?: Enumerable<studentUpdateManyWithWhereWithoutParentInput>
-    deleteMany?: Enumerable<studentScalarWhereInput>
   }
 
   export type userloginUncheckedUpdateOneWithoutParentNestedInput = {
@@ -15852,6 +15809,10 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<waitinglistCreateOrConnectWithoutAdminInput>
     createMany?: waitinglistCreateManyAdminInputEnvelope
     connect?: Enumerable<waitinglistWhereUniqueInput>
+  }
+
+  export type NullableBoolFieldUpdateOperationsInput = {
+    set?: boolean | null
   }
 
   export type historyUpdateManyWithoutAdminNestedInput = {
@@ -16048,12 +16009,6 @@ export namespace Prisma {
     update?: XOR<meetingUpdateWithoutTimeslotInput, meetingUncheckedUpdateWithoutTimeslotInput>
   }
 
-  export type parentCreateNestedOneWithoutStudentInput = {
-    create?: XOR<parentCreateWithoutStudentInput, parentUncheckedCreateWithoutStudentInput>
-    connectOrCreate?: parentCreateOrConnectWithoutStudentInput
-    connect?: parentWhereUniqueInput
-  }
-
   export type attendanceCreateNestedManyWithoutStudentInput = {
     create?: XOR<Enumerable<attendanceCreateWithoutStudentInput>, Enumerable<attendanceUncheckedCreateWithoutStudentInput>>
     connectOrCreate?: Enumerable<attendanceCreateOrConnectWithoutStudentInput>
@@ -16162,14 +16117,8 @@ export namespace Prisma {
     connect?: Enumerable<waitinglistWhereUniqueInput>
   }
 
-  export type parentUpdateOneWithoutStudentNestedInput = {
-    create?: XOR<parentCreateWithoutStudentInput, parentUncheckedCreateWithoutStudentInput>
-    connectOrCreate?: parentCreateOrConnectWithoutStudentInput
-    upsert?: parentUpsertWithoutStudentInput
-    disconnect?: boolean
-    delete?: boolean
-    connect?: parentWhereUniqueInput
-    update?: XOR<parentUpdateWithoutStudentInput, parentUncheckedUpdateWithoutStudentInput>
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type attendanceUpdateManyWithoutStudentNestedInput = {
@@ -16274,10 +16223,6 @@ export namespace Prisma {
     update?: Enumerable<waitinglistUpdateWithWhereUniqueWithoutStudentInput>
     updateMany?: Enumerable<waitinglistUpdateManyWithWhereWithoutStudentInput>
     deleteMany?: Enumerable<waitinglistScalarWhereInput>
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type attendanceUncheckedUpdateManyWithoutStudentNestedInput = {
@@ -16694,6 +16639,30 @@ export namespace Prisma {
     not?: NestedIntFilter | number
   }
 
+  export type NestedBoolNullableFilter = {
+    equals?: boolean | null
+    not?: NestedBoolNullableFilter | boolean | null
+  }
+
+  export type NestedBoolNullableWithAggregatesFilter = {
+    equals?: boolean | null
+    not?: NestedBoolNullableWithAggregatesFilter | boolean | null
+    _count?: NestedIntNullableFilter
+    _min?: NestedBoolNullableFilter
+    _max?: NestedBoolNullableFilter
+  }
+
+  export type NestedIntNullableFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableFilter | number | null
+  }
+
   export type NestedDateTimeFilter = {
     equals?: Date | string
     in?: Enumerable<Date> | Enumerable<string>
@@ -16788,17 +16757,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter
     _min?: NestedStringNullableFilter
     _max?: NestedStringNullableFilter
-  }
-
-  export type NestedIntNullableFilter = {
-    equals?: number | null
-    in?: Enumerable<number> | null
-    notIn?: Enumerable<number> | null
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntNullableFilter | number | null
   }
 
   export type NestedFloatWithAggregatesFilter = {
@@ -16944,56 +16902,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type studentCreateWithoutParentInput = {
-    regNo: string
-    firstName: string
-    lastName: string
-    email: string
-    gender: string
-    birthdate: Date | string
-    studentCnic: string
-    class: string
-    section: string
-    attendance?: attendanceCreateNestedManyWithoutStudentInput
-    cgpa?: cgpaCreateNestedOneWithoutStudentInput
-    disciplinary?: disciplinaryCreateNestedManyWithoutStudentInput
-    failedsubject?: failedsubjectCreateNestedManyWithoutStudentInput
-    history?: historyCreateNestedManyWithoutStudentInput
-    meeting?: meetingCreateNestedManyWithoutStudentInput
-    userlogin?: userloginCreateNestedOneWithoutStudentInput
-    waiinglist?: waitinglistCreateNestedManyWithoutStudentInput
-  }
-
-  export type studentUncheckedCreateWithoutParentInput = {
-    regNo: string
-    firstName: string
-    lastName: string
-    email: string
-    gender: string
-    birthdate: Date | string
-    studentCnic: string
-    class: string
-    section: string
-    attendance?: attendanceUncheckedCreateNestedManyWithoutStudentInput
-    cgpa?: cgpaUncheckedCreateNestedOneWithoutStudentInput
-    disciplinary?: disciplinaryUncheckedCreateNestedManyWithoutStudentInput
-    failedsubject?: failedsubjectUncheckedCreateNestedManyWithoutStudentInput
-    history?: historyUncheckedCreateNestedManyWithoutStudentInput
-    meeting?: meetingUncheckedCreateNestedManyWithoutStudentInput
-    userlogin?: userloginUncheckedCreateNestedOneWithoutStudentInput
-    waiinglist?: waitinglistUncheckedCreateNestedManyWithoutStudentInput
-  }
-
-  export type studentCreateOrConnectWithoutParentInput = {
-    where: studentWhereUniqueInput
-    create: XOR<studentCreateWithoutParentInput, studentUncheckedCreateWithoutParentInput>
-  }
-
-  export type studentCreateManyParentInputEnvelope = {
-    data: Enumerable<studentCreateManyParentInput>
-    skipDuplicates?: boolean
-  }
-
   export type userloginCreateWithoutParentInput = {
     userName: string
     password: string
@@ -17107,38 +17015,6 @@ export namespace Prisma {
     regNo?: StringFilter | string
     adminId?: StringFilter | string
     parentId?: StringFilter | string
-  }
-
-  export type studentUpsertWithWhereUniqueWithoutParentInput = {
-    where: studentWhereUniqueInput
-    update: XOR<studentUpdateWithoutParentInput, studentUncheckedUpdateWithoutParentInput>
-    create: XOR<studentCreateWithoutParentInput, studentUncheckedCreateWithoutParentInput>
-  }
-
-  export type studentUpdateWithWhereUniqueWithoutParentInput = {
-    where: studentWhereUniqueInput
-    data: XOR<studentUpdateWithoutParentInput, studentUncheckedUpdateWithoutParentInput>
-  }
-
-  export type studentUpdateManyWithWhereWithoutParentInput = {
-    where: studentScalarWhereInput
-    data: XOR<studentUpdateManyMutationInput, studentUncheckedUpdateManyWithoutStudentInput>
-  }
-
-  export type studentScalarWhereInput = {
-    AND?: Enumerable<studentScalarWhereInput>
-    OR?: Enumerable<studentScalarWhereInput>
-    NOT?: Enumerable<studentScalarWhereInput>
-    regNo?: StringFilter | string
-    firstName?: StringFilter | string
-    lastName?: StringFilter | string
-    email?: StringFilter | string
-    gender?: StringFilter | string
-    birthdate?: DateTimeFilter | Date | string
-    studentCnic?: StringFilter | string
-    class?: StringFilter | string
-    section?: StringFilter | string
-    parentId?: StringNullableFilter | string | null
   }
 
   export type userloginUpsertWithoutParentInput = {
@@ -17447,6 +17323,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail?: boolean | null
     history?: historyCreateNestedManyWithoutAdminInput
     meeting?: meetingCreateNestedManyWithoutAdminInput
     userlogin?: userloginCreateNestedOneWithoutAdminInput
@@ -17462,6 +17339,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail?: boolean | null
     history?: historyUncheckedCreateNestedManyWithoutAdminInput
     meeting?: meetingUncheckedCreateNestedManyWithoutAdminInput
     userlogin?: userloginUncheckedCreateNestedOneWithoutAdminInput
@@ -17511,6 +17389,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUpdateManyWithoutAdminNestedInput
     meeting?: meetingUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUpdateOneWithoutAdminNestedInput
@@ -17526,6 +17405,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUncheckedUpdateManyWithoutAdminNestedInput
     meeting?: meetingUncheckedUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUncheckedUpdateOneWithoutAdminNestedInput
@@ -17554,35 +17434,6 @@ export namespace Prisma {
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type parentCreateWithoutStudentInput = {
-    cnic: string
-    firstName: string
-    lastName: string
-    email: string
-    address: string
-    history?: historyCreateNestedManyWithoutParentInput
-    meeting?: meetingCreateNestedManyWithoutParentInput
-    userlogin?: userloginCreateNestedOneWithoutParentInput
-    waitinglist?: waitinglistCreateNestedManyWithoutParentInput
-  }
-
-  export type parentUncheckedCreateWithoutStudentInput = {
-    cnic: string
-    firstName: string
-    lastName: string
-    email: string
-    address: string
-    history?: historyUncheckedCreateNestedManyWithoutParentInput
-    meeting?: meetingUncheckedCreateNestedManyWithoutParentInput
-    userlogin?: userloginUncheckedCreateNestedOneWithoutParentInput
-    waitinglist?: waitinglistUncheckedCreateNestedManyWithoutParentInput
-  }
-
-  export type parentCreateOrConnectWithoutStudentInput = {
-    where: parentWhereUniqueInput
-    create: XOR<parentCreateWithoutStudentInput, parentUncheckedCreateWithoutStudentInput>
   }
 
   export type attendanceCreateWithoutStudentInput = {
@@ -17779,35 +17630,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type parentUpsertWithoutStudentInput = {
-    update: XOR<parentUpdateWithoutStudentInput, parentUncheckedUpdateWithoutStudentInput>
-    create: XOR<parentCreateWithoutStudentInput, parentUncheckedCreateWithoutStudentInput>
-  }
-
-  export type parentUpdateWithoutStudentInput = {
-    cnic?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    address?: StringFieldUpdateOperationsInput | string
-    history?: historyUpdateManyWithoutParentNestedInput
-    meeting?: meetingUpdateManyWithoutParentNestedInput
-    userlogin?: userloginUpdateOneWithoutParentNestedInput
-    waitinglist?: waitinglistUpdateManyWithoutParentNestedInput
-  }
-
-  export type parentUncheckedUpdateWithoutStudentInput = {
-    cnic?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    address?: StringFieldUpdateOperationsInput | string
-    history?: historyUncheckedUpdateManyWithoutParentNestedInput
-    meeting?: meetingUncheckedUpdateManyWithoutParentNestedInput
-    userlogin?: userloginUncheckedUpdateOneWithoutParentNestedInput
-    waitinglist?: waitinglistUncheckedUpdateManyWithoutParentNestedInput
-  }
-
   export type attendanceUpsertWithWhereUniqueWithoutStudentInput = {
     where: attendanceWhereUniqueInput
     update: XOR<attendanceUpdateWithoutStudentInput, attendanceUncheckedUpdateWithoutStudentInput>
@@ -17982,7 +17804,7 @@ export namespace Prisma {
     studentCnic: string
     class: string
     section: string
-    parent?: parentCreateNestedOneWithoutStudentInput
+    parentId?: string | null
     cgpa?: cgpaCreateNestedOneWithoutStudentInput
     disciplinary?: disciplinaryCreateNestedManyWithoutStudentInput
     failedsubject?: failedsubjectCreateNestedManyWithoutStudentInput
@@ -18032,7 +17854,7 @@ export namespace Prisma {
     studentCnic?: StringFieldUpdateOperationsInput | string
     class?: StringFieldUpdateOperationsInput | string
     section?: StringFieldUpdateOperationsInput | string
-    parent?: parentUpdateOneWithoutStudentNestedInput
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     cgpa?: cgpaUpdateOneWithoutStudentNestedInput
     disciplinary?: disciplinaryUpdateManyWithoutStudentNestedInput
     failedsubject?: failedsubjectUpdateManyWithoutStudentNestedInput
@@ -18072,7 +17894,7 @@ export namespace Prisma {
     studentCnic: string
     class: string
     section: string
-    parent?: parentCreateNestedOneWithoutStudentInput
+    parentId?: string | null
     attendance?: attendanceCreateNestedManyWithoutStudentInput
     disciplinary?: disciplinaryCreateNestedManyWithoutStudentInput
     failedsubject?: failedsubjectCreateNestedManyWithoutStudentInput
@@ -18122,7 +17944,7 @@ export namespace Prisma {
     studentCnic?: StringFieldUpdateOperationsInput | string
     class?: StringFieldUpdateOperationsInput | string
     section?: StringFieldUpdateOperationsInput | string
-    parent?: parentUpdateOneWithoutStudentNestedInput
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     attendance?: attendanceUpdateManyWithoutStudentNestedInput
     disciplinary?: disciplinaryUpdateManyWithoutStudentNestedInput
     failedsubject?: failedsubjectUpdateManyWithoutStudentNestedInput
@@ -18162,7 +17984,7 @@ export namespace Prisma {
     studentCnic: string
     class: string
     section: string
-    parent?: parentCreateNestedOneWithoutStudentInput
+    parentId?: string | null
     attendance?: attendanceCreateNestedManyWithoutStudentInput
     cgpa?: cgpaCreateNestedOneWithoutStudentInput
     failedsubject?: failedsubjectCreateNestedManyWithoutStudentInput
@@ -18212,7 +18034,7 @@ export namespace Prisma {
     studentCnic?: StringFieldUpdateOperationsInput | string
     class?: StringFieldUpdateOperationsInput | string
     section?: StringFieldUpdateOperationsInput | string
-    parent?: parentUpdateOneWithoutStudentNestedInput
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     attendance?: attendanceUpdateManyWithoutStudentNestedInput
     cgpa?: cgpaUpdateOneWithoutStudentNestedInput
     failedsubject?: failedsubjectUpdateManyWithoutStudentNestedInput
@@ -18252,7 +18074,7 @@ export namespace Prisma {
     studentCnic: string
     class: string
     section: string
-    parent?: parentCreateNestedOneWithoutStudentInput
+    parentId?: string | null
     attendance?: attendanceCreateNestedManyWithoutStudentInput
     cgpa?: cgpaCreateNestedOneWithoutStudentInput
     disciplinary?: disciplinaryCreateNestedManyWithoutStudentInput
@@ -18302,7 +18124,7 @@ export namespace Prisma {
     studentCnic?: StringFieldUpdateOperationsInput | string
     class?: StringFieldUpdateOperationsInput | string
     section?: StringFieldUpdateOperationsInput | string
-    parent?: parentUpdateOneWithoutStudentNestedInput
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     attendance?: attendanceUpdateManyWithoutStudentNestedInput
     cgpa?: cgpaUpdateOneWithoutStudentNestedInput
     disciplinary?: disciplinaryUpdateManyWithoutStudentNestedInput
@@ -18341,6 +18163,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail?: boolean | null
     history?: historyCreateNestedManyWithoutAdminInput
     timeslot?: timeslotCreateNestedManyWithoutAdminInput
     userlogin?: userloginCreateNestedOneWithoutAdminInput
@@ -18356,6 +18179,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail?: boolean | null
     history?: historyUncheckedCreateNestedManyWithoutAdminInput
     timeslot?: timeslotUncheckedCreateNestedManyWithoutAdminInput
     userlogin?: userloginUncheckedCreateNestedOneWithoutAdminInput
@@ -18374,7 +18198,6 @@ export namespace Prisma {
     email: string
     address: string
     history?: historyCreateNestedManyWithoutParentInput
-    student?: studentCreateNestedManyWithoutParentInput
     userlogin?: userloginCreateNestedOneWithoutParentInput
     waitinglist?: waitinglistCreateNestedManyWithoutParentInput
   }
@@ -18386,7 +18209,6 @@ export namespace Prisma {
     email: string
     address: string
     history?: historyUncheckedCreateNestedManyWithoutParentInput
-    student?: studentUncheckedCreateNestedManyWithoutParentInput
     userlogin?: userloginUncheckedCreateNestedOneWithoutParentInput
     waitinglist?: waitinglistUncheckedCreateNestedManyWithoutParentInput
   }
@@ -18406,7 +18228,7 @@ export namespace Prisma {
     studentCnic: string
     class: string
     section: string
-    parent?: parentCreateNestedOneWithoutStudentInput
+    parentId?: string | null
     attendance?: attendanceCreateNestedManyWithoutStudentInput
     cgpa?: cgpaCreateNestedOneWithoutStudentInput
     disciplinary?: disciplinaryCreateNestedManyWithoutStudentInput
@@ -18477,6 +18299,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUpdateOneWithoutAdminNestedInput
@@ -18492,6 +18315,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUncheckedUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUncheckedUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUncheckedUpdateOneWithoutAdminNestedInput
@@ -18510,7 +18334,6 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
     history?: historyUpdateManyWithoutParentNestedInput
-    student?: studentUpdateManyWithoutParentNestedInput
     userlogin?: userloginUpdateOneWithoutParentNestedInput
     waitinglist?: waitinglistUpdateManyWithoutParentNestedInput
   }
@@ -18522,7 +18345,6 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
     history?: historyUncheckedUpdateManyWithoutParentNestedInput
-    student?: studentUncheckedUpdateManyWithoutParentNestedInput
     userlogin?: userloginUncheckedUpdateOneWithoutParentNestedInput
     waitinglist?: waitinglistUncheckedUpdateManyWithoutParentNestedInput
   }
@@ -18542,7 +18364,7 @@ export namespace Prisma {
     studentCnic?: StringFieldUpdateOperationsInput | string
     class?: StringFieldUpdateOperationsInput | string
     section?: StringFieldUpdateOperationsInput | string
-    parent?: parentUpdateOneWithoutStudentNestedInput
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     attendance?: attendanceUpdateManyWithoutStudentNestedInput
     cgpa?: cgpaUpdateOneWithoutStudentNestedInput
     disciplinary?: disciplinaryUpdateManyWithoutStudentNestedInput
@@ -18603,6 +18425,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail?: boolean | null
     history?: historyCreateNestedManyWithoutAdminInput
     meeting?: meetingCreateNestedManyWithoutAdminInput
     timeslot?: timeslotCreateNestedManyWithoutAdminInput
@@ -18618,6 +18441,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail?: boolean | null
     history?: historyUncheckedCreateNestedManyWithoutAdminInput
     meeting?: meetingUncheckedCreateNestedManyWithoutAdminInput
     timeslot?: timeslotUncheckedCreateNestedManyWithoutAdminInput
@@ -18637,7 +18461,6 @@ export namespace Prisma {
     address: string
     history?: historyCreateNestedManyWithoutParentInput
     meeting?: meetingCreateNestedManyWithoutParentInput
-    student?: studentCreateNestedManyWithoutParentInput
     userlogin?: userloginCreateNestedOneWithoutParentInput
   }
 
@@ -18649,7 +18472,6 @@ export namespace Prisma {
     address: string
     history?: historyUncheckedCreateNestedManyWithoutParentInput
     meeting?: meetingUncheckedCreateNestedManyWithoutParentInput
-    student?: studentUncheckedCreateNestedManyWithoutParentInput
     userlogin?: userloginUncheckedCreateNestedOneWithoutParentInput
   }
 
@@ -18668,7 +18490,7 @@ export namespace Prisma {
     studentCnic: string
     class: string
     section: string
-    parent?: parentCreateNestedOneWithoutStudentInput
+    parentId?: string | null
     attendance?: attendanceCreateNestedManyWithoutStudentInput
     cgpa?: cgpaCreateNestedOneWithoutStudentInput
     disciplinary?: disciplinaryCreateNestedManyWithoutStudentInput
@@ -18717,6 +18539,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUpdateManyWithoutAdminNestedInput
     meeting?: meetingUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUpdateManyWithoutAdminNestedInput
@@ -18732,6 +18555,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUncheckedUpdateManyWithoutAdminNestedInput
     meeting?: meetingUncheckedUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUncheckedUpdateManyWithoutAdminNestedInput
@@ -18751,7 +18575,6 @@ export namespace Prisma {
     address?: StringFieldUpdateOperationsInput | string
     history?: historyUpdateManyWithoutParentNestedInput
     meeting?: meetingUpdateManyWithoutParentNestedInput
-    student?: studentUpdateManyWithoutParentNestedInput
     userlogin?: userloginUpdateOneWithoutParentNestedInput
   }
 
@@ -18763,7 +18586,6 @@ export namespace Prisma {
     address?: StringFieldUpdateOperationsInput | string
     history?: historyUncheckedUpdateManyWithoutParentNestedInput
     meeting?: meetingUncheckedUpdateManyWithoutParentNestedInput
-    student?: studentUncheckedUpdateManyWithoutParentNestedInput
     userlogin?: userloginUncheckedUpdateOneWithoutParentNestedInput
   }
 
@@ -18782,7 +18604,7 @@ export namespace Prisma {
     studentCnic?: StringFieldUpdateOperationsInput | string
     class?: StringFieldUpdateOperationsInput | string
     section?: StringFieldUpdateOperationsInput | string
-    parent?: parentUpdateOneWithoutStudentNestedInput
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     attendance?: attendanceUpdateManyWithoutStudentNestedInput
     cgpa?: cgpaUpdateOneWithoutStudentNestedInput
     disciplinary?: disciplinaryUpdateManyWithoutStudentNestedInput
@@ -18821,6 +18643,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail?: boolean | null
     meeting?: meetingCreateNestedManyWithoutAdminInput
     timeslot?: timeslotCreateNestedManyWithoutAdminInput
     userlogin?: userloginCreateNestedOneWithoutAdminInput
@@ -18836,6 +18659,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail?: boolean | null
     meeting?: meetingUncheckedCreateNestedManyWithoutAdminInput
     timeslot?: timeslotUncheckedCreateNestedManyWithoutAdminInput
     userlogin?: userloginUncheckedCreateNestedOneWithoutAdminInput
@@ -18854,7 +18678,6 @@ export namespace Prisma {
     email: string
     address: string
     meeting?: meetingCreateNestedManyWithoutParentInput
-    student?: studentCreateNestedManyWithoutParentInput
     userlogin?: userloginCreateNestedOneWithoutParentInput
     waitinglist?: waitinglistCreateNestedManyWithoutParentInput
   }
@@ -18866,7 +18689,6 @@ export namespace Prisma {
     email: string
     address: string
     meeting?: meetingUncheckedCreateNestedManyWithoutParentInput
-    student?: studentUncheckedCreateNestedManyWithoutParentInput
     userlogin?: userloginUncheckedCreateNestedOneWithoutParentInput
     waitinglist?: waitinglistUncheckedCreateNestedManyWithoutParentInput
   }
@@ -18886,7 +18708,7 @@ export namespace Prisma {
     studentCnic: string
     class: string
     section: string
-    parent?: parentCreateNestedOneWithoutStudentInput
+    parentId?: string | null
     attendance?: attendanceCreateNestedManyWithoutStudentInput
     cgpa?: cgpaCreateNestedOneWithoutStudentInput
     disciplinary?: disciplinaryCreateNestedManyWithoutStudentInput
@@ -18935,6 +18757,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     meeting?: meetingUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUpdateOneWithoutAdminNestedInput
@@ -18950,6 +18773,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     meeting?: meetingUncheckedUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUncheckedUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUncheckedUpdateOneWithoutAdminNestedInput
@@ -18968,7 +18792,6 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
     meeting?: meetingUpdateManyWithoutParentNestedInput
-    student?: studentUpdateManyWithoutParentNestedInput
     userlogin?: userloginUpdateOneWithoutParentNestedInput
     waitinglist?: waitinglistUpdateManyWithoutParentNestedInput
   }
@@ -18980,7 +18803,6 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
     meeting?: meetingUncheckedUpdateManyWithoutParentNestedInput
-    student?: studentUncheckedUpdateManyWithoutParentNestedInput
     userlogin?: userloginUncheckedUpdateOneWithoutParentNestedInput
     waitinglist?: waitinglistUncheckedUpdateManyWithoutParentNestedInput
   }
@@ -19000,7 +18822,7 @@ export namespace Prisma {
     studentCnic?: StringFieldUpdateOperationsInput | string
     class?: StringFieldUpdateOperationsInput | string
     section?: StringFieldUpdateOperationsInput | string
-    parent?: parentUpdateOneWithoutStudentNestedInput
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     attendance?: attendanceUpdateManyWithoutStudentNestedInput
     cgpa?: cgpaUpdateOneWithoutStudentNestedInput
     disciplinary?: disciplinaryUpdateManyWithoutStudentNestedInput
@@ -19039,6 +18861,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail?: boolean | null
     history?: historyCreateNestedManyWithoutAdminInput
     meeting?: meetingCreateNestedManyWithoutAdminInput
     timeslot?: timeslotCreateNestedManyWithoutAdminInput
@@ -19054,6 +18877,7 @@ export namespace Prisma {
     phone: string
     role: string
     desgination: string
+    generalavail?: boolean | null
     history?: historyUncheckedCreateNestedManyWithoutAdminInput
     meeting?: meetingUncheckedCreateNestedManyWithoutAdminInput
     timeslot?: timeslotUncheckedCreateNestedManyWithoutAdminInput
@@ -19073,7 +18897,6 @@ export namespace Prisma {
     address: string
     history?: historyCreateNestedManyWithoutParentInput
     meeting?: meetingCreateNestedManyWithoutParentInput
-    student?: studentCreateNestedManyWithoutParentInput
     waitinglist?: waitinglistCreateNestedManyWithoutParentInput
   }
 
@@ -19085,7 +18908,6 @@ export namespace Prisma {
     address: string
     history?: historyUncheckedCreateNestedManyWithoutParentInput
     meeting?: meetingUncheckedCreateNestedManyWithoutParentInput
-    student?: studentUncheckedCreateNestedManyWithoutParentInput
     waitinglist?: waitinglistUncheckedCreateNestedManyWithoutParentInput
   }
 
@@ -19104,7 +18926,7 @@ export namespace Prisma {
     studentCnic: string
     class: string
     section: string
-    parent?: parentCreateNestedOneWithoutStudentInput
+    parentId?: string | null
     attendance?: attendanceCreateNestedManyWithoutStudentInput
     cgpa?: cgpaCreateNestedOneWithoutStudentInput
     disciplinary?: disciplinaryCreateNestedManyWithoutStudentInput
@@ -19153,6 +18975,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUpdateManyWithoutAdminNestedInput
     meeting?: meetingUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUpdateManyWithoutAdminNestedInput
@@ -19168,6 +18991,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUncheckedUpdateManyWithoutAdminNestedInput
     meeting?: meetingUncheckedUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUncheckedUpdateManyWithoutAdminNestedInput
@@ -19187,7 +19011,6 @@ export namespace Prisma {
     address?: StringFieldUpdateOperationsInput | string
     history?: historyUpdateManyWithoutParentNestedInput
     meeting?: meetingUpdateManyWithoutParentNestedInput
-    student?: studentUpdateManyWithoutParentNestedInput
     waitinglist?: waitinglistUpdateManyWithoutParentNestedInput
   }
 
@@ -19199,7 +19022,6 @@ export namespace Prisma {
     address?: StringFieldUpdateOperationsInput | string
     history?: historyUncheckedUpdateManyWithoutParentNestedInput
     meeting?: meetingUncheckedUpdateManyWithoutParentNestedInput
-    student?: studentUncheckedUpdateManyWithoutParentNestedInput
     waitinglist?: waitinglistUncheckedUpdateManyWithoutParentNestedInput
   }
 
@@ -19218,7 +19040,7 @@ export namespace Prisma {
     studentCnic?: StringFieldUpdateOperationsInput | string
     class?: StringFieldUpdateOperationsInput | string
     section?: StringFieldUpdateOperationsInput | string
-    parent?: parentUpdateOneWithoutStudentNestedInput
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     attendance?: attendanceUpdateManyWithoutStudentNestedInput
     cgpa?: cgpaUpdateOneWithoutStudentNestedInput
     disciplinary?: disciplinaryUpdateManyWithoutStudentNestedInput
@@ -19270,18 +19092,6 @@ export namespace Prisma {
     tsid: number
     regNo: string
     adminId: string
-  }
-
-  export type studentCreateManyParentInput = {
-    regNo: string
-    firstName: string
-    lastName: string
-    email: string
-    gender: string
-    birthdate: Date | string
-    studentCnic: string
-    class: string
-    section: string
   }
 
   export type waitinglistCreateManyParentInput = {
@@ -19361,58 +19171,6 @@ export namespace Prisma {
     tsid?: IntFieldUpdateOperationsInput | number
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type studentUpdateWithoutParentInput = {
-    regNo?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    gender?: StringFieldUpdateOperationsInput | string
-    birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
-    studentCnic?: StringFieldUpdateOperationsInput | string
-    class?: StringFieldUpdateOperationsInput | string
-    section?: StringFieldUpdateOperationsInput | string
-    attendance?: attendanceUpdateManyWithoutStudentNestedInput
-    cgpa?: cgpaUpdateOneWithoutStudentNestedInput
-    disciplinary?: disciplinaryUpdateManyWithoutStudentNestedInput
-    failedsubject?: failedsubjectUpdateManyWithoutStudentNestedInput
-    history?: historyUpdateManyWithoutStudentNestedInput
-    meeting?: meetingUpdateManyWithoutStudentNestedInput
-    userlogin?: userloginUpdateOneWithoutStudentNestedInput
-    waiinglist?: waitinglistUpdateManyWithoutStudentNestedInput
-  }
-
-  export type studentUncheckedUpdateWithoutParentInput = {
-    regNo?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    gender?: StringFieldUpdateOperationsInput | string
-    birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
-    studentCnic?: StringFieldUpdateOperationsInput | string
-    class?: StringFieldUpdateOperationsInput | string
-    section?: StringFieldUpdateOperationsInput | string
-    attendance?: attendanceUncheckedUpdateManyWithoutStudentNestedInput
-    cgpa?: cgpaUncheckedUpdateOneWithoutStudentNestedInput
-    disciplinary?: disciplinaryUncheckedUpdateManyWithoutStudentNestedInput
-    failedsubject?: failedsubjectUncheckedUpdateManyWithoutStudentNestedInput
-    history?: historyUncheckedUpdateManyWithoutStudentNestedInput
-    meeting?: meetingUncheckedUpdateManyWithoutStudentNestedInput
-    userlogin?: userloginUncheckedUpdateOneWithoutStudentNestedInput
-    waiinglist?: waitinglistUncheckedUpdateManyWithoutStudentNestedInput
-  }
-
-  export type studentUncheckedUpdateManyWithoutStudentInput = {
-    regNo?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    gender?: StringFieldUpdateOperationsInput | string
-    birthdate?: DateTimeFieldUpdateOperationsInput | Date | string
-    studentCnic?: StringFieldUpdateOperationsInput | string
-    class?: StringFieldUpdateOperationsInput | string
-    section?: StringFieldUpdateOperationsInput | string
   }
 
   export type waitinglistUpdateWithoutParentInput = {

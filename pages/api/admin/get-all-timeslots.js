@@ -10,20 +10,27 @@ const handler = async (req, res) => {
 
     const { userId } = req.query;
 
-    const timeSlots = await prisma.timeslot.findMany({
+    const timeslots = await prisma.timeslot.findMany({
         where: {
             adminId: userId,
-            date: {gte: new Date()},
-            availibility: true
+            date: { gte: new Date() },
         },
         select: {
             startTime: true,
             endTime: true,
             date: true,
             availibility: true,
-            tsid: true
-        }
+            tsid: true,
+            meeting: true,
+        },
+        orderBy: [
+           { date: 'asc'},
+           {startTime: 'asc'}
+        ]
+        
     })
+
+    const timeSlots = timeslots.filter((ts)=>ts.meeting==null)
 
     // console.log("Timeslots: ", timeSlots);
 

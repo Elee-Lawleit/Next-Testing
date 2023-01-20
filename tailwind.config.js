@@ -10,10 +10,20 @@ module.exports = {
     extend: {
       fontFamily: {
         'Roboto' : ['Roboto', 'sans-serif'],
-        'Hack' : ['Hack', 'sans-serif']
+        'Hack' : ['Hack', 'sans-serif'],
+        'Montserrat': ['Montserrat']
       },
       backgroundImage:{
         'bglayer' : 'url(../assets/layers/bglayer.svg)'
+      },
+      animation:{
+        loadingBackwards: "loadingBackwards 5s linear infinite forwards"
+      },
+      keyframes:{
+        loadingBackwards:{
+          '0%':{width: "100%"},
+          '100%': {width: "0%", backgroundColor: "#fff"}
+        }
       }
     },
   },

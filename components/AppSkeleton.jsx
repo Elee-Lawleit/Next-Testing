@@ -72,6 +72,9 @@ const AppSkeloton = ({ children, ...props }) => {
               <Link href='/meetings'>
                 <NavLink component='a' label="Meetings" active={router.pathname === "/meetings"} icon={<FontAwesomeIcon icon={faHourglass} />} />
               </Link>
+              {props.session?.user.role === "Admin" && <Link href='/timeslots'>
+                <NavLink component='a' label="Timeslots" active={router.pathname === "/timeslots"} icon={<FontAwesomeIcon icon={faHourglass} />} />
+              </Link>}
               {props.session && <Link href='#'>
                 <NavLink onClick={signOut} component='a' label="Logout" active={router.pathname === "/logout"} />
               </Link>}
@@ -122,7 +125,7 @@ const AppSkeloton = ({ children, ...props }) => {
                   mr="xl"
                 />
               </MediaQuery>
-              <Text className='m-auto text-lg font-extrabold text-center font-Hack'>BIIT Appointment System</Text>
+              <Text className='m-auto text-xl font-bold text-center font-Montserrat'>BIIT Appointment System</Text>
               <MediaQuery largerThan="md" styles={{ display: 'none' }}>
                 <button
                   className={clsx("text-gray-400 text-lg ml-6", asideOpened && "text-purple-600")}

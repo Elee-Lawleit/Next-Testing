@@ -17,25 +17,25 @@ model parent {
   address     String        @db.VarChar(300)
   history     history[]
   meeting     meeting[]
-  student     student[]
   userlogin   userlogin?
   waitinglist waitinglist[]
 }
 
 model admin {
-  cnic        String        @id @db.VarChar(13)
-  firstName   String        @db.VarChar(128)
-  lastName    String        @db.VarChar(128)
-  email       String        @db.VarChar(128)
-  gender      String        @db.Char(1)
-  phone       String        @db.VarChar(13)
-  role        String        @db.VarChar(30)
-  desgination String        @db.VarChar(30)
-  history     history[]
-  meeting     meeting[]
-  timeslot    timeslot[]
-  userlogin   userlogin?
-  waitinglist waitinglist[]
+  cnic         String        @id @db.VarChar(13)
+  firstName    String        @db.VarChar(128)
+  lastName     String        @db.VarChar(128)
+  email        String        @db.VarChar(128)
+  gender       String        @db.Char(1)
+  phone        String        @db.VarChar(13)
+  role         String        @db.VarChar(30)
+  desgination  String        @db.VarChar(30)
+  generalavail Boolean?
+  history      history[]
+  meeting      meeting[]
+  timeslot     timeslot[]
+  userlogin    userlogin?
+  waitinglist  waitinglist[]
 }
 
 model timeslot {
@@ -60,7 +60,6 @@ model student {
   class         String          @db.VarChar(30)
   section       String          @db.VarChar(30)
   parentId      String?         @db.VarChar(13)
-  parent        parent?         @relation(fields: [parentId], references: [cnic])
   attendance    attendance[]
   cgpa          cgpa?
   disciplinary  disciplinary[]
@@ -172,4 +171,5 @@ enum Role {
   Admin
   Parent
   Student
+  Director
 }

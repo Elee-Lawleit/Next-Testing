@@ -17,26 +17,21 @@ export const authOptions = {
           label: "Password",
           type: "password",
         },
-        role: {
-          label: "Role",
-          type: "select",
-        },
       },
       authorize: async (credentials) => {
 
+        console.log("CREDENTIALS: ", credentials)
+
         if (
           !credentials.username ||
-          !credentials.password ||
-          !credentials.role
+          !credentials.password
         ) {
           return null;
         }
-
-        const userRole = credentials.role;
-
+        
+        // console.log("ADASDASDASDASFD")
         let user = await prisma.userlogin.findFirst({
           where: {
-            role: credentials.role,
             userName: credentials.username,
             password: credentials.password,
           },
@@ -46,6 +41,9 @@ export const authOptions = {
             student: true
           }
         });
+        console.log("ADASDASDASDASFD")
+
+        console.log("USER: ", user)
 
         if (user) {
           const uniqueIdentifier = user.regNo || user.parentId || user.adminId;
@@ -54,7 +52,7 @@ export const authOptions = {
 
           return {
             id: uniqueIdentifier,
-            role: userRole,
+            role: user.regNo ? "Student" : null || user.parentId? "Parent":null || user.adminId? "Admin":null,
             name: name
           };
         }

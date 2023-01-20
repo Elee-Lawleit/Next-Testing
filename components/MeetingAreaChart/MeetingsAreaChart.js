@@ -8,15 +8,17 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import useFetchMonthlyMeetings from "hooks/meetings/use-fetch-monthly-meetings";
+import { useState } from "react";
 
 
 const MeetingsAreaChart = (props) => {
+
+    
   
-  const month = new Date().getMonth() + 1;
   const year = new Date().getFullYear();
 
   const { data: monthlyMeetings, isLoading: areaChartLoading, isError: areaChartError } = useFetchMonthlyMeetings(props.session.user.id,
-    month, year);
+    props.month, year);
 
   const week1 = monthlyMeetings?.totalMonthlyMeetings.filter(
     (meeting) => meeting.week_number === 1
@@ -84,9 +86,6 @@ const MeetingsAreaChart = (props) => {
   const cthree = cweek3 != null ? cweek3[0]?.meetings_in_week : 0;
   const cfour = cweek4 != null ? cweek4[0]?.meetings_in_week : 0;
   const cfive = cweek5 != null ? cweek5[0]?.meetings_in_week : 0;
-
-
-  console.log(monthlyMeetings)
 
 
   const data = [

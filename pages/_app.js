@@ -12,6 +12,7 @@ import { useState, useEffect, useRef } from "react";
 import Router from "next/router";
 import LoadingBar from "react-top-loading-bar";
 
+
 //dynamically importing it because goddammit it
 const Toaster = dynamic(() => import("./../components/GlobalToaster"), {
   ssr: false,
@@ -58,7 +59,7 @@ function MyApp({ Component, pageProps, session }) {
               purple: ["#9c27b0", "#f3e5f5", "#e1bee7", "#ce93d8", "#ba68c8", "#ab47bc", "#9c27b0", "#8e24aa", "#7b1fa2", "#6a1b9a", "#4a148c"]
             }
             }}>
-            <Component {...pageProps} session={session} opened={opened} setOpened={setOpened} />
+            <Component {...pageProps} session={session}  />
           </MantineProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

@@ -23,7 +23,6 @@ const Login = ({ session }) => {
   });
 
   const onLogin = async (data) => {
-    console.log("INside login file");
     try {
       const res = await signIn("credentials", {
         username: data.username,
@@ -31,8 +30,6 @@ const Login = ({ session }) => {
         role: data.role,
         redirect: false,
       });
-
-      console.log("THis is response: ", res);
 
       if (res.ok) {
         toast.success("Logged In")
@@ -55,7 +52,7 @@ const Login = ({ session }) => {
       {/* Container div to give border */}
       <div className="flex flex-col w-full max-w-md p-5 xl:max-w-lg gap-9">
         <div className="flex items-center gap-2 m-auto">
-          <h1 className="text-xl font-bold lg:text-2xl font-Hack">Login</h1>
+          <h1 className="text-xl font-bold lg:text-2xl font-Montserrat">Login</h1>
           <FontAwesomeIcon icon={faLock} />
         </div>
 
@@ -95,14 +92,6 @@ const Login = ({ session }) => {
               className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
             />
           </div>
-          <div className="flex justify-center">
-            <select name="" id="" {...register("role")} className={clsx("w-full select select-bordered select-primary select-sm rounded-md lg:select-md", errors?.role && "select-error")}>
-              <option value="" defaultChecked>Select Role</option>
-              <option value="Admin">Admin</option>
-              <option value="Parent">Parent</option>
-              <option value="Student">Student</option>
-            </select>
-          </div>
           <div className="text-center text-white">
             <input
               type="submit"
@@ -116,7 +105,7 @@ const Login = ({ session }) => {
       </div>
       <div className="px-2 sm:p-0">
         <span className="text-gray-500">
-          Dont't have an account?{" "}
+          Don't have an account?{" "}
           <Link href="/signup">
             <a href="" className="font-bold link link-primary">
               Signup

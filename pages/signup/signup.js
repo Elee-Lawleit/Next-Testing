@@ -44,7 +44,6 @@ const Signup = ({ session }) => {
   const { mutate: addParent, isLoading, isError } = useAddParentMutation();
 
   const onSignup = (data) => {
-    console.log(data)
     addParent(
       {
         ...data,
@@ -60,8 +59,6 @@ const Signup = ({ session }) => {
       }
     );
   };
-
-  console.log("Error: ", isError)
 
 
   if (typeof window !== "undefined") {
@@ -79,7 +76,7 @@ const Signup = ({ session }) => {
 
       {payload && <div className="h-screen w-full flex flex-col gap-6 px-6 justify-center items-center bg-bglayer bg-no-repeat bg-cover">
         <div className="flex items-center gap-2">
-          <h1 className="text-xl lg:text-2xl font-bold font-['Hack']">Sign Up</h1>
+          <h1 className="text-xl lg:text-2xl font-bold font-Montserrat">Sign Up</h1>
           <FontAwesomeIcon icon={faRightToBracket} />
         </div>
         <form onSubmit={handleSubmit(onSignup)} className="justify-center gap-2 form-control w-full max-w-md xl:max-w-lg">
@@ -192,7 +189,7 @@ const Signup = ({ session }) => {
               value="Signup"
               name=""
               id=""
-              className="w-full rounded-xl btn btn-primary"
+              className="w-full rounded-xl btn btn-primary font-Montserrat"
             />
           </div>
         </form>

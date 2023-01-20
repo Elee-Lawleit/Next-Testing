@@ -4,9 +4,9 @@ import axios from "axios";
 const useCreateMeetingMutation = () => {
 
     return useMutation(
-        async({date, reason, registrationNumber, time, students, userId})=>{
-            return await axios.post("/api/meetings/create-meeting", {
-                date, reason, registrationNumber, time, students, userId
+        async({date, reason, registrationNumber, time, students, userId, userRole, adminId, assocRegno})=>{
+            return await axios.post(userRole === "Admin"? "/api/meetings/create-meeting" : "/api/meetings/create-meetingP", {
+                date, reason, registrationNumber, time, students, userId, adminId, assocRegno
             });
         },
         {

@@ -14,12 +14,13 @@ const handler = async(req, res) => {
 
     // console.log("daystring: ", new Date(dayString))
 
-    const meetings = await prisma.$queryRaw`SELECT m.reason, m.status, m."regNo", m."parentId", m.mid, m."referedTo", t.date, t."startTime", t."endTime"
-                                         FROM meeting m, timeslot t
+    const meetings = await prisma.$queryRaw`SELECT m.reason, m.status, m."regNo", m."parentId", m.mid, m."referedTo", t.date, t."startTime", t."endTime", a.generalavail, m."adminId"
+                                         FROM meeting m, timeslot t, admin a
                                          WHERE (m."regNo" = ${userId} 
                                                 OR m."parentId" = ${userId} 
                                                 OR m."adminId" = ${userId})
-                                         AND m.tsid = t.tsid`;
+                                         AND m.tsid = t.tsid
+                                         AND m."adminId" = a."cnic"`;
 
     // if(!meetings.Meeting.length) return res.status(204).json();
 
