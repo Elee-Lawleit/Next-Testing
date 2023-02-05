@@ -9,12 +9,11 @@ const handler = async(req, res) => {
     }
 
     const {dayString, userId, userRole} = req.query;
-    console.log("Date: ", typeof new Date(dayString));
     
 
     // console.log("daystring: ", new Date(dayString))
 
-    const meetings = await prisma.$queryRaw`SELECT m.reason, m.status, m."regNo", m."parentId", m.mid, m."referedTo", t.date, t."startTime", t."endTime", a.generalavail, m."adminId"
+    const meetings = await prisma.$queryRaw`SELECT m.reason, m.status, m."regNo", m."parentId", m.date, m.mid, m."referedTo", t."startTime", t."endTime", a.generalavail, m."adminId"
                                          FROM meeting m, timeslot t, admin a
                                          WHERE (m."regNo" = ${userId} 
                                                 OR m."parentId" = ${userId} 

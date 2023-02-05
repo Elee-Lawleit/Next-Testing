@@ -40,13 +40,13 @@ model admin {
 
 model timeslot {
   tsid         Int      @id @default(autoincrement())
-  date         DateTime @db.Date
   startTime    DateTime @db.Time(6)
   endTime      DateTime @db.Time(6)
   availibility Boolean
   adminId      String   @db.VarChar(13)
-  admin        admin    @relation(fields: [adminId], references: [cnic])
+  day          String?  @db.VarChar(9)
   meeting      meeting?
+  admin        admin    @relation(fields: [adminId], references: [cnic])
 }
 
 model student {
@@ -104,12 +104,13 @@ model failedsubject {
 model meeting {
   mid       Int      @id @default(autoincrement())
   reason    String   @db.VarChar(300)
-  status    Status
+  status    String   @db.VarChar(30)
   referedTo String   @db.VarChar(30)
   tsid      Int      @unique
   regNo     String   @db.VarChar(30)
   adminId   String   @db.VarChar(13)
   parentId  String   @db.VarChar(13)
+  date      DateTime @db.Date
   admin     admin    @relation(fields: [adminId], references: [cnic])
   parent    parent   @relation(fields: [parentId], references: [cnic])
   student   student  @relation(fields: [regNo], references: [regNo])
@@ -124,27 +125,29 @@ model waitinglist {
   regNo    String   @db.VarChar(30)
   adminId  String   @db.VarChar(13)
   parentId String   @db.VarChar(13)
+  status   String?  @db.VarChar(50)
   admin    admin    @relation(fields: [adminId], references: [cnic])
   parent   parent   @relation(fields: [parentId], references: [cnic])
   student  student  @relation(fields: [regNo], references: [regNo])
 }
 
 model history {
-  hid       Int      @id @default(autoincrement())
-  date      DateTime @db.Date
-  startTime DateTime @db.Time(6)
-  endTime   DateTime @db.Time(6)
-  reason    String   @db.VarChar(300)
-  status    Status
-  referedTo String   @db.VarChar(30)
-  feedback  String?  @db.VarChar(300)
-  rating    Int?
-  regNo     String   @db.VarChar(30)
-  adminId   String   @db.VarChar(13)
-  parentId  String   @db.VarChar(13)
-  admin     admin    @relation(fields: [adminId], references: [cnic])
-  parent    parent   @relation(fields: [parentId], references: [cnic])
-  student   student  @relation(fields: [regNo], references: [regNo])
+  hid           Int       @id @default(autoincrement())
+  date          DateTime  @db.Date
+  startTime     DateTime  @db.Time(6)
+  endTime       DateTime  @db.Time(6)
+  reason        String    @db.VarChar(300)
+  status        Status
+  referedTo     String    @db.VarChar(30)
+  regNo         String    @db.VarChar(30)
+  adminId       String    @db.VarChar(13)
+  parentId      String    @db.VarChar(13)
+  adminFeedback String?   @db.VarChar(128)
+  suggestion    String?   @db.VarChar(128)
+  feedback      feedback?
+  admin         admin     @relation(fields: [adminId], references: [cnic])
+  parent        parent    @relation(fields: [parentId], references: [cnic])
+  student       student   @relation(fields: [regNo], references: [regNo])
 }
 
 model userlogin {
@@ -159,6 +162,15 @@ model userlogin {
   admin    admin?   @relation(fields: [adminId], references: [cnic], onDelete: NoAction, onUpdate: NoAction, map: "ad_fk")
   parent   parent?  @relation(fields: [parentId], references: [cnic], onDelete: NoAction, onUpdate: NoAction, map: "pr_fk")
   student  student? @relation(fields: [regNo], references: [regNo], onDelete: NoAction, onUpdate: NoAction, map: "st_fk")
+}
+
+model feedback {
+  attentive  Float?  @db.Real
+  polite     Float?  @db.Real
+  rude       Float?  @db.Real
+  suggestion String  @db.VarChar(128)
+  hid        Int     @unique(map: "feedback_pk") @default(autoincrement())
+  history    history @relation(fields: [hid], references: [hid], onDelete: NoAction, onUpdate: NoAction, map: "meeting_fk")
 }
 
 enum Status {

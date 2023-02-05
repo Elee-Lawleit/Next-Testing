@@ -14,67 +14,41 @@ export default async function handler(req, res) {
 
     // console.log(req.body);
 
-    const { reason, time, students, registrationNumber, userId } = req.body;
+    const { reason, time, students, registrationNumber, userId, date } = req.body;
 
-    // console.log(time)
-    // console.log(typeof time[2])
+    console.log("reason: ", reason);
+    console.log("time array: ", time)
+    console.log("userId is; ", userId);
+    console.log("reg no; ", registrationNumber);
+    console.log("students: ", students)
+    console.log("date: ", date)
 
-    // console.log("userId is; ", userId);
 
     if (!reason || !time || (!registrationNumber && !students)) {
       return res.status(403).json({ error: "Please fill in all the fields" });
     }
 
-    //finding out if it is parent creating the meeting or admin
-    const role = await prisma.userlogin.findFirst({
-      where:{
-        OR:[
-          {
-            parentId: userId
-          },
-          {
-            adminId: userId
-          }
-        ]
-      },
-      select:{
-        role: true
-      }
-    })
-    // console.log("Role is:", role)
-
-    // will do this later, if needed
-    // if(role.role === "Admin"){
-
-    // }
-
     if (registrationNumber) {
 
-      const parent = await prisma.student.findFirst({
+      //getting the student
+      const student = await prisma.student.findFirst({
         where: {
-          regNo: registrationNumber,
-        },
-        select: {
-          parent: {
-            select: {
-              cnic: true
-            }
-          }
+          regNo: registrationNumber
         }
-      });
+      })
 
       const timeArray = time.split(",");
 
       // console.log("parentId is: ", parent.parent.cnic);
 
       const timeslot = await prisma.timeslot.findFirst({
-        where:{
+        where: {
           startTime: new Date(timeArray[0]),
           endTime: new Date(timeArray[1]),
-          date: dayjs(timeArray[2]).toDate(),
+          day: timeArray[2],
           adminId: userId
         },
-        select:{
+        select: {
           tsid: true
         }
       })
@@ -86,53 +60,52 @@ export default async function handler(req, res) {
           reason: reason,
           status: "pending",
           regNo: registrationNumber,
-          parentId: parent.parent.cnic,
-          adminId: userId,
+          parentId: student.parentId,
+          date: dayjs(date).add(5, "hour").toDate(),
           referedTo: "n/a",
+          adminId: userId,
           tsid: timeslot.tsid
         }
       });
 
-      await prisma.timeslot.update({
-        where:{
-          tsid: timeslot.tsid
-        },
-        data:{
-          availibility: false
-        }
-      });
     }
 
     console.log("Students: ", students);
-    
+
     let count = 0;
     let timeSlotsEnded = false;
+    let ldate = date;
 
     if (students) {
-      
+
       const timeArray = time.split(",");
 
-      for(let i = 0; i < students.length; i++){
-        //get parent for every student
-        const parent = await prisma.student.findFirst({
+      let startTime = dayjs(timeArray[0]).toDate();
+      let endTime = dayjs(timeArray[1]).toDate();
+      let anotherCount = 0;
+      
+
+      for (let i = 0; true; i++) {
+
+        if(anotherCount === students.length) break;
+
+        console.log("INSIDE FOR LOOP:")
+
+        //getting the student
+        const student = await prisma.student.findFirst({
           where: {
-            regNo: students[i],
-          },
-          select: {
-            parent: {
-              select: {
-                cnic: true,
-              },
-            },
-          },
-        });
+            regNo: students[i]
+          }
+        })
+
 
         const timeslot = await prisma.timeslot.findFirst({
           where: {
             startTime: new Date(timeArray[0]),
             endTime: new Date(timeArray[1]),
-            date: dayjs(timeArray[2]).toDate(),
+            day: timeArray[2],
             adminId: userId,
+            // meeting: null
           },
           select: {
             tsid: true,
@@ -140,9 +113,12 @@ export default async function handler(req, res) {
           },
         });
 
-        // console.log(timeslot)
+        console.log("timeslot: ", timeslot)
 
-        if(timeslot == null){
+
+        //in case the timeslots end for the admin
+
+        if (timeslot == null) {
           timeSlotsEnded = true;
           break;
         }
@@ -151,40 +127,37 @@ export default async function handler(req, res) {
 
         if (timeslot.availibility == false) {
           console.log("ts: ", timeslot)
+          startTime = dayjs(startTime).add(15, "minute").toDate();
+          endTime = dayjs(endTime).add(15, "minute").toDate();
           continue;
         }
 
-        console.log("after getting false", timeslot)
+        console.log("after getting false: ", timeslot)
+        console.log("after getting false: ", students[i])
 
         await prisma.meeting.create({
           data: {
             reason: reason,
             status: "pending",
             regNo: students[i],
-            parentId: parent.parent.cnic,
+            parentId: student.parentId,
             adminId: userId,
+            date: dayjs(ldate).add(5, "hour").toDate(),
             referedTo: "n/a",
             tsid: timeslot.tsid,
           },
         });
 
-        await prisma.timeslot.update({
-          where: {
-            tsid: timeslot.tsid,
-          },
-          data: {
-            availibility: false,
-          },
-        });
+        anotherCount++;
 
         timeArray[0] = dayjs(timeArray[0]).add(15, 'minutes');
         timeArray[1] = dayjs(timeArray[1]).add(15, 'minutes');
-        timeArray[2] = dayjs(timeArray[2]).add(15, 'minutes');
+        // ldate = dayjs(ldate).add(15, 'minutes').toDate;
+      }
 
-      };
     }
 
-    if(timeSlotsEnded === true){
+    if (timeSlotsEnded === true) {
       res.status(200).json({
         msg: "free time slots ended",
         meetingsCreated: count
@@ -195,7 +168,8 @@ export default async function handler(req, res) {
       msg: "Meeting created",
     });
     await prisma.$disconnect();
-  } catch (err) {
+  }
+  catch (err) {
     console.log(err);
     res.status(500).json({
       msg: "Server error.",

@@ -14,23 +14,25 @@ export default async function handler(req, res) {
 
     // console.log(req.body);
 
-    const { reason, time, assocRegno, adminId, userId } = req.body;
+    const { reason, time, assocRegno, userId, date } = req.body;
 
-    console.log("Assoc reg no: ", assocRegno)
+    // console.log("data at backend: ", assocRegno)
 
     const timeArray = time.split(",");
 
-      const timeslot = await prisma.timeslot.findFirst({
-          where: {
-              startTime: new Date(timeArray[0]),
-              endTime: new Date(timeArray[1]),
-              date: dayjs(timeArray[2]).toDate(),
-              adminId: adminId
-          },
-          select: {
-              tsid: true
-          }
-      });
+    console.log("data at backend: ", timeArray[2])
+
+    const timeslot = await prisma.timeslot.findFirst({
+        where: {
+            startTime: timeArray[0],
+            endTime: timeArray[1],
+            adminId: timeArray[2],
+            day: timeArray[3]
+        },
+        select: {
+            tsid: true
+        }
+    });
 
     await prisma.meeting.create({
       data: {
@@ -38,20 +40,21 @@ export default async function handler(req, res) {
         status: "pending",
         regNo: assocRegno,
         parentId: userId,
-        adminId: userId,
+        adminId: timeArray[2],
+        date: dayjs(date).add(5, "hour").toDate(),
         referedTo: "n/a",
         tsid: timeslot.tsid,
       },
     });
 
-    await prisma.timeslot.update({
-      where: {
-        tsid: timeslot.tsid,
-      },
-      data: {
-        availibility: false,
-      },
-    });
+    // await prisma.timeslot.update({
+    //   where: {
+    //     tsid: timeslot.tsid,
+    //   },
+    //   data: {
+    //     availibility: false,
+    //   },
+    // });
 
     res.status(200).json({
       msg: "Meeting created",

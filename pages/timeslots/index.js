@@ -1,169 +1,246 @@
-import { Title, Table, Text, ActionIcon, Modal, Switch, LoadingOverlay, Button } from "@mantine/core";
 import AppSkeloton from "components/AppSkeleton";
+import { useQueryClient } from "react-query";
+import toast from "react-hot-toast";
+import { Checkbox, LoadingOverlay, Table, Title, Modal, Button } from "@mantine/core";
+import { useState } from "react";
 import useFetchAllTimeSlots from "hooks/admin/use-fetch-all-timeslots";
 import dayjs from "dayjs";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import useDeleteTimeslot from "hooks/admin/use-delete-timeslot";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { useQueryClient } from "react-query";
 import useUpdateTimeslotStatus from "hooks/admin/use-update-timeslot-status";
-import { useToggle } from "@mantine/hooks";
-import { getSession } from "next-auth/react";
-import { PrismaClient } from "/prisma/src/generated/client";
 
+const Timeslots = ({ session }) => {
 
-const Timeslots = ({session}) => {
+  const queryClient = useQueryClient();
+  const { data: timeslots, isLoading: isLoadingTs, isError: timeslotError } = useFetchAllTimeSlots(session?.user.id);
+  const {mutate: updateAvail, isLoading: settingStatus, isError: statusError} = useUpdateTimeslotStatus();
 
-    const {data: timeslots, isLoading: isLoadingTs, isError: timeslotError} = useFetchAllTimeSlots(session?.user.id);
+  const [availModal, setAvailModal] = useState(null);
 
-    const { mutate: deleteTimeslot, isLoading: isDeleting, isError: errorDeleting } = useDeleteTimeslot();
-    const { mutate: updateTimeslotStatus, isLoading: isUpdating, isError: errorUpdating } = useUpdateTimeslotStatus();
+  let t830 = [];
+  let t8450 = [];
+  let t9000 = [];
+  let t9150 = [];
+  let t9300 = [];
+  let t9450 = [];
+  let t1000 = [];
+  let t1015 = [];
+  let t1030 = [];
+  let t1045 = [];
+  let t1100 = [];
+  let t1115 = [];
+  let t1130 = [];
+  let t1145 = [];
+  let t1200 = [];
+  let t1215 = [];
+  let t1230 = [];
+  let t1245 = [];
+  let t130 = [];
+  let t145 = [];
+  let t200 = [];
+  let t215 = [];
+  let t230 = [];
+  let t245 = [];
+  let t300 = [];
+  let t315 = [];
+  let t330 = [];
+  let t345 = [];
+  let t400 = [];
+  let t415 = [];
 
-    const [deleteModal, setDeleteModal] = useState(null);
+  timeslots?.timeslots.forEach((ts, index) => {
+    if (dayjs(ts.startTime).subtract(5, "hour").hour() == 8 && dayjs(ts.startTime).subtract(5, "hour").minute() == 30) {
+      t830.push(ts);
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 8 && dayjs(ts.startTime).subtract(5, "hour").minute() == 45) {
+      t8450.push(ts);
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 9 && dayjs(ts.startTime).subtract(5, "hour").minute() == 0) {
+      t9000.push(ts);
 
-    const queryClient = useQueryClient();
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 9 && dayjs(ts.startTime).subtract(5, "hour").minute() == 15) {
+      t9150.push(ts);
 
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 9 && dayjs(ts.startTime).subtract(5, "hour").minute() == 30) {
+      t9300.push(ts);
 
-    return (
-        <AppSkeloton session={session}>
-            <Title order={1} align="center" className="text-gray-900 font-Montserrat">Timeslots</Title>
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 9 && dayjs(ts.startTime).subtract(5, "hour").minute() == 45) {
+      t9450.push(ts);
 
-            <Table className="relative" highlightOnHover align="center">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
-                        <th>Availibility</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                { timeslots?.timeSlots.length !== 0 ?
-                    timeslots?.timeSlots.map((ts, index)=>{
-                        return (<tr key={ts.tsid}>
-                            <td>{new Date(ts.date).toDateString()}</td>
-                            <td>{dayjs(ts.startTime).subtract(5, "hours").hour() +
-                                ":" +
-                                dayjs(ts.startTime).subtract(5, "hours").minute()}
-                            </td>
-                            <td>
-                                {dayjs(ts.endTime).subtract(5, "hours").hour() +
-                                ":" +
-                                dayjs(ts.endTime).subtract(5, "hours").minute()}
-                            </td>
-                            <td>
-                                <Switch
-                                    className="cursor-pointer"
-                                    size="sm"
-                                    checked={ts.availibility}
-                                    color={"#ba68c8"}
-                                    onChange={()=>{
-                                        updateTimeslotStatus({
-                                            timeslotId: ts.tsid,
-                                            status: ts.availibility === true ? false: true
-                                        }, {
-                                            onSuccess: ()=>{
-                                                queryClient.refetchQueries("timeslots-all");
-                                                toast.success("Timeslot status updated.");
-                                            },
-                                            onError: ()=>{
-                                                toast.error("Error updating timeslost status.");
-                                            }
-                                        })
-                                    }}
-                                />
-                            </td>
-                            <td>
-                                <ActionIcon onClick={()=>setDeleteModal(ts)}>
-                                    <FontAwesomeIcon icon={faTrash} />
-                                </ActionIcon>
-                            </td>
-                        </tr>)
-                    }) : <tr>
-                        <td colSpan={3}>
-                            <Text ta="center" fw={500} color="red">
-                                  No timeslots available.
-                              </Text>
-                        </td>
-                    </tr>
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 10 && dayjs(ts.startTime).subtract(5, "hour").minute() == 0) {
+      t1000.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 10 && dayjs(ts.startTime).subtract(5, "hour").minute() == 15) {
+      t1015.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 10 && dayjs(ts.startTime).subtract(5, "hour").minute() == 30) {
+      t1030.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 10 && dayjs(ts.startTime).subtract(5, "hour").minute() == 45) {
+      t1045.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 11 && dayjs(ts.startTime).subtract(5, "hour").minute() == 0) {
+      t1100.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 11 && dayjs(ts.startTime).subtract(5, "hour").minute() == 15) {
+      t1115.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 11 && dayjs(ts.startTime).subtract(5, "hour").minute() == 30) {
+      t1130.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 11 && dayjs(ts.startTime).subtract(5, "hour").minute() == 45) {
+      t1145.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 12 && dayjs(ts.startTime).subtract(5, "hour").minute() == 0) {
+      t1200.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 12 && dayjs(ts.startTime).subtract(5, "hour").minute() == 15) {
+      t1215.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 12 && dayjs(ts.startTime).subtract(5, "hour").minute() == 30) {
+      t1230.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 12 && dayjs(ts.startTime).subtract(5, "hour").minute() == 45) {
+      t1245.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 1 && dayjs(ts.startTime).subtract(5, "hour").minute() == 30) {
+      t130.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 1 && dayjs(ts.startTime).subtract(5, "hour").minute() == 45) {
+      t145.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 2 && dayjs(ts.startTime).subtract(5, "hour").minute() == 0) {
+      t200.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 2 && dayjs(ts.startTime).subtract(5, "hour").minute() == 15) {
+      t215.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 2 && dayjs(ts.startTime).subtract(5, "hour").minute() == 30) {
+      t230.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 2 && dayjs(ts.startTime).subtract(5, "hour").minute() == 45) {
+      t245.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 3 && dayjs(ts.startTime).subtract(5, "hour").minute() == 0) {
+      t300.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 3 && dayjs(ts.startTime).subtract(5, "hour").minute() == 15) {
+      t315.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 3 && dayjs(ts.startTime).subtract(5, "hour").minute() == 30) {
+      t330.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 3 && dayjs(ts.startTime).subtract(5, "hour").minute() == 45) {
+      t345.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 4 && dayjs(ts.startTime).subtract(5, "hour").minute() == 0) {
+      t400.push(ts);
+
+    }
+    else if (dayjs(ts.startTime).subtract(5, "hour").hour() == 4 && dayjs(ts.startTime).subtract(5, "hour").minute() == 15) {
+      t415.push(ts);
+
+    }
+  })
+
+ 
+  const sortedDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+  const matrix = [t830.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t8450, t9000, t9150, t9300, t9450, t1000, t1015.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t1030.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t1045.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t1100.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t1115.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t1130.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t1145.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t1200.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t1215.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t1230.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t1245.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t130.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t145.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t200.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t215.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t230.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t245.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t300.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t315.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t330.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t345.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t400.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day)), t415.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day))];
+  
+
+  return (
+    <AppSkeloton session={session}>
+      <Title order={1} align="center" className="text-gray-900 font-Montserrat">Timeslots</Title>
+      <div>
+        <Table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Monday</th>
+              <th>Tuesday</th>
+              <th>Wednesday</th>
+              <th>Thursday</th>
+              <th>Friday</th>
+            </tr>
+          </thead>
+          <tbody>
+            {matrix?.map((timeslot, index) => {
+              return (
+                <tr key={index}>
+                  <td>{dayjs(matrix[index][0]?.startTime).subtract(5, "hour").hour() + ":" + dayjs(matrix[index][0]?.startTime).subtract(5, "hour").minute() + " - " + dayjs(matrix[index][0]?.endTime).subtract(5, "hour").hour() + ":" + dayjs(matrix[index][0]?.endTime).subtract(5, "hour").minute()}</td>
+                  <td><Checkbox defaultValue={false} checked={matrix[index][0]?.availibility} onClick={()=>setAvailModal(matrix[index][0])}/></td>
+                  <td><Checkbox defaultValue={false} checked={matrix[index][1]?.availibility} onClick={()=>setAvailModal(matrix[index][1])}/></td>
+                  <td><Checkbox defaultValue={false} checked={matrix[index][2]?.availibility} onClick={()=>setAvailModal(matrix[index][2])}/></td>
+                  <td><Checkbox defaultValue={false} checked={matrix[index][3]?.availibility} onClick={()=>setAvailModal(matrix[index][3])}/></td>
+                  <td><Checkbox defaultValue={false} checked={matrix[index][4]?.availibility} onClick={()=>setAvailModal(matrix[index][4])}/></td>
+                </tr>)
+
+            })
+            }
+          </tbody>
+        </Table>
+      </div>
+      <Modal
+        opened={availModal}
+        title="Are you sure?"
+        onClose={() => setAvailModal(null)}
+        shadow="sm"
+        overlayOpacity={0.1}
+        centered
+      >
+        <div className="flex gap-4 justify-start">
+          <Button
+            className="bg-purple-500 hover:bg-purple-600 relative"
+            onClick={() => {
+              updateAvail({timeslotId: availModal?.tsid, status: !availModal?.availibility}, {
+                onSuccess: ()=>{
+                  queryClient.refetchQueries("timeslots-all");
+                  toast.success("Availability updated successfully.");
+                }, 
+                onError: ()=>{
+                  toast.error("Error updating availability.");
                 }
-              </tbody>
-            </Table>
-            <Modal
-                opened={deleteModal}
-                title="Are you sure?"
-                onClose={() => setDeleteModal(null)}
-                shadow="sm"
-                overlayOpacity={0.1}
-                centered
-            >
-                <div className="flex gap-4 justify-start">
-                    <Button
-                        className="bg-purple-500 hover:bg-purple-600"
-                        onClick={() => {
-                            deleteTimeslot({ timeslotId: deleteModal.tsid }, {
-                                onSuccess: () => {
-                                    queryClient.refetchQueries("timeslots-all");
-                                    toast.success("Timeslot deleted successfully");
-                                    setDeleteModal(null);
-                                },
-                                onError: () => {
-                                    toast.error("Error deleting timeslot");
-                                }
-                            });
-                        }}
-                    >
-                        <LoadingOverlay visible={isDeleting} />
-                        Yes
-                    </Button>
-                    <Button
-                        className="bg-red-400 hover:bg-red-500"
-                        onClick={() => setDeleteModal(null)}
-                    >
-                        Cancel
-                    </Button>
-                </div>
-            </Modal>
-        </AppSkeloton>
-    );
+              });
+            }}
+          >
+            <LoadingOverlay visible={settingStatus}/>
+            Yes
+          </Button>
+          <Button
+            className="bg-red-400 hover:bg-red-500"
+            onClick={() => setAvailModal(null)}
+          >
+            Cancel
+          </Button>
+        </div>
+      </Modal>
+    </AppSkeloton>
+  );
 };
-
-
-
-// export async function getServerSideProps(context) {
-//     const session = await getSession(context);
-//     if (session) {
-//         const prisma = new PrismaClient();
-        
-//         const timeslots = await prisma.timeslot.findMany({
-//             where: {
-//                 adminId: session.user.id,
-//                 date: { gte: new Date() },
-//             },
-//             select: {
-//                 startTime: true,
-//                 endTime: true,
-//                 date: true,
-//                 availibility: true,
-//                 tsid: true,
-//                 meeting: true
-//             },
-//         })
-
-//         var timeSlots = timeslots.filter((ts) => ts.meeting == null)
-
-//         console.log("TIMESLOTS: ", timeSlots)
-
-//         prisma.$disconnect();
-
-//         return {
-//             props: { timeSlots: JSON.parse(JSON.stringify(timeSlots)) }
-//         }
-//     }
-// }
-
 
 export default Timeslots;

@@ -6,7 +6,7 @@ dayjs.extend(objectSupport);
 
 export const meetingSchema = yup.object().shape({
     
-    time: yup.string().required(),
+    // date: yup.date().required(),
 
     meetingCriteria: yup.mixed().oneOf(["Individual Meeting", "Bulk Meeting"]),
 
@@ -20,6 +20,6 @@ export const meetingSchema = yup.object().shape({
         then: yup.mixed().oneOf(["Attendance", "GPA"])
     }),
 
-    reason: yup.string().required("required").min(30, "30-characters")
+    reason: yup.string().required("required").min(5, "5-characters")
 
 })

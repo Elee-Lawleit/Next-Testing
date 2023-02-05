@@ -72,8 +72,11 @@ const AppSkeloton = ({ children, ...props }) => {
               <Link href='/meetings'>
                 <NavLink component='a' label="Meetings" active={router.pathname === "/meetings"} icon={<FontAwesomeIcon icon={faHourglass} />} />
               </Link>
-              {props.session?.user.role === "Admin" && <Link href='/timeslots'>
+              {props.session?.user.role !== "Parent" && props.session?.user.role !== "Student"  && <Link href='/timeslots'>
                 <NavLink component='a' label="Timeslots" active={router.pathname === "/timeslots"} icon={<FontAwesomeIcon icon={faHourglass} />} />
+              </Link>}
+              {props.session?.user.role === "Director" && <Link href='/admin-info'>
+                <NavLink component='a' label="Admin Info" active={router.pathname === "/admin-info"} icon={<FontAwesomeIcon icon={faHourglass} />} />
               </Link>}
               {props.session && <Link href='#'>
                 <NavLink onClick={signOut} component='a' label="Logout" active={router.pathname === "/logout"} />

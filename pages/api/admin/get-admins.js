@@ -9,21 +9,24 @@ const handler = async (req, res) => {
         return res.status(403).json({ error: "Method not allowed" });
     }
 
-    const admin = await prisma.admin.findMany({
+    let admin = await prisma.admin.findMany({
         include: {
-            meeting: {
-                select: {
-                    timeslot: true
-                }
-            },
             timeslot: {
-                where: {
-                    availibility: true,
-                    date: {gte: new Date()}
+                include: {
+                    meeting: true
                 }
             }
+        },
+        where:{
+            role: {notIn: ["director", "deputy director", "datacell"]}
         }
     })
+
+    //return all free ones
+    admin = admin.map((a, index)=>{
+        a.timeslot = a.timeslot.filter((b)=>b.meeting === null)
+        return a;
+    });
 
     await prisma.$disconnect();
 

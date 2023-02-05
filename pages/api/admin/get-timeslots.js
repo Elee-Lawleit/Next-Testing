@@ -13,13 +13,12 @@ const handler = async (req, res) => {
     const timeSlots = await prisma.timeslot.findMany({
         where: {
             adminId: userId,
-            date: {gte: new Date()},
             availibility: true
         },
         select: {
             startTime: true,
             endTime: true,
-            date: true,
+            day: true,
             availibility: true,
             tsid: true
         }

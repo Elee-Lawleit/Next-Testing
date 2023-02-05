@@ -36,7 +36,7 @@ var __publicField = (obj, key, value) => {
 var require_lz_string = __commonJS({
   "../../node_modules/.pnpm/lz-string@1.4.4/node_modules/lz-string/libs/lz-string.js"(exports, module2) {
     var LZString = function() {
-      var f = String.fromCharCode;
+      var f2 = String.fromCharCode;
       var keyStrBase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
       var keyStrUriSafe = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$";
       var baseReverseDic = {};
@@ -82,7 +82,7 @@ var require_lz_string = __commonJS({
           if (input == null)
             return "";
           return LZString2._compress(input, 15, function(a) {
-            return f(a + 32);
+            return f2(a + 32);
           }) + " ";
         },
         decompressFromUTF16: function(compressed) {
@@ -114,7 +114,7 @@ var require_lz_string = __commonJS({
             }
             var result = [];
             buf.forEach(function(c) {
-              result.push(f(c));
+              result.push(f2(c));
             });
             return LZString2.decompress(result.join(""));
           }
@@ -138,7 +138,7 @@ var require_lz_string = __commonJS({
         },
         compress: function(uncompressed) {
           return LZString2._compress(uncompressed, 16, function(a) {
-            return f(a);
+            return f2(a);
           });
         },
         _compress: function(uncompressed, bitsPerChar, getCharFromInt) {
@@ -343,7 +343,7 @@ var require_lz_string = __commonJS({
           });
         },
         _decompress: function(length, resetValue, getNextValue) {
-          var dictionary = [], next, enlargeIn = 4, dictSize = 4, numBits = 3, entry = "", result = [], i, w, bits, resb, maxpower, power, c, data = { val: getNextValue(0), position: resetValue, index: 1 };
+          var dictionary = [], next, enlargeIn = 4, dictSize = 4, numBits = 3, entry = "", result = [], i, w2, bits, resb, maxpower, power, c, data = { val: getNextValue(0), position: resetValue, index: 1 };
           for (i = 0; i < 3; i += 1) {
             dictionary[i] = i;
           }
@@ -375,7 +375,7 @@ var require_lz_string = __commonJS({
                 bits |= (resb > 0 ? 1 : 0) * power;
                 power <<= 1;
               }
-              c = f(bits);
+              c = f2(bits);
               break;
             case 1:
               bits = 0;
@@ -391,13 +391,13 @@ var require_lz_string = __commonJS({
                 bits |= (resb > 0 ? 1 : 0) * power;
                 power <<= 1;
               }
-              c = f(bits);
+              c = f2(bits);
               break;
             case 2:
               return "";
           }
           dictionary[3] = c;
-          w = c;
+          w2 = c;
           result.push(c);
           while (true) {
             if (data.index > length) {
@@ -431,7 +431,7 @@ var require_lz_string = __commonJS({
                   bits |= (resb > 0 ? 1 : 0) * power;
                   power <<= 1;
                 }
-                dictionary[dictSize++] = f(bits);
+                dictionary[dictSize++] = f2(bits);
                 c = dictSize - 1;
                 enlargeIn--;
                 break;
@@ -449,7 +449,7 @@ var require_lz_string = __commonJS({
                   bits |= (resb > 0 ? 1 : 0) * power;
                   power <<= 1;
                 }
-                dictionary[dictSize++] = f(bits);
+                dictionary[dictSize++] = f2(bits);
                 c = dictSize - 1;
                 enlargeIn--;
                 break;
@@ -464,15 +464,15 @@ var require_lz_string = __commonJS({
               entry = dictionary[c];
             } else {
               if (c === dictSize) {
-                entry = w + w.charAt(0);
+                entry = w2 + w2.charAt(0);
               } else {
                 return null;
               }
             }
             result.push(entry);
-            dictionary[dictSize++] = w + entry.charAt(0);
+            dictionary[dictSize++] = w2 + entry.charAt(0);
             enlargeIn--;
-            w = entry;
+            w2 = entry;
             if (enlargeIn == 0) {
               enlargeIn = Math.pow(2, numBits);
               numBits++;
@@ -692,22 +692,22 @@ var require_conversions = __commonJS({
       Object.defineProperty(convert[model], "labels", { value: labels });
     }
     convert.rgb.hsl = function(rgb) {
-      const r = rgb[0] / 255;
-      const g = rgb[1] / 255;
-      const b = rgb[2] / 255;
-      const min2 = Math.min(r, g, b);
-      const max2 = Math.max(r, g, b);
+      const r2 = rgb[0] / 255;
+      const g2 = rgb[1] / 255;
+      const b2 = rgb[2] / 255;
+      const min2 = Math.min(r2, g2, b2);
+      const max2 = Math.max(r2, g2, b2);
       const delta = max2 - min2;
       let h;
       let s;
       if (max2 === min2) {
         h = 0;
-      } else if (r === max2) {
-        h = (g - b) / delta;
-      } else if (g === max2) {
-        h = 2 + (b - r) / delta;
-      } else if (b === max2) {
-        h = 4 + (r - g) / delta;
+      } else if (r2 === max2) {
+        h = (g2 - b2) / delta;
+      } else if (g2 === max2) {
+        h = 2 + (b2 - r2) / delta;
+      } else if (b2 === max2) {
+        h = 4 + (r2 - g2) / delta;
       }
       h = Math.min(h * 60, 360);
       if (h < 0) {
@@ -729,11 +729,11 @@ var require_conversions = __commonJS({
       let bdif;
       let h;
       let s;
-      const r = rgb[0] / 255;
-      const g = rgb[1] / 255;
-      const b = rgb[2] / 255;
-      const v = Math.max(r, g, b);
-      const diff = v - Math.min(r, g, b);
+      const r2 = rgb[0] / 255;
+      const g2 = rgb[1] / 255;
+      const b2 = rgb[2] / 255;
+      const v = Math.max(r2, g2, b2);
+      const diff = v - Math.min(r2, g2, b2);
       const diffc = /* @__PURE__ */ __name(function(c) {
         return (v - c) / 6 / diff + 1 / 2;
       }, "diffc");
@@ -742,14 +742,14 @@ var require_conversions = __commonJS({
         s = 0;
       } else {
         s = diff / v;
-        rdif = diffc(r);
-        gdif = diffc(g);
-        bdif = diffc(b);
-        if (r === v) {
+        rdif = diffc(r2);
+        gdif = diffc(g2);
+        bdif = diffc(b2);
+        if (r2 === v) {
           h = bdif - gdif;
-        } else if (g === v) {
+        } else if (g2 === v) {
           h = 1 / 3 + rdif - bdif;
-        } else if (b === v) {
+        } else if (b2 === v) {
           h = 2 / 3 + gdif - rdif;
         }
         if (h < 0) {
@@ -765,23 +765,23 @@ var require_conversions = __commonJS({
       ];
     };
     convert.rgb.hwb = function(rgb) {
-      const r = rgb[0];
-      const g = rgb[1];
-      let b = rgb[2];
+      const r2 = rgb[0];
+      const g2 = rgb[1];
+      let b2 = rgb[2];
       const h = convert.rgb.hsl(rgb)[0];
-      const w = 1 / 255 * Math.min(r, Math.min(g, b));
-      b = 1 - 1 / 255 * Math.max(r, Math.max(g, b));
-      return [h, w * 100, b * 100];
+      const w2 = 1 / 255 * Math.min(r2, Math.min(g2, b2));
+      b2 = 1 - 1 / 255 * Math.max(r2, Math.max(g2, b2));
+      return [h, w2 * 100, b2 * 100];
     };
     convert.rgb.cmyk = function(rgb) {
-      const r = rgb[0] / 255;
-      const g = rgb[1] / 255;
-      const b = rgb[2] / 255;
-      const k = Math.min(1 - r, 1 - g, 1 - b);
-      const c = (1 - r - k) / (1 - k) || 0;
-      const m = (1 - g - k) / (1 - k) || 0;
-      const y = (1 - b - k) / (1 - k) || 0;
-      return [c * 100, m * 100, y * 100, k * 100];
+      const r2 = rgb[0] / 255;
+      const g2 = rgb[1] / 255;
+      const b2 = rgb[2] / 255;
+      const k = Math.min(1 - r2, 1 - g2, 1 - b2);
+      const c = (1 - r2 - k) / (1 - k) || 0;
+      const m2 = (1 - g2 - k) / (1 - k) || 0;
+      const y = (1 - b2 - k) / (1 - k) || 0;
+      return [c * 100, m2 * 100, y * 100, k * 100];
     };
     function comparativeDistance(x, y) {
       return (x[0] - y[0]) ** 2 + (x[1] - y[1]) ** 2 + (x[2] - y[2]) ** 2;
@@ -808,15 +808,15 @@ var require_conversions = __commonJS({
       return cssKeywords[keyword];
     };
     convert.rgb.xyz = function(rgb) {
-      let r = rgb[0] / 255;
-      let g = rgb[1] / 255;
-      let b = rgb[2] / 255;
-      r = r > 0.04045 ? ((r + 0.055) / 1.055) ** 2.4 : r / 12.92;
-      g = g > 0.04045 ? ((g + 0.055) / 1.055) ** 2.4 : g / 12.92;
-      b = b > 0.04045 ? ((b + 0.055) / 1.055) ** 2.4 : b / 12.92;
-      const x = r * 0.4124 + g * 0.3576 + b * 0.1805;
-      const y = r * 0.2126 + g * 0.7152 + b * 0.0722;
-      const z = r * 0.0193 + g * 0.1192 + b * 0.9505;
+      let r2 = rgb[0] / 255;
+      let g2 = rgb[1] / 255;
+      let b2 = rgb[2] / 255;
+      r2 = r2 > 0.04045 ? ((r2 + 0.055) / 1.055) ** 2.4 : r2 / 12.92;
+      g2 = g2 > 0.04045 ? ((g2 + 0.055) / 1.055) ** 2.4 : g2 / 12.92;
+      b2 = b2 > 0.04045 ? ((b2 + 0.055) / 1.055) ** 2.4 : b2 / 12.92;
+      const x = r2 * 0.4124 + g2 * 0.3576 + b2 * 0.1805;
+      const y = r2 * 0.2126 + g2 * 0.7152 + b2 * 0.0722;
+      const z = r2 * 0.0193 + g2 * 0.1192 + b2 * 0.9505;
       return [x * 100, y * 100, z * 100];
     };
     convert.rgb.lab = function(rgb) {
@@ -832,8 +832,8 @@ var require_conversions = __commonJS({
       z = z > 8856e-6 ? z ** (1 / 3) : 7.787 * z + 16 / 116;
       const l = 116 * y - 16;
       const a = 500 * (x - y);
-      const b = 200 * (y - z);
-      return [l, a, b];
+      const b2 = 200 * (y - z);
+      return [l, a, b2];
     };
     convert.hsl.rgb = function(hsl) {
       const h = hsl[0] / 360;
@@ -892,24 +892,24 @@ var require_conversions = __commonJS({
       const s = hsv[1] / 100;
       let v = hsv[2] / 100;
       const hi = Math.floor(h) % 6;
-      const f = h - Math.floor(h);
-      const p = 255 * v * (1 - s);
-      const q = 255 * v * (1 - s * f);
-      const t = 255 * v * (1 - s * (1 - f));
+      const f2 = h - Math.floor(h);
+      const p2 = 255 * v * (1 - s);
+      const q = 255 * v * (1 - s * f2);
+      const t2 = 255 * v * (1 - s * (1 - f2));
       v *= 255;
       switch (hi) {
         case 0:
-          return [v, t, p];
+          return [v, t2, p2];
         case 1:
-          return [q, v, p];
+          return [q, v, p2];
         case 2:
-          return [p, v, t];
+          return [p2, v, t2];
         case 3:
-          return [p, q, v];
+          return [p2, q, v];
         case 4:
-          return [t, p, v];
+          return [t2, p2, v];
         case 5:
-          return [v, p, q];
+          return [v, p2, q];
       }
     };
     convert.hsv.hsl = function(hsv) {
@@ -932,84 +932,84 @@ var require_conversions = __commonJS({
       let wh = hwb[1] / 100;
       let bl = hwb[2] / 100;
       const ratio = wh + bl;
-      let f;
+      let f2;
       if (ratio > 1) {
         wh /= ratio;
         bl /= ratio;
       }
       const i = Math.floor(6 * h);
       const v = 1 - bl;
-      f = 6 * h - i;
+      f2 = 6 * h - i;
       if ((i & 1) !== 0) {
-        f = 1 - f;
+        f2 = 1 - f2;
       }
-      const n = wh + f * (v - wh);
-      let r;
-      let g;
-      let b;
+      const n2 = wh + f2 * (v - wh);
+      let r2;
+      let g2;
+      let b2;
       switch (i) {
         default:
         case 6:
         case 0:
-          r = v;
-          g = n;
-          b = wh;
+          r2 = v;
+          g2 = n2;
+          b2 = wh;
           break;
         case 1:
-          r = n;
-          g = v;
-          b = wh;
+          r2 = n2;
+          g2 = v;
+          b2 = wh;
           break;
         case 2:
-          r = wh;
-          g = v;
-          b = n;
+          r2 = wh;
+          g2 = v;
+          b2 = n2;
           break;
         case 3:
-          r = wh;
-          g = n;
-          b = v;
+          r2 = wh;
+          g2 = n2;
+          b2 = v;
           break;
         case 4:
-          r = n;
-          g = wh;
-          b = v;
+          r2 = n2;
+          g2 = wh;
+          b2 = v;
           break;
         case 5:
-          r = v;
-          g = wh;
-          b = n;
+          r2 = v;
+          g2 = wh;
+          b2 = n2;
           break;
       }
-      return [r * 255, g * 255, b * 255];
+      return [r2 * 255, g2 * 255, b2 * 255];
     };
     convert.cmyk.rgb = function(cmyk) {
       const c = cmyk[0] / 100;
-      const m = cmyk[1] / 100;
+      const m2 = cmyk[1] / 100;
       const y = cmyk[2] / 100;
       const k = cmyk[3] / 100;
-      const r = 1 - Math.min(1, c * (1 - k) + k);
-      const g = 1 - Math.min(1, m * (1 - k) + k);
-      const b = 1 - Math.min(1, y * (1 - k) + k);
-      return [r * 255, g * 255, b * 255];
+      const r2 = 1 - Math.min(1, c * (1 - k) + k);
+      const g2 = 1 - Math.min(1, m2 * (1 - k) + k);
+      const b2 = 1 - Math.min(1, y * (1 - k) + k);
+      return [r2 * 255, g2 * 255, b2 * 255];
     };
     convert.xyz.rgb = function(xyz) {
       const x = xyz[0] / 100;
       const y = xyz[1] / 100;
       const z = xyz[2] / 100;
-      let r;
-      let g;
-      let b;
-      r = x * 3.2406 + y * -1.5372 + z * -0.4986;
-      g = x * -0.9689 + y * 1.8758 + z * 0.0415;
-      b = x * 0.0557 + y * -0.204 + z * 1.057;
-      r = r > 31308e-7 ? 1.055 * r ** (1 / 2.4) - 0.055 : r * 12.92;
-      g = g > 31308e-7 ? 1.055 * g ** (1 / 2.4) - 0.055 : g * 12.92;
-      b = b > 31308e-7 ? 1.055 * b ** (1 / 2.4) - 0.055 : b * 12.92;
-      r = Math.min(Math.max(0, r), 1);
-      g = Math.min(Math.max(0, g), 1);
-      b = Math.min(Math.max(0, b), 1);
-      return [r * 255, g * 255, b * 255];
+      let r2;
+      let g2;
+      let b2;
+      r2 = x * 3.2406 + y * -1.5372 + z * -0.4986;
+      g2 = x * -0.9689 + y * 1.8758 + z * 0.0415;
+      b2 = x * 0.0557 + y * -0.204 + z * 1.057;
+      r2 = r2 > 31308e-7 ? 1.055 * r2 ** (1 / 2.4) - 0.055 : r2 * 12.92;
+      g2 = g2 > 31308e-7 ? 1.055 * g2 ** (1 / 2.4) - 0.055 : g2 * 12.92;
+      b2 = b2 > 31308e-7 ? 1.055 * b2 ** (1 / 2.4) - 0.055 : b2 * 12.92;
+      r2 = Math.min(Math.max(0, r2), 1);
+      g2 = Math.min(Math.max(0, g2), 1);
+      b2 = Math.min(Math.max(0, b2), 1);
+      return [r2 * 255, g2 * 255, b2 * 255];
     };
     convert.xyz.lab = function(xyz) {
       let x = xyz[0];
@@ -1023,19 +1023,19 @@ var require_conversions = __commonJS({
       z = z > 8856e-6 ? z ** (1 / 3) : 7.787 * z + 16 / 116;
       const l = 116 * y - 16;
       const a = 500 * (x - y);
-      const b = 200 * (y - z);
-      return [l, a, b];
+      const b2 = 200 * (y - z);
+      return [l, a, b2];
     };
     convert.lab.xyz = function(lab) {
       const l = lab[0];
       const a = lab[1];
-      const b = lab[2];
+      const b2 = lab[2];
       let x;
       let y;
       let z;
       y = (l + 16) / 116;
       x = a / 500 + y;
-      z = y - b / 200;
+      z = y - b2 / 200;
       const y2 = y ** 3;
       const x2 = x ** 3;
       const z2 = z ** 3;
@@ -1050,14 +1050,14 @@ var require_conversions = __commonJS({
     convert.lab.lch = function(lab) {
       const l = lab[0];
       const a = lab[1];
-      const b = lab[2];
+      const b2 = lab[2];
       let h;
-      const hr = Math.atan2(b, a);
+      const hr = Math.atan2(b2, a);
       h = hr * 360 / 2 / Math.PI;
       if (h < 0) {
         h += 360;
       }
-      const c = Math.sqrt(a * a + b * b);
+      const c = Math.sqrt(a * a + b2 * b2);
       return [l, c, h];
     };
     convert.lch.lab = function(lch) {
@@ -1066,17 +1066,17 @@ var require_conversions = __commonJS({
       const h = lch[2];
       const hr = h / 360 * 2 * Math.PI;
       const a = c * Math.cos(hr);
-      const b = c * Math.sin(hr);
-      return [l, a, b];
+      const b2 = c * Math.sin(hr);
+      return [l, a, b2];
     };
     convert.rgb.ansi16 = function(args, saturation = null) {
-      const [r, g, b] = args;
+      const [r2, g2, b2] = args;
       let value = saturation === null ? convert.rgb.hsv(args)[2] : saturation;
       value = Math.round(value / 50);
       if (value === 0) {
         return 30;
       }
-      let ansi = 30 + (Math.round(b / 255) << 2 | Math.round(g / 255) << 1 | Math.round(r / 255));
+      let ansi = 30 + (Math.round(b2 / 255) << 2 | Math.round(g2 / 255) << 1 | Math.round(r2 / 255));
       if (value === 2) {
         ansi += 60;
       }
@@ -1086,19 +1086,19 @@ var require_conversions = __commonJS({
       return convert.rgb.ansi16(convert.hsv.rgb(args), args[2]);
     };
     convert.rgb.ansi256 = function(args) {
-      const r = args[0];
-      const g = args[1];
-      const b = args[2];
-      if (r === g && g === b) {
-        if (r < 8) {
+      const r2 = args[0];
+      const g2 = args[1];
+      const b2 = args[2];
+      if (r2 === g2 && g2 === b2) {
+        if (r2 < 8) {
           return 16;
         }
-        if (r > 248) {
+        if (r2 > 248) {
           return 231;
         }
-        return Math.round((r - 8) / 247 * 24) + 232;
+        return Math.round((r2 - 8) / 247 * 24) + 232;
       }
-      const ansi = 16 + 36 * Math.round(r / 255 * 5) + 6 * Math.round(g / 255 * 5) + Math.round(b / 255 * 5);
+      const ansi = 16 + 36 * Math.round(r2 / 255 * 5) + 6 * Math.round(g2 / 255 * 5) + Math.round(b2 / 255 * 5);
       return ansi;
     };
     convert.ansi16.rgb = function(args) {
@@ -1111,10 +1111,10 @@ var require_conversions = __commonJS({
         return [color, color, color];
       }
       const mult = (~~(args > 50) + 1) * 0.5;
-      const r = (color & 1) * mult * 255;
-      const g = (color >> 1 & 1) * mult * 255;
-      const b = (color >> 2 & 1) * mult * 255;
-      return [r, g, b];
+      const r2 = (color & 1) * mult * 255;
+      const g2 = (color >> 1 & 1) * mult * 255;
+      const b2 = (color >> 2 & 1) * mult * 255;
+      return [r2, g2, b2];
     };
     convert.ansi256.rgb = function(args) {
       if (args >= 232) {
@@ -1123,10 +1123,10 @@ var require_conversions = __commonJS({
       }
       args -= 16;
       let rem;
-      const r = Math.floor(args / 36) / 5 * 255;
-      const g = Math.floor((rem = args % 36) / 6) / 5 * 255;
-      const b = rem % 6 / 5 * 255;
-      return [r, g, b];
+      const r2 = Math.floor(args / 36) / 5 * 255;
+      const g2 = Math.floor((rem = args % 36) / 6) / 5 * 255;
+      const b2 = rem % 6 / 5 * 255;
+      return [r2, g2, b2];
     };
     convert.rgb.hex = function(args) {
       const integer = ((Math.round(args[0]) & 255) << 16) + ((Math.round(args[1]) & 255) << 8) + (Math.round(args[2]) & 255);
@@ -1145,17 +1145,17 @@ var require_conversions = __commonJS({
         }).join("");
       }
       const integer = parseInt(colorString, 16);
-      const r = integer >> 16 & 255;
-      const g = integer >> 8 & 255;
-      const b = integer & 255;
-      return [r, g, b];
+      const r2 = integer >> 16 & 255;
+      const g2 = integer >> 8 & 255;
+      const b2 = integer & 255;
+      return [r2, g2, b2];
     };
     convert.rgb.hcg = function(rgb) {
-      const r = rgb[0] / 255;
-      const g = rgb[1] / 255;
-      const b = rgb[2] / 255;
-      const max2 = Math.max(Math.max(r, g), b);
-      const min2 = Math.min(Math.min(r, g), b);
+      const r2 = rgb[0] / 255;
+      const g2 = rgb[1] / 255;
+      const b2 = rgb[2] / 255;
+      const max2 = Math.max(Math.max(r2, g2), b2);
+      const min2 = Math.min(Math.min(r2, g2), b2);
       const chroma = max2 - min2;
       let grayscale;
       let hue;
@@ -1166,12 +1166,12 @@ var require_conversions = __commonJS({
       }
       if (chroma <= 0) {
         hue = 0;
-      } else if (max2 === r) {
-        hue = (g - b) / chroma % 6;
-      } else if (max2 === g) {
-        hue = 2 + (b - r) / chroma;
+      } else if (max2 === r2) {
+        hue = (g2 - b2) / chroma % 6;
+      } else if (max2 === g2) {
+        hue = 2 + (b2 - r2) / chroma;
       } else {
-        hue = 4 + (r - g) / chroma;
+        hue = 4 + (r2 - g2) / chroma;
       }
       hue /= 6;
       hue %= 1;
@@ -1181,33 +1181,33 @@ var require_conversions = __commonJS({
       const s = hsl[1] / 100;
       const l = hsl[2] / 100;
       const c = l < 0.5 ? 2 * s * l : 2 * s * (1 - l);
-      let f = 0;
+      let f2 = 0;
       if (c < 1) {
-        f = (l - 0.5 * c) / (1 - c);
+        f2 = (l - 0.5 * c) / (1 - c);
       }
-      return [hsl[0], c * 100, f * 100];
+      return [hsl[0], c * 100, f2 * 100];
     };
     convert.hsv.hcg = function(hsv) {
       const s = hsv[1] / 100;
       const v = hsv[2] / 100;
       const c = s * v;
-      let f = 0;
+      let f2 = 0;
       if (c < 1) {
-        f = (v - c) / (1 - c);
+        f2 = (v - c) / (1 - c);
       }
-      return [hsv[0], c * 100, f * 100];
+      return [hsv[0], c * 100, f2 * 100];
     };
     convert.hcg.rgb = function(hcg) {
       const h = hcg[0] / 360;
       const c = hcg[1] / 100;
-      const g = hcg[2] / 100;
+      const g2 = hcg[2] / 100;
       if (c === 0) {
-        return [g * 255, g * 255, g * 255];
+        return [g2 * 255, g2 * 255, g2 * 255];
       }
       const pure = [0, 0, 0];
       const hi = h % 1 * 6;
       const v = hi % 1;
-      const w = 1 - v;
+      const w2 = 1 - v;
       let mg = 0;
       switch (Math.floor(hi)) {
         case 0:
@@ -1216,7 +1216,7 @@ var require_conversions = __commonJS({
           pure[2] = 0;
           break;
         case 1:
-          pure[0] = w;
+          pure[0] = w2;
           pure[1] = 1;
           pure[2] = 0;
           break;
@@ -1227,7 +1227,7 @@ var require_conversions = __commonJS({
           break;
         case 3:
           pure[0] = 0;
-          pure[1] = w;
+          pure[1] = w2;
           pure[2] = 1;
           break;
         case 4:
@@ -1238,9 +1238,9 @@ var require_conversions = __commonJS({
         default:
           pure[0] = 1;
           pure[1] = 0;
-          pure[2] = w;
+          pure[2] = w2;
       }
-      mg = (1 - c) * g;
+      mg = (1 - c) * g2;
       return [
         (c * pure[0] + mg) * 255,
         (c * pure[1] + mg) * 255,
@@ -1249,18 +1249,18 @@ var require_conversions = __commonJS({
     };
     convert.hcg.hsv = function(hcg) {
       const c = hcg[1] / 100;
-      const g = hcg[2] / 100;
-      const v = c + g * (1 - c);
-      let f = 0;
+      const g2 = hcg[2] / 100;
+      const v = c + g2 * (1 - c);
+      let f2 = 0;
       if (v > 0) {
-        f = c / v;
+        f2 = c / v;
       }
-      return [hcg[0], f * 100, v * 100];
+      return [hcg[0], f2 * 100, v * 100];
     };
     convert.hcg.hsl = function(hcg) {
       const c = hcg[1] / 100;
-      const g = hcg[2] / 100;
-      const l = g * (1 - c) + 0.5 * c;
+      const g2 = hcg[2] / 100;
+      const l = g2 * (1 - c) + 0.5 * c;
       let s = 0;
       if (l > 0 && l < 0.5) {
         s = c / (2 * l);
@@ -1271,20 +1271,20 @@ var require_conversions = __commonJS({
     };
     convert.hcg.hwb = function(hcg) {
       const c = hcg[1] / 100;
-      const g = hcg[2] / 100;
-      const v = c + g * (1 - c);
+      const g2 = hcg[2] / 100;
+      const v = c + g2 * (1 - c);
       return [hcg[0], (v - c) * 100, (1 - v) * 100];
     };
     convert.hwb.hcg = function(hwb) {
-      const w = hwb[1] / 100;
-      const b = hwb[2] / 100;
-      const v = 1 - b;
-      const c = v - w;
-      let g = 0;
+      const w2 = hwb[1] / 100;
+      const b2 = hwb[2] / 100;
+      const v = 1 - b2;
+      const c = v - w2;
+      let g2 = 0;
       if (c < 1) {
-        g = (v - c) / (1 - c);
+        g2 = (v - c) / (1 - c);
       }
-      return [hwb[0], c * 100, g * 100];
+      return [hwb[0], c * 100, g2 * 100];
     };
     convert.apple.rgb = function(apple) {
       return [apple[0] / 65535 * 255, apple[1] / 65535 * 255, apple[2] / 65535 * 255];
@@ -1472,8 +1472,8 @@ var require_ansi_styles = __commonJS({
       const rgb = fn(...args);
       return `\x1B[${38 + offset};2;${rgb[0]};${rgb[1]};${rgb[2]}m`;
     }, "wrapAnsi16m");
-    var ansi2ansi = /* @__PURE__ */ __name((n) => n, "ansi2ansi");
-    var rgb2rgb = /* @__PURE__ */ __name((r, g, b) => [r, g, b], "rgb2rgb");
+    var ansi2ansi = /* @__PURE__ */ __name((n2) => n2, "ansi2ansi");
+    var rgb2rgb = /* @__PURE__ */ __name((r2, g2, b2) => [r2, g2, b2], "rgb2rgb");
     var setLazyProperty = /* @__PURE__ */ __name((object, property, get) => {
       Object.defineProperty(object, property, {
         get: () => {
@@ -1613,23 +1613,23 @@ var require_has_flag = __commonJS({
 var require_supports_color = __commonJS({
   "../../node_modules/.pnpm/supports-color@7.2.0/node_modules/supports-color/index.js"(exports, module2) {
     "use strict";
-    var os3 = require("os");
+    var os2 = require("os");
     var tty = require("tty");
     var hasFlag = require_has_flag();
-    var { env: env2 } = process;
+    var { env } = process;
     var forceColor;
     if (hasFlag("no-color") || hasFlag("no-colors") || hasFlag("color=false") || hasFlag("color=never")) {
       forceColor = 0;
     } else if (hasFlag("color") || hasFlag("colors") || hasFlag("color=true") || hasFlag("color=always")) {
       forceColor = 1;
     }
-    if ("FORCE_COLOR" in env2) {
-      if (env2.FORCE_COLOR === "true") {
+    if ("FORCE_COLOR" in env) {
+      if (env.FORCE_COLOR === "true") {
         forceColor = 1;
-      } else if (env2.FORCE_COLOR === "false") {
+      } else if (env.FORCE_COLOR === "false") {
         forceColor = 0;
       } else {
-        forceColor = env2.FORCE_COLOR.length === 0 ? 1 : Math.min(parseInt(env2.FORCE_COLOR, 10), 3);
+        forceColor = env.FORCE_COLOR.length === 0 ? 1 : Math.min(parseInt(env.FORCE_COLOR, 10), 3);
       }
     }
     function translateLevel(level) {
@@ -1658,44 +1658,44 @@ var require_supports_color = __commonJS({
         return 0;
       }
       const min2 = forceColor || 0;
-      if (env2.TERM === "dumb") {
+      if (env.TERM === "dumb") {
         return min2;
       }
       if (process.platform === "win32") {
-        const osRelease = os3.release().split(".");
+        const osRelease = os2.release().split(".");
         if (Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
           return Number(osRelease[2]) >= 14931 ? 3 : 2;
         }
         return 1;
       }
-      if ("CI" in env2) {
-        if (["TRAVIS", "CIRCLECI", "APPVEYOR", "GITLAB_CI", "GITHUB_ACTIONS", "BUILDKITE"].some((sign2) => sign2 in env2) || env2.CI_NAME === "codeship") {
+      if ("CI" in env) {
+        if (["TRAVIS", "CIRCLECI", "APPVEYOR", "GITLAB_CI", "GITHUB_ACTIONS", "BUILDKITE"].some((sign2) => sign2 in env) || env.CI_NAME === "codeship") {
           return 1;
         }
         return min2;
       }
-      if ("TEAMCITY_VERSION" in env2) {
-        return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env2.TEAMCITY_VERSION) ? 1 : 0;
+      if ("TEAMCITY_VERSION" in env) {
+        return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env.TEAMCITY_VERSION) ? 1 : 0;
       }
-      if (env2.COLORTERM === "truecolor") {
+      if (env.COLORTERM === "truecolor") {
         return 3;
       }
-      if ("TERM_PROGRAM" in env2) {
-        const version = parseInt((env2.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
-        switch (env2.TERM_PROGRAM) {
+      if ("TERM_PROGRAM" in env) {
+        const version = parseInt((env.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
+        switch (env.TERM_PROGRAM) {
           case "iTerm.app":
             return version >= 3 ? 3 : 2;
           case "Apple_Terminal":
             return 2;
         }
       }
-      if (/-256(color)?$/i.test(env2.TERM)) {
+      if (/-256(color)?$/i.test(env.TERM)) {
         return 2;
       }
-      if (/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(env2.TERM)) {
+      if (/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(env.TERM)) {
         return 1;
       }
-      if ("COLORTERM" in env2) {
+      if ("COLORTERM" in env) {
         return 1;
       }
       return min2;
@@ -1794,7 +1794,7 @@ var require_templates = __commonJS({
         if (!Number.isNaN(number)) {
           results.push(number);
         } else if (matches = chunk.match(STRING_REGEX)) {
-          results.push(matches[2].replace(ESCAPE_REGEX, (m, escape, character) => escape ? unescape(escape) : character));
+          results.push(matches[2].replace(ESCAPE_REGEX, (m2, escape, character) => escape ? unescape(escape) : character));
         } else {
           throw new Error(`Invalid Chalk template style argument: ${chunk} (in style '${name}')`);
         }
@@ -1818,14 +1818,14 @@ var require_templates = __commonJS({
       return results;
     }
     __name(parseStyle, "parseStyle");
-    function buildStyle(chalk12, styles) {
+    function buildStyle(chalk13, styles) {
       const enabled = {};
       for (const layer of styles) {
         for (const style of layer.styles) {
           enabled[style[0]] = layer.inverse ? null : style.slice(1);
         }
       }
-      let current = chalk12;
+      let current = chalk13;
       for (const [styleName, styles2] of Object.entries(enabled)) {
         if (!Array.isArray(styles2)) {
           continue;
@@ -1838,23 +1838,23 @@ var require_templates = __commonJS({
       return current;
     }
     __name(buildStyle, "buildStyle");
-    module2.exports = (chalk12, temporary) => {
+    module2.exports = (chalk13, temporary) => {
       const styles = [];
       const chunks = [];
       let chunk = [];
-      temporary.replace(TEMPLATE_REGEX, (m, escapeCharacter, inverse, style, close, character) => {
+      temporary.replace(TEMPLATE_REGEX, (m2, escapeCharacter, inverse, style, close, character) => {
         if (escapeCharacter) {
           chunk.push(unescape(escapeCharacter));
         } else if (style) {
           const string = chunk.join("");
           chunk = [];
-          chunks.push(styles.length === 0 ? string : buildStyle(chalk12, styles)(string));
+          chunks.push(styles.length === 0 ? string : buildStyle(chalk13, styles)(string));
           styles.push({ inverse, styles: parseStyle(style) });
         } else if (close) {
           if (styles.length === 0) {
             throw new Error("Found extraneous } in Chalk template literal");
           }
-          chunks.push(buildStyle(chalk12, styles)(chunk.join("")));
+          chunks.push(buildStyle(chalk13, styles)(chunk.join("")));
           chunk = [];
           styles.pop();
         } else {
@@ -1881,7 +1881,7 @@ var require_source = __commonJS({
       stringReplaceAll,
       stringEncaseCRLFWithFirstIndex
     } = require_util();
-    var { isArray: isArray2 } = Array;
+    var { isArray } = Array;
     var levelMapping = [
       "ansi",
       "ansi",
@@ -1903,16 +1903,16 @@ var require_source = __commonJS({
     };
     __name(ChalkClass, "ChalkClass");
     var chalkFactory = /* @__PURE__ */ __name((options) => {
-      const chalk13 = {};
-      applyOptions(chalk13, options);
-      chalk13.template = (...arguments_) => chalkTag(chalk13.template, ...arguments_);
-      Object.setPrototypeOf(chalk13, Chalk.prototype);
-      Object.setPrototypeOf(chalk13.template, chalk13);
-      chalk13.template.constructor = () => {
+      const chalk14 = {};
+      applyOptions(chalk14, options);
+      chalk14.template = (...arguments_) => chalkTag(chalk14.template, ...arguments_);
+      Object.setPrototypeOf(chalk14, Chalk.prototype);
+      Object.setPrototypeOf(chalk14.template, chalk14);
+      chalk14.template.constructor = () => {
         throw new Error("`chalk.constructor()` is deprecated. Use `new chalk.Instance()` instead.");
       };
-      chalk13.template.Instance = ChalkClass;
-      return chalk13.template;
+      chalk14.template.Instance = ChalkClass;
+      return chalk14.template;
     }, "chalkFactory");
     function Chalk(options) {
       return chalkFactory(options);
@@ -1991,7 +1991,7 @@ var require_source = __commonJS({
     }, "createStyler");
     var createBuilder = /* @__PURE__ */ __name((self2, _styler, _isEmpty) => {
       const builder = /* @__PURE__ */ __name((...arguments_) => {
-        if (isArray2(arguments_[0]) && isArray2(arguments_[0].raw)) {
+        if (isArray(arguments_[0]) && isArray(arguments_[0].raw)) {
           return applyStyle(builder, chalkTag(builder, ...arguments_));
         }
         return applyStyle(builder, arguments_.length === 1 ? "" + arguments_[0] : arguments_.join(" "));
@@ -2024,9 +2024,9 @@ var require_source = __commonJS({
       return openAll + string + closeAll;
     }, "applyStyle");
     var template;
-    var chalkTag = /* @__PURE__ */ __name((chalk13, ...strings) => {
+    var chalkTag = /* @__PURE__ */ __name((chalk14, ...strings) => {
       const [firstString] = strings;
-      if (!isArray2(firstString) || !isArray2(firstString.raw)) {
+      if (!isArray(firstString) || !isArray(firstString.raw)) {
         return strings.join(" ");
       }
       const arguments_ = strings.slice(1);
@@ -2040,135 +2040,14 @@ var require_source = __commonJS({
       if (template === void 0) {
         template = require_templates();
       }
-      return template(chalk13, parts.join(""));
+      return template(chalk14, parts.join(""));
     }, "chalkTag");
     Object.defineProperties(Chalk.prototype, styles);
-    var chalk12 = Chalk();
-    chalk12.supportsColor = stdoutColor;
-    chalk12.stderr = Chalk({ level: stderrColor ? stderrColor.level : 0 });
-    chalk12.stderr.supportsColor = stderrColor;
-    module2.exports = chalk12;
-  }
-});
-
-// ../../node_modules/.pnpm/indent-string@4.0.0/node_modules/indent-string/index.js
-var require_indent_string = __commonJS({
-  "../../node_modules/.pnpm/indent-string@4.0.0/node_modules/indent-string/index.js"(exports, module2) {
-    "use strict";
-    module2.exports = (string, count2 = 1, options) => {
-      options = {
-        indent: " ",
-        includeEmptyLines: false,
-        ...options
-      };
-      if (typeof string !== "string") {
-        throw new TypeError(
-          `Expected \`input\` to be a \`string\`, got \`${typeof string}\``
-        );
-      }
-      if (typeof count2 !== "number") {
-        throw new TypeError(
-          `Expected \`count\` to be a \`number\`, got \`${typeof count2}\``
-        );
-      }
-      if (typeof options.indent !== "string") {
-        throw new TypeError(
-          `Expected \`options.indent\` to be a \`string\`, got \`${typeof options.indent}\``
-        );
-      }
-      if (count2 === 0) {
-        return string;
-      }
-      const regex = options.includeEmptyLines ? /^/gm : /^(?!\s*$)/gm;
-      return string.replace(regex, options.indent.repeat(count2));
-    };
-  }
-});
-
-// ../../node_modules/.pnpm/js-levenshtein@1.1.6/node_modules/js-levenshtein/index.js
-var require_js_levenshtein = __commonJS({
-  "../../node_modules/.pnpm/js-levenshtein@1.1.6/node_modules/js-levenshtein/index.js"(exports, module2) {
-    "use strict";
-    module2.exports = function() {
-      function _min(d0, d1, d2, bx, ay) {
-        return d0 < d1 || d2 < d1 ? d0 > d2 ? d2 + 1 : d0 + 1 : bx === ay ? d1 : d1 + 1;
-      }
-      __name(_min, "_min");
-      return function(a, b) {
-        if (a === b) {
-          return 0;
-        }
-        if (a.length > b.length) {
-          var tmp = a;
-          a = b;
-          b = tmp;
-        }
-        var la = a.length;
-        var lb = b.length;
-        while (la > 0 && a.charCodeAt(la - 1) === b.charCodeAt(lb - 1)) {
-          la--;
-          lb--;
-        }
-        var offset = 0;
-        while (offset < la && a.charCodeAt(offset) === b.charCodeAt(offset)) {
-          offset++;
-        }
-        la -= offset;
-        lb -= offset;
-        if (la === 0 || lb < 3) {
-          return lb;
-        }
-        var x = 0;
-        var y;
-        var d0;
-        var d1;
-        var d2;
-        var d3;
-        var dd;
-        var dy;
-        var ay;
-        var bx0;
-        var bx1;
-        var bx2;
-        var bx3;
-        var vector = [];
-        for (y = 0; y < la; y++) {
-          vector.push(y + 1);
-          vector.push(a.charCodeAt(offset + y));
-        }
-        var len = vector.length - 1;
-        for (; x < lb - 3; ) {
-          bx0 = b.charCodeAt(offset + (d0 = x));
-          bx1 = b.charCodeAt(offset + (d1 = x + 1));
-          bx2 = b.charCodeAt(offset + (d2 = x + 2));
-          bx3 = b.charCodeAt(offset + (d3 = x + 3));
-          dd = x += 4;
-          for (y = 0; y < len; y += 2) {
-            dy = vector[y];
-            ay = vector[y + 1];
-            d0 = _min(dy, d0, d1, bx0, ay);
-            d1 = _min(d0, d1, d2, bx1, ay);
-            d2 = _min(d1, d2, d3, bx2, ay);
-            dd = _min(d2, d3, dd, bx3, ay);
-            vector[y] = dd;
-            d3 = d2;
-            d2 = d1;
-            d1 = d0;
-            d0 = dy;
-          }
-        }
-        for (; x < lb; ) {
-          bx0 = b.charCodeAt(offset + (d0 = x));
-          dd = ++x;
-          for (y = 0; y < len; y += 2) {
-            dy = vector[y];
-            vector[y] = dd = _min(dy, d0, dd, bx0, vector[y + 1]);
-            d0 = dy;
-          }
-        }
-        return dd;
-      };
-    }();
+    var chalk13 = Chalk();
+    chalk13.supportsColor = stdoutColor;
+    chalk13.stderr = Chalk({ level: stderrColor ? stderrColor.level : 0 });
+    chalk13.stderr.supportsColor = stderrColor;
+    module2.exports = chalk13;
   }
 });
 
@@ -2176,11 +2055,11 @@ var require_js_levenshtein = __commonJS({
 var require_ms = __commonJS({
   "../../node_modules/.pnpm/ms@2.1.2/node_modules/ms/index.js"(exports, module2) {
     var s = 1e3;
-    var m = s * 60;
-    var h = m * 60;
-    var d = h * 24;
-    var w = d * 7;
-    var y = d * 365.25;
+    var m2 = s * 60;
+    var h = m2 * 60;
+    var d2 = h * 24;
+    var w2 = d2 * 7;
+    var y = d2 * 365.25;
     module2.exports = function(val, options) {
       options = options || {};
       var type = typeof val;
@@ -2204,7 +2083,7 @@ var require_ms = __commonJS({
       if (!match) {
         return;
       }
-      var n = parseFloat(match[1]);
+      var n2 = parseFloat(match[1]);
       var type = (match[2] || "ms").toLowerCase();
       switch (type) {
         case "years":
@@ -2212,39 +2091,39 @@ var require_ms = __commonJS({
         case "yrs":
         case "yr":
         case "y":
-          return n * y;
+          return n2 * y;
         case "weeks":
         case "week":
         case "w":
-          return n * w;
+          return n2 * w2;
         case "days":
         case "day":
         case "d":
-          return n * d;
+          return n2 * d2;
         case "hours":
         case "hour":
         case "hrs":
         case "hr":
         case "h":
-          return n * h;
+          return n2 * h;
         case "minutes":
         case "minute":
         case "mins":
         case "min":
         case "m":
-          return n * m;
+          return n2 * m2;
         case "seconds":
         case "second":
         case "secs":
         case "sec":
         case "s":
-          return n * s;
+          return n2 * s;
         case "milliseconds":
         case "millisecond":
         case "msecs":
         case "msec":
         case "ms":
-          return n;
+          return n2;
         default:
           return void 0;
       }
@@ -2252,14 +2131,14 @@ var require_ms = __commonJS({
     __name(parse2, "parse");
     function fmtShort(ms) {
       var msAbs = Math.abs(ms);
-      if (msAbs >= d) {
-        return Math.round(ms / d) + "d";
+      if (msAbs >= d2) {
+        return Math.round(ms / d2) + "d";
       }
       if (msAbs >= h) {
         return Math.round(ms / h) + "h";
       }
-      if (msAbs >= m) {
-        return Math.round(ms / m) + "m";
+      if (msAbs >= m2) {
+        return Math.round(ms / m2) + "m";
       }
       if (msAbs >= s) {
         return Math.round(ms / s) + "s";
@@ -2269,14 +2148,14 @@ var require_ms = __commonJS({
     __name(fmtShort, "fmtShort");
     function fmtLong(ms) {
       var msAbs = Math.abs(ms);
-      if (msAbs >= d) {
-        return plural(ms, msAbs, d, "day");
+      if (msAbs >= d2) {
+        return plural(ms, msAbs, d2, "day");
       }
       if (msAbs >= h) {
         return plural(ms, msAbs, h, "hour");
       }
-      if (msAbs >= m) {
-        return plural(ms, msAbs, m, "minute");
+      if (msAbs >= m2) {
+        return plural(ms, msAbs, m2, "minute");
       }
       if (msAbs >= s) {
         return plural(ms, msAbs, s, "second");
@@ -2284,9 +2163,9 @@ var require_ms = __commonJS({
       return ms + " ms";
     }
     __name(fmtLong, "fmtLong");
-    function plural(ms, msAbs, n, name) {
-      var isPlural = msAbs >= n * 1.5;
-      return Math.round(ms / n) + " " + name + (isPlural ? "s" : "");
+    function plural(ms, msAbs, n2, name) {
+      var isPlural = msAbs >= n2 * 1.5;
+      return Math.round(ms / n2) + " " + name + (isPlural ? "s" : "");
     }
     __name(plural, "plural");
   }
@@ -2295,7 +2174,7 @@ var require_ms = __commonJS({
 // ../../node_modules/.pnpm/debug@4.3.4/node_modules/debug/src/common.js
 var require_common = __commonJS({
   "../../node_modules/.pnpm/debug@4.3.4/node_modules/debug/src/common.js"(exports, module2) {
-    function setup(env2) {
+    function setup(env) {
       createDebug.debug = createDebug;
       createDebug.default = createDebug;
       createDebug.coerce = coerce;
@@ -2304,8 +2183,8 @@ var require_common = __commonJS({
       createDebug.enabled = enabled;
       createDebug.humanize = require_ms();
       createDebug.destroy = destroy;
-      Object.keys(env2).forEach((key) => {
-        createDebug[key] = env2[key];
+      Object.keys(env).forEach((key) => {
+        createDebug[key] = env[key];
       });
       createDebug.names = [];
       createDebug.skips = [];
@@ -2325,11 +2204,11 @@ var require_common = __commonJS({
         let enableOverride = null;
         let namespacesCache;
         let enabledCache;
-        function debug13(...args) {
-          if (!debug13.enabled) {
+        function debug14(...args) {
+          if (!debug14.enabled) {
             return;
           }
-          const self2 = debug13;
+          const self2 = debug14;
           const curr = Number(new Date());
           const ms = curr - (prevTime || curr);
           self2.diff = ms;
@@ -2359,13 +2238,13 @@ var require_common = __commonJS({
           const logFn = self2.log || createDebug.log;
           logFn.apply(self2, args);
         }
-        __name(debug13, "debug");
-        debug13.namespace = namespace;
-        debug13.useColors = createDebug.useColors();
-        debug13.color = createDebug.selectColor(namespace);
-        debug13.extend = extend;
-        debug13.destroy = createDebug.destroy;
-        Object.defineProperty(debug13, "enabled", {
+        __name(debug14, "debug");
+        debug14.namespace = namespace;
+        debug14.useColors = createDebug.useColors();
+        debug14.color = createDebug.selectColor(namespace);
+        debug14.extend = extend;
+        debug14.destroy = createDebug.destroy;
+        Object.defineProperty(debug14, "enabled", {
           enumerable: true,
           configurable: false,
           get: () => {
@@ -2383,9 +2262,9 @@ var require_common = __commonJS({
           }
         });
         if (typeof createDebug.init === "function") {
-          createDebug.init(debug13);
+          createDebug.init(debug14);
         }
-        return debug13;
+        return debug14;
       }
       __name(createDebug, "createDebug");
       function extend(namespace, delimiter) {
@@ -2606,15 +2485,15 @@ var require_browser = __commonJS({
     }
     __name(save, "save");
     function load() {
-      let r;
+      let r2;
       try {
-        r = exports.storage.getItem("debug");
+        r2 = exports.storage.getItem("debug");
       } catch (error2) {
       }
-      if (!r && typeof process !== "undefined" && "env" in process) {
-        r = process.env.DEBUG;
+      if (!r2 && typeof process !== "undefined" && "env" in process) {
+        r2 = process.env.DEBUG;
       }
-      return r;
+      return r2;
     }
     __name(load, "load");
     function localstorage() {
@@ -2642,7 +2521,7 @@ var require_node = __commonJS({
     var tty = require("tty");
     var util2 = require("util");
     exports.init = init;
-    exports.log = log4;
+    exports.log = log3;
     exports.formatArgs = formatArgs;
     exports.save = save;
     exports.load = load;
@@ -2780,10 +2659,10 @@ var require_node = __commonJS({
       return new Date().toISOString() + " ";
     }
     __name(getDate, "getDate");
-    function log4(...args) {
+    function log3(...args) {
       return process.stderr.write(util2.format(...args) + "\n");
     }
-    __name(log4, "log");
+    __name(log3, "log");
     function save(namespaces) {
       if (namespaces) {
         process.env.DEBUG = namespaces;
@@ -2796,11 +2675,11 @@ var require_node = __commonJS({
       return process.env.DEBUG;
     }
     __name(load, "load");
-    function init(debug13) {
-      debug13.inspectOpts = {};
+    function init(debug14) {
+      debug14.inspectOpts = {};
       const keys2 = Object.keys(exports.inspectOpts);
       for (let i = 0; i < keys2.length; i++) {
-        debug13.inspectOpts[keys2[i]] = exports.inspectOpts[keys2[i]];
+        debug14.inspectOpts[keys2[i]] = exports.inspectOpts[keys2[i]];
       }
     }
     __name(init, "init");
@@ -2844,8 +2723,8 @@ var require_windows = __commonJS({
         return true;
       }
       for (var i = 0; i < pathext.length; i++) {
-        var p = pathext[i].toLowerCase();
-        if (p && path7.substr(-p.length).toLowerCase() === p) {
+        var p2 = pathext[i].toLowerCase();
+        if (p2 && path7.substr(-p2.length).toLowerCase() === p2) {
           return true;
         }
       }
@@ -2899,10 +2778,10 @@ var require_mode = __commonJS({
       var myUid = options.uid !== void 0 ? options.uid : process.getuid && process.getuid();
       var myGid = options.gid !== void 0 ? options.gid : process.getgid && process.getgid();
       var u = parseInt("100", 8);
-      var g = parseInt("010", 8);
-      var o = parseInt("001", 8);
-      var ug = u | g;
-      var ret = mod2 & o || mod2 & g && gid === myGid || mod2 & u && uid === myUid || mod2 & ug && myUid === 0;
+      var g2 = parseInt("010", 8);
+      var o2 = parseInt("001", 8);
+      var ug = u | g2;
+      var ret = mod2 & o2 || mod2 & g2 && gid === myGid || mod2 & u && uid === myUid || mod2 & ug && myUid === 0;
       return ret;
     }
     __name(checkMode, "checkMode");
@@ -3007,21 +2886,21 @@ var require_which = __commonJS({
         const ppRaw = pathEnv[i];
         const pathPart = /^".*"$/.test(ppRaw) ? ppRaw.slice(1, -1) : ppRaw;
         const pCmd = path7.join(pathPart, cmd);
-        const p = !pathPart && /^\.[\\\/]/.test(cmd) ? cmd.slice(0, 2) + pCmd : pCmd;
-        resolve(subStep(p, i, 0));
+        const p2 = !pathPart && /^\.[\\\/]/.test(cmd) ? cmd.slice(0, 2) + pCmd : pCmd;
+        resolve(subStep(p2, i, 0));
       }), "step");
-      const subStep = /* @__PURE__ */ __name((p, i, ii) => new Promise((resolve, reject) => {
+      const subStep = /* @__PURE__ */ __name((p2, i, ii) => new Promise((resolve, reject) => {
         if (ii === pathExt.length)
           return resolve(step(i + 1));
         const ext = pathExt[ii];
-        isexe(p + ext, { pathExt: pathExtExe }, (er, is) => {
+        isexe(p2 + ext, { pathExt: pathExtExe }, (er, is) => {
           if (!er && is) {
             if (opt.all)
-              found.push(p + ext);
+              found.push(p2 + ext);
             else
-              return resolve(p + ext);
+              return resolve(p2 + ext);
           }
-          return resolve(subStep(p, i, ii + 1));
+          return resolve(subStep(p2, i, ii + 1));
         });
       }), "subStep");
       return cb ? step(0).then((res) => cb(null, res), cb) : step(0);
@@ -3034,9 +2913,9 @@ var require_which = __commonJS({
         const ppRaw = pathEnv[i];
         const pathPart = /^".*"$/.test(ppRaw) ? ppRaw.slice(1, -1) : ppRaw;
         const pCmd = path7.join(pathPart, cmd);
-        const p = !pathPart && /^\.[\\\/]/.test(cmd) ? cmd.slice(0, 2) + pCmd : pCmd;
+        const p2 = !pathPart && /^\.[\\\/]/.test(cmd) ? cmd.slice(0, 2) + pCmd : pCmd;
         for (let j = 0; j < pathExt.length; j++) {
-          const cur = p + pathExt[j];
+          const cur = p2 + pathExt[j];
           try {
             const is = isexe.sync(cur, { pathExt: pathExtExe });
             if (is) {
@@ -3066,8 +2945,8 @@ var require_path_key = __commonJS({
     "use strict";
     var pathKey = /* @__PURE__ */ __name((options = {}) => {
       const environment = options.env || process.env;
-      const platform3 = options.platform || process.platform;
-      if (platform3 !== "win32") {
+      const platform2 = options.platform || process.platform;
+      if (platform2 !== "win32") {
         return "PATH";
       }
       return Object.keys(environment).reverse().find((key) => key.toUpperCase() === "PATH") || "Path";
@@ -3085,7 +2964,7 @@ var require_resolveCommand = __commonJS({
     var which = require_which();
     var getPathKey = require_path_key();
     function resolveCommandAttempt(parsed, withoutPathExt) {
-      const env2 = parsed.options.env || process.env;
+      const env = parsed.options.env || process.env;
       const cwd = process.cwd();
       const hasCustomCwd = parsed.options.cwd != null;
       const shouldSwitchCwd = hasCustomCwd && process.chdir !== void 0 && !process.chdir.disabled;
@@ -3098,10 +2977,10 @@ var require_resolveCommand = __commonJS({
       let resolved;
       try {
         resolved = which.sync(parsed.command, {
-          path: env2[getPathKey({ env: env2 })],
+          path: env[getPathKey({ env })],
           pathExt: withoutPathExt ? path7.delimiter : void 0
         });
-      } catch (e) {
+      } catch (e2) {
       } finally {
         if (shouldSwitchCwd) {
           process.chdir(cwd);
@@ -3190,7 +3069,7 @@ var require_readShebang = __commonJS({
         fd = fs11.openSync(command, "r");
         fs11.readSync(fd, buffer, 0, size, 0);
         fs11.closeSync(fd);
-      } catch (e) {
+      } catch (e2) {
       }
       return shebangCommand(buffer.toString());
     }
@@ -3279,19 +3158,19 @@ var require_enoent = __commonJS({
       });
     }
     __name(notFoundError, "notFoundError");
-    function hookChildProcess(cp, parsed) {
+    function hookChildProcess(cp2, parsed) {
       if (!isWin) {
         return;
       }
-      const originalEmit = cp.emit;
-      cp.emit = function(name, arg1) {
+      const originalEmit = cp2.emit;
+      cp2.emit = function(name, arg1) {
         if (name === "exit") {
           const err = verifyENOENT(arg1, parsed, "spawn");
           if (err) {
-            return originalEmit.call(cp, "error", err);
+            return originalEmit.call(cp2, "error", err);
           }
         }
-        return originalEmit.apply(cp, arguments);
+        return originalEmit.apply(cp2, arguments);
       };
     }
     __name(hookChildProcess, "hookChildProcess");
@@ -3322,19 +3201,19 @@ var require_enoent = __commonJS({
 var require_cross_spawn = __commonJS({
   "../../node_modules/.pnpm/cross-spawn@7.0.3/node_modules/cross-spawn/index.js"(exports, module2) {
     "use strict";
-    var cp = require("child_process");
+    var cp2 = require("child_process");
     var parse2 = require_parse();
     var enoent = require_enoent();
     function spawn2(command, args, options) {
       const parsed = parse2(command, args, options);
-      const spawned = cp.spawn(parsed.command, parsed.args, parsed.options);
+      const spawned = cp2.spawn(parsed.command, parsed.args, parsed.options);
       enoent.hookChildProcess(spawned, parsed);
       return spawned;
     }
     __name(spawn2, "spawn");
     function spawnSync(command, args, options) {
       const parsed = parse2(command, args, options);
-      const result = cp.spawnSync(parsed.command, parsed.args, parsed.options);
+      const result = cp2.spawnSync(parsed.command, parsed.args, parsed.options);
       result.error = result.error || enoent.verifyENOENTSync(result.status, parsed);
       return result;
     }
@@ -3344,49 +3223,6 @@ var require_cross_spawn = __commonJS({
     module2.exports.sync = spawnSync;
     module2.exports._parse = parse2;
     module2.exports._enoent = enoent;
-  }
-});
-
-// ../../node_modules/.pnpm/@prisma+engines-version@4.6.1-3.694eea289a8462c80264df36757e4fdc129b1b32/node_modules/@prisma/engines-version/package.json
-var require_package = __commonJS({
-  "../../node_modules/.pnpm/@prisma+engines-version@4.6.1-3.694eea289a8462c80264df36757e4fdc129b1b32/node_modules/@prisma/engines-version/package.json"(exports, module2) {
-    module2.exports = {
-      name: "@prisma/engines-version",
-      version: "4.6.1-3.694eea289a8462c80264df36757e4fdc129b1b32",
-      main: "index.js",
-      types: "index.d.ts",
-      license: "Apache-2.0",
-      author: "Tim Suchanek <suchanek@prisma.io>",
-      prisma: {
-        enginesVersion: "694eea289a8462c80264df36757e4fdc129b1b32"
-      },
-      repository: {
-        type: "git",
-        url: "https://github.com/prisma/engines-wrapper.git",
-        directory: "packages/engines-version"
-      },
-      devDependencies: {
-        "@types/node": "16.11.64",
-        typescript: "4.8.4"
-      },
-      files: [
-        "index.js",
-        "index.d.ts"
-      ],
-      scripts: {
-        build: "tsc -d"
-      }
-    };
-  }
-});
-
-// ../../node_modules/.pnpm/@prisma+engines-version@4.6.1-3.694eea289a8462c80264df36757e4fdc129b1b32/node_modules/@prisma/engines-version/index.js
-var require_engines_version = __commonJS({
-  "../../node_modules/.pnpm/@prisma+engines-version@4.6.1-3.694eea289a8462c80264df36757e4fdc129b1b32/node_modules/@prisma/engines-version/index.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.enginesVersion = void 0;
-    exports.enginesVersion = require_package().prisma.enginesVersion;
   }
 });
 
@@ -3440,11 +3276,11 @@ var require_npm_run_path = __commonJS({
         env: process.env,
         ...options
       };
-      const env2 = { ...options.env };
-      const path8 = pathKey({ env: env2 });
-      options.path = env2[path8];
-      env2[path8] = module2.exports(options);
-      return env2;
+      const env = { ...options.env };
+      const path8 = pathKey({ env });
+      options.path = env[path8];
+      env[path8] = module2.exports(options);
+      return env;
     };
   }
 });
@@ -4215,7 +4051,7 @@ var require_signal_exit = __commonJS({
 var require_kill = __commonJS({
   "../../node_modules/.pnpm/execa@5.1.1/node_modules/execa/lib/kill.js"(exports, module2) {
     "use strict";
-    var os3 = require("os");
+    var os2 = require("os");
     var onExit = require_signal_exit();
     var DEFAULT_FORCE_KILL_TIMEOUT = 1e3 * 5;
     var spawnedKill = /* @__PURE__ */ __name((kill, signal = "SIGTERM", options = {}) => {
@@ -4228,18 +4064,18 @@ var require_kill = __commonJS({
         return;
       }
       const timeout = getForceKillAfterTimeout(options);
-      const t = setTimeout(() => {
+      const t2 = setTimeout(() => {
         kill("SIGKILL");
       }, timeout);
-      if (t.unref) {
-        t.unref();
+      if (t2.unref) {
+        t2.unref();
       }
     }, "setKillTimeout");
     var shouldForceKill = /* @__PURE__ */ __name((signal, { forceKillAfterTimeout }, killResult) => {
       return isSigterm(signal) && forceKillAfterTimeout !== false && killResult;
     }, "shouldForceKill");
     var isSigterm = /* @__PURE__ */ __name((signal) => {
-      return signal === os3.constants.signals.SIGTERM || typeof signal === "string" && signal.toUpperCase() === "SIGTERM";
+      return signal === os2.constants.signals.SIGTERM || typeof signal === "string" && signal.toUpperCase() === "SIGTERM";
     }, "isSigterm");
     var getForceKillAfterTimeout = /* @__PURE__ */ __name(({ forceKillAfterTimeout = true }) => {
       if (forceKillAfterTimeout === true) {
@@ -4250,10 +4086,10 @@ var require_kill = __commonJS({
       }
       return forceKillAfterTimeout;
     }, "getForceKillAfterTimeout");
-    var spawnedCancel = /* @__PURE__ */ __name((spawned, context3) => {
+    var spawnedCancel = /* @__PURE__ */ __name((spawned, context2) => {
       const killResult = spawned.kill();
       if (killResult) {
-        context3.isCanceled = true;
+        context2.isCanceled = true;
       }
     }, "spawnedCancel");
     var timeoutKill = /* @__PURE__ */ __name((spawned, signal, reject) => {
@@ -4639,12 +4475,12 @@ var require_execa = __commonJS({
     var { mergePromise, getSpawnedPromise } = require_promise();
     var { joinCommand, parseCommand, getEscapedCommand } = require_command();
     var DEFAULT_MAX_BUFFER = 1e3 * 1e3 * 100;
-    var getEnv2 = /* @__PURE__ */ __name(({ env: envOption, extendEnv, preferLocal, localDir, execPath }) => {
-      const env2 = extendEnv ? { ...process.env, ...envOption } : envOption;
+    var getEnv = /* @__PURE__ */ __name(({ env: envOption, extendEnv, preferLocal, localDir, execPath }) => {
+      const env = extendEnv ? { ...process.env, ...envOption } : envOption;
       if (preferLocal) {
-        return npmRunPath.env({ env: env2, cwd: localDir, execPath });
+        return npmRunPath.env({ env, cwd: localDir, execPath });
       }
-      return env2;
+      return env;
     }, "getEnv");
     var handleArguments = /* @__PURE__ */ __name((file, args, options = {}) => {
       const parsed = crossSpawn._parse(file, args, options);
@@ -4666,7 +4502,7 @@ var require_execa = __commonJS({
         windowsHide: true,
         ...options
       };
-      options.env = getEnv2(options);
+      options.env = getEnv(options);
       options.stdio = normalizeStdio(options);
       if (process.platform === "win32" && path7.basename(file, ".exe") === "cmd") {
         args.unshift("/q");
@@ -4709,9 +4545,9 @@ var require_execa = __commonJS({
       const spawnedPromise = getSpawnedPromise(spawned);
       const timedPromise = setupTimeout(spawned, parsed.options, spawnedPromise);
       const processDone = setExitHandler(spawned, parsed.options, timedPromise);
-      const context3 = { isCanceled: false };
+      const context2 = { isCanceled: false };
       spawned.kill = spawnedKill.bind(null, spawned.kill.bind(spawned));
-      spawned.cancel = spawnedCancel.bind(null, spawned, context3);
+      spawned.cancel = spawnedCancel.bind(null, spawned, context2);
       const handlePromise = /* @__PURE__ */ __name(async () => {
         const [{ error: error2, exitCode, signal, timedOut }, stdoutResult, stderrResult, allResult] = await getSpawnedResult(spawned, parsed.options, processDone);
         const stdout = handleOutput(parsed.options, stdoutResult);
@@ -4729,7 +4565,7 @@ var require_execa = __commonJS({
             escapedCommand,
             parsed,
             timedOut,
-            isCanceled: context3.isCanceled,
+            isCanceled: context2.isCanceled,
             killed: spawned.killed
           });
           if (!parsed.options.reject) {
@@ -4847,6 +4683,377 @@ var require_execa = __commonJS({
         }
       );
     };
+  }
+});
+
+// ../../node_modules/.pnpm/dotenv@16.0.3/node_modules/dotenv/package.json
+var require_package = __commonJS({
+  "../../node_modules/.pnpm/dotenv@16.0.3/node_modules/dotenv/package.json"(exports, module2) {
+    module2.exports = {
+      name: "dotenv",
+      version: "16.0.3",
+      description: "Loads environment variables from .env file",
+      main: "lib/main.js",
+      types: "lib/main.d.ts",
+      exports: {
+        ".": {
+          require: "./lib/main.js",
+          types: "./lib/main.d.ts",
+          default: "./lib/main.js"
+        },
+        "./config": "./config.js",
+        "./config.js": "./config.js",
+        "./lib/env-options": "./lib/env-options.js",
+        "./lib/env-options.js": "./lib/env-options.js",
+        "./lib/cli-options": "./lib/cli-options.js",
+        "./lib/cli-options.js": "./lib/cli-options.js",
+        "./package.json": "./package.json"
+      },
+      scripts: {
+        "dts-check": "tsc --project tests/types/tsconfig.json",
+        lint: "standard",
+        "lint-readme": "standard-markdown",
+        pretest: "npm run lint && npm run dts-check",
+        test: "tap tests/*.js --100 -Rspec",
+        prerelease: "npm test",
+        release: "standard-version"
+      },
+      repository: {
+        type: "git",
+        url: "git://github.com/motdotla/dotenv.git"
+      },
+      keywords: [
+        "dotenv",
+        "env",
+        ".env",
+        "environment",
+        "variables",
+        "config",
+        "settings"
+      ],
+      readmeFilename: "README.md",
+      license: "BSD-2-Clause",
+      devDependencies: {
+        "@types/node": "^17.0.9",
+        decache: "^4.6.1",
+        dtslint: "^3.7.0",
+        sinon: "^12.0.1",
+        standard: "^16.0.4",
+        "standard-markdown": "^7.1.0",
+        "standard-version": "^9.3.2",
+        tap: "^15.1.6",
+        tar: "^6.1.11",
+        typescript: "^4.5.4"
+      },
+      engines: {
+        node: ">=12"
+      }
+    };
+  }
+});
+
+// ../../node_modules/.pnpm/dotenv@16.0.3/node_modules/dotenv/lib/main.js
+var require_main2 = __commonJS({
+  "../../node_modules/.pnpm/dotenv@16.0.3/node_modules/dotenv/lib/main.js"(exports, module2) {
+    var fs11 = require("fs");
+    var path7 = require("path");
+    var os2 = require("os");
+    var packageJson = require_package();
+    var version = packageJson.version;
+    var LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg;
+    function parse2(src) {
+      const obj = {};
+      let lines = src.toString();
+      lines = lines.replace(/\r\n?/mg, "\n");
+      let match;
+      while ((match = LINE.exec(lines)) != null) {
+        const key = match[1];
+        let value = match[2] || "";
+        value = value.trim();
+        const maybeQuote = value[0];
+        value = value.replace(/^(['"`])([\s\S]*)\1$/mg, "$2");
+        if (maybeQuote === '"') {
+          value = value.replace(/\\n/g, "\n");
+          value = value.replace(/\\r/g, "\r");
+        }
+        obj[key] = value;
+      }
+      return obj;
+    }
+    __name(parse2, "parse");
+    function _log(message) {
+      console.log(`[dotenv@${version}][DEBUG] ${message}`);
+    }
+    __name(_log, "_log");
+    function _resolveHome(envPath) {
+      return envPath[0] === "~" ? path7.join(os2.homedir(), envPath.slice(1)) : envPath;
+    }
+    __name(_resolveHome, "_resolveHome");
+    function config2(options) {
+      let dotenvPath = path7.resolve(process.cwd(), ".env");
+      let encoding = "utf8";
+      const debug14 = Boolean(options && options.debug);
+      const override = Boolean(options && options.override);
+      if (options) {
+        if (options.path != null) {
+          dotenvPath = _resolveHome(options.path);
+        }
+        if (options.encoding != null) {
+          encoding = options.encoding;
+        }
+      }
+      try {
+        const parsed = DotenvModule.parse(fs11.readFileSync(dotenvPath, { encoding }));
+        Object.keys(parsed).forEach(function(key) {
+          if (!Object.prototype.hasOwnProperty.call(process.env, key)) {
+            process.env[key] = parsed[key];
+          } else {
+            if (override === true) {
+              process.env[key] = parsed[key];
+            }
+            if (debug14) {
+              if (override === true) {
+                _log(`"${key}" is already defined in \`process.env\` and WAS overwritten`);
+              } else {
+                _log(`"${key}" is already defined in \`process.env\` and was NOT overwritten`);
+              }
+            }
+          }
+        });
+        return { parsed };
+      } catch (e2) {
+        if (debug14) {
+          _log(`Failed to load ${dotenvPath} ${e2.message}`);
+        }
+        return { error: e2 };
+      }
+    }
+    __name(config2, "config");
+    var DotenvModule = {
+      config: config2,
+      parse: parse2
+    };
+    module2.exports.config = DotenvModule.config;
+    module2.exports.parse = DotenvModule.parse;
+    module2.exports = DotenvModule;
+  }
+});
+
+// ../../node_modules/.pnpm/arg@5.0.2/node_modules/arg/index.js
+var require_arg = __commonJS({
+  "../../node_modules/.pnpm/arg@5.0.2/node_modules/arg/index.js"(exports, module2) {
+    var flagSymbol = Symbol("arg flag");
+    var ArgError = class extends Error {
+      constructor(msg, code) {
+        super(msg);
+        this.name = "ArgError";
+        this.code = code;
+        Object.setPrototypeOf(this, ArgError.prototype);
+      }
+    };
+    __name(ArgError, "ArgError");
+    function arg2(opts, {
+      argv = process.argv.slice(2),
+      permissive = false,
+      stopAtPositional = false
+    } = {}) {
+      if (!opts) {
+        throw new ArgError(
+          "argument specification object is required",
+          "ARG_CONFIG_NO_SPEC"
+        );
+      }
+      const result = { _: [] };
+      const aliases = {};
+      const handlers = {};
+      for (const key of Object.keys(opts)) {
+        if (!key) {
+          throw new ArgError(
+            "argument key cannot be an empty string",
+            "ARG_CONFIG_EMPTY_KEY"
+          );
+        }
+        if (key[0] !== "-") {
+          throw new ArgError(
+            `argument key must start with '-' but found: '${key}'`,
+            "ARG_CONFIG_NONOPT_KEY"
+          );
+        }
+        if (key.length === 1) {
+          throw new ArgError(
+            `argument key must have a name; singular '-' keys are not allowed: ${key}`,
+            "ARG_CONFIG_NONAME_KEY"
+          );
+        }
+        if (typeof opts[key] === "string") {
+          aliases[key] = opts[key];
+          continue;
+        }
+        let type = opts[key];
+        let isFlag = false;
+        if (Array.isArray(type) && type.length === 1 && typeof type[0] === "function") {
+          const [fn] = type;
+          type = /* @__PURE__ */ __name((value, name, prev = []) => {
+            prev.push(fn(value, name, prev[prev.length - 1]));
+            return prev;
+          }, "type");
+          isFlag = fn === Boolean || fn[flagSymbol] === true;
+        } else if (typeof type === "function") {
+          isFlag = type === Boolean || type[flagSymbol] === true;
+        } else {
+          throw new ArgError(
+            `type missing or not a function or valid array type: ${key}`,
+            "ARG_CONFIG_VAD_TYPE"
+          );
+        }
+        if (key[1] !== "-" && key.length > 2) {
+          throw new ArgError(
+            `short argument keys (with a single hyphen) must have only one character: ${key}`,
+            "ARG_CONFIG_SHORTOPT_TOOLONG"
+          );
+        }
+        handlers[key] = [type, isFlag];
+      }
+      for (let i = 0, len = argv.length; i < len; i++) {
+        const wholeArg = argv[i];
+        if (stopAtPositional && result._.length > 0) {
+          result._ = result._.concat(argv.slice(i));
+          break;
+        }
+        if (wholeArg === "--") {
+          result._ = result._.concat(argv.slice(i + 1));
+          break;
+        }
+        if (wholeArg.length > 1 && wholeArg[0] === "-") {
+          const separatedArguments = wholeArg[1] === "-" || wholeArg.length === 2 ? [wholeArg] : wholeArg.slice(1).split("").map((a) => `-${a}`);
+          for (let j = 0; j < separatedArguments.length; j++) {
+            const arg3 = separatedArguments[j];
+            const [originalArgName, argStr] = arg3[1] === "-" ? arg3.split(/=(.*)/, 2) : [arg3, void 0];
+            let argName = originalArgName;
+            while (argName in aliases) {
+              argName = aliases[argName];
+            }
+            if (!(argName in handlers)) {
+              if (permissive) {
+                result._.push(arg3);
+                continue;
+              } else {
+                throw new ArgError(
+                  `unknown or unexpected option: ${originalArgName}`,
+                  "ARG_UNKNOWN_OPTION"
+                );
+              }
+            }
+            const [type, isFlag] = handlers[argName];
+            if (!isFlag && j + 1 < separatedArguments.length) {
+              throw new ArgError(
+                `option requires argument (but was followed by another short argument): ${originalArgName}`,
+                "ARG_MISSING_REQUIRED_SHORTARG"
+              );
+            }
+            if (isFlag) {
+              result[argName] = type(true, argName, result[argName]);
+            } else if (argStr === void 0) {
+              if (argv.length < i + 2 || argv[i + 1].length > 1 && argv[i + 1][0] === "-" && !(argv[i + 1].match(/^-?\d*(\.(?=\d))?\d*$/) && (type === Number || typeof BigInt !== "undefined" && type === BigInt))) {
+                const extended = originalArgName === argName ? "" : ` (alias for ${argName})`;
+                throw new ArgError(
+                  `option requires argument: ${originalArgName}${extended}`,
+                  "ARG_MISSING_REQUIRED_LONGARG"
+                );
+              }
+              result[argName] = type(argv[i + 1], argName, result[argName]);
+              ++i;
+            } else {
+              result[argName] = type(argStr, argName, result[argName]);
+            }
+          }
+        } else {
+          result._.push(wholeArg);
+        }
+      }
+      return result;
+    }
+    __name(arg2, "arg");
+    arg2.flag = (fn) => {
+      fn[flagSymbol] = true;
+      return fn;
+    };
+    arg2.COUNT = arg2.flag((v, name, existingCount) => (existingCount || 0) + 1);
+    arg2.ArgError = ArgError;
+    module2.exports = arg2;
+  }
+});
+
+// ../../node_modules/.pnpm/min-indent@1.0.1/node_modules/min-indent/index.js
+var require_min_indent = __commonJS({
+  "../../node_modules/.pnpm/min-indent@1.0.1/node_modules/min-indent/index.js"(exports, module2) {
+    "use strict";
+    module2.exports = (string) => {
+      const match = string.match(/^[ \t]*(?=\S)/gm);
+      if (!match) {
+        return 0;
+      }
+      return match.reduce((r2, a) => Math.min(r2, a.length), Infinity);
+    };
+  }
+});
+
+// ../../node_modules/.pnpm/strip-indent@3.0.0/node_modules/strip-indent/index.js
+var require_strip_indent = __commonJS({
+  "../../node_modules/.pnpm/strip-indent@3.0.0/node_modules/strip-indent/index.js"(exports, module2) {
+    "use strict";
+    var minIndent = require_min_indent();
+    module2.exports = (string) => {
+      const indent4 = minIndent(string);
+      if (indent4 === 0) {
+        return string;
+      }
+      const regex = new RegExp(`^[ \\t]{${indent4}}`, "gm");
+      return string.replace(regex, "");
+    };
+  }
+});
+
+// ../../node_modules/.pnpm/@prisma+engines-version@4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5/node_modules/@prisma/engines-version/package.json
+var require_package2 = __commonJS({
+  "../../node_modules/.pnpm/@prisma+engines-version@4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5/node_modules/@prisma/engines-version/package.json"(exports, module2) {
+    module2.exports = {
+      name: "@prisma/engines-version",
+      version: "4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5",
+      main: "index.js",
+      types: "index.d.ts",
+      license: "Apache-2.0",
+      author: "Tim Suchanek <suchanek@prisma.io>",
+      prisma: {
+        enginesVersion: "ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5"
+      },
+      repository: {
+        type: "git",
+        url: "https://github.com/prisma/engines-wrapper.git",
+        directory: "packages/engines-version"
+      },
+      devDependencies: {
+        "@types/node": "16.11.64",
+        typescript: "4.8.4"
+      },
+      files: [
+        "index.js",
+        "index.d.ts"
+      ],
+      scripts: {
+        build: "tsc -d"
+      }
+    };
+  }
+});
+
+// ../../node_modules/.pnpm/@prisma+engines-version@4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5/node_modules/@prisma/engines-version/index.js
+var require_engines_version = __commonJS({
+  "../../node_modules/.pnpm/@prisma+engines-version@4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5/node_modules/@prisma/engines-version/index.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.enginesVersion = void 0;
+    exports.enginesVersion = require_package2().prisma.enginesVersion;
   }
 });
 
@@ -5022,8 +5229,8 @@ var require_retry = __commonJS({
       if (options && options.forever && !timeouts.length) {
         timeouts.push(this.createTimeout(i, opts));
       }
-      timeouts.sort(function(a, b) {
-        return a - b;
+      timeouts.sort(function(a, b2) {
+        return a - b2;
       });
       return timeouts;
     };
@@ -5217,6 +5424,40 @@ var require_new_github_issue_url = __commonJS({
       return url.toString();
     };
     module2.exports.default = module2.exports;
+  }
+});
+
+// ../../node_modules/.pnpm/indent-string@4.0.0/node_modules/indent-string/index.js
+var require_indent_string = __commonJS({
+  "../../node_modules/.pnpm/indent-string@4.0.0/node_modules/indent-string/index.js"(exports, module2) {
+    "use strict";
+    module2.exports = (string, count2 = 1, options) => {
+      options = {
+        indent: " ",
+        includeEmptyLines: false,
+        ...options
+      };
+      if (typeof string !== "string") {
+        throw new TypeError(
+          `Expected \`input\` to be a \`string\`, got \`${typeof string}\``
+        );
+      }
+      if (typeof count2 !== "number") {
+        throw new TypeError(
+          `Expected \`count\` to be a \`number\`, got \`${typeof count2}\``
+        );
+      }
+      if (typeof options.indent !== "string") {
+        throw new TypeError(
+          `Expected \`options.indent\` to be a \`string\`, got \`${typeof options.indent}\``
+        );
+      }
+      if (count2 === 0) {
+        return string;
+      }
+      const regex = options.includeEmptyLines ? /^/gm : /^(?!\s*$)/gm;
+      return string.replace(regex, options.indent.repeat(count2));
+    };
   }
 });
 
@@ -5652,8 +5893,8 @@ var require_util2 = __commonJS({
     __name(destroy, "destroy");
     var KEEPALIVE_TIMEOUT_EXPR = /timeout=(\d+)/;
     function parseKeepAliveTimeout(val) {
-      const m = val.toString().match(KEEPALIVE_TIMEOUT_EXPR);
-      return m ? parseInt(m[1], 10) * 1e3 : null;
+      const m2 = val.toString().match(KEEPALIVE_TIMEOUT_EXPR);
+      return m2 ? parseInt(m2[1], 10) * 1e3 : null;
     }
     __name(parseKeepAliveTimeout, "parseKeepAliveTimeout");
     function parseHeaders(headers, obj = {}) {
@@ -6184,7 +6425,7 @@ var require_utils = __commonJS({
         try {
           const decoder = new TextDecoder(exports);
           return decoder.decode(data);
-        } catch (e) {
+        } catch {
         }
       }
     };
@@ -8085,7 +8326,7 @@ var require_multipart = __commonJS({
           }
         });
       }
-      _read(n) {
+      _read(n2) {
         const cb = this._readcb;
         if (cb) {
           this._readcb = null;
@@ -9619,8 +9860,7 @@ var require_constants = __commonJS({
       "xslt",
       ""
     ];
-    var _a3;
-    var DOMException = (_a3 = globalThis.DOMException) != null ? _a3 : (() => {
+    var DOMException = globalThis.DOMException ?? (() => {
       try {
         atob("~");
       } catch (err) {
@@ -9657,7 +9897,7 @@ var require_util3 = __commonJS({
     var crypto2;
     try {
       crypto2 = require("crypto");
-    } catch (e) {
+    } catch {
     }
     var badPorts = [
       "1",
@@ -9772,8 +10012,7 @@ var require_util3 = __commonJS({
     }
     __name(requestBadPort, "requestBadPort");
     function isErrorLike(object) {
-      var _a3, _b2;
-      return object instanceof Error || (((_a3 = object == null ? void 0 : object.constructor) == null ? void 0 : _a3.name) === "Error" || ((_b2 = object == null ? void 0 : object.constructor) == null ? void 0 : _b2.name) === "DOMException");
+      return object instanceof Error || (object?.constructor?.name === "Error" || object?.constructor?.name === "DOMException");
     }
     __name(isErrorLike, "isErrorLike");
     function isValidReasonPhrase(statusText) {
@@ -9886,12 +10125,11 @@ var require_util3 = __commonJS({
     }
     __name(coarsenedSharedCurrentTime, "coarsenedSharedCurrentTime");
     function createOpaqueTimingInfo(timingInfo) {
-      var _a3, _b2;
       return {
-        startTime: (_a3 = timingInfo.startTime) != null ? _a3 : 0,
+        startTime: timingInfo.startTime ?? 0,
         redirectStartTime: 0,
         redirectEndTime: 0,
-        postRedirectStartTime: (_b2 = timingInfo.startTime) != null ? _b2 : 0,
+        postRedirectStartTime: timingInfo.startTime ?? 0,
         finalServiceWorkerStartTime: 0,
         finalNetworkResponseStartTime: 0,
         finalNetworkRequestStartTime: 0,
@@ -9911,7 +10149,6 @@ var require_util3 = __commonJS({
     }
     __name(clonePolicyContainer, "clonePolicyContainer");
     function determineRequestsReferrer(request2) {
-      var _a3, _b2, _c, _d, _e, _f, _g;
       const policy = request2.referrerPolicy;
       if (policy == null || policy === "" || policy === "no-referrer") {
         return "no-referrer";
@@ -9919,13 +10156,13 @@ var require_util3 = __commonJS({
       const environment = request2.client;
       let referrerSource = null;
       if (request2.referrer === "client") {
-        if (((_c = (_b2 = (_a3 = request2.client) == null ? void 0 : _a3.globalObject) == null ? void 0 : _b2.constructor) == null ? void 0 : _c.name) === "Window") {
-          const origin = (_f = (_d = environment.globalObject.self) == null ? void 0 : _d.origin) != null ? _f : (_e = environment.globalObject.location) == null ? void 0 : _e.origin;
+        if (request2.client?.globalObject?.constructor?.name === "Window") {
+          const origin = environment.globalObject.self?.origin ?? environment.globalObject.location?.origin;
           if (origin == null || origin === "null")
             return "no-referrer";
           referrerSource = new URL(environment.globalObject.location.href);
         } else {
-          if (((_g = environment == null ? void 0 : environment.globalObject) == null ? void 0 : _g.location) == null) {
+          if (environment?.globalObject?.location == null) {
             return "no-referrer";
           }
           referrerSource = new URL(environment.globalObject.location.href);
@@ -10009,7 +10246,7 @@ var require_util3 = __commonJS({
       if (parsedMetadata.length === 0) {
         return true;
       }
-      const metadata = parsedMetadata.sort((c, d) => d.algo.localeCompare(c.algo));
+      const metadata = parsedMetadata.sort((c, d2) => d2.algo.localeCompare(c.algo));
       for (const item of metadata) {
         const algorithm = item.algo;
         const expectedValue = item.hash;
@@ -10046,8 +10283,8 @@ var require_util3 = __commonJS({
     function tryUpgradeRequestToAPotentiallyTrustworthyURL(request2) {
     }
     __name(tryUpgradeRequestToAPotentiallyTrustworthyURL, "tryUpgradeRequestToAPotentiallyTrustworthyURL");
-    function sameOrigin(A, B) {
-      if (A.protocol === B.protocol && A.hostname === B.hostname && A.port === B.port) {
+    function sameOrigin(A2, B) {
+      if (A2.protocol === B.protocol && A2.hostname === B.hostname && A2.port === B.port) {
         return true;
       }
       return false;
@@ -10193,18 +10430,18 @@ var require_webidl = __commonJS({
     webidl.errors.exception = function(message) {
       throw new TypeError(`${message.header}: ${message.message}`);
     };
-    webidl.errors.conversionFailed = function(context3) {
-      const plural = context3.types.length === 1 ? "" : " one of";
-      const message = `${context3.argument} could not be converted to${plural}: ${context3.types.join(", ")}.`;
+    webidl.errors.conversionFailed = function(context2) {
+      const plural = context2.types.length === 1 ? "" : " one of";
+      const message = `${context2.argument} could not be converted to${plural}: ${context2.types.join(", ")}.`;
       return webidl.errors.exception({
-        header: context3.prefix,
+        header: context2.prefix,
         message
       });
     };
-    webidl.errors.invalidArgument = function(context3) {
+    webidl.errors.invalidArgument = function(context2) {
       return webidl.errors.exception({
-        header: context3.prefix,
-        message: `"${context3.value}" is an invalid ${context3.type}.`
+        header: context2.prefix,
+        message: `"${context2.value}" is an invalid ${context2.type}.`
       });
     };
     webidl.util.Type = function(V) {
@@ -10286,23 +10523,22 @@ var require_webidl = __commonJS({
       }
       return x;
     };
-    webidl.util.IntegerPart = function(n) {
-      const r = Math.floor(Math.abs(n));
-      if (n < 0) {
-        return -1 * r;
+    webidl.util.IntegerPart = function(n2) {
+      const r2 = Math.floor(Math.abs(n2));
+      if (n2 < 0) {
+        return -1 * r2;
       }
-      return r;
+      return r2;
     };
     webidl.sequenceConverter = function(converter) {
       return (V) => {
-        var _a3;
         if (webidl.util.Type(V) !== "Object") {
           webidl.errors.exception({
             header: "Sequence",
             message: `Value of type ${webidl.util.Type(V)} is not an Object.`
           });
         }
-        const method = (_a3 = V == null ? void 0 : V[Symbol.iterator]) == null ? void 0 : _a3.call(V);
+        const method = V?.[Symbol.iterator]?.();
         const seq = [];
         if (method === void 0 || typeof method.next !== "function") {
           webidl.errors.exception({
@@ -10375,7 +10611,7 @@ var require_webidl = __commonJS({
           let value = dictionary[key];
           const hasDefault = hasOwn(options, "defaultValue");
           if (hasDefault && value !== null) {
-            value = value != null ? value : defaultValue;
+            value = value ?? defaultValue;
           }
           if (required || hasDefault || value !== void 0) {
             value = converter(value);
@@ -10528,12 +10764,12 @@ var require_file = __commonJS({
         fileBits = webidl.converters["sequence<BlobPart>"](fileBits);
         fileName = webidl.converters.USVString(fileName);
         options = webidl.converters.FilePropertyBag(options);
-        const n = fileName;
-        const d = options.lastModified;
+        const n2 = fileName;
+        const d2 = options.lastModified;
         super(processBlobParts(fileBits, options), { type: options.type });
         this[kState] = {
-          name: n,
-          lastModified: d
+          name: n2,
+          lastModified: d2
         };
       }
       get name() {
@@ -10555,15 +10791,14 @@ var require_file = __commonJS({
     __name(File, "File");
     var FileLike = class {
       constructor(blobLike, fileName, options = {}) {
-        var _a3;
-        const n = fileName;
-        const t = options.type;
-        const d = (_a3 = options.lastModified) != null ? _a3 : Date.now();
+        const n2 = fileName;
+        const t2 = options.type;
+        const d2 = options.lastModified ?? Date.now();
         this[kState] = {
           blobLike,
-          name: n,
-          type: t,
-          lastModified: d
+          name: n2,
+          type: t2,
+          lastModified: d2
         };
       }
       stream(...args) {
@@ -11311,7 +11546,7 @@ var require_request = __commonJS({
       channels.headers = diagnosticsChannel.channel("undici:request:headers");
       channels.trailers = diagnosticsChannel.channel("undici:request:trailers");
       channels.error = diagnosticsChannel.channel("undici:request:error");
-    } catch (e) {
+    } catch {
       channels.create = { hasSubscribers: false };
       channels.bodySent = { hasSubscribers: false };
       channels.headers = { hasSubscribers: false };
@@ -11533,8 +11768,8 @@ var require_request = __commonJS({
 var require_dispatcher = __commonJS({
   "../../node_modules/.pnpm/undici@5.11.0/node_modules/undici/lib/dispatcher.js"(exports, module2) {
     "use strict";
-    var EventEmitter4 = require("events");
-    var Dispatcher = class extends EventEmitter4 {
+    var EventEmitter3 = require("events");
+    var Dispatcher = class extends EventEmitter3 {
       dispatch() {
         throw new Error("not implemented");
       }
@@ -11727,14 +11962,14 @@ var require_connect = __commonJS({
       const sessionCache = /* @__PURE__ */ new Map();
       timeout = timeout == null ? 1e4 : timeout;
       maxCachedSessions = maxCachedSessions == null ? 100 : maxCachedSessions;
-      return /* @__PURE__ */ __name(function connect({ hostname: hostname3, host, protocol, port, servername, httpSocket }, callback) {
+      return /* @__PURE__ */ __name(function connect({ hostname, host, protocol, port, servername, httpSocket }, callback) {
         let socket;
         if (protocol === "https:") {
           if (!tls) {
             tls = require("tls");
           }
           servername = servername || options.servername || util2.getServerName(host) || null;
-          const sessionKey = servername || hostname3;
+          const sessionKey = servername || hostname;
           const session = sessionCache.get(sessionKey) || null;
           assert(sessionKey);
           socket = tls.connect({
@@ -11744,7 +11979,7 @@ var require_connect = __commonJS({
             session,
             socket: httpSocket,
             port: port || 443,
-            host: hostname3
+            host: hostname
           });
           socket.on("session", function(session2) {
             if (maxCachedSessions === 0) {
@@ -11766,7 +12001,7 @@ var require_connect = __commonJS({
             highWaterMark: 64 * 1024,
             ...options,
             port: port || 80,
-            host: hostname3
+            host: hostname
           });
         }
         const cancelTimeout = setupTimeout(() => onConnectTimeout(socket), timeout);
@@ -12413,7 +12648,7 @@ var require_client = __commonJS({
       channels.beforeConnect = diagnosticsChannel.channel("undici:client:beforeConnect");
       channels.connectError = diagnosticsChannel.channel("undici:client:connectError");
       channels.connected = diagnosticsChannel.channel("undici:client:connected");
-    } catch (e) {
+    } catch {
       channels.sendHeaders = { hasSubscribers: false };
       channels.beforeConnect = { hasSubscribers: false };
       channels.connectError = { hasSubscribers: false };
@@ -12610,48 +12845,48 @@ var require_client = __commonJS({
       let mod2;
       try {
         mod2 = await WebAssembly.compile(Buffer.from(require_llhttp_simd_wasm(), "base64"));
-      } catch (e) {
+      } catch (e2) {
         mod2 = await WebAssembly.compile(Buffer.from(llhttpWasmData || require_llhttp_wasm(), "base64"));
       }
       return await WebAssembly.instantiate(mod2, {
         env: {
-          wasm_on_url: (p, at, len) => {
+          wasm_on_url: (p2, at, len) => {
             return 0;
           },
-          wasm_on_status: (p, at, len) => {
-            assert.strictEqual(currentParser.ptr, p);
+          wasm_on_status: (p2, at, len) => {
+            assert.strictEqual(currentParser.ptr, p2);
             const start = at - currentBufferPtr;
             const end = start + len;
             return currentParser.onStatus(currentBufferRef.slice(start, end)) || 0;
           },
-          wasm_on_message_begin: (p) => {
-            assert.strictEqual(currentParser.ptr, p);
+          wasm_on_message_begin: (p2) => {
+            assert.strictEqual(currentParser.ptr, p2);
             return currentParser.onMessageBegin() || 0;
           },
-          wasm_on_header_field: (p, at, len) => {
-            assert.strictEqual(currentParser.ptr, p);
+          wasm_on_header_field: (p2, at, len) => {
+            assert.strictEqual(currentParser.ptr, p2);
             const start = at - currentBufferPtr;
             const end = start + len;
             return currentParser.onHeaderField(currentBufferRef.slice(start, end)) || 0;
           },
-          wasm_on_header_value: (p, at, len) => {
-            assert.strictEqual(currentParser.ptr, p);
+          wasm_on_header_value: (p2, at, len) => {
+            assert.strictEqual(currentParser.ptr, p2);
             const start = at - currentBufferPtr;
             const end = start + len;
             return currentParser.onHeaderValue(currentBufferRef.slice(start, end)) || 0;
           },
-          wasm_on_headers_complete: (p, statusCode, upgrade, shouldKeepAlive) => {
-            assert.strictEqual(currentParser.ptr, p);
+          wasm_on_headers_complete: (p2, statusCode, upgrade, shouldKeepAlive) => {
+            assert.strictEqual(currentParser.ptr, p2);
             return currentParser.onHeadersComplete(statusCode, Boolean(upgrade), Boolean(shouldKeepAlive)) || 0;
           },
-          wasm_on_body: (p, at, len) => {
-            assert.strictEqual(currentParser.ptr, p);
+          wasm_on_body: (p2, at, len) => {
+            assert.strictEqual(currentParser.ptr, p2);
             const start = at - currentBufferPtr;
             const end = start + len;
             return currentParser.onBody(currentBufferRef.slice(start, end)) || 0;
           },
-          wasm_on_message_complete: (p) => {
-            assert.strictEqual(currentParser.ptr, p);
+          wasm_on_message_complete: (p2) => {
+            assert.strictEqual(currentParser.ptr, p2);
             return currentParser.onMessageComplete() || 0;
           }
         }
@@ -13113,20 +13348,20 @@ var require_client = __commonJS({
     async function connect(client) {
       assert(!client[kConnecting]);
       assert(!client[kSocket]);
-      let { host, hostname: hostname3, protocol, port } = client[kUrl];
-      if (hostname3[0] === "[") {
-        const idx = hostname3.indexOf("]");
+      let { host, hostname, protocol, port } = client[kUrl];
+      if (hostname[0] === "[") {
+        const idx = hostname.indexOf("]");
         assert(idx !== -1);
-        const ip = hostname3.substr(1, idx - 1);
+        const ip = hostname.substr(1, idx - 1);
         assert(net2.isIP(ip));
-        hostname3 = ip;
+        hostname = ip;
       }
       client[kConnecting] = true;
       if (channels.beforeConnect.hasSubscribers) {
         channels.beforeConnect.publish({
           connectParams: {
             host,
-            hostname: hostname3,
+            hostname,
             protocol,
             port,
             servername: client[kServerName]
@@ -13138,7 +13373,7 @@ var require_client = __commonJS({
         const socket = await new Promise((resolve, reject) => {
           client[kConnector]({
             host,
-            hostname: hostname3,
+            hostname,
             protocol,
             port,
             servername: client[kServerName]
@@ -13171,7 +13406,7 @@ var require_client = __commonJS({
           channels.connected.publish({
             connectParams: {
               host,
-              hostname: hostname3,
+              hostname,
               protocol,
               port,
               servername: client[kServerName]
@@ -13187,7 +13422,7 @@ var require_client = __commonJS({
           channels.connectError.publish({
             connectParams: {
               host,
-              hostname: hostname3,
+              hostname,
               protocol,
               port,
               servername: client[kServerName]
@@ -14022,10 +14257,10 @@ var require_balanced_pool = __commonJS({
     var kWeight = Symbol("kWeight");
     var kMaxWeightPerServer = Symbol("kMaxWeightPerServer");
     var kErrorPenalty = Symbol("kErrorPenalty");
-    function getGreatestCommonDivisor(a, b) {
-      if (b === 0)
+    function getGreatestCommonDivisor(a, b2) {
+      if (b2 === 0)
         return a;
-      return getGreatestCommonDivisor(b, a % b);
+      return getGreatestCommonDivisor(b2, a % b2);
     }
     __name(getGreatestCommonDivisor, "getGreatestCommonDivisor");
     function defaultFactory(origin, opts) {
@@ -14081,7 +14316,7 @@ var require_balanced_pool = __commonJS({
         return this;
       }
       _updateBalancedPoolStats() {
-        this[kGreatestCommonDivisor] = this[kClients].map((p) => p[kWeight]).reduce(getGreatestCommonDivisor, 0);
+        this[kGreatestCommonDivisor] = this[kClients].map((p2) => p2[kWeight]).reduce(getGreatestCommonDivisor, 0);
       }
       removeUpstream(upstream) {
         const upstreamOrigin = parseOrigin(upstream).origin;
@@ -14092,7 +14327,7 @@ var require_balanced_pool = __commonJS({
         return this;
       }
       get upstreams() {
-        return this[kClients].filter((dispatcher) => dispatcher.closed !== true && dispatcher.destroyed !== true).map((p) => p[kUrl].origin);
+        return this[kClients].filter((dispatcher) => dispatcher.closed !== true && dispatcher.destroyed !== true).map((p2) => p2[kUrl].origin);
       }
       [kGetDispatcher]() {
         if (this[kClients].length === 0) {
@@ -14102,7 +14337,7 @@ var require_balanced_pool = __commonJS({
         if (!dispatcher) {
           return;
         }
-        const allClientsBusy = this[kClients].map((pool) => pool[kNeedDrain]).reduce((a, b) => a && b, true);
+        const allClientsBusy = this[kClients].map((pool) => pool[kNeedDrain]).reduce((a, b2) => a && b2, true);
         if (allClientsBusy) {
           return;
         }
@@ -14399,7 +14634,7 @@ var require_readable = __commonJS({
               return;
             }
           }
-        } catch (e) {
+        } catch {
         }
       }
     }, "BodyReadable");
@@ -14619,15 +14854,15 @@ var require_api_request = __commonJS({
         }
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context2) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context3;
+        this.context = context2;
       }
       onHeaders(statusCode, rawHeaders, resume, statusMessage) {
-        const { callback, opaque, abort, context: context3 } = this;
+        const { callback, opaque, abort, context: context2 } = this;
         if (statusCode < 200) {
           if (this.onInfo) {
             const headers2 = this.responseHeaders === "raw" ? util2.parseRawHeaders(rawHeaders) : util2.parseHeaders(rawHeaders);
@@ -14656,7 +14891,7 @@ var require_api_request = __commonJS({
             trailers: this.trailers,
             opaque,
             body,
-            context: context3
+            context: context2
           });
         }
       }
@@ -14797,15 +15032,15 @@ var require_api_stream = __commonJS({
         }
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context2) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context3;
+        this.context = context2;
       }
       onHeaders(statusCode, rawHeaders, resume) {
-        const { factory, opaque, context: context3 } = this;
+        const { factory, opaque, context: context2 } = this;
         if (statusCode < 200) {
           if (this.onInfo) {
             const headers2 = this.responseHeaders === "raw" ? util2.parseRawHeaders(rawHeaders) : util2.parseHeaders(rawHeaders);
@@ -14819,7 +15054,7 @@ var require_api_stream = __commonJS({
           statusCode,
           headers,
           opaque,
-          context: context3
+          context: context2
         });
         if (!res || typeof res.write !== "function" || typeof res.end !== "function" || typeof res.on !== "function") {
           throw new InvalidReturnValueError("expected Writable");
@@ -15011,17 +15246,17 @@ var require_api_pipeline = __commonJS({
         this.res = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context2) {
         const { ret, res } = this;
         assert(!res, "pipeline cannot be retried");
         if (ret.destroyed) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context3;
+        this.context = context2;
       }
       onHeaders(statusCode, rawHeaders, resume) {
-        const { opaque, handler, context: context3 } = this;
+        const { opaque, handler, context: context2 } = this;
         if (statusCode < 200) {
           if (this.onInfo) {
             const headers = this.responseHeaders === "raw" ? util2.parseRawHeaders(rawHeaders) : util2.parseHeaders(rawHeaders);
@@ -15039,7 +15274,7 @@ var require_api_pipeline = __commonJS({
             headers,
             opaque,
             body: this.res,
-            context: context3
+            context: context2
           });
         } catch (err) {
           this.res.on("error", util2.nop);
@@ -15125,7 +15360,7 @@ var require_api_upgrade = __commonJS({
         this.context = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context2) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
@@ -15136,7 +15371,7 @@ var require_api_upgrade = __commonJS({
         throw new SocketError("bad upgrade", null);
       }
       onUpgrade(statusCode, rawHeaders, socket) {
-        const { callback, opaque, context: context3 } = this;
+        const { callback, opaque, context: context2 } = this;
         assert.strictEqual(statusCode, 101);
         removeSignal(this);
         this.callback = null;
@@ -15145,7 +15380,7 @@ var require_api_upgrade = __commonJS({
           headers,
           socket,
           opaque,
-          context: context3
+          context: context2
         });
       }
       onError(err) {
@@ -15215,18 +15450,18 @@ var require_api_connect = __commonJS({
         this.abort = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context2) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context3;
+        this.context = context2;
       }
       onHeaders() {
         throw new SocketError("bad connect", null);
       }
       onUpgrade(statusCode, rawHeaders, socket) {
-        const { callback, opaque, context: context3 } = this;
+        const { callback, opaque, context: context2 } = this;
         removeSignal(this);
         this.callback = null;
         const headers = this.responseHeaders === "raw" ? util2.parseRawHeaders(rawHeaders) : util2.parseHeaders(rawHeaders);
@@ -15235,7 +15470,7 @@ var require_api_connect = __commonJS({
           headers,
           socket,
           opaque,
-          context: context3
+          context: context2
         });
       }
       onError(err) {
@@ -16369,12 +16604,11 @@ var require_headers = __commonJS({
         return this[kHeadersMap].delete(name);
       }
       get(name) {
-        var _a3;
         name = name.toLowerCase();
         if (!this.contains(name)) {
           return null;
         }
-        return (_a3 = this[kHeadersMap].get(name)) != null ? _a3 : null;
+        return this[kHeadersMap].get(name) ?? null;
       }
       has(name) {
         name = name.toLowerCase();
@@ -16534,7 +16768,7 @@ var require_headers = __commonJS({
       }
       get [kHeadersSortedMap]() {
         if (!this[kHeadersList][kHeadersSortedMap]) {
-          this[kHeadersList][kHeadersSortedMap] = new Map([...this[kHeadersList]].sort((a, b) => a[0] < b[0] ? -1 : 1));
+          this[kHeadersList][kHeadersSortedMap] = new Map([...this[kHeadersList]].sort((a, b2) => a[0] < b2[0] ? -1 : 1));
         }
         return this[kHeadersList][kHeadersSortedMap];
       }
@@ -16899,12 +17133,12 @@ var require_response = __commonJS({
         ...state
       };
       return new Proxy(response, {
-        get(target, p) {
-          return p in state ? state[p] : target[p];
+        get(target, p2) {
+          return p2 in state ? state[p2] : target[p2];
         },
-        set(target, p, value) {
-          assert(!(p in state));
-          target[p] = value;
+        set(target, p2, value) {
+          assert(!(p2 in state));
+          target[p2] = value;
           return true;
         }
       });
@@ -17010,7 +17244,7 @@ var require_response = __commonJS({
       if (V instanceof ReadableStream) {
         return webidl.converters.ReadableStream(V);
       }
-      if (V == null ? void 0 : V[Symbol.asyncIterator]) {
+      if (V?.[Symbol.asyncIterator]) {
         return V;
       }
       return webidl.converters.XMLHttpRequestBodyInit(V);
@@ -17076,7 +17310,6 @@ var require_request2 = __commonJS({
     });
     var Request = class {
       constructor(input, init = {}) {
-        var _a3, _b2;
         if (input === kInit) {
           return;
         }
@@ -17117,7 +17350,7 @@ var require_request2 = __commonJS({
         }
         const origin = this[kRealm].settingsObject.origin;
         let window2 = "client";
-        if (((_b2 = (_a3 = request2.window) == null ? void 0 : _a3.constructor) == null ? void 0 : _b2.name) === "EnvironmentSettingsObject" && sameOrigin(request2.window, origin)) {
+        if (request2.window?.constructor?.name === "EnvironmentSettingsObject" && sameOrigin(request2.window, origin)) {
           window2 = request2.window;
         }
         if (init.window !== void 0 && init.window != null) {
@@ -17308,7 +17541,7 @@ var require_request2 = __commonJS({
             this[kHeaders].append("content-type", contentType);
           }
         }
-        const inputOrInitBody = initBody != null ? initBody : inputBody;
+        const inputOrInitBody = initBody ?? inputBody;
         if (inputOrInitBody != null && inputOrInitBody.source == null) {
           if (request2.mode !== "same-origin" && request2.mode !== "cors") {
             throw new TypeError(
@@ -17434,11 +17667,10 @@ var require_request2 = __commonJS({
         return this[kSignal];
       }
       clone() {
-        var _a3;
         if (!(this instanceof Request)) {
           throw new TypeError("Illegal invocation");
         }
-        if (this.bodyUsed || ((_a3 = this.body) == null ? void 0 : _a3.locked)) {
+        if (this.bodyUsed || this.body?.locked) {
           throw new TypeError("unusable");
         }
         const clonedRequest = cloneRequest(this[kState]);
@@ -17979,48 +18211,45 @@ var require_fetch = __commonJS({
         this.state = "ongoing";
       }
       terminate(reason) {
-        var _a3;
         if (this.state !== "ongoing") {
           return;
         }
         this.state = "terminated";
-        (_a3 = this.connection) == null ? void 0 : _a3.destroy(reason);
+        this.connection?.destroy(reason);
         this.emit("terminated", reason);
       }
       abort() {
-        var _a3;
         if (this.state !== "ongoing") {
           return;
         }
         const reason = new DOMException("The operation was aborted.", "AbortError");
         this.state = "aborted";
-        (_a3 = this.connection) == null ? void 0 : _a3.destroy(reason);
+        this.connection?.destroy(reason);
         this.emit("terminated", reason);
       }
     };
     __name(Fetch, "Fetch");
     async function fetch2(input, init = {}) {
-      var _a3;
       if (arguments.length < 1) {
         throw new TypeError(
           `Failed to execute 'fetch' on 'Window': 1 argument required, but only ${arguments.length} present.`
         );
       }
-      const p = createDeferredPromise();
+      const p2 = createDeferredPromise();
       let requestObject;
       try {
         requestObject = new Request(input, init);
-      } catch (e) {
-        p.reject(e);
-        return p.promise;
+      } catch (e2) {
+        p2.reject(e2);
+        return p2.promise;
       }
       const request2 = requestObject[kState];
       if (requestObject.signal.aborted) {
-        abortFetch(p, request2, null);
-        return p.promise;
+        abortFetch(p2, request2, null);
+        return p2.promise;
       }
       const globalObject = request2.client.globalObject;
-      if (((_a3 = globalObject == null ? void 0 : globalObject.constructor) == null ? void 0 : _a3.name) === "ServiceWorkerGlobalScope") {
+      if (globalObject?.constructor?.name === "ServiceWorkerGlobalScope") {
         request2.serviceWorkers = "none";
       }
       let responseObject = null;
@@ -18031,7 +18260,7 @@ var require_fetch = __commonJS({
         "abort",
         () => {
           locallyAborted = true;
-          abortFetch(p, request2, responseObject);
+          abortFetch(p2, request2, responseObject);
           if (controller != null) {
             controller.abort();
           }
@@ -18044,11 +18273,11 @@ var require_fetch = __commonJS({
           return;
         }
         if (response.aborted) {
-          abortFetch(p, request2, responseObject);
+          abortFetch(p2, request2, responseObject);
           return;
         }
         if (response.type === "error") {
-          p.reject(
+          p2.reject(
             Object.assign(new TypeError("fetch failed"), { cause: response.error })
           );
           return;
@@ -18059,7 +18288,7 @@ var require_fetch = __commonJS({
         responseObject[kHeaders][kHeadersList] = response.headersList;
         responseObject[kHeaders][kGuard] = "immutable";
         responseObject[kHeaders][kRealm] = relevantRealm;
-        p.resolve(responseObject);
+        p2.resolve(responseObject);
       }, "processResponse");
       controller = fetching({
         request: request2,
@@ -18067,15 +18296,14 @@ var require_fetch = __commonJS({
         processResponse,
         dispatcher: this
       });
-      return p.promise;
+      return p2.promise;
     }
     __name(fetch2, "fetch");
     function finalizeAndReportTiming(response, initiatorType = "other") {
-      var _a3;
       if (response.type === "error" && response.aborted) {
         return;
       }
-      if (!((_a3 = response.urlList) == null ? void 0 : _a3.length)) {
+      if (!response.urlList?.length) {
         return;
       }
       const originalURL = response.urlList[0];
@@ -18110,11 +18338,10 @@ var require_fetch = __commonJS({
       }
     }
     __name(markResourceTiming, "markResourceTiming");
-    function abortFetch(p, request2, responseObject) {
-      var _a3, _b2;
+    function abortFetch(p2, request2, responseObject) {
       const error2 = new DOMException("The operation was aborted.", "AbortError");
-      p.reject(error2);
-      if (request2.body != null && isReadable((_a3 = request2.body) == null ? void 0 : _a3.stream)) {
+      p2.reject(error2);
+      if (request2.body != null && isReadable(request2.body?.stream)) {
         request2.body.stream.cancel(error2).catch((err) => {
           if (err.code === "ERR_INVALID_STATE") {
             return;
@@ -18126,7 +18353,7 @@ var require_fetch = __commonJS({
         return;
       }
       const response = responseObject[kState];
-      if (response.body != null && isReadable((_b2 = response.body) == null ? void 0 : _b2.stream)) {
+      if (response.body != null && isReadable(response.body?.stream)) {
         response.body.stream.cancel(error2).catch((err) => {
           if (err.code === "ERR_INVALID_STATE") {
             return;
@@ -18146,7 +18373,6 @@ var require_fetch = __commonJS({
       useParallelQueue = false,
       dispatcher
     }) {
-      var _a3, _b2, _c, _d;
       let taskDestination = null;
       let crossOriginIsolatedCapability = false;
       if (request2.client != null) {
@@ -18171,10 +18397,10 @@ var require_fetch = __commonJS({
       };
       assert(!request2.body || request2.body.stream);
       if (request2.window === "client") {
-        request2.window = ((_c = (_b2 = (_a3 = request2.client) == null ? void 0 : _a3.globalObject) == null ? void 0 : _b2.constructor) == null ? void 0 : _c.name) === "Window" ? request2.client : "no-window";
+        request2.window = request2.client?.globalObject?.constructor?.name === "Window" ? request2.client : "no-window";
       }
       if (request2.origin === "client") {
-        request2.origin = (_d = request2.client) == null ? void 0 : _d.origin;
+        request2.origin = request2.client?.origin;
       }
       if (request2.policyContainer === "client") {
         if (request2.client != null) {
@@ -18626,10 +18852,9 @@ var require_fetch = __commonJS({
         abort: null,
         destroyed: false,
         destroy(err) {
-          var _a3;
           if (!this.destroyed) {
             this.destroyed = true;
-            (_a3 = this.abort) == null ? void 0 : _a3.call(this, err != null ? err : new DOMException("The operation was aborted.", "AbortError"));
+            this.abort?.(err ?? new DOMException("The operation was aborted.", "AbortError"));
           }
         }
       };
@@ -18649,12 +18874,11 @@ var require_fetch = __commonJS({
         queueMicrotask(() => fetchParams.processRequestEndOfBody());
       } else if (request2.body != null) {
         const processBodyChunk = /* @__PURE__ */ __name(async function* (bytes) {
-          var _a3;
           if (isCancelled(fetchParams)) {
             return;
           }
           yield bytes;
-          (_a3 = fetchParams.processRequestBodyChunkLength) == null ? void 0 : _a3.call(fetchParams, bytes.byteLength);
+          fetchParams.processRequestBodyChunkLength?.(bytes.byteLength);
         }, "processBodyChunk");
         const processEndOfBody = /* @__PURE__ */ __name(() => {
           if (isCancelled(fetchParams)) {
@@ -18664,14 +18888,14 @@ var require_fetch = __commonJS({
             fetchParams.processRequestEndOfBody();
           }
         }, "processEndOfBody");
-        const processBodyError = /* @__PURE__ */ __name((e) => {
+        const processBodyError = /* @__PURE__ */ __name((e2) => {
           if (isCancelled(fetchParams)) {
             return;
           }
-          if (e.name === "AbortError") {
+          if (e2.name === "AbortError") {
             fetchParams.controller.abort();
           } else {
-            fetchParams.controller.terminate(e);
+            fetchParams.controller.terminate(e2);
           }
         }, "processBodyError");
         requestBody = async function* () {
@@ -18723,7 +18947,6 @@ var require_fetch = __commonJS({
       response.body = { stream: stream2 };
       fetchParams.controller.on("terminated", onAborted);
       fetchParams.controller.resume = async () => {
-        var _a3;
         while (true) {
           let bytes;
           try {
@@ -18750,7 +18973,7 @@ var require_fetch = __commonJS({
             finalizeResponse(fetchParams, response);
             return;
           }
-          timingInfo.decodedBodySize += (_a3 = bytes == null ? void 0 : bytes.byteLength) != null ? _a3 : 0;
+          timingInfo.decodedBodySize += bytes?.byteLength ?? 0;
           if (isErrorLike(bytes)) {
             fetchParams.controller.terminate(bytes);
             return;
@@ -18816,9 +19039,9 @@ var require_fetch = __commonJS({
               let codings = [];
               let location = "";
               const headers = new Headers();
-              for (let n = 0; n < headersList.length; n += 2) {
-                const key = headersList[n + 0].toString("latin1");
-                const val = headersList[n + 1].toString("latin1");
+              for (let n2 = 0; n2 < headersList.length; n2 += 2) {
+                const key = headersList[n2 + 0].toString("latin1");
+                const val = headersList[n2 + 1].toString("latin1");
                 if (key.toLowerCase() === "content-encoding") {
                   codings = val.split(",").map((x) => x.trim());
                 } else if (key.toLowerCase() === "location") {
@@ -18869,11 +19092,10 @@ var require_fetch = __commonJS({
               this.body.push(null);
             },
             onError(error2) {
-              var _a3;
               if (this.abort) {
                 fetchParams.controller.off("terminated", this.abort);
               }
-              (_a3 = this.body) == null ? void 0 : _a3.destroy(error2);
+              this.body?.destroy(error2);
               fetchParams.controller.terminate(error2);
               reject(error2);
             }
@@ -19007,331 +19229,90 @@ var require_undici = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/dotenv@16.0.3/node_modules/dotenv/package.json
-var require_package2 = __commonJS({
-  "../../node_modules/.pnpm/dotenv@16.0.3/node_modules/dotenv/package.json"(exports, module2) {
-    module2.exports = {
-      name: "dotenv",
-      version: "16.0.3",
-      description: "Loads environment variables from .env file",
-      main: "lib/main.js",
-      types: "lib/main.d.ts",
-      exports: {
-        ".": {
-          require: "./lib/main.js",
-          types: "./lib/main.d.ts",
-          default: "./lib/main.js"
-        },
-        "./config": "./config.js",
-        "./config.js": "./config.js",
-        "./lib/env-options": "./lib/env-options.js",
-        "./lib/env-options.js": "./lib/env-options.js",
-        "./lib/cli-options": "./lib/cli-options.js",
-        "./lib/cli-options.js": "./lib/cli-options.js",
-        "./package.json": "./package.json"
-      },
-      scripts: {
-        "dts-check": "tsc --project tests/types/tsconfig.json",
-        lint: "standard",
-        "lint-readme": "standard-markdown",
-        pretest: "npm run lint && npm run dts-check",
-        test: "tap tests/*.js --100 -Rspec",
-        prerelease: "npm test",
-        release: "standard-version"
-      },
-      repository: {
-        type: "git",
-        url: "git://github.com/motdotla/dotenv.git"
-      },
-      keywords: [
-        "dotenv",
-        "env",
-        ".env",
-        "environment",
-        "variables",
-        "config",
-        "settings"
-      ],
-      readmeFilename: "README.md",
-      license: "BSD-2-Clause",
-      devDependencies: {
-        "@types/node": "^17.0.9",
-        decache: "^4.6.1",
-        dtslint: "^3.7.0",
-        sinon: "^12.0.1",
-        standard: "^16.0.4",
-        "standard-markdown": "^7.1.0",
-        "standard-version": "^9.3.2",
-        tap: "^15.1.6",
-        tar: "^6.1.11",
-        typescript: "^4.5.4"
-      },
-      engines: {
-        node: ">=12"
-      }
-    };
-  }
-});
-
-// ../../node_modules/.pnpm/dotenv@16.0.3/node_modules/dotenv/lib/main.js
-var require_main2 = __commonJS({
-  "../../node_modules/.pnpm/dotenv@16.0.3/node_modules/dotenv/lib/main.js"(exports, module2) {
-    var fs11 = require("fs");
-    var path7 = require("path");
-    var os3 = require("os");
-    var packageJson = require_package2();
-    var version = packageJson.version;
-    var LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg;
-    function parse2(src) {
-      const obj = {};
-      let lines = src.toString();
-      lines = lines.replace(/\r\n?/mg, "\n");
-      let match;
-      while ((match = LINE.exec(lines)) != null) {
-        const key = match[1];
-        let value = match[2] || "";
-        value = value.trim();
-        const maybeQuote = value[0];
-        value = value.replace(/^(['"`])([\s\S]*)\1$/mg, "$2");
-        if (maybeQuote === '"') {
-          value = value.replace(/\\n/g, "\n");
-          value = value.replace(/\\r/g, "\r");
-        }
-        obj[key] = value;
-      }
-      return obj;
-    }
-    __name(parse2, "parse");
-    function _log(message) {
-      console.log(`[dotenv@${version}][DEBUG] ${message}`);
-    }
-    __name(_log, "_log");
-    function _resolveHome(envPath) {
-      return envPath[0] === "~" ? path7.join(os3.homedir(), envPath.slice(1)) : envPath;
-    }
-    __name(_resolveHome, "_resolveHome");
-    function config2(options) {
-      let dotenvPath = path7.resolve(process.cwd(), ".env");
-      let encoding = "utf8";
-      const debug13 = Boolean(options && options.debug);
-      const override = Boolean(options && options.override);
-      if (options) {
-        if (options.path != null) {
-          dotenvPath = _resolveHome(options.path);
-        }
-        if (options.encoding != null) {
-          encoding = options.encoding;
-        }
-      }
-      try {
-        const parsed = DotenvModule.parse(fs11.readFileSync(dotenvPath, { encoding }));
-        Object.keys(parsed).forEach(function(key) {
-          if (!Object.prototype.hasOwnProperty.call(process.env, key)) {
-            process.env[key] = parsed[key];
-          } else {
-            if (override === true) {
-              process.env[key] = parsed[key];
-            }
-            if (debug13) {
-              if (override === true) {
-                _log(`"${key}" is already defined in \`process.env\` and WAS overwritten`);
-              } else {
-                _log(`"${key}" is already defined in \`process.env\` and was NOT overwritten`);
-              }
-            }
-          }
-        });
-        return { parsed };
-      } catch (e) {
-        if (debug13) {
-          _log(`Failed to load ${dotenvPath} ${e.message}`);
-        }
-        return { error: e };
-      }
-    }
-    __name(config2, "config");
-    var DotenvModule = {
-      config: config2,
-      parse: parse2
-    };
-    module2.exports.config = DotenvModule.config;
-    module2.exports.parse = DotenvModule.parse;
-    module2.exports = DotenvModule;
-  }
-});
-
-// ../../node_modules/.pnpm/arg@5.0.2/node_modules/arg/index.js
-var require_arg = __commonJS({
-  "../../node_modules/.pnpm/arg@5.0.2/node_modules/arg/index.js"(exports, module2) {
-    var flagSymbol = Symbol("arg flag");
-    var ArgError = class extends Error {
-      constructor(msg, code) {
-        super(msg);
-        this.name = "ArgError";
-        this.code = code;
-        Object.setPrototypeOf(this, ArgError.prototype);
-      }
-    };
-    __name(ArgError, "ArgError");
-    function arg2(opts, {
-      argv = process.argv.slice(2),
-      permissive = false,
-      stopAtPositional = false
-    } = {}) {
-      if (!opts) {
-        throw new ArgError(
-          "argument specification object is required",
-          "ARG_CONFIG_NO_SPEC"
-        );
-      }
-      const result = { _: [] };
-      const aliases = {};
-      const handlers = {};
-      for (const key of Object.keys(opts)) {
-        if (!key) {
-          throw new ArgError(
-            "argument key cannot be an empty string",
-            "ARG_CONFIG_EMPTY_KEY"
-          );
-        }
-        if (key[0] !== "-") {
-          throw new ArgError(
-            `argument key must start with '-' but found: '${key}'`,
-            "ARG_CONFIG_NONOPT_KEY"
-          );
-        }
-        if (key.length === 1) {
-          throw new ArgError(
-            `argument key must have a name; singular '-' keys are not allowed: ${key}`,
-            "ARG_CONFIG_NONAME_KEY"
-          );
-        }
-        if (typeof opts[key] === "string") {
-          aliases[key] = opts[key];
-          continue;
-        }
-        let type = opts[key];
-        let isFlag = false;
-        if (Array.isArray(type) && type.length === 1 && typeof type[0] === "function") {
-          const [fn] = type;
-          type = /* @__PURE__ */ __name((value, name, prev = []) => {
-            prev.push(fn(value, name, prev[prev.length - 1]));
-            return prev;
-          }, "type");
-          isFlag = fn === Boolean || fn[flagSymbol] === true;
-        } else if (typeof type === "function") {
-          isFlag = type === Boolean || type[flagSymbol] === true;
-        } else {
-          throw new ArgError(
-            `type missing or not a function or valid array type: ${key}`,
-            "ARG_CONFIG_VAD_TYPE"
-          );
-        }
-        if (key[1] !== "-" && key.length > 2) {
-          throw new ArgError(
-            `short argument keys (with a single hyphen) must have only one character: ${key}`,
-            "ARG_CONFIG_SHORTOPT_TOOLONG"
-          );
-        }
-        handlers[key] = [type, isFlag];
-      }
-      for (let i = 0, len = argv.length; i < len; i++) {
-        const wholeArg = argv[i];
-        if (stopAtPositional && result._.length > 0) {
-          result._ = result._.concat(argv.slice(i));
-          break;
-        }
-        if (wholeArg === "--") {
-          result._ = result._.concat(argv.slice(i + 1));
-          break;
-        }
-        if (wholeArg.length > 1 && wholeArg[0] === "-") {
-          const separatedArguments = wholeArg[1] === "-" || wholeArg.length === 2 ? [wholeArg] : wholeArg.slice(1).split("").map((a) => `-${a}`);
-          for (let j = 0; j < separatedArguments.length; j++) {
-            const arg3 = separatedArguments[j];
-            const [originalArgName, argStr] = arg3[1] === "-" ? arg3.split(/=(.*)/, 2) : [arg3, void 0];
-            let argName = originalArgName;
-            while (argName in aliases) {
-              argName = aliases[argName];
-            }
-            if (!(argName in handlers)) {
-              if (permissive) {
-                result._.push(arg3);
-                continue;
-              } else {
-                throw new ArgError(
-                  `unknown or unexpected option: ${originalArgName}`,
-                  "ARG_UNKNOWN_OPTION"
-                );
-              }
-            }
-            const [type, isFlag] = handlers[argName];
-            if (!isFlag && j + 1 < separatedArguments.length) {
-              throw new ArgError(
-                `option requires argument (but was followed by another short argument): ${originalArgName}`,
-                "ARG_MISSING_REQUIRED_SHORTARG"
-              );
-            }
-            if (isFlag) {
-              result[argName] = type(true, argName, result[argName]);
-            } else if (argStr === void 0) {
-              if (argv.length < i + 2 || argv[i + 1].length > 1 && argv[i + 1][0] === "-" && !(argv[i + 1].match(/^-?\d*(\.(?=\d))?\d*$/) && (type === Number || typeof BigInt !== "undefined" && type === BigInt))) {
-                const extended = originalArgName === argName ? "" : ` (alias for ${argName})`;
-                throw new ArgError(
-                  `option requires argument: ${originalArgName}${extended}`,
-                  "ARG_MISSING_REQUIRED_LONGARG"
-                );
-              }
-              result[argName] = type(argv[i + 1], argName, result[argName]);
-              ++i;
-            } else {
-              result[argName] = type(argStr, argName, result[argName]);
-            }
-          }
-        } else {
-          result._.push(wholeArg);
-        }
-      }
-      return result;
-    }
-    __name(arg2, "arg");
-    arg2.flag = (fn) => {
-      fn[flagSymbol] = true;
-      return fn;
-    };
-    arg2.COUNT = arg2.flag((v, name, existingCount) => (existingCount || 0) + 1);
-    arg2.ArgError = ArgError;
-    module2.exports = arg2;
-  }
-});
-
-// ../../node_modules/.pnpm/min-indent@1.0.1/node_modules/min-indent/index.js
-var require_min_indent = __commonJS({
-  "../../node_modules/.pnpm/min-indent@1.0.1/node_modules/min-indent/index.js"(exports, module2) {
+// ../../node_modules/.pnpm/js-levenshtein@1.1.6/node_modules/js-levenshtein/index.js
+var require_js_levenshtein = __commonJS({
+  "../../node_modules/.pnpm/js-levenshtein@1.1.6/node_modules/js-levenshtein/index.js"(exports, module2) {
     "use strict";
-    module2.exports = (string) => {
-      const match = string.match(/^[ \t]*(?=\S)/gm);
-      if (!match) {
-        return 0;
+    module2.exports = function() {
+      function _min(d0, d1, d2, bx, ay) {
+        return d0 < d1 || d2 < d1 ? d0 > d2 ? d2 + 1 : d0 + 1 : bx === ay ? d1 : d1 + 1;
       }
-      return match.reduce((r, a) => Math.min(r, a.length), Infinity);
-    };
-  }
-});
-
-// ../../node_modules/.pnpm/strip-indent@3.0.0/node_modules/strip-indent/index.js
-var require_strip_indent = __commonJS({
-  "../../node_modules/.pnpm/strip-indent@3.0.0/node_modules/strip-indent/index.js"(exports, module2) {
-    "use strict";
-    var minIndent = require_min_indent();
-    module2.exports = (string) => {
-      const indent4 = minIndent(string);
-      if (indent4 === 0) {
-        return string;
-      }
-      const regex = new RegExp(`^[ \\t]{${indent4}}`, "gm");
-      return string.replace(regex, "");
-    };
+      __name(_min, "_min");
+      return function(a, b2) {
+        if (a === b2) {
+          return 0;
+        }
+        if (a.length > b2.length) {
+          var tmp = a;
+          a = b2;
+          b2 = tmp;
+        }
+        var la = a.length;
+        var lb = b2.length;
+        while (la > 0 && a.charCodeAt(la - 1) === b2.charCodeAt(lb - 1)) {
+          la--;
+          lb--;
+        }
+        var offset = 0;
+        while (offset < la && a.charCodeAt(offset) === b2.charCodeAt(offset)) {
+          offset++;
+        }
+        la -= offset;
+        lb -= offset;
+        if (la === 0 || lb < 3) {
+          return lb;
+        }
+        var x = 0;
+        var y;
+        var d0;
+        var d1;
+        var d2;
+        var d3;
+        var dd;
+        var dy;
+        var ay;
+        var bx0;
+        var bx1;
+        var bx2;
+        var bx3;
+        var vector = [];
+        for (y = 0; y < la; y++) {
+          vector.push(y + 1);
+          vector.push(a.charCodeAt(offset + y));
+        }
+        var len = vector.length - 1;
+        for (; x < lb - 3; ) {
+          bx0 = b2.charCodeAt(offset + (d0 = x));
+          bx1 = b2.charCodeAt(offset + (d1 = x + 1));
+          bx2 = b2.charCodeAt(offset + (d2 = x + 2));
+          bx3 = b2.charCodeAt(offset + (d3 = x + 3));
+          dd = x += 4;
+          for (y = 0; y < len; y += 2) {
+            dy = vector[y];
+            ay = vector[y + 1];
+            d0 = _min(dy, d0, d1, bx0, ay);
+            d1 = _min(d0, d1, d2, bx1, ay);
+            d2 = _min(d1, d2, d3, bx2, ay);
+            dd = _min(d2, d3, dd, bx3, ay);
+            vector[y] = dd;
+            d3 = d2;
+            d2 = d1;
+            d1 = d0;
+            d0 = dy;
+          }
+        }
+        for (; x < lb; ) {
+          bx0 = b2.charCodeAt(offset + (d0 = x));
+          dd = ++x;
+          for (y = 0; y < len; y += 2) {
+            dy = vector[y];
+            vector[y] = dd = _min(dy, d0, dd, bx0, vector[y + 1]);
+            d0 = dy;
+          }
+        }
+        return dd;
+      };
+    }();
   }
 });
 
@@ -19721,7 +19702,7 @@ var require_package3 = __commonJS({
   "package.json"(exports, module2) {
     module2.exports = {
       name: "@prisma/client",
-      version: "4.6.1",
+      version: "4.9.0",
       description: "Prisma Client is an auto-generated, type-safe and modern JavaScript/TypeScript ORM for Node.js that's tailored to your data. Supports MySQL, PostgreSQL, MariaDB, SQLite databases.",
       keywords: [
         "orm",
@@ -19759,6 +19740,7 @@ var require_package3 = __commonJS({
         dev: "DEV=true node -r esbuild-register helpers/build.ts",
         build: "node -r esbuild-register helpers/build.ts",
         test: "jest --verbose",
+        "test:e2e": "node -r esbuild-register tests/e2e/_utils/run.ts",
         "test:functional": "node -r esbuild-register helpers/functional-test/run-tests.ts",
         "test:memory": "node -r esbuild-register helpers/memory-tests.ts",
         "test:functional:code": "node -r esbuild-register helpers/functional-test/run-tests.ts --no-types",
@@ -19782,68 +19764,65 @@ var require_package3 = __commonJS({
       ],
       devDependencies: {
         "@faker-js/faker": "7.6.0",
-        "@fast-check/jest": "1.3.1",
-        "@jest/globals": "28.1.3",
-        "@jest/test-sequencer": "28.1.3",
-        "@opentelemetry/api": "1.2.0",
-        "@opentelemetry/context-async-hooks": "1.7.0",
-        "@opentelemetry/instrumentation": "0.33.0",
-        "@opentelemetry/resources": "1.7.0",
-        "@opentelemetry/sdk-trace-base": "1.7.0",
-        "@opentelemetry/semantic-conventions": "1.7.0",
-        "@prisma/debug": "workspace:4.6.1",
-        "@prisma/engine-core": "workspace:4.6.1",
-        "@prisma/engines": "workspace:4.6.1",
-        "@prisma/fetch-engine": "workspace:4.6.1",
-        "@prisma/generator-helper": "workspace:4.6.1",
-        "@prisma/get-platform": "workspace:4.6.1",
-        "@prisma/instrumentation": "workspace:4.6.1",
-        "@prisma/internals": "workspace:4.6.1",
-        "@prisma/migrate": "workspace:4.6.1",
+        "@fast-check/jest": "1.6.0",
+        "@jest/globals": "29.3.1",
+        "@jest/test-sequencer": "29.3.1",
+        "@opentelemetry/api": "1.3.0",
+        "@opentelemetry/context-async-hooks": "1.8.0",
+        "@opentelemetry/instrumentation": "0.34.0",
+        "@opentelemetry/resources": "1.8.0",
+        "@opentelemetry/sdk-trace-base": "1.8.0",
+        "@opentelemetry/semantic-conventions": "1.8.0",
+        "@prisma/debug": "workspace:*",
+        "@prisma/engine-core": "workspace:*",
+        "@prisma/engines": "workspace:*",
+        "@prisma/fetch-engine": "workspace:*",
+        "@prisma/generator-helper": "workspace:*",
+        "@prisma/get-platform": "workspace:*",
+        "@prisma/instrumentation": "workspace:*",
+        "@prisma/internals": "workspace:*",
+        "@prisma/migrate": "workspace:*",
         "@prisma/mini-proxy": "0.3.0",
         "@swc-node/register": "1.5.4",
         "@swc/core": "1.3.14",
-        "@swc/jest": "0.2.23",
+        "@swc/jest": "0.2.24",
         "@timsuchanek/copy": "1.4.5",
         "@types/debug": "4.1.7",
         "@types/fs-extra": "9.0.13",
-        "@types/jest": "28.1.8",
+        "@types/jest": "29.2.4",
         "@types/js-levenshtein": "1.1.1",
         "@types/mssql": "8.1.1",
-        "@types/node": "14.18.33",
-        "@types/pg": "8.6.5",
+        "@types/node": "14.18.36",
+        "@types/pg": "8.6.6",
         "@types/yeoman-generator": "5.2.11",
         arg: "5.0.2",
         benchmark: "2.1.4",
         chalk: "4.1.2",
-        cuid: "2.1.8",
         "decimal.js": "10.4.2",
         esbuild: "0.15.13",
         execa: "5.1.1",
         "expect-type": "0.15.0",
         "flat-map-polyfill": "0.3.8",
-        "fs-extra": "10.1.0",
+        "fs-extra": "11.1.0",
         "fs-monkey": "1.0.3",
         "get-own-enumerable-property-symbols": "3.0.2",
         globby: "11.1.0",
         "indent-string": "4.0.0",
         "is-obj": "2.0.0",
         "is-regexp": "2.1.0",
-        jest: "28.1.3",
-        "jest-junit": "14.0.1",
-        "jest-snapshot": "28.1.3",
+        jest: "29.3.1",
+        "jest-junit": "15.0.0",
+        "jest-snapshot": "29.3.1",
         "js-levenshtein": "1.1.6",
         klona: "2.0.5",
         "lz-string": "1.4.4",
-        "make-dir": "3.1.0",
         mariadb: "3.0.2",
-        memfs: "3.4.9",
+        memfs: "3.4.10",
         mssql: "9.0.1",
         "node-fetch": "2.6.7",
         pg: "8.8.0",
         "pkg-up": "3.1.0",
         pluralize: "8.0.0",
-        "replace-string": "3.1.0",
         resolve: "1.22.1",
         rimraf: "3.0.2",
         "simple-statistics": "7.8.0",
@@ -19853,13 +19832,14 @@ var require_package3 = __commonJS({
         "stacktrace-parser": "0.1.10",
         "strip-ansi": "6.0.1",
         "strip-indent": "3.0.0",
-        "ts-jest": "28.0.8",
+        "ts-jest": "29.0.3",
         "ts-node": "10.9.1",
         "ts-pattern": "4.0.5",
         tsd: "0.21.0",
         typescript: "4.8.4",
         "yeoman-generator": "5.7.0",
-        yo: "4.3.0"
+        yo: "4.3.1",
+        zx: "7.1.1"
       },
       peerDependencies: {
         prisma: "*"
@@ -19870,7 +19850,7 @@ var require_package3 = __commonJS({
         }
       },
       dependencies: {
-        "@prisma/engines-version": "4.6.1-3.694eea289a8462c80264df36757e4fdc129b1b32"
+        "@prisma/engines-version": "4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5"
       },
       sideEffects: false
     };
@@ -19888,6 +19868,7 @@ __export(runtime_exports, {
   Extensions: () => extensions_exports,
   MetricsClient: () => MetricsClient,
   NotFoundError: () => NotFoundError2,
+  PrismaClientExtensionError: () => PrismaClientExtensionError,
   PrismaClientInitializationError: () => PrismaClientInitializationError,
   PrismaClientKnownRequestError: () => PrismaClientKnownRequestError,
   PrismaClientRustPanicError: () => PrismaClientRustPanicError,
@@ -19915,8 +19896,18 @@ var lzString = __toESM(require_lz_string());
 // src/runtime/core/extensions/index.ts
 var extensions_exports = {};
 __export(extensions_exports, {
+  defineExtension: () => defineExtension,
   getExtensionContext: () => getExtensionContext
 });
+
+// src/runtime/core/extensions/defineExtension.ts
+function defineExtension(ext) {
+  if (typeof ext === "function") {
+    return ext;
+  }
+  return (client) => client.$extends(ext);
+}
+__name(defineExtension, "defineExtension");
 
 // src/runtime/core/extensions/getExtensionContext.ts
 function getExtensionContext(that) {
@@ -19926,2956 +19917,27 @@ __name(getExtensionContext, "getExtensionContext");
 
 // src/runtime/core/types/index.ts
 var types_exports = {};
+__export(types_exports, {
+  Extensions: () => Extensions_exports,
+  Public: () => Public_exports,
+  Utils: () => Utils_exports
+});
 
-// src/runtime/core/metrics/MetricsClient.ts
-var MetricsClient = class {
-  constructor(engine) {
-    this._engine = engine;
-  }
-  prometheus(options) {
-    return this._engine.metrics({ format: "prometheus", ...options });
-  }
-  json(options) {
-    return this._engine.metrics({ format: "json", ...options });
-  }
-};
-__name(MetricsClient, "MetricsClient");
+// src/runtime/core/types/Extensions.ts
+var Extensions_exports = {};
 
-// src/runtime/utils/applyMixins.ts
-function applyMixins(derivedCtor, constructors) {
-  var _a3;
-  for (const baseCtor of constructors) {
-    for (const name of Object.getOwnPropertyNames(baseCtor.prototype)) {
-      Object.defineProperty(
-        derivedCtor.prototype,
-        name,
-        (_a3 = Object.getOwnPropertyDescriptor(baseCtor.prototype, name)) != null ? _a3 : /* @__PURE__ */ Object.create(null)
-      );
-    }
-  }
-}
-__name(applyMixins, "applyMixins");
+// src/runtime/core/types/Public.ts
+var Public_exports = {};
 
-// src/runtime/utils/common.ts
-var import_chalk = __toESM(require_source());
-
-// ../../node_modules/.pnpm/decimal.js@10.4.2/node_modules/decimal.js/decimal.mjs
-var EXP_LIMIT = 9e15;
-var MAX_DIGITS = 1e9;
-var NUMERALS = "0123456789abcdef";
-var LN10 = "2.3025850929940456840179914546843642076011014886287729760333279009675726096773524802359972050895982983419677840422862486334095254650828067566662873690987816894829072083255546808437998948262331985283935053089653777326288461633662222876982198867465436674744042432743651550489343149393914796194044002221051017141748003688084012647080685567743216228355220114804663715659121373450747856947683463616792101806445070648000277502684916746550586856935673420670581136429224554405758925724208241314695689016758940256776311356919292033376587141660230105703089634572075440370847469940168269282808481184289314848524948644871927809676271275775397027668605952496716674183485704422507197965004714951050492214776567636938662976979522110718264549734772662425709429322582798502585509785265383207606726317164309505995087807523710333101197857547331541421808427543863591778117054309827482385045648019095610299291824318237525357709750539565187697510374970888692180205189339507238539205144634197265287286965110862571492198849978748873771345686209167058";
-var PI = "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288109756659334461284756482337867831652712019091456485669234603486104543266482133936072602491412737245870066063155881748815209209628292540917153643678925903600113305305488204665213841469519415116094330572703657595919530921861173819326117931051185480744623799627495673518857527248912279381830119491298336733624406566430860213949463952247371907021798609437027705392171762931767523846748184676694051320005681271452635608277857713427577896091736371787214684409012249534301465495853710507922796892589235420199561121290219608640344181598136297747713099605187072113499999983729780499510597317328160963185950244594553469083026425223082533446850352619311881710100031378387528865875332083814206171776691473035982534904287554687311595628638823537875937519577818577805321712268066130019278766111959092164201989380952572010654858632789";
-var DEFAULTS = {
-  precision: 20,
-  rounding: 4,
-  modulo: 1,
-  toExpNeg: -7,
-  toExpPos: 21,
-  minE: -EXP_LIMIT,
-  maxE: EXP_LIMIT,
-  crypto: false
-};
-var inexact;
-var quadrant;
-var external = true;
-var decimalError = "[DecimalError] ";
-var invalidArgument = decimalError + "Invalid argument: ";
-var precisionLimitExceeded = decimalError + "Precision limit exceeded";
-var cryptoUnavailable = decimalError + "crypto unavailable";
-var tag = "[object Decimal]";
-var mathfloor = Math.floor;
-var mathpow = Math.pow;
-var isBinary = /^0b([01]+(\.[01]*)?|\.[01]+)(p[+-]?\d+)?$/i;
-var isHex = /^0x([0-9a-f]+(\.[0-9a-f]*)?|\.[0-9a-f]+)(p[+-]?\d+)?$/i;
-var isOctal = /^0o([0-7]+(\.[0-7]*)?|\.[0-7]+)(p[+-]?\d+)?$/i;
-var isDecimal = /^(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?$/i;
-var BASE = 1e7;
-var LOG_BASE = 7;
-var MAX_SAFE_INTEGER = 9007199254740991;
-var LN10_PRECISION = LN10.length - 1;
-var PI_PRECISION = PI.length - 1;
-var P = { toStringTag: tag };
-P.absoluteValue = P.abs = function() {
-  var x = new this.constructor(this);
-  if (x.s < 0)
-    x.s = 1;
-  return finalise(x);
-};
-P.ceil = function() {
-  return finalise(new this.constructor(this), this.e + 1, 2);
-};
-P.clampedTo = P.clamp = function(min2, max2) {
-  var k, x = this, Ctor = x.constructor;
-  min2 = new Ctor(min2);
-  max2 = new Ctor(max2);
-  if (!min2.s || !max2.s)
-    return new Ctor(NaN);
-  if (min2.gt(max2))
-    throw Error(invalidArgument + max2);
-  k = x.cmp(min2);
-  return k < 0 ? min2 : x.cmp(max2) > 0 ? max2 : new Ctor(x);
-};
-P.comparedTo = P.cmp = function(y) {
-  var i, j, xdL, ydL, x = this, xd = x.d, yd = (y = new x.constructor(y)).d, xs = x.s, ys = y.s;
-  if (!xd || !yd) {
-    return !xs || !ys ? NaN : xs !== ys ? xs : xd === yd ? 0 : !xd ^ xs < 0 ? 1 : -1;
-  }
-  if (!xd[0] || !yd[0])
-    return xd[0] ? xs : yd[0] ? -ys : 0;
-  if (xs !== ys)
-    return xs;
-  if (x.e !== y.e)
-    return x.e > y.e ^ xs < 0 ? 1 : -1;
-  xdL = xd.length;
-  ydL = yd.length;
-  for (i = 0, j = xdL < ydL ? xdL : ydL; i < j; ++i) {
-    if (xd[i] !== yd[i])
-      return xd[i] > yd[i] ^ xs < 0 ? 1 : -1;
-  }
-  return xdL === ydL ? 0 : xdL > ydL ^ xs < 0 ? 1 : -1;
-};
-P.cosine = P.cos = function() {
-  var pr, rm, x = this, Ctor = x.constructor;
-  if (!x.d)
-    return new Ctor(NaN);
-  if (!x.d[0])
-    return new Ctor(1);
-  pr = Ctor.precision;
-  rm = Ctor.rounding;
-  Ctor.precision = pr + Math.max(x.e, x.sd()) + LOG_BASE;
-  Ctor.rounding = 1;
-  x = cosine(Ctor, toLessThanHalfPi(Ctor, x));
-  Ctor.precision = pr;
-  Ctor.rounding = rm;
-  return finalise(quadrant == 2 || quadrant == 3 ? x.neg() : x, pr, rm, true);
-};
-P.cubeRoot = P.cbrt = function() {
-  var e, m, n, r, rep, s, sd, t, t3, t3plusx, x = this, Ctor = x.constructor;
-  if (!x.isFinite() || x.isZero())
-    return new Ctor(x);
-  external = false;
-  s = x.s * mathpow(x.s * x, 1 / 3);
-  if (!s || Math.abs(s) == 1 / 0) {
-    n = digitsToString(x.d);
-    e = x.e;
-    if (s = (e - n.length + 1) % 3)
-      n += s == 1 || s == -2 ? "0" : "00";
-    s = mathpow(n, 1 / 3);
-    e = mathfloor((e + 1) / 3) - (e % 3 == (e < 0 ? -1 : 2));
-    if (s == 1 / 0) {
-      n = "5e" + e;
-    } else {
-      n = s.toExponential();
-      n = n.slice(0, n.indexOf("e") + 1) + e;
-    }
-    r = new Ctor(n);
-    r.s = x.s;
-  } else {
-    r = new Ctor(s.toString());
-  }
-  sd = (e = Ctor.precision) + 3;
-  for (; ; ) {
-    t = r;
-    t3 = t.times(t).times(t);
-    t3plusx = t3.plus(x);
-    r = divide(t3plusx.plus(x).times(t), t3plusx.plus(t3), sd + 2, 1);
-    if (digitsToString(t.d).slice(0, sd) === (n = digitsToString(r.d)).slice(0, sd)) {
-      n = n.slice(sd - 3, sd + 1);
-      if (n == "9999" || !rep && n == "4999") {
-        if (!rep) {
-          finalise(t, e + 1, 0);
-          if (t.times(t).times(t).eq(x)) {
-            r = t;
-            break;
-          }
-        }
-        sd += 4;
-        rep = 1;
-      } else {
-        if (!+n || !+n.slice(1) && n.charAt(0) == "5") {
-          finalise(r, e + 1, 1);
-          m = !r.times(r).times(r).eq(x);
-        }
-        break;
-      }
-    }
-  }
-  external = true;
-  return finalise(r, e, Ctor.rounding, m);
-};
-P.decimalPlaces = P.dp = function() {
-  var w, d = this.d, n = NaN;
-  if (d) {
-    w = d.length - 1;
-    n = (w - mathfloor(this.e / LOG_BASE)) * LOG_BASE;
-    w = d[w];
-    if (w)
-      for (; w % 10 == 0; w /= 10)
-        n--;
-    if (n < 0)
-      n = 0;
-  }
-  return n;
-};
-P.dividedBy = P.div = function(y) {
-  return divide(this, new this.constructor(y));
-};
-P.dividedToIntegerBy = P.divToInt = function(y) {
-  var x = this, Ctor = x.constructor;
-  return finalise(divide(x, new Ctor(y), 0, 1, 1), Ctor.precision, Ctor.rounding);
-};
-P.equals = P.eq = function(y) {
-  return this.cmp(y) === 0;
-};
-P.floor = function() {
-  return finalise(new this.constructor(this), this.e + 1, 3);
-};
-P.greaterThan = P.gt = function(y) {
-  return this.cmp(y) > 0;
-};
-P.greaterThanOrEqualTo = P.gte = function(y) {
-  var k = this.cmp(y);
-  return k == 1 || k === 0;
-};
-P.hyperbolicCosine = P.cosh = function() {
-  var k, n, pr, rm, len, x = this, Ctor = x.constructor, one = new Ctor(1);
-  if (!x.isFinite())
-    return new Ctor(x.s ? 1 / 0 : NaN);
-  if (x.isZero())
-    return one;
-  pr = Ctor.precision;
-  rm = Ctor.rounding;
-  Ctor.precision = pr + Math.max(x.e, x.sd()) + 4;
-  Ctor.rounding = 1;
-  len = x.d.length;
-  if (len < 32) {
-    k = Math.ceil(len / 3);
-    n = (1 / tinyPow(4, k)).toString();
-  } else {
-    k = 16;
-    n = "2.3283064365386962890625e-10";
-  }
-  x = taylorSeries(Ctor, 1, x.times(n), new Ctor(1), true);
-  var cosh2_x, i = k, d8 = new Ctor(8);
-  for (; i--; ) {
-    cosh2_x = x.times(x);
-    x = one.minus(cosh2_x.times(d8.minus(cosh2_x.times(d8))));
-  }
-  return finalise(x, Ctor.precision = pr, Ctor.rounding = rm, true);
-};
-P.hyperbolicSine = P.sinh = function() {
-  var k, pr, rm, len, x = this, Ctor = x.constructor;
-  if (!x.isFinite() || x.isZero())
-    return new Ctor(x);
-  pr = Ctor.precision;
-  rm = Ctor.rounding;
-  Ctor.precision = pr + Math.max(x.e, x.sd()) + 4;
-  Ctor.rounding = 1;
-  len = x.d.length;
-  if (len < 3) {
-    x = taylorSeries(Ctor, 2, x, x, true);
-  } else {
-    k = 1.4 * Math.sqrt(len);
-    k = k > 16 ? 16 : k | 0;
-    x = x.times(1 / tinyPow(5, k));
-    x = taylorSeries(Ctor, 2, x, x, true);
-    var sinh2_x, d5 = new Ctor(5), d16 = new Ctor(16), d20 = new Ctor(20);
-    for (; k--; ) {
-      sinh2_x = x.times(x);
-      x = x.times(d5.plus(sinh2_x.times(d16.times(sinh2_x).plus(d20))));
-    }
-  }
-  Ctor.precision = pr;
-  Ctor.rounding = rm;
-  return finalise(x, pr, rm, true);
-};
-P.hyperbolicTangent = P.tanh = function() {
-  var pr, rm, x = this, Ctor = x.constructor;
-  if (!x.isFinite())
-    return new Ctor(x.s);
-  if (x.isZero())
-    return new Ctor(x);
-  pr = Ctor.precision;
-  rm = Ctor.rounding;
-  Ctor.precision = pr + 7;
-  Ctor.rounding = 1;
-  return divide(x.sinh(), x.cosh(), Ctor.precision = pr, Ctor.rounding = rm);
-};
-P.inverseCosine = P.acos = function() {
-  var halfPi, x = this, Ctor = x.constructor, k = x.abs().cmp(1), pr = Ctor.precision, rm = Ctor.rounding;
-  if (k !== -1) {
-    return k === 0 ? x.isNeg() ? getPi(Ctor, pr, rm) : new Ctor(0) : new Ctor(NaN);
-  }
-  if (x.isZero())
-    return getPi(Ctor, pr + 4, rm).times(0.5);
-  Ctor.precision = pr + 6;
-  Ctor.rounding = 1;
-  x = x.asin();
-  halfPi = getPi(Ctor, pr + 4, rm).times(0.5);
-  Ctor.precision = pr;
-  Ctor.rounding = rm;
-  return halfPi.minus(x);
-};
-P.inverseHyperbolicCosine = P.acosh = function() {
-  var pr, rm, x = this, Ctor = x.constructor;
-  if (x.lte(1))
-    return new Ctor(x.eq(1) ? 0 : NaN);
-  if (!x.isFinite())
-    return new Ctor(x);
-  pr = Ctor.precision;
-  rm = Ctor.rounding;
-  Ctor.precision = pr + Math.max(Math.abs(x.e), x.sd()) + 4;
-  Ctor.rounding = 1;
-  external = false;
-  x = x.times(x).minus(1).sqrt().plus(x);
-  external = true;
-  Ctor.precision = pr;
-  Ctor.rounding = rm;
-  return x.ln();
-};
-P.inverseHyperbolicSine = P.asinh = function() {
-  var pr, rm, x = this, Ctor = x.constructor;
-  if (!x.isFinite() || x.isZero())
-    return new Ctor(x);
-  pr = Ctor.precision;
-  rm = Ctor.rounding;
-  Ctor.precision = pr + 2 * Math.max(Math.abs(x.e), x.sd()) + 6;
-  Ctor.rounding = 1;
-  external = false;
-  x = x.times(x).plus(1).sqrt().plus(x);
-  external = true;
-  Ctor.precision = pr;
-  Ctor.rounding = rm;
-  return x.ln();
-};
-P.inverseHyperbolicTangent = P.atanh = function() {
-  var pr, rm, wpr, xsd, x = this, Ctor = x.constructor;
-  if (!x.isFinite())
-    return new Ctor(NaN);
-  if (x.e >= 0)
-    return new Ctor(x.abs().eq(1) ? x.s / 0 : x.isZero() ? x : NaN);
-  pr = Ctor.precision;
-  rm = Ctor.rounding;
-  xsd = x.sd();
-  if (Math.max(xsd, pr) < 2 * -x.e - 1)
-    return finalise(new Ctor(x), pr, rm, true);
-  Ctor.precision = wpr = xsd - x.e;
-  x = divide(x.plus(1), new Ctor(1).minus(x), wpr + pr, 1);
-  Ctor.precision = pr + 4;
-  Ctor.rounding = 1;
-  x = x.ln();
-  Ctor.precision = pr;
-  Ctor.rounding = rm;
-  return x.times(0.5);
-};
-P.inverseSine = P.asin = function() {
-  var halfPi, k, pr, rm, x = this, Ctor = x.constructor;
-  if (x.isZero())
-    return new Ctor(x);
-  k = x.abs().cmp(1);
-  pr = Ctor.precision;
-  rm = Ctor.rounding;
-  if (k !== -1) {
-    if (k === 0) {
-      halfPi = getPi(Ctor, pr + 4, rm).times(0.5);
-      halfPi.s = x.s;
-      return halfPi;
-    }
-    return new Ctor(NaN);
-  }
-  Ctor.precision = pr + 6;
-  Ctor.rounding = 1;
-  x = x.div(new Ctor(1).minus(x.times(x)).sqrt().plus(1)).atan();
-  Ctor.precision = pr;
-  Ctor.rounding = rm;
-  return x.times(2);
-};
-P.inverseTangent = P.atan = function() {
-  var i, j, k, n, px, t, r, wpr, x2, x = this, Ctor = x.constructor, pr = Ctor.precision, rm = Ctor.rounding;
-  if (!x.isFinite()) {
-    if (!x.s)
-      return new Ctor(NaN);
-    if (pr + 4 <= PI_PRECISION) {
-      r = getPi(Ctor, pr + 4, rm).times(0.5);
-      r.s = x.s;
-      return r;
-    }
-  } else if (x.isZero()) {
-    return new Ctor(x);
-  } else if (x.abs().eq(1) && pr + 4 <= PI_PRECISION) {
-    r = getPi(Ctor, pr + 4, rm).times(0.25);
-    r.s = x.s;
-    return r;
-  }
-  Ctor.precision = wpr = pr + 10;
-  Ctor.rounding = 1;
-  k = Math.min(28, wpr / LOG_BASE + 2 | 0);
-  for (i = k; i; --i)
-    x = x.div(x.times(x).plus(1).sqrt().plus(1));
-  external = false;
-  j = Math.ceil(wpr / LOG_BASE);
-  n = 1;
-  x2 = x.times(x);
-  r = new Ctor(x);
-  px = x;
-  for (; i !== -1; ) {
-    px = px.times(x2);
-    t = r.minus(px.div(n += 2));
-    px = px.times(x2);
-    r = t.plus(px.div(n += 2));
-    if (r.d[j] !== void 0)
-      for (i = j; r.d[i] === t.d[i] && i--; )
-        ;
-  }
-  if (k)
-    r = r.times(2 << k - 1);
-  external = true;
-  return finalise(r, Ctor.precision = pr, Ctor.rounding = rm, true);
-};
-P.isFinite = function() {
-  return !!this.d;
-};
-P.isInteger = P.isInt = function() {
-  return !!this.d && mathfloor(this.e / LOG_BASE) > this.d.length - 2;
-};
-P.isNaN = function() {
-  return !this.s;
-};
-P.isNegative = P.isNeg = function() {
-  return this.s < 0;
-};
-P.isPositive = P.isPos = function() {
-  return this.s > 0;
-};
-P.isZero = function() {
-  return !!this.d && this.d[0] === 0;
-};
-P.lessThan = P.lt = function(y) {
-  return this.cmp(y) < 0;
-};
-P.lessThanOrEqualTo = P.lte = function(y) {
-  return this.cmp(y) < 1;
-};
-P.logarithm = P.log = function(base) {
-  var isBase10, d, denominator, k, inf, num, sd, r, arg2 = this, Ctor = arg2.constructor, pr = Ctor.precision, rm = Ctor.rounding, guard = 5;
-  if (base == null) {
-    base = new Ctor(10);
-    isBase10 = true;
-  } else {
-    base = new Ctor(base);
-    d = base.d;
-    if (base.s < 0 || !d || !d[0] || base.eq(1))
-      return new Ctor(NaN);
-    isBase10 = base.eq(10);
-  }
-  d = arg2.d;
-  if (arg2.s < 0 || !d || !d[0] || arg2.eq(1)) {
-    return new Ctor(d && !d[0] ? -1 / 0 : arg2.s != 1 ? NaN : d ? 0 : 1 / 0);
-  }
-  if (isBase10) {
-    if (d.length > 1) {
-      inf = true;
-    } else {
-      for (k = d[0]; k % 10 === 0; )
-        k /= 10;
-      inf = k !== 1;
-    }
-  }
-  external = false;
-  sd = pr + guard;
-  num = naturalLogarithm(arg2, sd);
-  denominator = isBase10 ? getLn10(Ctor, sd + 10) : naturalLogarithm(base, sd);
-  r = divide(num, denominator, sd, 1);
-  if (checkRoundingDigits(r.d, k = pr, rm)) {
-    do {
-      sd += 10;
-      num = naturalLogarithm(arg2, sd);
-      denominator = isBase10 ? getLn10(Ctor, sd + 10) : naturalLogarithm(base, sd);
-      r = divide(num, denominator, sd, 1);
-      if (!inf) {
-        if (+digitsToString(r.d).slice(k + 1, k + 15) + 1 == 1e14) {
-          r = finalise(r, pr + 1, 0);
-        }
-        break;
-      }
-    } while (checkRoundingDigits(r.d, k += 10, rm));
-  }
-  external = true;
-  return finalise(r, pr, rm);
-};
-P.minus = P.sub = function(y) {
-  var d, e, i, j, k, len, pr, rm, xd, xe, xLTy, yd, x = this, Ctor = x.constructor;
-  y = new Ctor(y);
-  if (!x.d || !y.d) {
-    if (!x.s || !y.s)
-      y = new Ctor(NaN);
-    else if (x.d)
-      y.s = -y.s;
-    else
-      y = new Ctor(y.d || x.s !== y.s ? x : NaN);
-    return y;
-  }
-  if (x.s != y.s) {
-    y.s = -y.s;
-    return x.plus(y);
-  }
-  xd = x.d;
-  yd = y.d;
-  pr = Ctor.precision;
-  rm = Ctor.rounding;
-  if (!xd[0] || !yd[0]) {
-    if (yd[0])
-      y.s = -y.s;
-    else if (xd[0])
-      y = new Ctor(x);
-    else
-      return new Ctor(rm === 3 ? -0 : 0);
-    return external ? finalise(y, pr, rm) : y;
-  }
-  e = mathfloor(y.e / LOG_BASE);
-  xe = mathfloor(x.e / LOG_BASE);
-  xd = xd.slice();
-  k = xe - e;
-  if (k) {
-    xLTy = k < 0;
-    if (xLTy) {
-      d = xd;
-      k = -k;
-      len = yd.length;
-    } else {
-      d = yd;
-      e = xe;
-      len = xd.length;
-    }
-    i = Math.max(Math.ceil(pr / LOG_BASE), len) + 2;
-    if (k > i) {
-      k = i;
-      d.length = 1;
-    }
-    d.reverse();
-    for (i = k; i--; )
-      d.push(0);
-    d.reverse();
-  } else {
-    i = xd.length;
-    len = yd.length;
-    xLTy = i < len;
-    if (xLTy)
-      len = i;
-    for (i = 0; i < len; i++) {
-      if (xd[i] != yd[i]) {
-        xLTy = xd[i] < yd[i];
-        break;
-      }
-    }
-    k = 0;
-  }
-  if (xLTy) {
-    d = xd;
-    xd = yd;
-    yd = d;
-    y.s = -y.s;
-  }
-  len = xd.length;
-  for (i = yd.length - len; i > 0; --i)
-    xd[len++] = 0;
-  for (i = yd.length; i > k; ) {
-    if (xd[--i] < yd[i]) {
-      for (j = i; j && xd[--j] === 0; )
-        xd[j] = BASE - 1;
-      --xd[j];
-      xd[i] += BASE;
-    }
-    xd[i] -= yd[i];
-  }
-  for (; xd[--len] === 0; )
-    xd.pop();
-  for (; xd[0] === 0; xd.shift())
-    --e;
-  if (!xd[0])
-    return new Ctor(rm === 3 ? -0 : 0);
-  y.d = xd;
-  y.e = getBase10Exponent(xd, e);
-  return external ? finalise(y, pr, rm) : y;
-};
-P.modulo = P.mod = function(y) {
-  var q, x = this, Ctor = x.constructor;
-  y = new Ctor(y);
-  if (!x.d || !y.s || y.d && !y.d[0])
-    return new Ctor(NaN);
-  if (!y.d || x.d && !x.d[0]) {
-    return finalise(new Ctor(x), Ctor.precision, Ctor.rounding);
-  }
-  external = false;
-  if (Ctor.modulo == 9) {
-    q = divide(x, y.abs(), 0, 3, 1);
-    q.s *= y.s;
-  } else {
-    q = divide(x, y, 0, Ctor.modulo, 1);
-  }
-  q = q.times(y);
-  external = true;
-  return x.minus(q);
-};
-P.naturalExponential = P.exp = function() {
-  return naturalExponential(this);
-};
-P.naturalLogarithm = P.ln = function() {
-  return naturalLogarithm(this);
-};
-P.negated = P.neg = function() {
-  var x = new this.constructor(this);
-  x.s = -x.s;
-  return finalise(x);
-};
-P.plus = P.add = function(y) {
-  var carry, d, e, i, k, len, pr, rm, xd, yd, x = this, Ctor = x.constructor;
-  y = new Ctor(y);
-  if (!x.d || !y.d) {
-    if (!x.s || !y.s)
-      y = new Ctor(NaN);
-    else if (!x.d)
-      y = new Ctor(y.d || x.s === y.s ? x : NaN);
-    return y;
-  }
-  if (x.s != y.s) {
-    y.s = -y.s;
-    return x.minus(y);
-  }
-  xd = x.d;
-  yd = y.d;
-  pr = Ctor.precision;
-  rm = Ctor.rounding;
-  if (!xd[0] || !yd[0]) {
-    if (!yd[0])
-      y = new Ctor(x);
-    return external ? finalise(y, pr, rm) : y;
-  }
-  k = mathfloor(x.e / LOG_BASE);
-  e = mathfloor(y.e / LOG_BASE);
-  xd = xd.slice();
-  i = k - e;
-  if (i) {
-    if (i < 0) {
-      d = xd;
-      i = -i;
-      len = yd.length;
-    } else {
-      d = yd;
-      e = k;
-      len = xd.length;
-    }
-    k = Math.ceil(pr / LOG_BASE);
-    len = k > len ? k + 1 : len + 1;
-    if (i > len) {
-      i = len;
-      d.length = 1;
-    }
-    d.reverse();
-    for (; i--; )
-      d.push(0);
-    d.reverse();
-  }
-  len = xd.length;
-  i = yd.length;
-  if (len - i < 0) {
-    i = len;
-    d = yd;
-    yd = xd;
-    xd = d;
-  }
-  for (carry = 0; i; ) {
-    carry = (xd[--i] = xd[i] + yd[i] + carry) / BASE | 0;
-    xd[i] %= BASE;
-  }
-  if (carry) {
-    xd.unshift(carry);
-    ++e;
-  }
-  for (len = xd.length; xd[--len] == 0; )
-    xd.pop();
-  y.d = xd;
-  y.e = getBase10Exponent(xd, e);
-  return external ? finalise(y, pr, rm) : y;
-};
-P.precision = P.sd = function(z) {
-  var k, x = this;
-  if (z !== void 0 && z !== !!z && z !== 1 && z !== 0)
-    throw Error(invalidArgument + z);
-  if (x.d) {
-    k = getPrecision(x.d);
-    if (z && x.e + 1 > k)
-      k = x.e + 1;
-  } else {
-    k = NaN;
-  }
-  return k;
-};
-P.round = function() {
-  var x = this, Ctor = x.constructor;
-  return finalise(new Ctor(x), x.e + 1, Ctor.rounding);
-};
-P.sine = P.sin = function() {
-  var pr, rm, x = this, Ctor = x.constructor;
-  if (!x.isFinite())
-    return new Ctor(NaN);
-  if (x.isZero())
-    return new Ctor(x);
-  pr = Ctor.precision;
-  rm = Ctor.rounding;
-  Ctor.precision = pr + Math.max(x.e, x.sd()) + LOG_BASE;
-  Ctor.rounding = 1;
-  x = sine(Ctor, toLessThanHalfPi(Ctor, x));
-  Ctor.precision = pr;
-  Ctor.rounding = rm;
-  return finalise(quadrant > 2 ? x.neg() : x, pr, rm, true);
-};
-P.squareRoot = P.sqrt = function() {
-  var m, n, sd, r, rep, t, x = this, d = x.d, e = x.e, s = x.s, Ctor = x.constructor;
-  if (s !== 1 || !d || !d[0]) {
-    return new Ctor(!s || s < 0 && (!d || d[0]) ? NaN : d ? x : 1 / 0);
-  }
-  external = false;
-  s = Math.sqrt(+x);
-  if (s == 0 || s == 1 / 0) {
-    n = digitsToString(d);
-    if ((n.length + e) % 2 == 0)
-      n += "0";
-    s = Math.sqrt(n);
-    e = mathfloor((e + 1) / 2) - (e < 0 || e % 2);
-    if (s == 1 / 0) {
-      n = "5e" + e;
-    } else {
-      n = s.toExponential();
-      n = n.slice(0, n.indexOf("e") + 1) + e;
-    }
-    r = new Ctor(n);
-  } else {
-    r = new Ctor(s.toString());
-  }
-  sd = (e = Ctor.precision) + 3;
-  for (; ; ) {
-    t = r;
-    r = t.plus(divide(x, t, sd + 2, 1)).times(0.5);
-    if (digitsToString(t.d).slice(0, sd) === (n = digitsToString(r.d)).slice(0, sd)) {
-      n = n.slice(sd - 3, sd + 1);
-      if (n == "9999" || !rep && n == "4999") {
-        if (!rep) {
-          finalise(t, e + 1, 0);
-          if (t.times(t).eq(x)) {
-            r = t;
-            break;
-          }
-        }
-        sd += 4;
-        rep = 1;
-      } else {
-        if (!+n || !+n.slice(1) && n.charAt(0) == "5") {
-          finalise(r, e + 1, 1);
-          m = !r.times(r).eq(x);
-        }
-        break;
-      }
-    }
-  }
-  external = true;
-  return finalise(r, e, Ctor.rounding, m);
-};
-P.tangent = P.tan = function() {
-  var pr, rm, x = this, Ctor = x.constructor;
-  if (!x.isFinite())
-    return new Ctor(NaN);
-  if (x.isZero())
-    return new Ctor(x);
-  pr = Ctor.precision;
-  rm = Ctor.rounding;
-  Ctor.precision = pr + 10;
-  Ctor.rounding = 1;
-  x = x.sin();
-  x.s = 1;
-  x = divide(x, new Ctor(1).minus(x.times(x)).sqrt(), pr + 10, 0);
-  Ctor.precision = pr;
-  Ctor.rounding = rm;
-  return finalise(quadrant == 2 || quadrant == 4 ? x.neg() : x, pr, rm, true);
-};
-P.times = P.mul = function(y) {
-  var carry, e, i, k, r, rL, t, xdL, ydL, x = this, Ctor = x.constructor, xd = x.d, yd = (y = new Ctor(y)).d;
-  y.s *= x.s;
-  if (!xd || !xd[0] || !yd || !yd[0]) {
-    return new Ctor(!y.s || xd && !xd[0] && !yd || yd && !yd[0] && !xd ? NaN : !xd || !yd ? y.s / 0 : y.s * 0);
-  }
-  e = mathfloor(x.e / LOG_BASE) + mathfloor(y.e / LOG_BASE);
-  xdL = xd.length;
-  ydL = yd.length;
-  if (xdL < ydL) {
-    r = xd;
-    xd = yd;
-    yd = r;
-    rL = xdL;
-    xdL = ydL;
-    ydL = rL;
-  }
-  r = [];
-  rL = xdL + ydL;
-  for (i = rL; i--; )
-    r.push(0);
-  for (i = ydL; --i >= 0; ) {
-    carry = 0;
-    for (k = xdL + i; k > i; ) {
-      t = r[k] + yd[i] * xd[k - i - 1] + carry;
-      r[k--] = t % BASE | 0;
-      carry = t / BASE | 0;
-    }
-    r[k] = (r[k] + carry) % BASE | 0;
-  }
-  for (; !r[--rL]; )
-    r.pop();
-  if (carry)
-    ++e;
-  else
-    r.shift();
-  y.d = r;
-  y.e = getBase10Exponent(r, e);
-  return external ? finalise(y, Ctor.precision, Ctor.rounding) : y;
-};
-P.toBinary = function(sd, rm) {
-  return toStringBinary(this, 2, sd, rm);
-};
-P.toDecimalPlaces = P.toDP = function(dp, rm) {
-  var x = this, Ctor = x.constructor;
-  x = new Ctor(x);
-  if (dp === void 0)
-    return x;
-  checkInt32(dp, 0, MAX_DIGITS);
-  if (rm === void 0)
-    rm = Ctor.rounding;
-  else
-    checkInt32(rm, 0, 8);
-  return finalise(x, dp + x.e + 1, rm);
-};
-P.toExponential = function(dp, rm) {
-  var str, x = this, Ctor = x.constructor;
-  if (dp === void 0) {
-    str = finiteToString(x, true);
-  } else {
-    checkInt32(dp, 0, MAX_DIGITS);
-    if (rm === void 0)
-      rm = Ctor.rounding;
-    else
-      checkInt32(rm, 0, 8);
-    x = finalise(new Ctor(x), dp + 1, rm);
-    str = finiteToString(x, true, dp + 1);
-  }
-  return x.isNeg() && !x.isZero() ? "-" + str : str;
-};
-P.toFixed = function(dp, rm) {
-  var str, y, x = this, Ctor = x.constructor;
-  if (dp === void 0) {
-    str = finiteToString(x);
-  } else {
-    checkInt32(dp, 0, MAX_DIGITS);
-    if (rm === void 0)
-      rm = Ctor.rounding;
-    else
-      checkInt32(rm, 0, 8);
-    y = finalise(new Ctor(x), dp + x.e + 1, rm);
-    str = finiteToString(y, false, dp + y.e + 1);
-  }
-  return x.isNeg() && !x.isZero() ? "-" + str : str;
-};
-P.toFraction = function(maxD) {
-  var d, d0, d1, d2, e, k, n, n0, n1, pr, q, r, x = this, xd = x.d, Ctor = x.constructor;
-  if (!xd)
-    return new Ctor(x);
-  n1 = d0 = new Ctor(1);
-  d1 = n0 = new Ctor(0);
-  d = new Ctor(d1);
-  e = d.e = getPrecision(xd) - x.e - 1;
-  k = e % LOG_BASE;
-  d.d[0] = mathpow(10, k < 0 ? LOG_BASE + k : k);
-  if (maxD == null) {
-    maxD = e > 0 ? d : n1;
-  } else {
-    n = new Ctor(maxD);
-    if (!n.isInt() || n.lt(n1))
-      throw Error(invalidArgument + n);
-    maxD = n.gt(d) ? e > 0 ? d : n1 : n;
-  }
-  external = false;
-  n = new Ctor(digitsToString(xd));
-  pr = Ctor.precision;
-  Ctor.precision = e = xd.length * LOG_BASE * 2;
-  for (; ; ) {
-    q = divide(n, d, 0, 1, 1);
-    d2 = d0.plus(q.times(d1));
-    if (d2.cmp(maxD) == 1)
-      break;
-    d0 = d1;
-    d1 = d2;
-    d2 = n1;
-    n1 = n0.plus(q.times(d2));
-    n0 = d2;
-    d2 = d;
-    d = n.minus(q.times(d2));
-    n = d2;
-  }
-  d2 = divide(maxD.minus(d0), d1, 0, 1, 1);
-  n0 = n0.plus(d2.times(n1));
-  d0 = d0.plus(d2.times(d1));
-  n0.s = n1.s = x.s;
-  r = divide(n1, d1, e, 1).minus(x).abs().cmp(divide(n0, d0, e, 1).minus(x).abs()) < 1 ? [n1, d1] : [n0, d0];
-  Ctor.precision = pr;
-  external = true;
-  return r;
-};
-P.toHexadecimal = P.toHex = function(sd, rm) {
-  return toStringBinary(this, 16, sd, rm);
-};
-P.toNearest = function(y, rm) {
-  var x = this, Ctor = x.constructor;
-  x = new Ctor(x);
-  if (y == null) {
-    if (!x.d)
-      return x;
-    y = new Ctor(1);
-    rm = Ctor.rounding;
-  } else {
-    y = new Ctor(y);
-    if (rm === void 0) {
-      rm = Ctor.rounding;
-    } else {
-      checkInt32(rm, 0, 8);
-    }
-    if (!x.d)
-      return y.s ? x : y;
-    if (!y.d) {
-      if (y.s)
-        y.s = x.s;
-      return y;
-    }
-  }
-  if (y.d[0]) {
-    external = false;
-    x = divide(x, y, 0, rm, 1).times(y);
-    external = true;
-    finalise(x);
-  } else {
-    y.s = x.s;
-    x = y;
-  }
-  return x;
-};
-P.toNumber = function() {
-  return +this;
-};
-P.toOctal = function(sd, rm) {
-  return toStringBinary(this, 8, sd, rm);
-};
-P.toPower = P.pow = function(y) {
-  var e, k, pr, r, rm, s, x = this, Ctor = x.constructor, yn = +(y = new Ctor(y));
-  if (!x.d || !y.d || !x.d[0] || !y.d[0])
-    return new Ctor(mathpow(+x, yn));
-  x = new Ctor(x);
-  if (x.eq(1))
-    return x;
-  pr = Ctor.precision;
-  rm = Ctor.rounding;
-  if (y.eq(1))
-    return finalise(x, pr, rm);
-  e = mathfloor(y.e / LOG_BASE);
-  if (e >= y.d.length - 1 && (k = yn < 0 ? -yn : yn) <= MAX_SAFE_INTEGER) {
-    r = intPow(Ctor, x, k, pr);
-    return y.s < 0 ? new Ctor(1).div(r) : finalise(r, pr, rm);
-  }
-  s = x.s;
-  if (s < 0) {
-    if (e < y.d.length - 1)
-      return new Ctor(NaN);
-    if ((y.d[e] & 1) == 0)
-      s = 1;
-    if (x.e == 0 && x.d[0] == 1 && x.d.length == 1) {
-      x.s = s;
-      return x;
-    }
-  }
-  k = mathpow(+x, yn);
-  e = k == 0 || !isFinite(k) ? mathfloor(yn * (Math.log("0." + digitsToString(x.d)) / Math.LN10 + x.e + 1)) : new Ctor(k + "").e;
-  if (e > Ctor.maxE + 1 || e < Ctor.minE - 1)
-    return new Ctor(e > 0 ? s / 0 : 0);
-  external = false;
-  Ctor.rounding = x.s = 1;
-  k = Math.min(12, (e + "").length);
-  r = naturalExponential(y.times(naturalLogarithm(x, pr + k)), pr);
-  if (r.d) {
-    r = finalise(r, pr + 5, 1);
-    if (checkRoundingDigits(r.d, pr, rm)) {
-      e = pr + 10;
-      r = finalise(naturalExponential(y.times(naturalLogarithm(x, e + k)), e), e + 5, 1);
-      if (+digitsToString(r.d).slice(pr + 1, pr + 15) + 1 == 1e14) {
-        r = finalise(r, pr + 1, 0);
-      }
-    }
-  }
-  r.s = s;
-  external = true;
-  Ctor.rounding = rm;
-  return finalise(r, pr, rm);
-};
-P.toPrecision = function(sd, rm) {
-  var str, x = this, Ctor = x.constructor;
-  if (sd === void 0) {
-    str = finiteToString(x, x.e <= Ctor.toExpNeg || x.e >= Ctor.toExpPos);
-  } else {
-    checkInt32(sd, 1, MAX_DIGITS);
-    if (rm === void 0)
-      rm = Ctor.rounding;
-    else
-      checkInt32(rm, 0, 8);
-    x = finalise(new Ctor(x), sd, rm);
-    str = finiteToString(x, sd <= x.e || x.e <= Ctor.toExpNeg, sd);
-  }
-  return x.isNeg() && !x.isZero() ? "-" + str : str;
-};
-P.toSignificantDigits = P.toSD = function(sd, rm) {
-  var x = this, Ctor = x.constructor;
-  if (sd === void 0) {
-    sd = Ctor.precision;
-    rm = Ctor.rounding;
-  } else {
-    checkInt32(sd, 1, MAX_DIGITS);
-    if (rm === void 0)
-      rm = Ctor.rounding;
-    else
-      checkInt32(rm, 0, 8);
-  }
-  return finalise(new Ctor(x), sd, rm);
-};
-P.toString = function() {
-  var x = this, Ctor = x.constructor, str = finiteToString(x, x.e <= Ctor.toExpNeg || x.e >= Ctor.toExpPos);
-  return x.isNeg() && !x.isZero() ? "-" + str : str;
-};
-P.truncated = P.trunc = function() {
-  return finalise(new this.constructor(this), this.e + 1, 1);
-};
-P.valueOf = P.toJSON = function() {
-  var x = this, Ctor = x.constructor, str = finiteToString(x, x.e <= Ctor.toExpNeg || x.e >= Ctor.toExpPos);
-  return x.isNeg() ? "-" + str : str;
-};
-function digitsToString(d) {
-  var i, k, ws, indexOfLastWord = d.length - 1, str = "", w = d[0];
-  if (indexOfLastWord > 0) {
-    str += w;
-    for (i = 1; i < indexOfLastWord; i++) {
-      ws = d[i] + "";
-      k = LOG_BASE - ws.length;
-      if (k)
-        str += getZeroString(k);
-      str += ws;
-    }
-    w = d[i];
-    ws = w + "";
-    k = LOG_BASE - ws.length;
-    if (k)
-      str += getZeroString(k);
-  } else if (w === 0) {
-    return "0";
-  }
-  for (; w % 10 === 0; )
-    w /= 10;
-  return str + w;
-}
-__name(digitsToString, "digitsToString");
-function checkInt32(i, min2, max2) {
-  if (i !== ~~i || i < min2 || i > max2) {
-    throw Error(invalidArgument + i);
-  }
-}
-__name(checkInt32, "checkInt32");
-function checkRoundingDigits(d, i, rm, repeating) {
-  var di, k, r, rd;
-  for (k = d[0]; k >= 10; k /= 10)
-    --i;
-  if (--i < 0) {
-    i += LOG_BASE;
-    di = 0;
-  } else {
-    di = Math.ceil((i + 1) / LOG_BASE);
-    i %= LOG_BASE;
-  }
-  k = mathpow(10, LOG_BASE - i);
-  rd = d[di] % k | 0;
-  if (repeating == null) {
-    if (i < 3) {
-      if (i == 0)
-        rd = rd / 100 | 0;
-      else if (i == 1)
-        rd = rd / 10 | 0;
-      r = rm < 4 && rd == 99999 || rm > 3 && rd == 49999 || rd == 5e4 || rd == 0;
-    } else {
-      r = (rm < 4 && rd + 1 == k || rm > 3 && rd + 1 == k / 2) && (d[di + 1] / k / 100 | 0) == mathpow(10, i - 2) - 1 || (rd == k / 2 || rd == 0) && (d[di + 1] / k / 100 | 0) == 0;
-    }
-  } else {
-    if (i < 4) {
-      if (i == 0)
-        rd = rd / 1e3 | 0;
-      else if (i == 1)
-        rd = rd / 100 | 0;
-      else if (i == 2)
-        rd = rd / 10 | 0;
-      r = (repeating || rm < 4) && rd == 9999 || !repeating && rm > 3 && rd == 4999;
-    } else {
-      r = ((repeating || rm < 4) && rd + 1 == k || !repeating && rm > 3 && rd + 1 == k / 2) && (d[di + 1] / k / 1e3 | 0) == mathpow(10, i - 3) - 1;
-    }
-  }
-  return r;
-}
-__name(checkRoundingDigits, "checkRoundingDigits");
-function convertBase(str, baseIn, baseOut) {
-  var j, arr = [0], arrL, i = 0, strL = str.length;
-  for (; i < strL; ) {
-    for (arrL = arr.length; arrL--; )
-      arr[arrL] *= baseIn;
-    arr[0] += NUMERALS.indexOf(str.charAt(i++));
-    for (j = 0; j < arr.length; j++) {
-      if (arr[j] > baseOut - 1) {
-        if (arr[j + 1] === void 0)
-          arr[j + 1] = 0;
-        arr[j + 1] += arr[j] / baseOut | 0;
-        arr[j] %= baseOut;
-      }
-    }
-  }
-  return arr.reverse();
-}
-__name(convertBase, "convertBase");
-function cosine(Ctor, x) {
-  var k, len, y;
-  if (x.isZero())
-    return x;
-  len = x.d.length;
-  if (len < 32) {
-    k = Math.ceil(len / 3);
-    y = (1 / tinyPow(4, k)).toString();
-  } else {
-    k = 16;
-    y = "2.3283064365386962890625e-10";
-  }
-  Ctor.precision += k;
-  x = taylorSeries(Ctor, 1, x.times(y), new Ctor(1));
-  for (var i = k; i--; ) {
-    var cos2x = x.times(x);
-    x = cos2x.times(cos2x).minus(cos2x).times(8).plus(1);
-  }
-  Ctor.precision -= k;
-  return x;
-}
-__name(cosine, "cosine");
-var divide = function() {
-  function multiplyInteger(x, k, base) {
-    var temp, carry = 0, i = x.length;
-    for (x = x.slice(); i--; ) {
-      temp = x[i] * k + carry;
-      x[i] = temp % base | 0;
-      carry = temp / base | 0;
-    }
-    if (carry)
-      x.unshift(carry);
-    return x;
-  }
-  __name(multiplyInteger, "multiplyInteger");
-  function compare(a, b, aL, bL) {
-    var i, r;
-    if (aL != bL) {
-      r = aL > bL ? 1 : -1;
-    } else {
-      for (i = r = 0; i < aL; i++) {
-        if (a[i] != b[i]) {
-          r = a[i] > b[i] ? 1 : -1;
-          break;
-        }
-      }
-    }
-    return r;
-  }
-  __name(compare, "compare");
-  function subtract(a, b, aL, base) {
-    var i = 0;
-    for (; aL--; ) {
-      a[aL] -= i;
-      i = a[aL] < b[aL] ? 1 : 0;
-      a[aL] = i * base + a[aL] - b[aL];
-    }
-    for (; !a[0] && a.length > 1; )
-      a.shift();
-  }
-  __name(subtract, "subtract");
-  return function(x, y, pr, rm, dp, base) {
-    var cmp, e, i, k, logBase, more, prod, prodL, q, qd, rem, remL, rem0, sd, t, xi, xL, yd0, yL, yz, Ctor = x.constructor, sign2 = x.s == y.s ? 1 : -1, xd = x.d, yd = y.d;
-    if (!xd || !xd[0] || !yd || !yd[0]) {
-      return new Ctor(
-        !x.s || !y.s || (xd ? yd && xd[0] == yd[0] : !yd) ? NaN : xd && xd[0] == 0 || !yd ? sign2 * 0 : sign2 / 0
-      );
-    }
-    if (base) {
-      logBase = 1;
-      e = x.e - y.e;
-    } else {
-      base = BASE;
-      logBase = LOG_BASE;
-      e = mathfloor(x.e / logBase) - mathfloor(y.e / logBase);
-    }
-    yL = yd.length;
-    xL = xd.length;
-    q = new Ctor(sign2);
-    qd = q.d = [];
-    for (i = 0; yd[i] == (xd[i] || 0); i++)
-      ;
-    if (yd[i] > (xd[i] || 0))
-      e--;
-    if (pr == null) {
-      sd = pr = Ctor.precision;
-      rm = Ctor.rounding;
-    } else if (dp) {
-      sd = pr + (x.e - y.e) + 1;
-    } else {
-      sd = pr;
-    }
-    if (sd < 0) {
-      qd.push(1);
-      more = true;
-    } else {
-      sd = sd / logBase + 2 | 0;
-      i = 0;
-      if (yL == 1) {
-        k = 0;
-        yd = yd[0];
-        sd++;
-        for (; (i < xL || k) && sd--; i++) {
-          t = k * base + (xd[i] || 0);
-          qd[i] = t / yd | 0;
-          k = t % yd | 0;
-        }
-        more = k || i < xL;
-      } else {
-        k = base / (yd[0] + 1) | 0;
-        if (k > 1) {
-          yd = multiplyInteger(yd, k, base);
-          xd = multiplyInteger(xd, k, base);
-          yL = yd.length;
-          xL = xd.length;
-        }
-        xi = yL;
-        rem = xd.slice(0, yL);
-        remL = rem.length;
-        for (; remL < yL; )
-          rem[remL++] = 0;
-        yz = yd.slice();
-        yz.unshift(0);
-        yd0 = yd[0];
-        if (yd[1] >= base / 2)
-          ++yd0;
-        do {
-          k = 0;
-          cmp = compare(yd, rem, yL, remL);
-          if (cmp < 0) {
-            rem0 = rem[0];
-            if (yL != remL)
-              rem0 = rem0 * base + (rem[1] || 0);
-            k = rem0 / yd0 | 0;
-            if (k > 1) {
-              if (k >= base)
-                k = base - 1;
-              prod = multiplyInteger(yd, k, base);
-              prodL = prod.length;
-              remL = rem.length;
-              cmp = compare(prod, rem, prodL, remL);
-              if (cmp == 1) {
-                k--;
-                subtract(prod, yL < prodL ? yz : yd, prodL, base);
-              }
-            } else {
-              if (k == 0)
-                cmp = k = 1;
-              prod = yd.slice();
-            }
-            prodL = prod.length;
-            if (prodL < remL)
-              prod.unshift(0);
-            subtract(rem, prod, remL, base);
-            if (cmp == -1) {
-              remL = rem.length;
-              cmp = compare(yd, rem, yL, remL);
-              if (cmp < 1) {
-                k++;
-                subtract(rem, yL < remL ? yz : yd, remL, base);
-              }
-            }
-            remL = rem.length;
-          } else if (cmp === 0) {
-            k++;
-            rem = [0];
-          }
-          qd[i++] = k;
-          if (cmp && rem[0]) {
-            rem[remL++] = xd[xi] || 0;
-          } else {
-            rem = [xd[xi]];
-            remL = 1;
-          }
-        } while ((xi++ < xL || rem[0] !== void 0) && sd--);
-        more = rem[0] !== void 0;
-      }
-      if (!qd[0])
-        qd.shift();
-    }
-    if (logBase == 1) {
-      q.e = e;
-      inexact = more;
-    } else {
-      for (i = 1, k = qd[0]; k >= 10; k /= 10)
-        i++;
-      q.e = i + e * logBase - 1;
-      finalise(q, dp ? pr + q.e + 1 : pr, rm, more);
-    }
-    return q;
-  };
-}();
-function finalise(x, sd, rm, isTruncated) {
-  var digits, i, j, k, rd, roundUp, w, xd, xdi, Ctor = x.constructor;
-  out:
-    if (sd != null) {
-      xd = x.d;
-      if (!xd)
-        return x;
-      for (digits = 1, k = xd[0]; k >= 10; k /= 10)
-        digits++;
-      i = sd - digits;
-      if (i < 0) {
-        i += LOG_BASE;
-        j = sd;
-        w = xd[xdi = 0];
-        rd = w / mathpow(10, digits - j - 1) % 10 | 0;
-      } else {
-        xdi = Math.ceil((i + 1) / LOG_BASE);
-        k = xd.length;
-        if (xdi >= k) {
-          if (isTruncated) {
-            for (; k++ <= xdi; )
-              xd.push(0);
-            w = rd = 0;
-            digits = 1;
-            i %= LOG_BASE;
-            j = i - LOG_BASE + 1;
-          } else {
-            break out;
-          }
-        } else {
-          w = k = xd[xdi];
-          for (digits = 1; k >= 10; k /= 10)
-            digits++;
-          i %= LOG_BASE;
-          j = i - LOG_BASE + digits;
-          rd = j < 0 ? 0 : w / mathpow(10, digits - j - 1) % 10 | 0;
-        }
-      }
-      isTruncated = isTruncated || sd < 0 || xd[xdi + 1] !== void 0 || (j < 0 ? w : w % mathpow(10, digits - j - 1));
-      roundUp = rm < 4 ? (rd || isTruncated) && (rm == 0 || rm == (x.s < 0 ? 3 : 2)) : rd > 5 || rd == 5 && (rm == 4 || isTruncated || rm == 6 && (i > 0 ? j > 0 ? w / mathpow(10, digits - j) : 0 : xd[xdi - 1]) % 10 & 1 || rm == (x.s < 0 ? 8 : 7));
-      if (sd < 1 || !xd[0]) {
-        xd.length = 0;
-        if (roundUp) {
-          sd -= x.e + 1;
-          xd[0] = mathpow(10, (LOG_BASE - sd % LOG_BASE) % LOG_BASE);
-          x.e = -sd || 0;
-        } else {
-          xd[0] = x.e = 0;
-        }
-        return x;
-      }
-      if (i == 0) {
-        xd.length = xdi;
-        k = 1;
-        xdi--;
-      } else {
-        xd.length = xdi + 1;
-        k = mathpow(10, LOG_BASE - i);
-        xd[xdi] = j > 0 ? (w / mathpow(10, digits - j) % mathpow(10, j) | 0) * k : 0;
-      }
-      if (roundUp) {
-        for (; ; ) {
-          if (xdi == 0) {
-            for (i = 1, j = xd[0]; j >= 10; j /= 10)
-              i++;
-            j = xd[0] += k;
-            for (k = 1; j >= 10; j /= 10)
-              k++;
-            if (i != k) {
-              x.e++;
-              if (xd[0] == BASE)
-                xd[0] = 1;
-            }
-            break;
-          } else {
-            xd[xdi] += k;
-            if (xd[xdi] != BASE)
-              break;
-            xd[xdi--] = 0;
-            k = 1;
-          }
-        }
-      }
-      for (i = xd.length; xd[--i] === 0; )
-        xd.pop();
-    }
-  if (external) {
-    if (x.e > Ctor.maxE) {
-      x.d = null;
-      x.e = NaN;
-    } else if (x.e < Ctor.minE) {
-      x.e = 0;
-      x.d = [0];
-    }
-  }
-  return x;
-}
-__name(finalise, "finalise");
-function finiteToString(x, isExp, sd) {
-  if (!x.isFinite())
-    return nonFiniteToString(x);
-  var k, e = x.e, str = digitsToString(x.d), len = str.length;
-  if (isExp) {
-    if (sd && (k = sd - len) > 0) {
-      str = str.charAt(0) + "." + str.slice(1) + getZeroString(k);
-    } else if (len > 1) {
-      str = str.charAt(0) + "." + str.slice(1);
-    }
-    str = str + (x.e < 0 ? "e" : "e+") + x.e;
-  } else if (e < 0) {
-    str = "0." + getZeroString(-e - 1) + str;
-    if (sd && (k = sd - len) > 0)
-      str += getZeroString(k);
-  } else if (e >= len) {
-    str += getZeroString(e + 1 - len);
-    if (sd && (k = sd - e - 1) > 0)
-      str = str + "." + getZeroString(k);
-  } else {
-    if ((k = e + 1) < len)
-      str = str.slice(0, k) + "." + str.slice(k);
-    if (sd && (k = sd - len) > 0) {
-      if (e + 1 === len)
-        str += ".";
-      str += getZeroString(k);
-    }
-  }
-  return str;
-}
-__name(finiteToString, "finiteToString");
-function getBase10Exponent(digits, e) {
-  var w = digits[0];
-  for (e *= LOG_BASE; w >= 10; w /= 10)
-    e++;
-  return e;
-}
-__name(getBase10Exponent, "getBase10Exponent");
-function getLn10(Ctor, sd, pr) {
-  if (sd > LN10_PRECISION) {
-    external = true;
-    if (pr)
-      Ctor.precision = pr;
-    throw Error(precisionLimitExceeded);
-  }
-  return finalise(new Ctor(LN10), sd, 1, true);
-}
-__name(getLn10, "getLn10");
-function getPi(Ctor, sd, rm) {
-  if (sd > PI_PRECISION)
-    throw Error(precisionLimitExceeded);
-  return finalise(new Ctor(PI), sd, rm, true);
-}
-__name(getPi, "getPi");
-function getPrecision(digits) {
-  var w = digits.length - 1, len = w * LOG_BASE + 1;
-  w = digits[w];
-  if (w) {
-    for (; w % 10 == 0; w /= 10)
-      len--;
-    for (w = digits[0]; w >= 10; w /= 10)
-      len++;
-  }
-  return len;
-}
-__name(getPrecision, "getPrecision");
-function getZeroString(k) {
-  var zs = "";
-  for (; k--; )
-    zs += "0";
-  return zs;
-}
-__name(getZeroString, "getZeroString");
-function intPow(Ctor, x, n, pr) {
-  var isTruncated, r = new Ctor(1), k = Math.ceil(pr / LOG_BASE + 4);
-  external = false;
-  for (; ; ) {
-    if (n % 2) {
-      r = r.times(x);
-      if (truncate(r.d, k))
-        isTruncated = true;
-    }
-    n = mathfloor(n / 2);
-    if (n === 0) {
-      n = r.d.length - 1;
-      if (isTruncated && r.d[n] === 0)
-        ++r.d[n];
-      break;
-    }
-    x = x.times(x);
-    truncate(x.d, k);
-  }
-  external = true;
-  return r;
-}
-__name(intPow, "intPow");
-function isOdd(n) {
-  return n.d[n.d.length - 1] & 1;
-}
-__name(isOdd, "isOdd");
-function maxOrMin(Ctor, args, ltgt) {
-  var y, x = new Ctor(args[0]), i = 0;
-  for (; ++i < args.length; ) {
-    y = new Ctor(args[i]);
-    if (!y.s) {
-      x = y;
-      break;
-    } else if (x[ltgt](y)) {
-      x = y;
-    }
-  }
-  return x;
-}
-__name(maxOrMin, "maxOrMin");
-function naturalExponential(x, sd) {
-  var denominator, guard, j, pow2, sum3, t, wpr, rep = 0, i = 0, k = 0, Ctor = x.constructor, rm = Ctor.rounding, pr = Ctor.precision;
-  if (!x.d || !x.d[0] || x.e > 17) {
-    return new Ctor(x.d ? !x.d[0] ? 1 : x.s < 0 ? 0 : 1 / 0 : x.s ? x.s < 0 ? 0 : x : 0 / 0);
-  }
-  if (sd == null) {
-    external = false;
-    wpr = pr;
-  } else {
-    wpr = sd;
-  }
-  t = new Ctor(0.03125);
-  while (x.e > -2) {
-    x = x.times(t);
-    k += 5;
-  }
-  guard = Math.log(mathpow(2, k)) / Math.LN10 * 2 + 5 | 0;
-  wpr += guard;
-  denominator = pow2 = sum3 = new Ctor(1);
-  Ctor.precision = wpr;
-  for (; ; ) {
-    pow2 = finalise(pow2.times(x), wpr, 1);
-    denominator = denominator.times(++i);
-    t = sum3.plus(divide(pow2, denominator, wpr, 1));
-    if (digitsToString(t.d).slice(0, wpr) === digitsToString(sum3.d).slice(0, wpr)) {
-      j = k;
-      while (j--)
-        sum3 = finalise(sum3.times(sum3), wpr, 1);
-      if (sd == null) {
-        if (rep < 3 && checkRoundingDigits(sum3.d, wpr - guard, rm, rep)) {
-          Ctor.precision = wpr += 10;
-          denominator = pow2 = t = new Ctor(1);
-          i = 0;
-          rep++;
-        } else {
-          return finalise(sum3, Ctor.precision = pr, rm, external = true);
-        }
-      } else {
-        Ctor.precision = pr;
-        return sum3;
-      }
-    }
-    sum3 = t;
-  }
-}
-__name(naturalExponential, "naturalExponential");
-function naturalLogarithm(y, sd) {
-  var c, c0, denominator, e, numerator, rep, sum3, t, wpr, x1, x2, n = 1, guard = 10, x = y, xd = x.d, Ctor = x.constructor, rm = Ctor.rounding, pr = Ctor.precision;
-  if (x.s < 0 || !xd || !xd[0] || !x.e && xd[0] == 1 && xd.length == 1) {
-    return new Ctor(xd && !xd[0] ? -1 / 0 : x.s != 1 ? NaN : xd ? 0 : x);
-  }
-  if (sd == null) {
-    external = false;
-    wpr = pr;
-  } else {
-    wpr = sd;
-  }
-  Ctor.precision = wpr += guard;
-  c = digitsToString(xd);
-  c0 = c.charAt(0);
-  if (Math.abs(e = x.e) < 15e14) {
-    while (c0 < 7 && c0 != 1 || c0 == 1 && c.charAt(1) > 3) {
-      x = x.times(y);
-      c = digitsToString(x.d);
-      c0 = c.charAt(0);
-      n++;
-    }
-    e = x.e;
-    if (c0 > 1) {
-      x = new Ctor("0." + c);
-      e++;
-    } else {
-      x = new Ctor(c0 + "." + c.slice(1));
-    }
-  } else {
-    t = getLn10(Ctor, wpr + 2, pr).times(e + "");
-    x = naturalLogarithm(new Ctor(c0 + "." + c.slice(1)), wpr - guard).plus(t);
-    Ctor.precision = pr;
-    return sd == null ? finalise(x, pr, rm, external = true) : x;
-  }
-  x1 = x;
-  sum3 = numerator = x = divide(x.minus(1), x.plus(1), wpr, 1);
-  x2 = finalise(x.times(x), wpr, 1);
-  denominator = 3;
-  for (; ; ) {
-    numerator = finalise(numerator.times(x2), wpr, 1);
-    t = sum3.plus(divide(numerator, new Ctor(denominator), wpr, 1));
-    if (digitsToString(t.d).slice(0, wpr) === digitsToString(sum3.d).slice(0, wpr)) {
-      sum3 = sum3.times(2);
-      if (e !== 0)
-        sum3 = sum3.plus(getLn10(Ctor, wpr + 2, pr).times(e + ""));
-      sum3 = divide(sum3, new Ctor(n), wpr, 1);
-      if (sd == null) {
-        if (checkRoundingDigits(sum3.d, wpr - guard, rm, rep)) {
-          Ctor.precision = wpr += guard;
-          t = numerator = x = divide(x1.minus(1), x1.plus(1), wpr, 1);
-          x2 = finalise(x.times(x), wpr, 1);
-          denominator = rep = 1;
-        } else {
-          return finalise(sum3, Ctor.precision = pr, rm, external = true);
-        }
-      } else {
-        Ctor.precision = pr;
-        return sum3;
-      }
-    }
-    sum3 = t;
-    denominator += 2;
-  }
-}
-__name(naturalLogarithm, "naturalLogarithm");
-function nonFiniteToString(x) {
-  return String(x.s * x.s / 0);
-}
-__name(nonFiniteToString, "nonFiniteToString");
-function parseDecimal(x, str) {
-  var e, i, len;
-  if ((e = str.indexOf(".")) > -1)
-    str = str.replace(".", "");
-  if ((i = str.search(/e/i)) > 0) {
-    if (e < 0)
-      e = i;
-    e += +str.slice(i + 1);
-    str = str.substring(0, i);
-  } else if (e < 0) {
-    e = str.length;
-  }
-  for (i = 0; str.charCodeAt(i) === 48; i++)
-    ;
-  for (len = str.length; str.charCodeAt(len - 1) === 48; --len)
-    ;
-  str = str.slice(i, len);
-  if (str) {
-    len -= i;
-    x.e = e = e - i - 1;
-    x.d = [];
-    i = (e + 1) % LOG_BASE;
-    if (e < 0)
-      i += LOG_BASE;
-    if (i < len) {
-      if (i)
-        x.d.push(+str.slice(0, i));
-      for (len -= LOG_BASE; i < len; )
-        x.d.push(+str.slice(i, i += LOG_BASE));
-      str = str.slice(i);
-      i = LOG_BASE - str.length;
-    } else {
-      i -= len;
-    }
-    for (; i--; )
-      str += "0";
-    x.d.push(+str);
-    if (external) {
-      if (x.e > x.constructor.maxE) {
-        x.d = null;
-        x.e = NaN;
-      } else if (x.e < x.constructor.minE) {
-        x.e = 0;
-        x.d = [0];
-      }
-    }
-  } else {
-    x.e = 0;
-    x.d = [0];
-  }
-  return x;
-}
-__name(parseDecimal, "parseDecimal");
-function parseOther(x, str) {
-  var base, Ctor, divisor, i, isFloat, len, p, xd, xe;
-  if (str.indexOf("_") > -1) {
-    str = str.replace(/(\d)_(?=\d)/g, "$1");
-    if (isDecimal.test(str))
-      return parseDecimal(x, str);
-  } else if (str === "Infinity" || str === "NaN") {
-    if (!+str)
-      x.s = NaN;
-    x.e = NaN;
-    x.d = null;
-    return x;
-  }
-  if (isHex.test(str)) {
-    base = 16;
-    str = str.toLowerCase();
-  } else if (isBinary.test(str)) {
-    base = 2;
-  } else if (isOctal.test(str)) {
-    base = 8;
-  } else {
-    throw Error(invalidArgument + str);
-  }
-  i = str.search(/p/i);
-  if (i > 0) {
-    p = +str.slice(i + 1);
-    str = str.substring(2, i);
-  } else {
-    str = str.slice(2);
-  }
-  i = str.indexOf(".");
-  isFloat = i >= 0;
-  Ctor = x.constructor;
-  if (isFloat) {
-    str = str.replace(".", "");
-    len = str.length;
-    i = len - i;
-    divisor = intPow(Ctor, new Ctor(base), i, i * 2);
-  }
-  xd = convertBase(str, base, BASE);
-  xe = xd.length - 1;
-  for (i = xe; xd[i] === 0; --i)
-    xd.pop();
-  if (i < 0)
-    return new Ctor(x.s * 0);
-  x.e = getBase10Exponent(xd, xe);
-  x.d = xd;
-  external = false;
-  if (isFloat)
-    x = divide(x, divisor, len * 4);
-  if (p)
-    x = x.times(Math.abs(p) < 54 ? mathpow(2, p) : Decimal.pow(2, p));
-  external = true;
-  return x;
-}
-__name(parseOther, "parseOther");
-function sine(Ctor, x) {
-  var k, len = x.d.length;
-  if (len < 3) {
-    return x.isZero() ? x : taylorSeries(Ctor, 2, x, x);
-  }
-  k = 1.4 * Math.sqrt(len);
-  k = k > 16 ? 16 : k | 0;
-  x = x.times(1 / tinyPow(5, k));
-  x = taylorSeries(Ctor, 2, x, x);
-  var sin2_x, d5 = new Ctor(5), d16 = new Ctor(16), d20 = new Ctor(20);
-  for (; k--; ) {
-    sin2_x = x.times(x);
-    x = x.times(d5.plus(sin2_x.times(d16.times(sin2_x).minus(d20))));
-  }
-  return x;
-}
-__name(sine, "sine");
-function taylorSeries(Ctor, n, x, y, isHyperbolic) {
-  var j, t, u, x2, i = 1, pr = Ctor.precision, k = Math.ceil(pr / LOG_BASE);
-  external = false;
-  x2 = x.times(x);
-  u = new Ctor(y);
-  for (; ; ) {
-    t = divide(u.times(x2), new Ctor(n++ * n++), pr, 1);
-    u = isHyperbolic ? y.plus(t) : y.minus(t);
-    y = divide(t.times(x2), new Ctor(n++ * n++), pr, 1);
-    t = u.plus(y);
-    if (t.d[k] !== void 0) {
-      for (j = k; t.d[j] === u.d[j] && j--; )
-        ;
-      if (j == -1)
-        break;
-    }
-    j = u;
-    u = y;
-    y = t;
-    t = j;
-    i++;
-  }
-  external = true;
-  t.d.length = k + 1;
-  return t;
-}
-__name(taylorSeries, "taylorSeries");
-function tinyPow(b, e) {
-  var n = b;
-  while (--e)
-    n *= b;
-  return n;
-}
-__name(tinyPow, "tinyPow");
-function toLessThanHalfPi(Ctor, x) {
-  var t, isNeg = x.s < 0, pi = getPi(Ctor, Ctor.precision, 1), halfPi = pi.times(0.5);
-  x = x.abs();
-  if (x.lte(halfPi)) {
-    quadrant = isNeg ? 4 : 1;
-    return x;
-  }
-  t = x.divToInt(pi);
-  if (t.isZero()) {
-    quadrant = isNeg ? 3 : 2;
-  } else {
-    x = x.minus(t.times(pi));
-    if (x.lte(halfPi)) {
-      quadrant = isOdd(t) ? isNeg ? 2 : 3 : isNeg ? 4 : 1;
-      return x;
-    }
-    quadrant = isOdd(t) ? isNeg ? 1 : 4 : isNeg ? 3 : 2;
-  }
-  return x.minus(pi).abs();
-}
-__name(toLessThanHalfPi, "toLessThanHalfPi");
-function toStringBinary(x, baseOut, sd, rm) {
-  var base, e, i, k, len, roundUp, str, xd, y, Ctor = x.constructor, isExp = sd !== void 0;
-  if (isExp) {
-    checkInt32(sd, 1, MAX_DIGITS);
-    if (rm === void 0)
-      rm = Ctor.rounding;
-    else
-      checkInt32(rm, 0, 8);
-  } else {
-    sd = Ctor.precision;
-    rm = Ctor.rounding;
-  }
-  if (!x.isFinite()) {
-    str = nonFiniteToString(x);
-  } else {
-    str = finiteToString(x);
-    i = str.indexOf(".");
-    if (isExp) {
-      base = 2;
-      if (baseOut == 16) {
-        sd = sd * 4 - 3;
-      } else if (baseOut == 8) {
-        sd = sd * 3 - 2;
-      }
-    } else {
-      base = baseOut;
-    }
-    if (i >= 0) {
-      str = str.replace(".", "");
-      y = new Ctor(1);
-      y.e = str.length - i;
-      y.d = convertBase(finiteToString(y), 10, base);
-      y.e = y.d.length;
-    }
-    xd = convertBase(str, 10, base);
-    e = len = xd.length;
-    for (; xd[--len] == 0; )
-      xd.pop();
-    if (!xd[0]) {
-      str = isExp ? "0p+0" : "0";
-    } else {
-      if (i < 0) {
-        e--;
-      } else {
-        x = new Ctor(x);
-        x.d = xd;
-        x.e = e;
-        x = divide(x, y, sd, rm, 0, base);
-        xd = x.d;
-        e = x.e;
-        roundUp = inexact;
-      }
-      i = xd[sd];
-      k = base / 2;
-      roundUp = roundUp || xd[sd + 1] !== void 0;
-      roundUp = rm < 4 ? (i !== void 0 || roundUp) && (rm === 0 || rm === (x.s < 0 ? 3 : 2)) : i > k || i === k && (rm === 4 || roundUp || rm === 6 && xd[sd - 1] & 1 || rm === (x.s < 0 ? 8 : 7));
-      xd.length = sd;
-      if (roundUp) {
-        for (; ++xd[--sd] > base - 1; ) {
-          xd[sd] = 0;
-          if (!sd) {
-            ++e;
-            xd.unshift(1);
-          }
-        }
-      }
-      for (len = xd.length; !xd[len - 1]; --len)
-        ;
-      for (i = 0, str = ""; i < len; i++)
-        str += NUMERALS.charAt(xd[i]);
-      if (isExp) {
-        if (len > 1) {
-          if (baseOut == 16 || baseOut == 8) {
-            i = baseOut == 16 ? 4 : 3;
-            for (--len; len % i; len++)
-              str += "0";
-            xd = convertBase(str, base, baseOut);
-            for (len = xd.length; !xd[len - 1]; --len)
-              ;
-            for (i = 1, str = "1."; i < len; i++)
-              str += NUMERALS.charAt(xd[i]);
-          } else {
-            str = str.charAt(0) + "." + str.slice(1);
-          }
-        }
-        str = str + (e < 0 ? "p" : "p+") + e;
-      } else if (e < 0) {
-        for (; ++e; )
-          str = "0" + str;
-        str = "0." + str;
-      } else {
-        if (++e > len)
-          for (e -= len; e--; )
-            str += "0";
-        else if (e < len)
-          str = str.slice(0, e) + "." + str.slice(e);
-      }
-    }
-    str = (baseOut == 16 ? "0x" : baseOut == 2 ? "0b" : baseOut == 8 ? "0o" : "") + str;
-  }
-  return x.s < 0 ? "-" + str : str;
-}
-__name(toStringBinary, "toStringBinary");
-function truncate(arr, len) {
-  if (arr.length > len) {
-    arr.length = len;
-    return true;
-  }
-}
-__name(truncate, "truncate");
-function abs(x) {
-  return new this(x).abs();
-}
-__name(abs, "abs");
-function acos(x) {
-  return new this(x).acos();
-}
-__name(acos, "acos");
-function acosh(x) {
-  return new this(x).acosh();
-}
-__name(acosh, "acosh");
-function add(x, y) {
-  return new this(x).plus(y);
-}
-__name(add, "add");
-function asin(x) {
-  return new this(x).asin();
-}
-__name(asin, "asin");
-function asinh(x) {
-  return new this(x).asinh();
-}
-__name(asinh, "asinh");
-function atan(x) {
-  return new this(x).atan();
-}
-__name(atan, "atan");
-function atanh(x) {
-  return new this(x).atanh();
-}
-__name(atanh, "atanh");
-function atan2(y, x) {
-  y = new this(y);
-  x = new this(x);
-  var r, pr = this.precision, rm = this.rounding, wpr = pr + 4;
-  if (!y.s || !x.s) {
-    r = new this(NaN);
-  } else if (!y.d && !x.d) {
-    r = getPi(this, wpr, 1).times(x.s > 0 ? 0.25 : 0.75);
-    r.s = y.s;
-  } else if (!x.d || y.isZero()) {
-    r = x.s < 0 ? getPi(this, pr, rm) : new this(0);
-    r.s = y.s;
-  } else if (!y.d || x.isZero()) {
-    r = getPi(this, wpr, 1).times(0.5);
-    r.s = y.s;
-  } else if (x.s < 0) {
-    this.precision = wpr;
-    this.rounding = 1;
-    r = this.atan(divide(y, x, wpr, 1));
-    x = getPi(this, wpr, 1);
-    this.precision = pr;
-    this.rounding = rm;
-    r = y.s < 0 ? r.minus(x) : r.plus(x);
-  } else {
-    r = this.atan(divide(y, x, wpr, 1));
-  }
-  return r;
-}
-__name(atan2, "atan2");
-function cbrt(x) {
-  return new this(x).cbrt();
-}
-__name(cbrt, "cbrt");
-function ceil(x) {
-  return finalise(x = new this(x), x.e + 1, 2);
-}
-__name(ceil, "ceil");
-function clamp(x, min2, max2) {
-  return new this(x).clamp(min2, max2);
-}
-__name(clamp, "clamp");
-function config(obj) {
-  if (!obj || typeof obj !== "object")
-    throw Error(decimalError + "Object expected");
-  var i, p, v, useDefaults = obj.defaults === true, ps = [
-    "precision",
-    1,
-    MAX_DIGITS,
-    "rounding",
-    0,
-    8,
-    "toExpNeg",
-    -EXP_LIMIT,
-    0,
-    "toExpPos",
-    0,
-    EXP_LIMIT,
-    "maxE",
-    0,
-    EXP_LIMIT,
-    "minE",
-    -EXP_LIMIT,
-    0,
-    "modulo",
-    0,
-    9
-  ];
-  for (i = 0; i < ps.length; i += 3) {
-    if (p = ps[i], useDefaults)
-      this[p] = DEFAULTS[p];
-    if ((v = obj[p]) !== void 0) {
-      if (mathfloor(v) === v && v >= ps[i + 1] && v <= ps[i + 2])
-        this[p] = v;
-      else
-        throw Error(invalidArgument + p + ": " + v);
-    }
-  }
-  if (p = "crypto", useDefaults)
-    this[p] = DEFAULTS[p];
-  if ((v = obj[p]) !== void 0) {
-    if (v === true || v === false || v === 0 || v === 1) {
-      if (v) {
-        if (typeof crypto != "undefined" && crypto && (crypto.getRandomValues || crypto.randomBytes)) {
-          this[p] = true;
-        } else {
-          throw Error(cryptoUnavailable);
-        }
-      } else {
-        this[p] = false;
-      }
-    } else {
-      throw Error(invalidArgument + p + ": " + v);
-    }
-  }
-  return this;
-}
-__name(config, "config");
-function cos(x) {
-  return new this(x).cos();
-}
-__name(cos, "cos");
-function cosh(x) {
-  return new this(x).cosh();
-}
-__name(cosh, "cosh");
-function clone(obj) {
-  var i, p, ps;
-  function Decimal2(v) {
-    var e, i2, t, x = this;
-    if (!(x instanceof Decimal2))
-      return new Decimal2(v);
-    x.constructor = Decimal2;
-    if (isDecimalInstance(v)) {
-      x.s = v.s;
-      if (external) {
-        if (!v.d || v.e > Decimal2.maxE) {
-          x.e = NaN;
-          x.d = null;
-        } else if (v.e < Decimal2.minE) {
-          x.e = 0;
-          x.d = [0];
-        } else {
-          x.e = v.e;
-          x.d = v.d.slice();
-        }
-      } else {
-        x.e = v.e;
-        x.d = v.d ? v.d.slice() : v.d;
-      }
-      return;
-    }
-    t = typeof v;
-    if (t === "number") {
-      if (v === 0) {
-        x.s = 1 / v < 0 ? -1 : 1;
-        x.e = 0;
-        x.d = [0];
-        return;
-      }
-      if (v < 0) {
-        v = -v;
-        x.s = -1;
-      } else {
-        x.s = 1;
-      }
-      if (v === ~~v && v < 1e7) {
-        for (e = 0, i2 = v; i2 >= 10; i2 /= 10)
-          e++;
-        if (external) {
-          if (e > Decimal2.maxE) {
-            x.e = NaN;
-            x.d = null;
-          } else if (e < Decimal2.minE) {
-            x.e = 0;
-            x.d = [0];
-          } else {
-            x.e = e;
-            x.d = [v];
-          }
-        } else {
-          x.e = e;
-          x.d = [v];
-        }
-        return;
-      } else if (v * 0 !== 0) {
-        if (!v)
-          x.s = NaN;
-        x.e = NaN;
-        x.d = null;
-        return;
-      }
-      return parseDecimal(x, v.toString());
-    } else if (t !== "string") {
-      throw Error(invalidArgument + v);
-    }
-    if ((i2 = v.charCodeAt(0)) === 45) {
-      v = v.slice(1);
-      x.s = -1;
-    } else {
-      if (i2 === 43)
-        v = v.slice(1);
-      x.s = 1;
-    }
-    return isDecimal.test(v) ? parseDecimal(x, v) : parseOther(x, v);
-  }
-  __name(Decimal2, "Decimal");
-  Decimal2.prototype = P;
-  Decimal2.ROUND_UP = 0;
-  Decimal2.ROUND_DOWN = 1;
-  Decimal2.ROUND_CEIL = 2;
-  Decimal2.ROUND_FLOOR = 3;
-  Decimal2.ROUND_HALF_UP = 4;
-  Decimal2.ROUND_HALF_DOWN = 5;
-  Decimal2.ROUND_HALF_EVEN = 6;
-  Decimal2.ROUND_HALF_CEIL = 7;
-  Decimal2.ROUND_HALF_FLOOR = 8;
-  Decimal2.EUCLID = 9;
-  Decimal2.config = Decimal2.set = config;
-  Decimal2.clone = clone;
-  Decimal2.isDecimal = isDecimalInstance;
-  Decimal2.abs = abs;
-  Decimal2.acos = acos;
-  Decimal2.acosh = acosh;
-  Decimal2.add = add;
-  Decimal2.asin = asin;
-  Decimal2.asinh = asinh;
-  Decimal2.atan = atan;
-  Decimal2.atanh = atanh;
-  Decimal2.atan2 = atan2;
-  Decimal2.cbrt = cbrt;
-  Decimal2.ceil = ceil;
-  Decimal2.clamp = clamp;
-  Decimal2.cos = cos;
-  Decimal2.cosh = cosh;
-  Decimal2.div = div;
-  Decimal2.exp = exp;
-  Decimal2.floor = floor;
-  Decimal2.hypot = hypot;
-  Decimal2.ln = ln;
-  Decimal2.log = log;
-  Decimal2.log10 = log10;
-  Decimal2.log2 = log2;
-  Decimal2.max = max;
-  Decimal2.min = min;
-  Decimal2.mod = mod;
-  Decimal2.mul = mul;
-  Decimal2.pow = pow;
-  Decimal2.random = random;
-  Decimal2.round = round;
-  Decimal2.sign = sign;
-  Decimal2.sin = sin;
-  Decimal2.sinh = sinh;
-  Decimal2.sqrt = sqrt;
-  Decimal2.sub = sub;
-  Decimal2.sum = sum;
-  Decimal2.tan = tan;
-  Decimal2.tanh = tanh;
-  Decimal2.trunc = trunc;
-  if (obj === void 0)
-    obj = {};
-  if (obj) {
-    if (obj.defaults !== true) {
-      ps = ["precision", "rounding", "toExpNeg", "toExpPos", "maxE", "minE", "modulo", "crypto"];
-      for (i = 0; i < ps.length; )
-        if (!obj.hasOwnProperty(p = ps[i++]))
-          obj[p] = this[p];
-    }
-  }
-  Decimal2.config(obj);
-  return Decimal2;
-}
-__name(clone, "clone");
-function div(x, y) {
-  return new this(x).div(y);
-}
-__name(div, "div");
-function exp(x) {
-  return new this(x).exp();
-}
-__name(exp, "exp");
-function floor(x) {
-  return finalise(x = new this(x), x.e + 1, 3);
-}
-__name(floor, "floor");
-function hypot() {
-  var i, n, t = new this(0);
-  external = false;
-  for (i = 0; i < arguments.length; ) {
-    n = new this(arguments[i++]);
-    if (!n.d) {
-      if (n.s) {
-        external = true;
-        return new this(1 / 0);
-      }
-      t = n;
-    } else if (t.d) {
-      t = t.plus(n.times(n));
-    }
-  }
-  external = true;
-  return t.sqrt();
-}
-__name(hypot, "hypot");
-function isDecimalInstance(obj) {
-  return obj instanceof Decimal || obj && obj.toStringTag === tag || false;
-}
-__name(isDecimalInstance, "isDecimalInstance");
-function ln(x) {
-  return new this(x).ln();
-}
-__name(ln, "ln");
-function log(x, y) {
-  return new this(x).log(y);
-}
-__name(log, "log");
-function log2(x) {
-  return new this(x).log(2);
-}
-__name(log2, "log2");
-function log10(x) {
-  return new this(x).log(10);
-}
-__name(log10, "log10");
-function max() {
-  return maxOrMin(this, arguments, "lt");
-}
-__name(max, "max");
-function min() {
-  return maxOrMin(this, arguments, "gt");
-}
-__name(min, "min");
-function mod(x, y) {
-  return new this(x).mod(y);
-}
-__name(mod, "mod");
-function mul(x, y) {
-  return new this(x).mul(y);
-}
-__name(mul, "mul");
-function pow(x, y) {
-  return new this(x).pow(y);
-}
-__name(pow, "pow");
-function random(sd) {
-  var d, e, k, n, i = 0, r = new this(1), rd = [];
-  if (sd === void 0)
-    sd = this.precision;
-  else
-    checkInt32(sd, 1, MAX_DIGITS);
-  k = Math.ceil(sd / LOG_BASE);
-  if (!this.crypto) {
-    for (; i < k; )
-      rd[i++] = Math.random() * 1e7 | 0;
-  } else if (crypto.getRandomValues) {
-    d = crypto.getRandomValues(new Uint32Array(k));
-    for (; i < k; ) {
-      n = d[i];
-      if (n >= 429e7) {
-        d[i] = crypto.getRandomValues(new Uint32Array(1))[0];
-      } else {
-        rd[i++] = n % 1e7;
-      }
-    }
-  } else if (crypto.randomBytes) {
-    d = crypto.randomBytes(k *= 4);
-    for (; i < k; ) {
-      n = d[i] + (d[i + 1] << 8) + (d[i + 2] << 16) + ((d[i + 3] & 127) << 24);
-      if (n >= 214e7) {
-        crypto.randomBytes(4).copy(d, i);
-      } else {
-        rd.push(n % 1e7);
-        i += 4;
-      }
-    }
-    i = k / 4;
-  } else {
-    throw Error(cryptoUnavailable);
-  }
-  k = rd[--i];
-  sd %= LOG_BASE;
-  if (k && sd) {
-    n = mathpow(10, LOG_BASE - sd);
-    rd[i] = (k / n | 0) * n;
-  }
-  for (; rd[i] === 0; i--)
-    rd.pop();
-  if (i < 0) {
-    e = 0;
-    rd = [0];
-  } else {
-    e = -1;
-    for (; rd[0] === 0; e -= LOG_BASE)
-      rd.shift();
-    for (k = 1, n = rd[0]; n >= 10; n /= 10)
-      k++;
-    if (k < LOG_BASE)
-      e -= LOG_BASE - k;
-  }
-  r.e = e;
-  r.d = rd;
-  return r;
-}
-__name(random, "random");
-function round(x) {
-  return finalise(x = new this(x), x.e + 1, this.rounding);
-}
-__name(round, "round");
-function sign(x) {
-  x = new this(x);
-  return x.d ? x.d[0] ? x.s : 0 * x.s : x.s || NaN;
-}
-__name(sign, "sign");
-function sin(x) {
-  return new this(x).sin();
-}
-__name(sin, "sin");
-function sinh(x) {
-  return new this(x).sinh();
-}
-__name(sinh, "sinh");
-function sqrt(x) {
-  return new this(x).sqrt();
-}
-__name(sqrt, "sqrt");
-function sub(x, y) {
-  return new this(x).sub(y);
-}
-__name(sub, "sub");
-function sum() {
-  var i = 0, args = arguments, x = new this(args[i]);
-  external = false;
-  for (; x.s && ++i < args.length; )
-    x = x.plus(args[i]);
-  external = true;
-  return finalise(x, this.precision, this.rounding);
-}
-__name(sum, "sum");
-function tan(x) {
-  return new this(x).tan();
-}
-__name(tan, "tan");
-function tanh(x) {
-  return new this(x).tanh();
-}
-__name(tanh, "tanh");
-function trunc(x) {
-  return finalise(x = new this(x), x.e + 1, 1);
-}
-__name(trunc, "trunc");
-P[Symbol.for("nodejs.util.inspect.custom")] = P.toString;
-P[Symbol.toStringTag] = "Decimal";
-var Decimal = P.constructor = clone(DEFAULTS);
-LN10 = new Decimal(LN10);
-PI = new Decimal(PI);
-var decimal_default = Decimal;
-
-// src/runtime/utils/common.ts
-var import_indent_string = __toESM(require_indent_string());
-var import_js_levenshtein = __toESM(require_js_levenshtein());
-
-// src/runtime/core/model/FieldRef.ts
-var FieldRefImpl = class {
-  constructor(modelName, name, fieldType, isList) {
-    this.modelName = modelName;
-    this.name = name;
-    this.typeName = fieldType;
-    this.isList = isList;
-  }
-  _toGraphQLInputType() {
-    const prefix = this.isList ? `List${this.typeName}` : this.typeName;
-    return `${prefix}FieldRefInput<${this.modelName}>`;
-  }
-};
-__name(FieldRefImpl, "FieldRefImpl");
-
-// src/runtime/object-enums.ts
-var objectEnumNames = ["JsonNullValueInput", "NullableJsonNullValueInput", "JsonNullValueFilter"];
-var secret = Symbol();
-var representations = /* @__PURE__ */ new WeakMap();
-var ObjectEnumValue = class {
-  constructor(arg2) {
-    if (arg2 === secret) {
-      representations.set(this, `Prisma.${this._getName()}`);
-    } else {
-      representations.set(this, `new Prisma.${this._getNamespace()}.${this._getName()}()`);
-    }
-  }
-  _getName() {
-    return this.constructor.name;
-  }
-  toString() {
-    return representations.get(this);
-  }
-};
-__name(ObjectEnumValue, "ObjectEnumValue");
-var NullTypesEnumValue = class extends ObjectEnumValue {
-  _getNamespace() {
-    return "NullTypes";
-  }
-};
-__name(NullTypesEnumValue, "NullTypesEnumValue");
-var DbNull = class extends NullTypesEnumValue {
-};
-__name(DbNull, "DbNull");
-var JsonNull = class extends NullTypesEnumValue {
-};
-__name(JsonNull, "JsonNull");
-var AnyNull = class extends NullTypesEnumValue {
-};
-__name(AnyNull, "AnyNull");
-var objectEnumValues = {
-  classes: {
-    DbNull,
-    JsonNull,
-    AnyNull
-  },
-  instances: {
-    DbNull: new DbNull(secret),
-    JsonNull: new JsonNull(secret),
-    AnyNull: new AnyNull(secret)
-  }
-};
-
-// src/runtime/utils/decimalJsLike.ts
-function isDecimalJsLike(value) {
-  if (Decimal.isDecimal(value)) {
-    return true;
-  }
-  return value !== null && typeof value === "object" && typeof value.s === "number" && typeof value.e === "number" && Array.isArray(value.d);
-}
-__name(isDecimalJsLike, "isDecimalJsLike");
-function stringifyDecimalJsLike(value) {
-  if (Decimal.isDecimal(value)) {
-    return JSON.stringify(String(value));
-  }
-  const tmpDecimal = new Decimal(0);
-  tmpDecimal.d = value.d;
-  tmpDecimal.e = value.e;
-  tmpDecimal.s = value.s;
-  return JSON.stringify(String(tmpDecimal));
-}
-__name(stringifyDecimalJsLike, "stringifyDecimalJsLike");
-
-// src/runtime/utils/common.ts
-var keyBy = /* @__PURE__ */ __name((collection, prop) => {
-  const acc = {};
-  for (const obj of collection) {
-    const key = obj[prop];
-    acc[key] = obj;
-  }
-  return acc;
-}, "keyBy");
-var ScalarTypeTable = {
-  String: true,
-  Int: true,
-  Float: true,
-  Boolean: true,
-  Long: true,
-  DateTime: true,
-  ID: true,
-  UUID: true,
-  Json: true,
-  Bytes: true,
-  Decimal: true,
-  BigInt: true
-};
-var JSTypeToGraphQLType = {
-  string: "String",
-  boolean: "Boolean",
-  object: "Json",
-  symbol: "Symbol"
-};
-function stringifyGraphQLType(type) {
-  if (typeof type === "string") {
-    return type;
-  }
-  return type.name;
-}
-__name(stringifyGraphQLType, "stringifyGraphQLType");
-function wrapWithList(str, isList) {
-  if (isList) {
-    return `List<${str}>`;
-  }
-  return str;
-}
-__name(wrapWithList, "wrapWithList");
-var RFC_3339_REGEX = /^(\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60))(\.\d{1,})?(([Z])|([+|-]([01][0-9]|2[0-3]):[0-5][0-9]))$/;
-var UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-function getGraphQLType(value, inputType) {
-  const potentialType = inputType == null ? void 0 : inputType.type;
-  if (value === null) {
-    return "null";
-  }
-  if (Object.prototype.toString.call(value) === "[object BigInt]") {
-    return "BigInt";
-  }
-  if (decimal_default.isDecimal(value)) {
-    return "Decimal";
-  }
-  if (potentialType === "Decimal" && isDecimalJsLike(value)) {
-    return "Decimal";
-  }
-  if (Buffer.isBuffer(value)) {
-    return "Bytes";
-  }
-  if (isValidEnumValue(value, inputType)) {
-    return potentialType.name;
-  }
-  if (value instanceof ObjectEnumValue) {
-    return value._getName();
-  }
-  if (value instanceof FieldRefImpl) {
-    return value._toGraphQLInputType();
-  }
-  if (Array.isArray(value)) {
-    let scalarTypes = value.reduce((acc, val) => {
-      const type = getGraphQLType(val, inputType);
-      if (!acc.includes(type)) {
-        acc.push(type);
-      }
-      return acc;
-    }, []);
-    if (scalarTypes.includes("Float") && scalarTypes.includes("Int")) {
-      scalarTypes = ["Float"];
-    }
-    return `List<${scalarTypes.join(" | ")}>`;
-  }
-  const jsType = typeof value;
-  if (jsType === "number") {
-    if (Math.trunc(value) === value) {
-      return "Int";
-    } else {
-      return "Float";
-    }
-  }
-  if (Object.prototype.toString.call(value) === "[object Date]") {
-    return "DateTime";
-  }
-  if (jsType === "string") {
-    if (UUID_REGEX.test(value)) {
-      return "UUID";
-    }
-    const date = new Date(value);
-    if (date.toString() === "Invalid Date") {
-      return "String";
-    }
-    if (RFC_3339_REGEX.test(value)) {
-      return "DateTime";
-    }
-  }
-  return JSTypeToGraphQLType[jsType];
-}
-__name(getGraphQLType, "getGraphQLType");
-function isValidEnumValue(value, inputType) {
-  var _a3;
-  const enumType = inputType == null ? void 0 : inputType.type;
-  if (!isSchemaEnum(enumType)) {
-    return false;
-  }
-  if ((inputType == null ? void 0 : inputType.namespace) === "prisma" && objectEnumNames.includes(enumType.name)) {
-    const name = (_a3 = value == null ? void 0 : value.constructor) == null ? void 0 : _a3.name;
-    return typeof name === "string" && objectEnumValues.instances[name] === value && enumType.values.includes(name);
-  }
-  return typeof value === "string" && enumType.values.includes(value);
-}
-__name(isValidEnumValue, "isValidEnumValue");
-function getSuggestion(str, possibilities) {
-  const bestMatch = possibilities.reduce(
-    (acc, curr) => {
-      const distance = (0, import_js_levenshtein.default)(str, curr);
-      if (distance < acc.distance) {
-        return {
-          distance,
-          str: curr
-        };
-      }
-      return acc;
-    },
-    {
-      distance: Math.min(Math.floor(str.length) * 1.1, ...possibilities.map((p) => p.length * 3)),
-      str: null
-    }
-  );
-  return bestMatch.str;
-}
-__name(getSuggestion, "getSuggestion");
-function stringifyInputType(input, greenKeys = false) {
-  if (typeof input === "string") {
-    return input;
-  }
-  if (input.values) {
-    return `enum ${input.name} {
-${(0, import_indent_string.default)(input.values.join(", "), 2)}
-}`;
-  } else {
-    const body = (0, import_indent_string.default)(
-      input.fields.map((arg2) => {
-        const key = `${arg2.name}`;
-        const str = `${greenKeys ? import_chalk.default.green(key) : key}${arg2.isRequired ? "" : "?"}: ${import_chalk.default.white(
-          arg2.inputTypes.map((argType) => {
-            return wrapWithList(
-              argIsInputType(argType.type) ? argType.type.name : stringifyGraphQLType(argType.type),
-              argType.isList
-            );
-          }).join(" | ")
-        )}`;
-        if (!arg2.isRequired) {
-          return import_chalk.default.dim(str);
-        }
-        return str;
-      }).join("\n"),
-      2
-    );
-    return `${import_chalk.default.dim("type")} ${import_chalk.default.bold.dim(input.name)} ${import_chalk.default.dim("{")}
-${body}
-${import_chalk.default.dim("}")}`;
-  }
-}
-__name(stringifyInputType, "stringifyInputType");
-function argIsInputType(arg2) {
-  if (typeof arg2 === "string") {
-    return false;
-  }
-  return true;
-}
-__name(argIsInputType, "argIsInputType");
-function getInputTypeName(input) {
-  if (typeof input === "string") {
-    if (input === "Null") {
-      return "null";
-    }
-    return input;
-  }
-  return input.name;
-}
-__name(getInputTypeName, "getInputTypeName");
-function getOutputTypeName(input) {
-  if (typeof input === "string") {
-    return input;
-  }
-  return input.name;
-}
-__name(getOutputTypeName, "getOutputTypeName");
-function inputTypeToJson(input, isRequired, nameOnly = false) {
-  if (typeof input === "string") {
-    if (input === "Null") {
-      return "null";
-    }
-    return input;
-  }
-  if (input.values) {
-    return input.values.join(" | ");
-  }
-  const inputType = input;
-  const showDeepType = isRequired && inputType.fields.every(
-    (arg2) => {
-      var _a3;
-      return arg2.inputTypes[0].location === "inputObjectTypes" || ((_a3 = arg2.inputTypes[1]) == null ? void 0 : _a3.location) === "inputObjectTypes";
-    }
-  );
-  if (nameOnly) {
-    return getInputTypeName(input);
-  }
-  return inputType.fields.reduce((acc, curr) => {
-    let str = "";
-    if (!showDeepType && !curr.isRequired) {
-      str = curr.inputTypes.map((argType) => getInputTypeName(argType.type)).join(" | ");
-    } else {
-      str = curr.inputTypes.map((argInputType) => inputTypeToJson(argInputType.type, curr.isRequired, true)).join(" | ");
-    }
-    acc[curr.name + (curr.isRequired ? "" : "?")] = str;
-    return acc;
-  }, {});
-}
-__name(inputTypeToJson, "inputTypeToJson");
-function unionBy(arr1, arr2, iteratee) {
-  const map = {};
-  for (const element of arr1) {
-    map[iteratee(element)] = element;
-  }
-  for (const element of arr2) {
-    const key = iteratee(element);
-    if (!map[key]) {
-      map[key] = element;
-    }
-  }
-  return Object.values(map);
-}
-__name(unionBy, "unionBy");
-function lowerCase(name) {
-  return name.substring(0, 1).toLowerCase() + name.substring(1);
-}
-__name(lowerCase, "lowerCase");
-function isGroupByOutputName(type) {
-  return type.endsWith("GroupByOutputType");
-}
-__name(isGroupByOutputName, "isGroupByOutputName");
-function isSchemaEnum(type) {
-  return typeof type === "object" && type !== null && typeof type.name === "string" && Array.isArray(type.values);
-}
-__name(isSchemaEnum, "isSchemaEnum");
-
-// src/runtime/dmmf.ts
-var DMMFDatamodelHelper = class {
-  constructor({ datamodel }) {
-    this.datamodel = datamodel;
-    this.datamodelEnumMap = this.getDatamodelEnumMap();
-    this.modelMap = this.getModelMap();
-    this.typeMap = this.getTypeMap();
-    this.typeAndModelMap = this.getTypeModelMap();
-  }
-  getDatamodelEnumMap() {
-    return keyBy(this.datamodel.enums, "name");
-  }
-  getModelMap() {
-    return { ...keyBy(this.datamodel.models, "name") };
-  }
-  getTypeMap() {
-    return { ...keyBy(this.datamodel.types, "name") };
-  }
-  getTypeModelMap() {
-    return { ...this.getTypeMap(), ...this.getModelMap() };
-  }
-};
-__name(DMMFDatamodelHelper, "DMMFDatamodelHelper");
-var DMMFMappingsHelper = class {
-  constructor({ mappings }) {
-    this.mappings = mappings;
-    this.mappingsMap = this.getMappingsMap();
-  }
-  getMappingsMap() {
-    return keyBy(this.mappings.modelOperations, "model");
-  }
-};
-__name(DMMFMappingsHelper, "DMMFMappingsHelper");
-var DMMFSchemaHelper = class {
-  constructor({ schema }) {
-    this.outputTypeToMergedOutputType = /* @__PURE__ */ __name((outputType) => {
-      return {
-        ...outputType,
-        fields: outputType.fields
-      };
-    }, "outputTypeToMergedOutputType");
-    this.schema = schema;
-    this.enumMap = this.getEnumMap();
-    this.queryType = this.getQueryType();
-    this.mutationType = this.getMutationType();
-    this.outputTypes = this.getOutputTypes();
-    this.outputTypeMap = this.getMergedOutputTypeMap();
-    this.resolveOutputTypes();
-    this.inputObjectTypes = this.schema.inputObjectTypes;
-    this.inputTypeMap = this.getInputTypeMap();
-    this.resolveInputTypes();
-    this.resolveFieldArgumentTypes();
-    this.queryType = this.outputTypeMap.Query;
-    this.mutationType = this.outputTypeMap.Mutation;
-    this.rootFieldMap = this.getRootFieldMap();
-  }
-  get [Symbol.toStringTag]() {
-    return "DMMFClass";
-  }
-  resolveOutputTypes() {
-    for (const type of this.outputTypes.model) {
-      for (const field of type.fields) {
-        if (typeof field.outputType.type === "string" && !ScalarTypeTable[field.outputType.type]) {
-          field.outputType.type = this.outputTypeMap[field.outputType.type] || this.outputTypeMap[field.outputType.type] || this.enumMap[field.outputType.type] || field.outputType.type;
-        }
-      }
-      type.fieldMap = keyBy(type.fields, "name");
-    }
-    for (const type of this.outputTypes.prisma) {
-      for (const field of type.fields) {
-        if (typeof field.outputType.type === "string" && !ScalarTypeTable[field.outputType.type]) {
-          field.outputType.type = this.outputTypeMap[field.outputType.type] || this.outputTypeMap[field.outputType.type] || this.enumMap[field.outputType.type] || field.outputType.type;
-        }
-      }
-      type.fieldMap = keyBy(type.fields, "name");
-    }
-  }
-  resolveInputTypes() {
-    const inputTypes = this.inputObjectTypes.prisma;
-    if (this.inputObjectTypes.model) {
-      inputTypes.push(...this.inputObjectTypes.model);
-    }
-    for (const type of inputTypes) {
-      for (const field of type.fields) {
-        for (const fieldInputType of field.inputTypes) {
-          const fieldType = fieldInputType.type;
-          if (typeof fieldType === "string" && !ScalarTypeTable[fieldType] && (this.inputTypeMap[fieldType] || this.enumMap[fieldType])) {
-            fieldInputType.type = this.inputTypeMap[fieldType] || this.enumMap[fieldType] || fieldType;
-          }
-        }
-      }
-      type.fieldMap = keyBy(type.fields, "name");
-    }
-  }
-  resolveFieldArgumentTypes() {
-    for (const type of this.outputTypes.prisma) {
-      for (const field of type.fields) {
-        for (const arg2 of field.args) {
-          for (const argInputType of arg2.inputTypes) {
-            const argType = argInputType.type;
-            if (typeof argType === "string" && !ScalarTypeTable[argType]) {
-              argInputType.type = this.inputTypeMap[argType] || this.enumMap[argType] || argType;
-            }
-          }
-        }
-      }
-    }
-    for (const type of this.outputTypes.model) {
-      for (const field of type.fields) {
-        for (const arg2 of field.args) {
-          for (const argInputType of arg2.inputTypes) {
-            const argType = argInputType.type;
-            if (typeof argType === "string" && !ScalarTypeTable[argType]) {
-              argInputType.type = this.inputTypeMap[argType] || this.enumMap[argType] || argInputType.type;
-            }
-          }
-        }
-      }
-    }
-  }
-  getQueryType() {
-    return this.schema.outputObjectTypes.prisma.find((t) => t.name === "Query");
-  }
-  getMutationType() {
-    return this.schema.outputObjectTypes.prisma.find((t) => t.name === "Mutation");
-  }
-  getOutputTypes() {
-    return {
-      model: this.schema.outputObjectTypes.model.map(this.outputTypeToMergedOutputType),
-      prisma: this.schema.outputObjectTypes.prisma.map(this.outputTypeToMergedOutputType)
-    };
-  }
-  getEnumMap() {
-    return {
-      ...keyBy(this.schema.enumTypes.prisma, "name"),
-      ...this.schema.enumTypes.model ? keyBy(this.schema.enumTypes.model, "name") : void 0
-    };
-  }
-  hasEnumInNamespace(enumName, namespace) {
-    var _a3;
-    return ((_a3 = this.schema.enumTypes[namespace]) == null ? void 0 : _a3.find((schemaEnum) => schemaEnum.name === enumName)) !== void 0;
-  }
-  getMergedOutputTypeMap() {
-    return {
-      ...keyBy(this.outputTypes.model, "name"),
-      ...keyBy(this.outputTypes.prisma, "name")
-    };
-  }
-  getInputTypeMap() {
-    return {
-      ...this.schema.inputObjectTypes.model ? keyBy(this.schema.inputObjectTypes.model, "name") : void 0,
-      ...keyBy(this.schema.inputObjectTypes.prisma, "name")
-    };
-  }
-  getRootFieldMap() {
-    return { ...keyBy(this.queryType.fields, "name"), ...keyBy(this.mutationType.fields, "name") };
-  }
-};
-__name(DMMFSchemaHelper, "DMMFSchemaHelper");
-var BaseDMMFHelper = class {
-  constructor(dmmf) {
-    return Object.assign(this, new DMMFDatamodelHelper(dmmf), new DMMFMappingsHelper(dmmf));
-  }
-};
-__name(BaseDMMFHelper, "BaseDMMFHelper");
-applyMixins(BaseDMMFHelper, [DMMFDatamodelHelper, DMMFMappingsHelper]);
-var DMMFHelper = class {
-  constructor(dmmf) {
-    return Object.assign(this, new BaseDMMFHelper(dmmf), new DMMFSchemaHelper(dmmf));
-  }
-};
-__name(DMMFHelper, "DMMFHelper");
-applyMixins(DMMFHelper, [BaseDMMFHelper, DMMFSchemaHelper]);
-
-// ../generator-helper/src/dmmf.ts
-var DMMF;
-((DMMF2) => {
-  let ModelAction;
-  ((ModelAction2) => {
-    ModelAction2["findUnique"] = "findUnique";
-    ModelAction2["findFirst"] = "findFirst";
-    ModelAction2["findMany"] = "findMany";
-    ModelAction2["create"] = "create";
-    ModelAction2["createMany"] = "createMany";
-    ModelAction2["update"] = "update";
-    ModelAction2["updateMany"] = "updateMany";
-    ModelAction2["upsert"] = "upsert";
-    ModelAction2["delete"] = "delete";
-    ModelAction2["deleteMany"] = "deleteMany";
-    ModelAction2["groupBy"] = "groupBy";
-    ModelAction2["count"] = "count";
-    ModelAction2["aggregate"] = "aggregate";
-    ModelAction2["findRaw"] = "findRaw";
-    ModelAction2["aggregateRaw"] = "aggregateRaw";
-  })(ModelAction = DMMF2.ModelAction || (DMMF2.ModelAction = {}));
-})(DMMF || (DMMF = {}));
+// src/runtime/core/types/Utils.ts
+var Utils_exports = {};
 
 // ../debug/src/index.ts
 var import_debug = __toESM(require_src());
 var MAX_LOGS = 100;
 var debugArgsHistory = [];
-var _a, _b;
-if (typeof process !== "undefined" && typeof ((_a = process.stderr) == null ? void 0 : _a.write) !== "function") {
-  import_debug.default.log = (_b = console.debug) != null ? _b : console.log;
+if (typeof process !== "undefined" && typeof process.stderr?.write !== "function") {
+  import_debug.default.log = console.debug ?? console.log;
 }
 function debugCall(namespace) {
   const debugNamespace = (0, import_debug.default)(namespace);
@@ -22908,990 +19970,351 @@ function getLogs(numChars = 7500) {
   return output.slice(-numChars);
 }
 __name(getLogs, "getLogs");
+function clearLogs() {
+  debugArgsHistory.length = 0;
+}
+__name(clearLogs, "clearLogs");
 var src_default = Debug;
 
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/platform/node/globalThis.js
-var _globalThis = typeof globalThis === "object" ? globalThis : global;
+// ../internals/src/utils/tryLoadEnvs.ts
+var import_chalk = __toESM(require_source());
+var import_dotenv = __toESM(require_main2());
+var import_fs = __toESM(require("fs"));
+var import_path = __toESM(require("path"));
 
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/version.js
-var VERSION = "1.2.0";
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/internal/semver.js
-var re = /^(\d+)\.(\d+)\.(\d+)(-(.+))?$/;
-function _makeCompatibilityCheck(ownVersion) {
-  var acceptedVersions = /* @__PURE__ */ new Set([ownVersion]);
-  var rejectedVersions = /* @__PURE__ */ new Set();
-  var myVersionMatch = ownVersion.match(re);
-  if (!myVersionMatch) {
-    return function() {
-      return false;
-    };
-  }
-  var ownVersionParsed = {
-    major: +myVersionMatch[1],
-    minor: +myVersionMatch[2],
-    patch: +myVersionMatch[3],
-    prerelease: myVersionMatch[4]
-  };
-  if (ownVersionParsed.prerelease != null) {
-    return /* @__PURE__ */ __name(function isExactmatch(globalVersion) {
-      return globalVersion === ownVersion;
-    }, "isExactmatch");
-  }
-  function _reject(v) {
-    rejectedVersions.add(v);
-    return false;
-  }
-  __name(_reject, "_reject");
-  function _accept(v) {
-    acceptedVersions.add(v);
-    return true;
-  }
-  __name(_accept, "_accept");
-  return /* @__PURE__ */ __name(function isCompatible2(globalVersion) {
-    if (acceptedVersions.has(globalVersion)) {
-      return true;
-    }
-    if (rejectedVersions.has(globalVersion)) {
-      return false;
-    }
-    var globalVersionMatch = globalVersion.match(re);
-    if (!globalVersionMatch) {
-      return _reject(globalVersion);
-    }
-    var globalVersionParsed = {
-      major: +globalVersionMatch[1],
-      minor: +globalVersionMatch[2],
-      patch: +globalVersionMatch[3],
-      prerelease: globalVersionMatch[4]
-    };
-    if (globalVersionParsed.prerelease != null) {
-      return _reject(globalVersion);
-    }
-    if (ownVersionParsed.major !== globalVersionParsed.major) {
-      return _reject(globalVersion);
-    }
-    if (ownVersionParsed.major === 0) {
-      if (ownVersionParsed.minor === globalVersionParsed.minor && ownVersionParsed.patch <= globalVersionParsed.patch) {
-        return _accept(globalVersion);
+// ../internals/src/dotenvExpand.ts
+function dotenvExpand(config2) {
+  const environment = config2.ignoreProcessEnv ? {} : process.env;
+  const interpolate = /* @__PURE__ */ __name((envValue) => {
+    const matches = envValue.match(/(.?\${(?:[a-zA-Z0-9_]+)?})/g);
+    return matches?.reduce(function(newEnv, match) {
+      const parts = /(.?)\${([a-zA-Z0-9_]+)?}/g.exec(match);
+      if (!parts) {
+        return newEnv;
       }
-      return _reject(globalVersion);
-    }
-    if (ownVersionParsed.minor <= globalVersionParsed.minor) {
-      return _accept(globalVersion);
-    }
-    return _reject(globalVersion);
-  }, "isCompatible");
+      const prefix = parts[1];
+      let value, replacePart;
+      if (prefix === "\\") {
+        replacePart = parts[0];
+        value = replacePart.replace("\\$", "$");
+      } else {
+        const key = parts[2];
+        replacePart = parts[0].substring(prefix.length);
+        value = Object.hasOwnProperty.call(environment, key) ? environment[key] : config2.parsed[key] || "";
+        value = interpolate(value);
+      }
+      return newEnv.replace(replacePart, value);
+    }, envValue) ?? envValue;
+  }, "interpolate");
+  for (const configKey in config2.parsed) {
+    const value = Object.hasOwnProperty.call(environment, configKey) ? environment[configKey] : config2.parsed[configKey];
+    config2.parsed[configKey] = interpolate(value);
+  }
+  for (const processKey in config2.parsed) {
+    environment[processKey] = config2.parsed[processKey];
+  }
+  return config2;
 }
-__name(_makeCompatibilityCheck, "_makeCompatibilityCheck");
-var isCompatible = _makeCompatibilityCheck(VERSION);
+__name(dotenvExpand, "dotenvExpand");
 
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/internal/global-utils.js
-var major = VERSION.split(".")[0];
-var GLOBAL_OPENTELEMETRY_API_KEY = Symbol.for("opentelemetry.js.api." + major);
-var _global = _globalThis;
-function registerGlobal(type, instance, diag3, allowOverride) {
-  var _a3;
-  if (allowOverride === void 0) {
-    allowOverride = false;
+// ../internals/src/utils/tryLoadEnvs.ts
+var debug2 = src_default("prisma:tryLoadEnv");
+function tryLoadEnvs({
+  rootEnvPath,
+  schemaEnvPath
+}, opts = {
+  conflictCheck: "none"
+}) {
+  const rootEnvInfo = loadEnv(rootEnvPath);
+  if (opts.conflictCheck !== "none") {
+    checkForConflicts(rootEnvInfo, schemaEnvPath, opts.conflictCheck);
   }
-  var api = _global[GLOBAL_OPENTELEMETRY_API_KEY] = (_a3 = _global[GLOBAL_OPENTELEMETRY_API_KEY]) !== null && _a3 !== void 0 ? _a3 : {
-    version: VERSION
-  };
-  if (!allowOverride && api[type]) {
-    var err = new Error("@opentelemetry/api: Attempted duplicate registration of API: " + type);
-    diag3.error(err.stack || err.message);
-    return false;
+  let schemaEnvInfo = null;
+  if (!pathsEqual(rootEnvInfo?.path, schemaEnvPath)) {
+    schemaEnvInfo = loadEnv(schemaEnvPath);
   }
-  if (api.version !== VERSION) {
-    var err = new Error("@opentelemetry/api: All API registration versions must match");
-    diag3.error(err.stack || err.message);
-    return false;
+  if (!rootEnvInfo && !schemaEnvInfo) {
+    debug2("No Environment variables loaded");
   }
-  api[type] = instance;
-  diag3.debug("@opentelemetry/api: Registered a global for " + type + " v" + VERSION + ".");
-  return true;
-}
-__name(registerGlobal, "registerGlobal");
-function getGlobal(type) {
-  var _a3, _b2;
-  var globalVersion = (_a3 = _global[GLOBAL_OPENTELEMETRY_API_KEY]) === null || _a3 === void 0 ? void 0 : _a3.version;
-  if (!globalVersion || !isCompatible(globalVersion)) {
-    return;
+  if (schemaEnvInfo?.dotenvResult.error) {
+    return console.error(import_chalk.default.redBright.bold("Schema Env Error: ") + schemaEnvInfo.dotenvResult.error);
   }
-  return (_b2 = _global[GLOBAL_OPENTELEMETRY_API_KEY]) === null || _b2 === void 0 ? void 0 : _b2[type];
-}
-__name(getGlobal, "getGlobal");
-function unregisterGlobal(type, diag3) {
-  diag3.debug("@opentelemetry/api: Unregistering a global for " + type + " v" + VERSION + ".");
-  var api = _global[GLOBAL_OPENTELEMETRY_API_KEY];
-  if (api) {
-    delete api[type];
-  }
-}
-__name(unregisterGlobal, "unregisterGlobal");
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/diag/ComponentLogger.js
-var DiagComponentLogger = function() {
-  function DiagComponentLogger2(props) {
-    this._namespace = props.namespace || "DiagComponentLogger";
-  }
-  __name(DiagComponentLogger2, "DiagComponentLogger");
-  DiagComponentLogger2.prototype.debug = function() {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      args[_i] = arguments[_i];
-    }
-    return logProxy("debug", this._namespace, args);
-  };
-  DiagComponentLogger2.prototype.error = function() {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      args[_i] = arguments[_i];
-    }
-    return logProxy("error", this._namespace, args);
-  };
-  DiagComponentLogger2.prototype.info = function() {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      args[_i] = arguments[_i];
-    }
-    return logProxy("info", this._namespace, args);
-  };
-  DiagComponentLogger2.prototype.warn = function() {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      args[_i] = arguments[_i];
-    }
-    return logProxy("warn", this._namespace, args);
-  };
-  DiagComponentLogger2.prototype.verbose = function() {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      args[_i] = arguments[_i];
-    }
-    return logProxy("verbose", this._namespace, args);
-  };
-  return DiagComponentLogger2;
-}();
-function logProxy(funcName, namespace, args) {
-  var logger2 = getGlobal("diag");
-  if (!logger2) {
-    return;
-  }
-  args.unshift(namespace);
-  return logger2[funcName].apply(logger2, args);
-}
-__name(logProxy, "logProxy");
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/diag/types.js
-var DiagLogLevel;
-(function(DiagLogLevel2) {
-  DiagLogLevel2[DiagLogLevel2["NONE"] = 0] = "NONE";
-  DiagLogLevel2[DiagLogLevel2["ERROR"] = 30] = "ERROR";
-  DiagLogLevel2[DiagLogLevel2["WARN"] = 50] = "WARN";
-  DiagLogLevel2[DiagLogLevel2["INFO"] = 60] = "INFO";
-  DiagLogLevel2[DiagLogLevel2["DEBUG"] = 70] = "DEBUG";
-  DiagLogLevel2[DiagLogLevel2["VERBOSE"] = 80] = "VERBOSE";
-  DiagLogLevel2[DiagLogLevel2["ALL"] = 9999] = "ALL";
-})(DiagLogLevel || (DiagLogLevel = {}));
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/diag/internal/logLevelLogger.js
-function createLogLevelDiagLogger(maxLevel, logger2) {
-  if (maxLevel < DiagLogLevel.NONE) {
-    maxLevel = DiagLogLevel.NONE;
-  } else if (maxLevel > DiagLogLevel.ALL) {
-    maxLevel = DiagLogLevel.ALL;
-  }
-  logger2 = logger2 || {};
-  function _filterFunc(funcName, theLevel) {
-    var theFunc = logger2[funcName];
-    if (typeof theFunc === "function" && maxLevel >= theLevel) {
-      return theFunc.bind(logger2);
-    }
-    return function() {
-    };
-  }
-  __name(_filterFunc, "_filterFunc");
+  const messages = [rootEnvInfo?.message, schemaEnvInfo?.message].filter(Boolean);
   return {
-    error: _filterFunc("error", DiagLogLevel.ERROR),
-    warn: _filterFunc("warn", DiagLogLevel.WARN),
-    info: _filterFunc("info", DiagLogLevel.INFO),
-    debug: _filterFunc("debug", DiagLogLevel.DEBUG),
-    verbose: _filterFunc("verbose", DiagLogLevel.VERBOSE)
+    message: messages.join("\n"),
+    parsed: {
+      ...rootEnvInfo?.dotenvResult?.parsed,
+      ...schemaEnvInfo?.dotenvResult?.parsed
+    }
   };
 }
-__name(createLogLevelDiagLogger, "createLogLevelDiagLogger");
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/api/diag.js
-var API_NAME = "diag";
-var DiagAPI = function() {
-  function DiagAPI2() {
-    function _logProxy(funcName) {
-      return function() {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-          args[_i] = arguments[_i];
-        }
-        var logger2 = getGlobal("diag");
-        if (!logger2)
-          return;
-        return logger2[funcName].apply(logger2, args);
-      };
-    }
-    __name(_logProxy, "_logProxy");
-    var self2 = this;
-    self2.setLogger = function(logger2, logLevel) {
-      var _a3, _b2;
-      if (logLevel === void 0) {
-        logLevel = DiagLogLevel.INFO;
+__name(tryLoadEnvs, "tryLoadEnvs");
+function checkForConflicts(rootEnvInfo, envPath, type) {
+  const parsedRootEnv = rootEnvInfo?.dotenvResult.parsed;
+  const areNotTheSame = !pathsEqual(rootEnvInfo?.path, envPath);
+  if (parsedRootEnv && envPath && areNotTheSame && import_fs.default.existsSync(envPath)) {
+    const envConfig = import_dotenv.default.parse(import_fs.default.readFileSync(envPath));
+    const conflicts = [];
+    for (const k in envConfig) {
+      if (parsedRootEnv[k] === envConfig[k]) {
+        conflicts.push(k);
       }
-      if (logger2 === self2) {
-        var err = new Error("Cannot use diag as the logger for itself. Please use a DiagLogger implementation like ConsoleDiagLogger or a custom implementation");
-        self2.error((_a3 = err.stack) !== null && _a3 !== void 0 ? _a3 : err.message);
-        return false;
+    }
+    if (conflicts.length > 0) {
+      const relativeRootEnvPath = import_path.default.relative(process.cwd(), rootEnvInfo.path);
+      const relativeEnvPath = import_path.default.relative(process.cwd(), envPath);
+      if (type === "error") {
+        const message = `There is a conflict between env var${conflicts.length > 1 ? "s" : ""} in ${import_chalk.default.underline(
+          relativeRootEnvPath
+        )} and ${import_chalk.default.underline(relativeEnvPath)}
+Conflicting env vars:
+${conflicts.map((conflict) => `  ${import_chalk.default.bold(conflict)}`).join("\n")}
+
+We suggest to move the contents of ${import_chalk.default.underline(relativeEnvPath)} to ${import_chalk.default.underline(
+          relativeRootEnvPath
+        )} to consolidate your env vars.
+`;
+        throw new Error(message);
+      } else if (type === "warn") {
+        const message = `Conflict for env var${conflicts.length > 1 ? "s" : ""} ${conflicts.map((c) => import_chalk.default.bold(c)).join(", ")} in ${import_chalk.default.underline(relativeRootEnvPath)} and ${import_chalk.default.underline(relativeEnvPath)}
+Env vars from ${import_chalk.default.underline(relativeEnvPath)} overwrite the ones from ${import_chalk.default.underline(relativeRootEnvPath)}
+      `;
+        console.warn(`${import_chalk.default.yellow("warn(prisma)")} ${message}`);
       }
-      var oldLogger = getGlobal("diag");
-      var newLogger = createLogLevelDiagLogger(logLevel, logger2);
-      if (oldLogger) {
-        var stack = (_b2 = new Error().stack) !== null && _b2 !== void 0 ? _b2 : "<failed to generate stacktrace>";
-        oldLogger.warn("Current logger will be overwritten from " + stack);
-        newLogger.warn("Current logger will overwrite one already registered from " + stack);
-      }
-      return registerGlobal("diag", newLogger, self2, true);
+    }
+  }
+}
+__name(checkForConflicts, "checkForConflicts");
+function loadEnv(envPath) {
+  if (exists(envPath)) {
+    debug2(`Environment variables loaded from ${envPath}`);
+    return {
+      dotenvResult: dotenvExpand(
+        import_dotenv.default.config({
+          path: envPath,
+          debug: process.env.DOTENV_CONFIG_DEBUG ? true : void 0
+        })
+      ),
+      message: import_chalk.default.dim(`Environment variables loaded from ${import_path.default.relative(process.cwd(), envPath)}`),
+      path: envPath
     };
-    self2.disable = function() {
-      unregisterGlobal(API_NAME, self2);
-    };
-    self2.createComponentLogger = function(options) {
-      return new DiagComponentLogger(options);
-    };
-    self2.verbose = _logProxy("verbose");
-    self2.debug = _logProxy("debug");
-    self2.info = _logProxy("info");
-    self2.warn = _logProxy("warn");
-    self2.error = _logProxy("error");
+  } else {
+    debug2(`Environment variables not found at ${envPath}`);
   }
-  __name(DiagAPI2, "DiagAPI");
-  DiagAPI2.instance = function() {
-    if (!this._instance) {
-      this._instance = new DiagAPI2();
-    }
-    return this._instance;
-  };
-  return DiagAPI2;
-}();
+  return null;
+}
+__name(loadEnv, "loadEnv");
+function pathsEqual(path1, path22) {
+  return path1 && path22 && import_path.default.resolve(path1) === import_path.default.resolve(path22);
+}
+__name(pathsEqual, "pathsEqual");
+function exists(p2) {
+  return Boolean(p2 && import_fs.default.existsSync(p2));
+}
+__name(exists, "exists");
 
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/baggage/internal/baggage-impl.js
-var BaggageImpl = function() {
-  function BaggageImpl2(entries) {
-    this._entries = entries ? new Map(entries) : /* @__PURE__ */ new Map();
+// ../internals/src/client/getClientEngineType.ts
+var DEFAULT_CLIENT_ENGINE_TYPE = "library" /* Library */;
+function getClientEngineType(generatorConfig) {
+  const engineTypeFromEnvVar = getEngineTypeFromEnvVar();
+  if (engineTypeFromEnvVar)
+    return engineTypeFromEnvVar;
+  if (generatorConfig?.config.engineType === "library" /* Library */) {
+    return "library" /* Library */;
+  } else if (generatorConfig?.config.engineType === "binary" /* Binary */) {
+    return "binary" /* Binary */;
+  } else {
+    return DEFAULT_CLIENT_ENGINE_TYPE;
   }
-  __name(BaggageImpl2, "BaggageImpl");
-  BaggageImpl2.prototype.getEntry = function(key) {
-    var entry = this._entries.get(key);
-    if (!entry) {
-      return void 0;
-    }
-    return Object.assign({}, entry);
-  };
-  BaggageImpl2.prototype.getAllEntries = function() {
-    return Array.from(this._entries.entries()).map(function(_a3) {
-      var k = _a3[0], v = _a3[1];
-      return [k, v];
-    });
-  };
-  BaggageImpl2.prototype.setEntry = function(key, entry) {
-    var newBaggage = new BaggageImpl2(this._entries);
-    newBaggage._entries.set(key, entry);
-    return newBaggage;
-  };
-  BaggageImpl2.prototype.removeEntry = function(key) {
-    var newBaggage = new BaggageImpl2(this._entries);
-    newBaggage._entries.delete(key);
-    return newBaggage;
-  };
-  BaggageImpl2.prototype.removeEntries = function() {
-    var keys2 = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      keys2[_i] = arguments[_i];
-    }
-    var newBaggage = new BaggageImpl2(this._entries);
-    for (var _a3 = 0, keys_1 = keys2; _a3 < keys_1.length; _a3++) {
-      var key = keys_1[_a3];
-      newBaggage._entries.delete(key);
-    }
-    return newBaggage;
-  };
-  BaggageImpl2.prototype.clear = function() {
-    return new BaggageImpl2();
-  };
-  return BaggageImpl2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/baggage/internal/symbol.js
-var baggageEntryMetadataSymbol = Symbol("BaggageEntryMetadata");
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/baggage/utils.js
-var diag = DiagAPI.instance();
-function createBaggage(entries) {
-  if (entries === void 0) {
-    entries = {};
+}
+__name(getClientEngineType, "getClientEngineType");
+function getEngineTypeFromEnvVar() {
+  const engineType = process.env.PRISMA_CLIENT_ENGINE_TYPE;
+  if (engineType === "library" /* Library */) {
+    return "library" /* Library */;
+  } else if (engineType === "binary" /* Binary */) {
+    return "binary" /* Binary */;
+  } else {
+    return void 0;
   }
-  return new BaggageImpl(new Map(Object.entries(entries)));
 }
-__name(createBaggage, "createBaggage");
-function baggageEntryMetadataFromString(str) {
-  if (typeof str !== "string") {
-    diag.error("Cannot create baggage metadata from unknown type: " + typeof str);
-    str = "";
-  }
-  return {
-    __TYPE__: baggageEntryMetadataSymbol,
-    toString: function() {
-      return str;
-    }
-  };
+__name(getEngineTypeFromEnvVar, "getEngineTypeFromEnvVar");
+
+// ../internals/src/cli/utils.ts
+var import_arg = __toESM(require_arg());
+var import_strip_indent = __toESM(require_strip_indent());
+function isError(result) {
+  return result instanceof Error;
 }
-__name(baggageEntryMetadataFromString, "baggageEntryMetadataFromString");
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/diag/consoleLogger.js
-var consoleMap = [
-  { n: "error", c: "error" },
-  { n: "warn", c: "warn" },
-  { n: "info", c: "info" },
-  { n: "debug", c: "debug" },
-  { n: "verbose", c: "trace" }
-];
-var DiagConsoleLogger = function() {
-  function DiagConsoleLogger2() {
-    function _consoleFunc(funcName) {
-      return function() {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-          args[_i] = arguments[_i];
-        }
-        if (console) {
-          var theFunc = console[funcName];
-          if (typeof theFunc !== "function") {
-            theFunc = console.log;
-          }
-          if (typeof theFunc === "function") {
-            return theFunc.apply(console, args);
-          }
-        }
-      };
-    }
-    __name(_consoleFunc, "_consoleFunc");
-    for (var i = 0; i < consoleMap.length; i++) {
-      this[consoleMap[i].n] = _consoleFunc(consoleMap[i].c);
-    }
-  }
-  __name(DiagConsoleLogger2, "DiagConsoleLogger");
-  return DiagConsoleLogger2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/propagation/TextMapPropagator.js
-var defaultTextMapGetter = {
-  get: function(carrier, key) {
-    if (carrier == null) {
-      return void 0;
-    }
-    return carrier[key];
-  },
-  keys: function(carrier) {
-    if (carrier == null) {
-      return [];
-    }
-    return Object.keys(carrier);
-  }
-};
-var defaultTextMapSetter = {
-  set: function(carrier, key, value) {
-    if (carrier == null) {
-      return;
-    }
-    carrier[key] = value;
-  }
-};
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/context/context.js
-function createContextKey(description) {
-  return Symbol.for(description);
-}
-__name(createContextKey, "createContextKey");
-var BaseContext = function() {
-  function BaseContext2(parentContext) {
-    var self2 = this;
-    self2._currentContext = parentContext ? new Map(parentContext) : /* @__PURE__ */ new Map();
-    self2.getValue = function(key) {
-      return self2._currentContext.get(key);
-    };
-    self2.setValue = function(key, value) {
-      var context3 = new BaseContext2(self2._currentContext);
-      context3._currentContext.set(key, value);
-      return context3;
-    };
-    self2.deleteValue = function(key) {
-      var context3 = new BaseContext2(self2._currentContext);
-      context3._currentContext.delete(key);
-      return context3;
-    };
-  }
-  __name(BaseContext2, "BaseContext");
-  return BaseContext2;
-}();
-var ROOT_CONTEXT = new BaseContext();
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/context/NoopContextManager.js
-var __spreadArray = function(to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-    to[j] = from[i];
-  return to;
-};
-var NoopContextManager = function() {
-  function NoopContextManager2() {
-  }
-  __name(NoopContextManager2, "NoopContextManager");
-  NoopContextManager2.prototype.active = function() {
-    return ROOT_CONTEXT;
-  };
-  NoopContextManager2.prototype.with = function(_context, fn, thisArg) {
-    var args = [];
-    for (var _i = 3; _i < arguments.length; _i++) {
-      args[_i - 3] = arguments[_i];
-    }
-    return fn.call.apply(fn, __spreadArray([thisArg], args));
-  };
-  NoopContextManager2.prototype.bind = function(_context, target) {
-    return target;
-  };
-  NoopContextManager2.prototype.enable = function() {
-    return this;
-  };
-  NoopContextManager2.prototype.disable = function() {
-    return this;
-  };
-  return NoopContextManager2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/api/context.js
-var __spreadArray2 = function(to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-    to[j] = from[i];
-  return to;
-};
-var API_NAME2 = "context";
-var NOOP_CONTEXT_MANAGER = new NoopContextManager();
-var ContextAPI = function() {
-  function ContextAPI2() {
-  }
-  __name(ContextAPI2, "ContextAPI");
-  ContextAPI2.getInstance = function() {
-    if (!this._instance) {
-      this._instance = new ContextAPI2();
-    }
-    return this._instance;
-  };
-  ContextAPI2.prototype.setGlobalContextManager = function(contextManager) {
-    return registerGlobal(API_NAME2, contextManager, DiagAPI.instance());
-  };
-  ContextAPI2.prototype.active = function() {
-    return this._getContextManager().active();
-  };
-  ContextAPI2.prototype.with = function(context3, fn, thisArg) {
-    var _a3;
-    var args = [];
-    for (var _i = 3; _i < arguments.length; _i++) {
-      args[_i - 3] = arguments[_i];
-    }
-    return (_a3 = this._getContextManager()).with.apply(_a3, __spreadArray2([context3, fn, thisArg], args));
-  };
-  ContextAPI2.prototype.bind = function(context3, target) {
-    return this._getContextManager().bind(context3, target);
-  };
-  ContextAPI2.prototype._getContextManager = function() {
-    return getGlobal(API_NAME2) || NOOP_CONTEXT_MANAGER;
-  };
-  ContextAPI2.prototype.disable = function() {
-    this._getContextManager().disable();
-    unregisterGlobal(API_NAME2, DiagAPI.instance());
-  };
-  return ContextAPI2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/trace_flags.js
-var TraceFlags;
-(function(TraceFlags2) {
-  TraceFlags2[TraceFlags2["NONE"] = 0] = "NONE";
-  TraceFlags2[TraceFlags2["SAMPLED"] = 1] = "SAMPLED";
-})(TraceFlags || (TraceFlags = {}));
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/invalid-span-constants.js
-var INVALID_SPANID = "0000000000000000";
-var INVALID_TRACEID = "00000000000000000000000000000000";
-var INVALID_SPAN_CONTEXT = {
-  traceId: INVALID_TRACEID,
-  spanId: INVALID_SPANID,
-  traceFlags: TraceFlags.NONE
-};
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/NonRecordingSpan.js
-var NonRecordingSpan = function() {
-  function NonRecordingSpan2(_spanContext) {
-    if (_spanContext === void 0) {
-      _spanContext = INVALID_SPAN_CONTEXT;
-    }
-    this._spanContext = _spanContext;
-  }
-  __name(NonRecordingSpan2, "NonRecordingSpan");
-  NonRecordingSpan2.prototype.spanContext = function() {
-    return this._spanContext;
-  };
-  NonRecordingSpan2.prototype.setAttribute = function(_key, _value) {
-    return this;
-  };
-  NonRecordingSpan2.prototype.setAttributes = function(_attributes) {
-    return this;
-  };
-  NonRecordingSpan2.prototype.addEvent = function(_name, _attributes) {
-    return this;
-  };
-  NonRecordingSpan2.prototype.setStatus = function(_status) {
-    return this;
-  };
-  NonRecordingSpan2.prototype.updateName = function(_name) {
-    return this;
-  };
-  NonRecordingSpan2.prototype.end = function(_endTime) {
-  };
-  NonRecordingSpan2.prototype.isRecording = function() {
-    return false;
-  };
-  NonRecordingSpan2.prototype.recordException = function(_exception, _time) {
-  };
-  return NonRecordingSpan2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/context-utils.js
-var SPAN_KEY = createContextKey("OpenTelemetry Context Key SPAN");
-function getSpan(context3) {
-  return context3.getValue(SPAN_KEY) || void 0;
-}
-__name(getSpan, "getSpan");
-function getActiveSpan() {
-  return getSpan(ContextAPI.getInstance().active());
-}
-__name(getActiveSpan, "getActiveSpan");
-function setSpan(context3, span) {
-  return context3.setValue(SPAN_KEY, span);
-}
-__name(setSpan, "setSpan");
-function deleteSpan(context3) {
-  return context3.deleteValue(SPAN_KEY);
-}
-__name(deleteSpan, "deleteSpan");
-function setSpanContext(context3, spanContext) {
-  return setSpan(context3, new NonRecordingSpan(spanContext));
-}
-__name(setSpanContext, "setSpanContext");
-function getSpanContext(context3) {
-  var _a3;
-  return (_a3 = getSpan(context3)) === null || _a3 === void 0 ? void 0 : _a3.spanContext();
-}
-__name(getSpanContext, "getSpanContext");
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/spancontext-utils.js
-var VALID_TRACEID_REGEX = /^([0-9a-f]{32})$/i;
-var VALID_SPANID_REGEX = /^[0-9a-f]{16}$/i;
-function isValidTraceId(traceId) {
-  return VALID_TRACEID_REGEX.test(traceId) && traceId !== INVALID_TRACEID;
-}
-__name(isValidTraceId, "isValidTraceId");
-function isValidSpanId(spanId) {
-  return VALID_SPANID_REGEX.test(spanId) && spanId !== INVALID_SPANID;
-}
-__name(isValidSpanId, "isValidSpanId");
-function isSpanContextValid(spanContext) {
-  return isValidTraceId(spanContext.traceId) && isValidSpanId(spanContext.spanId);
-}
-__name(isSpanContextValid, "isSpanContextValid");
-function wrapSpanContext(spanContext) {
-  return new NonRecordingSpan(spanContext);
-}
-__name(wrapSpanContext, "wrapSpanContext");
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracer.js
-var context = ContextAPI.getInstance();
-var NoopTracer = function() {
-  function NoopTracer2() {
-  }
-  __name(NoopTracer2, "NoopTracer");
-  NoopTracer2.prototype.startSpan = function(name, options, context3) {
-    var root = Boolean(options === null || options === void 0 ? void 0 : options.root);
-    if (root) {
-      return new NonRecordingSpan();
-    }
-    var parentFromContext = context3 && getSpanContext(context3);
-    if (isSpanContext(parentFromContext) && isSpanContextValid(parentFromContext)) {
-      return new NonRecordingSpan(parentFromContext);
-    } else {
-      return new NonRecordingSpan();
-    }
-  };
-  NoopTracer2.prototype.startActiveSpan = function(name, arg2, arg3, arg4) {
-    var opts;
-    var ctx;
-    var fn;
-    if (arguments.length < 2) {
-      return;
-    } else if (arguments.length === 2) {
-      fn = arg2;
-    } else if (arguments.length === 3) {
-      opts = arg2;
-      fn = arg3;
-    } else {
-      opts = arg2;
-      ctx = arg3;
-      fn = arg4;
-    }
-    var parentContext = ctx !== null && ctx !== void 0 ? ctx : context.active();
-    var span = this.startSpan(name, opts, parentContext);
-    var contextWithSpanSet = setSpan(parentContext, span);
-    return context.with(contextWithSpanSet, fn, void 0, span);
-  };
-  return NoopTracer2;
-}();
-function isSpanContext(spanContext) {
-  return typeof spanContext === "object" && typeof spanContext["spanId"] === "string" && typeof spanContext["traceId"] === "string" && typeof spanContext["traceFlags"] === "number";
-}
-__name(isSpanContext, "isSpanContext");
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracer.js
-var NOOP_TRACER = new NoopTracer();
-var ProxyTracer = function() {
-  function ProxyTracer2(_provider, name, version, options) {
-    this._provider = _provider;
-    this.name = name;
-    this.version = version;
-    this.options = options;
-  }
-  __name(ProxyTracer2, "ProxyTracer");
-  ProxyTracer2.prototype.startSpan = function(name, options, context3) {
-    return this._getTracer().startSpan(name, options, context3);
-  };
-  ProxyTracer2.prototype.startActiveSpan = function(_name, _options, _context, _fn) {
-    var tracer = this._getTracer();
-    return Reflect.apply(tracer.startActiveSpan, tracer, arguments);
-  };
-  ProxyTracer2.prototype._getTracer = function() {
-    if (this._delegate) {
-      return this._delegate;
-    }
-    var tracer = this._provider.getDelegateTracer(this.name, this.version, this.options);
-    if (!tracer) {
-      return NOOP_TRACER;
-    }
-    this._delegate = tracer;
-    return this._delegate;
-  };
-  return ProxyTracer2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracerProvider.js
-var NoopTracerProvider = function() {
-  function NoopTracerProvider2() {
-  }
-  __name(NoopTracerProvider2, "NoopTracerProvider");
-  NoopTracerProvider2.prototype.getTracer = function(_name, _version, _options) {
-    return new NoopTracer();
-  };
-  return NoopTracerProvider2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracerProvider.js
-var NOOP_TRACER_PROVIDER = new NoopTracerProvider();
-var ProxyTracerProvider = function() {
-  function ProxyTracerProvider2() {
-  }
-  __name(ProxyTracerProvider2, "ProxyTracerProvider");
-  ProxyTracerProvider2.prototype.getTracer = function(name, version, options) {
-    var _a3;
-    return (_a3 = this.getDelegateTracer(name, version, options)) !== null && _a3 !== void 0 ? _a3 : new ProxyTracer(this, name, version, options);
-  };
-  ProxyTracerProvider2.prototype.getDelegate = function() {
-    var _a3;
-    return (_a3 = this._delegate) !== null && _a3 !== void 0 ? _a3 : NOOP_TRACER_PROVIDER;
-  };
-  ProxyTracerProvider2.prototype.setDelegate = function(delegate) {
-    this._delegate = delegate;
-  };
-  ProxyTracerProvider2.prototype.getDelegateTracer = function(name, version, options) {
-    var _a3;
-    return (_a3 = this._delegate) === null || _a3 === void 0 ? void 0 : _a3.getTracer(name, version, options);
-  };
-  return ProxyTracerProvider2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/SamplingResult.js
-var SamplingDecision;
-(function(SamplingDecision3) {
-  SamplingDecision3[SamplingDecision3["NOT_RECORD"] = 0] = "NOT_RECORD";
-  SamplingDecision3[SamplingDecision3["RECORD"] = 1] = "RECORD";
-  SamplingDecision3[SamplingDecision3["RECORD_AND_SAMPLED"] = 2] = "RECORD_AND_SAMPLED";
-})(SamplingDecision || (SamplingDecision = {}));
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/span_kind.js
-var SpanKind;
-(function(SpanKind2) {
-  SpanKind2[SpanKind2["INTERNAL"] = 0] = "INTERNAL";
-  SpanKind2[SpanKind2["SERVER"] = 1] = "SERVER";
-  SpanKind2[SpanKind2["CLIENT"] = 2] = "CLIENT";
-  SpanKind2[SpanKind2["PRODUCER"] = 3] = "PRODUCER";
-  SpanKind2[SpanKind2["CONSUMER"] = 4] = "CONSUMER";
-})(SpanKind || (SpanKind = {}));
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/status.js
-var SpanStatusCode;
-(function(SpanStatusCode2) {
-  SpanStatusCode2[SpanStatusCode2["UNSET"] = 0] = "UNSET";
-  SpanStatusCode2[SpanStatusCode2["OK"] = 1] = "OK";
-  SpanStatusCode2[SpanStatusCode2["ERROR"] = 2] = "ERROR";
-})(SpanStatusCode || (SpanStatusCode = {}));
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/internal/tracestate-validators.js
-var VALID_KEY_CHAR_RANGE = "[_0-9a-z-*/]";
-var VALID_KEY = "[a-z]" + VALID_KEY_CHAR_RANGE + "{0,255}";
-var VALID_VENDOR_KEY = "[a-z0-9]" + VALID_KEY_CHAR_RANGE + "{0,240}@[a-z]" + VALID_KEY_CHAR_RANGE + "{0,13}";
-var VALID_KEY_REGEX = new RegExp("^(?:" + VALID_KEY + "|" + VALID_VENDOR_KEY + ")$");
-var VALID_VALUE_BASE_REGEX = /^[ -~]{0,255}[!-~]$/;
-var INVALID_VALUE_COMMA_EQUAL_REGEX = /,|=/;
-function validateKey(key) {
-  return VALID_KEY_REGEX.test(key);
-}
-__name(validateKey, "validateKey");
-function validateValue(value) {
-  return VALID_VALUE_BASE_REGEX.test(value) && !INVALID_VALUE_COMMA_EQUAL_REGEX.test(value);
-}
-__name(validateValue, "validateValue");
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/trace/internal/tracestate-impl.js
-var MAX_TRACE_STATE_ITEMS = 32;
-var MAX_TRACE_STATE_LEN = 512;
-var LIST_MEMBERS_SEPARATOR = ",";
-var LIST_MEMBER_KEY_VALUE_SPLITTER = "=";
-var TraceStateImpl = function() {
-  function TraceStateImpl2(rawTraceState) {
-    this._internalState = /* @__PURE__ */ new Map();
-    if (rawTraceState)
-      this._parse(rawTraceState);
-  }
-  __name(TraceStateImpl2, "TraceStateImpl");
-  TraceStateImpl2.prototype.set = function(key, value) {
-    var traceState = this._clone();
-    if (traceState._internalState.has(key)) {
-      traceState._internalState.delete(key);
-    }
-    traceState._internalState.set(key, value);
-    return traceState;
-  };
-  TraceStateImpl2.prototype.unset = function(key) {
-    var traceState = this._clone();
-    traceState._internalState.delete(key);
-    return traceState;
-  };
-  TraceStateImpl2.prototype.get = function(key) {
-    return this._internalState.get(key);
-  };
-  TraceStateImpl2.prototype.serialize = function() {
-    var _this = this;
-    return this._keys().reduce(function(agg, key) {
-      agg.push(key + LIST_MEMBER_KEY_VALUE_SPLITTER + _this.get(key));
-      return agg;
-    }, []).join(LIST_MEMBERS_SEPARATOR);
-  };
-  TraceStateImpl2.prototype._parse = function(rawTraceState) {
-    if (rawTraceState.length > MAX_TRACE_STATE_LEN)
-      return;
-    this._internalState = rawTraceState.split(LIST_MEMBERS_SEPARATOR).reverse().reduce(function(agg, part) {
-      var listMember = part.trim();
-      var i = listMember.indexOf(LIST_MEMBER_KEY_VALUE_SPLITTER);
-      if (i !== -1) {
-        var key = listMember.slice(0, i);
-        var value = listMember.slice(i + 1, part.length);
-        if (validateKey(key) && validateValue(value)) {
-          agg.set(key, value);
-        } else {
-        }
-      }
-      return agg;
-    }, /* @__PURE__ */ new Map());
-    if (this._internalState.size > MAX_TRACE_STATE_ITEMS) {
-      this._internalState = new Map(Array.from(this._internalState.entries()).reverse().slice(0, MAX_TRACE_STATE_ITEMS));
-    }
-  };
-  TraceStateImpl2.prototype._keys = function() {
-    return Array.from(this._internalState.keys()).reverse();
-  };
-  TraceStateImpl2.prototype._clone = function() {
-    var traceState = new TraceStateImpl2();
-    traceState._internalState = new Map(this._internalState);
-    return traceState;
-  };
-  return TraceStateImpl2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/api/trace.js
-var API_NAME3 = "trace";
-var TraceAPI = function() {
-  function TraceAPI2() {
-    this._proxyTracerProvider = new ProxyTracerProvider();
-    this.wrapSpanContext = wrapSpanContext;
-    this.isSpanContextValid = isSpanContextValid;
-    this.deleteSpan = deleteSpan;
-    this.getSpan = getSpan;
-    this.getActiveSpan = getActiveSpan;
-    this.getSpanContext = getSpanContext;
-    this.setSpan = setSpan;
-    this.setSpanContext = setSpanContext;
-  }
-  __name(TraceAPI2, "TraceAPI");
-  TraceAPI2.getInstance = function() {
-    if (!this._instance) {
-      this._instance = new TraceAPI2();
-    }
-    return this._instance;
-  };
-  TraceAPI2.prototype.setGlobalTracerProvider = function(provider) {
-    var success = registerGlobal(API_NAME3, this._proxyTracerProvider, DiagAPI.instance());
-    if (success) {
-      this._proxyTracerProvider.setDelegate(provider);
-    }
-    return success;
-  };
-  TraceAPI2.prototype.getTracerProvider = function() {
-    return getGlobal(API_NAME3) || this._proxyTracerProvider;
-  };
-  TraceAPI2.prototype.getTracer = function(name, version) {
-    return this.getTracerProvider().getTracer(name, version);
-  };
-  TraceAPI2.prototype.disable = function() {
-    unregisterGlobal(API_NAME3, DiagAPI.instance());
-    this._proxyTracerProvider = new ProxyTracerProvider();
-  };
-  return TraceAPI2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/propagation/NoopTextMapPropagator.js
-var NoopTextMapPropagator = function() {
-  function NoopTextMapPropagator2() {
-  }
-  __name(NoopTextMapPropagator2, "NoopTextMapPropagator");
-  NoopTextMapPropagator2.prototype.inject = function(_context, _carrier) {
-  };
-  NoopTextMapPropagator2.prototype.extract = function(context3, _carrier) {
-    return context3;
-  };
-  NoopTextMapPropagator2.prototype.fields = function() {
-    return [];
-  };
-  return NoopTextMapPropagator2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/baggage/context-helpers.js
-var BAGGAGE_KEY = createContextKey("OpenTelemetry Baggage Key");
-function getBaggage(context3) {
-  return context3.getValue(BAGGAGE_KEY) || void 0;
-}
-__name(getBaggage, "getBaggage");
-function setBaggage(context3, baggage) {
-  return context3.setValue(BAGGAGE_KEY, baggage);
-}
-__name(setBaggage, "setBaggage");
-function deleteBaggage(context3) {
-  return context3.deleteValue(BAGGAGE_KEY);
-}
-__name(deleteBaggage, "deleteBaggage");
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/api/propagation.js
-var API_NAME4 = "propagation";
-var NOOP_TEXT_MAP_PROPAGATOR = new NoopTextMapPropagator();
-var PropagationAPI = function() {
-  function PropagationAPI2() {
-    this.createBaggage = createBaggage;
-    this.getBaggage = getBaggage;
-    this.setBaggage = setBaggage;
-    this.deleteBaggage = deleteBaggage;
-  }
-  __name(PropagationAPI2, "PropagationAPI");
-  PropagationAPI2.getInstance = function() {
-    if (!this._instance) {
-      this._instance = new PropagationAPI2();
-    }
-    return this._instance;
-  };
-  PropagationAPI2.prototype.setGlobalPropagator = function(propagator) {
-    return registerGlobal(API_NAME4, propagator, DiagAPI.instance());
-  };
-  PropagationAPI2.prototype.inject = function(context3, carrier, setter) {
-    if (setter === void 0) {
-      setter = defaultTextMapSetter;
-    }
-    return this._getGlobalPropagator().inject(context3, carrier, setter);
-  };
-  PropagationAPI2.prototype.extract = function(context3, carrier, getter) {
-    if (getter === void 0) {
-      getter = defaultTextMapGetter;
-    }
-    return this._getGlobalPropagator().extract(context3, carrier, getter);
-  };
-  PropagationAPI2.prototype.fields = function() {
-    return this._getGlobalPropagator().fields();
-  };
-  PropagationAPI2.prototype.disable = function() {
-    unregisterGlobal(API_NAME4, DiagAPI.instance());
-  };
-  PropagationAPI2.prototype._getGlobalPropagator = function() {
-    return getGlobal(API_NAME4) || NOOP_TEXT_MAP_PROPAGATOR;
-  };
-  return PropagationAPI2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+api@1.2.0/node_modules/@opentelemetry/api/build/esm/index.js
-var context2 = ContextAPI.getInstance();
-var trace = TraceAPI.getInstance();
-var propagation = PropagationAPI.getInstance();
-var diag2 = DiagAPI.instance();
+__name(isError, "isError");
 
 // ../engines/src/index.ts
 var import_engines_version = __toESM(require_engines_version());
 
 // ../get-platform/src/getNodeAPIName.ts
 var NODE_API_QUERY_ENGINE_URL_BASE = "libquery_engine";
-function getNodeAPIName(platform3, type) {
+function getNodeAPIName(platform2, type) {
   const isUrl = type === "url";
-  if (platform3.includes("windows")) {
-    return isUrl ? `query_engine.dll.node` : `query_engine-${platform3}.dll.node`;
-  } else if (platform3.includes("darwin")) {
-    return isUrl ? `${NODE_API_QUERY_ENGINE_URL_BASE}.dylib.node` : `${NODE_API_QUERY_ENGINE_URL_BASE}-${platform3}.dylib.node`;
+  if (platform2.includes("windows")) {
+    return isUrl ? `query_engine.dll.node` : `query_engine-${platform2}.dll.node`;
+  } else if (platform2.includes("darwin")) {
+    return isUrl ? `${NODE_API_QUERY_ENGINE_URL_BASE}.dylib.node` : `${NODE_API_QUERY_ENGINE_URL_BASE}-${platform2}.dylib.node`;
   } else {
-    return isUrl ? `${NODE_API_QUERY_ENGINE_URL_BASE}.so.node` : `${NODE_API_QUERY_ENGINE_URL_BASE}-${platform3}.so.node`;
+    return isUrl ? `${NODE_API_QUERY_ENGINE_URL_BASE}.so.node` : `${NODE_API_QUERY_ENGINE_URL_BASE}-${platform2}.so.node`;
   }
 }
 __name(getNodeAPIName, "getNodeAPIName");
 
 // ../get-platform/src/getPlatform.ts
-var import_child_process = require("child_process");
-var import_fs = __toESM(require("fs"));
+var import_child_process = __toESM(require("child_process"));
+var import_fs2 = __toESM(require("fs"));
 var import_os = __toESM(require("os"));
+
+// ../../node_modules/.pnpm/ts-pattern@4.0.6/node_modules/ts-pattern/dist/index.modern.js
+var e = Symbol("@ts-pattern/matcher");
+var t = "@ts-pattern/anonymous-select-key";
+var n = /* @__PURE__ */ __name((e2) => Boolean(e2 && "object" == typeof e2), "n");
+var r = /* @__PURE__ */ __name((t2) => t2 && !!t2[e], "r");
+var o = /* @__PURE__ */ __name((t2, c, a) => {
+  if (n(t2)) {
+    if (r(t2)) {
+      const n2 = t2[e](), { matched: r2, selections: o2 } = n2.match(c);
+      return r2 && o2 && Object.keys(o2).forEach((e2) => a(e2, o2[e2])), r2;
+    }
+    if (!n(c))
+      return false;
+    if (Array.isArray(t2))
+      return !!Array.isArray(c) && t2.length === c.length && t2.every((e2, t3) => o(e2, c[t3], a));
+    if (t2 instanceof Map)
+      return c instanceof Map && Array.from(t2.keys()).every((e2) => o(t2.get(e2), c.get(e2), a));
+    if (t2 instanceof Set) {
+      if (!(c instanceof Set))
+        return false;
+      if (0 === t2.size)
+        return 0 === c.size;
+      if (1 === t2.size) {
+        const [e2] = Array.from(t2.values());
+        return r(e2) ? Array.from(c.values()).every((t3) => o(e2, t3, a)) : c.has(e2);
+      }
+      return Array.from(t2.values()).every((e2) => c.has(e2));
+    }
+    return Object.keys(t2).every((n2) => {
+      const s = t2[n2];
+      return (n2 in c || r(i = s) && "optional" === i[e]().matcherType) && o(s, c[n2], a);
+      var i;
+    });
+  }
+  return Object.is(c, t2);
+}, "o");
+function f(t2) {
+  return { [e]: () => ({ match: (e2) => ({ matched: Boolean(t2(e2)) }) }) };
+}
+__name(f, "f");
+var m = f(function(e2) {
+  return true;
+});
+var d = f(function(e2) {
+  return "string" == typeof e2;
+});
+var g = f(function(e2) {
+  return "number" == typeof e2;
+});
+var p = f(function(e2) {
+  return "boolean" == typeof e2;
+});
+var b = f(function(e2) {
+  return "bigint" == typeof e2;
+});
+var w = f(function(e2) {
+  return "symbol" == typeof e2;
+});
+var A = f(function(e2) {
+  return null == e2;
+});
+var K = /* @__PURE__ */ __name((e2) => new O(e2, []), "K");
+var O = class {
+  constructor(e2, t2) {
+    this.value = void 0, this.cases = void 0, this.value = e2, this.cases = t2;
+  }
+  with(...e2) {
+    const n2 = e2[e2.length - 1], r2 = [e2[0]], c = [];
+    return 3 === e2.length && "function" == typeof e2[1] ? (r2.push(e2[0]), c.push(e2[1])) : e2.length > 2 && r2.push(...e2.slice(1, e2.length - 1)), new O(this.value, this.cases.concat([{ match: (e3) => {
+      let n3 = {};
+      const a = Boolean(r2.some((t2) => o(t2, e3, (e4, t3) => {
+        n3[e4] = t3;
+      })) && c.every((t2) => t2(e3)));
+      return { matched: a, value: a && Object.keys(n3).length ? t in n3 ? n3[t] : n3 : e3 };
+    }, handler: n2 }]));
+  }
+  when(e2, t2) {
+    return new O(this.value, this.cases.concat([{ match: (t3) => ({ matched: Boolean(e2(t3)), value: t3 }), handler: t2 }]));
+  }
+  otherwise(e2) {
+    return new O(this.value, this.cases.concat([{ match: (e3) => ({ matched: true, value: e3 }), handler: e2 }])).run();
+  }
+  exhaustive() {
+    return this.run();
+  }
+  run() {
+    let e2, t2 = this.value;
+    for (let n2 = 0; n2 < this.cases.length; n2++) {
+      const r2 = this.cases[n2], o2 = r2.match(this.value);
+      if (o2.matched) {
+        t2 = o2.value, e2 = r2.handler;
+        break;
+      }
+    }
+    if (!e2) {
+      let e3;
+      try {
+        e3 = JSON.stringify(this.value);
+      } catch (t3) {
+        e3 = this.value;
+      }
+      throw new Error(`Pattern matching error: no pattern matches value ${e3}`);
+    }
+    return e2(t2, this.value);
+  }
+};
+__name(O, "O");
+
+// ../get-platform/src/getPlatform.ts
 var import_util = require("util");
-var readFile = (0, import_util.promisify)(import_fs.default.readFile);
-var exists = (0, import_util.promisify)(import_fs.default.exists);
+
+// ../get-platform/src/logger.ts
+var import_chalk2 = __toESM(require_source());
+var tags = {
+  warn: import_chalk2.default.yellow("prisma:warn")
+};
+var should = {
+  warn: () => !process.env.PRISMA_DISABLE_WARNINGS
+};
+function warn(message, ...optionalParams) {
+  if (should.warn()) {
+    console.warn(`${tags.warn} ${message}`, ...optionalParams);
+  }
+}
+__name(warn, "warn");
+
+// ../get-platform/src/warnOnce.ts
+var alreadyWarned = /* @__PURE__ */ new Set();
+var warnOnce = /* @__PURE__ */ __name((key, message, ...args) => {
+  if (!alreadyWarned.has(key)) {
+    alreadyWarned.add(key);
+    warn(message, ...args);
+  }
+}, "warnOnce");
+
+// ../get-platform/src/getPlatform.ts
+var readFile = (0, import_util.promisify)(import_fs2.default.readFile);
+var exists2 = (0, import_util.promisify)(import_fs2.default.exists);
+var exec = (0, import_util.promisify)(import_child_process.default.exec);
+var debug3 = src_default("prisma:get-platform");
 async function getos() {
-  const platform3 = import_os.default.platform();
-  const arch2 = process.arch;
-  if (platform3 === "freebsd") {
-    const version = await gracefulExec(`freebsd-version`);
+  const platform2 = import_os.default.platform();
+  const arch = process.arch;
+  if (platform2 === "freebsd") {
+    const version = await getFirstSuccessfulExec([`freebsd-version`]);
     if (version && version.trim().length > 0) {
       const regex = /^(\d+)\.?/;
       const match = regex.exec(version);
@@ -23899,22 +20322,29 @@ async function getos() {
         return {
           platform: "freebsd",
           distro: `freebsd${match[1]}`,
-          arch: arch2
+          arch
         };
       }
     }
   }
-  if (platform3 !== "linux") {
+  if (platform2 !== "linux") {
     return {
-      platform: platform3,
-      arch: arch2
+      platform: platform2,
+      arch
     };
   }
+  const distro = await resolveDistro();
+  if (distro === "musl" && arch !== "x64") {
+    throw new Error(
+      `Prisma only supports Linux Alpine on the amd64 (x86_64) system architecture. If you're running Prisma on Docker, please use Docker Buildx to simulate the amd64 architecture on your device as explained by this comment: https://github.com/prisma/prisma/issues/8478#issuecomment-1355209706`
+    );
+  }
+  const libssl = await getSSLVersion({ arch, distro });
   return {
     platform: "linux",
-    libssl: await getOpenSSLVersion(),
-    distro: await resolveDistro(),
-    arch: arch2
+    libssl,
+    distro,
+    arch
   };
 }
 __name(getos, "getos");
@@ -23943,9 +20373,9 @@ __name(parseDistro, "parseDistro");
 async function resolveDistro() {
   const osReleaseFile = "/etc/os-release";
   const alpineReleaseFile = "/etc/alpine-release";
-  if (await exists(alpineReleaseFile)) {
+  if (await exists2(alpineReleaseFile)) {
     return "musl";
-  } else if (await exists(osReleaseFile)) {
+  } else if (await exists2(osReleaseFile)) {
     return parseDistro(await readFile(osReleaseFile, "utf-8"));
   } else {
     return;
@@ -23955,100 +20385,205 @@ __name(resolveDistro, "resolveDistro");
 function parseOpenSSLVersion(input) {
   const match = /^OpenSSL\s(\d+\.\d+)\.\d+/.exec(input);
   if (match) {
-    return match[1] + ".x";
-  }
-  return;
-}
-__name(parseOpenSSLVersion, "parseOpenSSLVersion");
-async function getOpenSSLVersion() {
-  const [version, ls] = await Promise.all([
-    gracefulExec(`openssl version -v`),
-    gracefulExec(`
-      ls -l /lib64 | grep ssl;
-      ls -l /usr/lib64 | grep ssl;
-    `)
-  ]);
-  if (version) {
-    const v = parseOpenSSLVersion(version);
-    if (v) {
-      return v;
-    }
-  }
-  if (ls) {
-    const match = /libssl\.so\.(\d+\.\d+)\.\d+/.exec(ls);
-    if (match) {
-      return match[1] + ".x";
-    }
+    const partialVersion = `${match[1]}.x`;
+    return sanitiseSSLVersion(partialVersion);
   }
   return void 0;
 }
-__name(getOpenSSLVersion, "getOpenSSLVersion");
-async function gracefulExec(cmd) {
-  return new Promise((resolve) => {
-    try {
-      (0, import_child_process.exec)(cmd, (err, stdout) => {
-        resolve(String(stdout));
-      });
-    } catch (e) {
-      resolve(void 0);
-      return void 0;
-    }
-    return void 0;
-  });
+__name(parseOpenSSLVersion, "parseOpenSSLVersion");
+function parseLibSSLVersion(input) {
+  const match = /libssl\.so\.(\d)(\.\d)?/.exec(input);
+  if (match) {
+    const partialVersion = `${match[1]}${match[2] ?? ".0"}.x`;
+    return sanitiseSSLVersion(partialVersion);
+  }
+  return void 0;
 }
-__name(gracefulExec, "gracefulExec");
+__name(parseLibSSLVersion, "parseLibSSLVersion");
+function sanitiseSSLVersion(version) {
+  if (isLibssl1x(version)) {
+    return version;
+  }
+  const versionSplit = version.split(".");
+  versionSplit[1] = "0";
+  return versionSplit.join(".");
+}
+__name(sanitiseSSLVersion, "sanitiseSSLVersion");
+async function getSSLVersion(args) {
+  const archFromUname = await getArchFromUname();
+  const libsslSpecificPaths = K(args).with({ distro: "musl" }, () => {
+    debug3('Trying platform-specific paths for "alpine"');
+    return ["/lib"];
+  }).with({ distro: "debian" }, () => {
+    debug3('Trying platform-specific paths for "debian" (and "ubuntu")');
+    return [`/usr/lib/${archFromUname}-linux-gnu`, `/lib/${archFromUname}-linux-gnu`];
+  }).with({ distro: "rhel" }, () => {
+    debug3('Trying platform-specific paths for "rhel"');
+    return ["/lib64", "/usr/lib64"];
+  }).otherwise(({ distro, arch }) => {
+    debug3(`Don't know any platform-specific paths for "${distro}" on ${arch}`);
+    return [];
+  });
+  const libsslSpecificCommands = libsslSpecificPaths.map((path7) => `ls ${path7} | grep libssl.so`);
+  const libsslFilenameFromSpecificPath = await getFirstSuccessfulExec(libsslSpecificCommands);
+  if (libsslFilenameFromSpecificPath) {
+    debug3(`Found libssl.so file using platform-specific paths: ${libsslFilenameFromSpecificPath}`);
+    const libsslVersion = parseLibSSLVersion(libsslFilenameFromSpecificPath);
+    debug3(`The parsed libssl version is: ${libsslVersion}`);
+    if (libsslVersion) {
+      return libsslVersion;
+    }
+  }
+  debug3('Falling back to "ldconfig" and other generic paths');
+  const libsslFilename = await getFirstSuccessfulExec([
+    'ldconfig -p | sed "s/.*=>s*//" | sed "s|.*/||" | grep ssl | sort',
+    "ls /lib64 | grep ssl",
+    "ls /usr/lib64 | grep ssl"
+  ]);
+  if (libsslFilename) {
+    debug3(`Found libssl.so file using "ldconfig" or other generic paths: ${libsslFilenameFromSpecificPath}`);
+    const libsslVersion = parseLibSSLVersion(libsslFilename);
+    if (libsslVersion) {
+      return libsslVersion;
+    }
+  }
+  const openSSLVersionLine = await getFirstSuccessfulExec(["openssl version -v"]);
+  if (openSSLVersionLine) {
+    debug3(`Found openssl binary with version: ${openSSLVersionLine}`);
+    const openSSLVersion2 = parseOpenSSLVersion(openSSLVersionLine);
+    debug3(`The parsed openssl version is: ${openSSLVersion2}`);
+    if (openSSLVersion2) {
+      return openSSLVersion2;
+    }
+  }
+  const openSSLVersion = await getFirstSuccessfulExec(["openssl version -v"]);
+  if (openSSLVersion) {
+    const matchedVersion = parseOpenSSLVersion(openSSLVersion);
+    if (matchedVersion) {
+      return matchedVersion;
+    }
+  }
+  debug3(`Couldn't find any version of libssl or OpenSSL in the system`);
+  return void 0;
+}
+__name(getSSLVersion, "getSSLVersion");
 async function getPlatform() {
-  const { platform: platform3, libssl, distro, arch: arch2 } = await getos();
-  if (platform3 === "darwin" && arch2 === "arm64") {
+  const { platform: platform2, distro, arch, libssl } = await getos();
+  const defaultLibssl = "1.1.x";
+  if (platform2 === "linux" && libssl === void 0) {
+    const additionalMessage = K({ distro }).with({ distro: "debian" }, () => {
+      return "Please manually install OpenSSL via `apt-get update -y && apt-get install -y openssl` and try installing Prisma again. If you're running Prisma on Docker, you may also try to replace your base image with `node:lts-slim`, which already ships with OpenSSL installed.";
+    }).otherwise(() => {
+      return "Please manually install OpenSSL and try installing Prisma again.";
+    });
+    warnOnce(
+      "libssl:undefined",
+      `Prisma failed to detect the libssl/openssl version to use, and may not work as expected. Defaulting to "openssl-${defaultLibssl}".
+${additionalMessage}`
+    );
+  }
+  const defaultDistro = "debian";
+  if (platform2 === "linux" && distro === void 0) {
+    warnOnce(
+      "distro:undefined",
+      `Prisma failed to detect the Linux distro in use, and may not work as expected. Defaulting to "${defaultDistro}".`
+    );
+  }
+  if (platform2 === "darwin" && arch === "arm64") {
     return "darwin-arm64";
   }
-  if (platform3 === "darwin") {
+  if (platform2 === "darwin") {
     return "darwin";
   }
-  if (platform3 === "win32") {
+  if (platform2 === "win32") {
     return "windows";
   }
-  if (platform3 === "freebsd") {
+  if (platform2 === "freebsd") {
     return distro;
   }
-  if (platform3 === "openbsd") {
+  if (platform2 === "openbsd") {
     return "openbsd";
   }
-  if (platform3 === "netbsd") {
+  if (platform2 === "netbsd") {
     return "netbsd";
   }
-  if (platform3 === "linux" && distro === "nixos") {
+  if (platform2 === "linux" && distro === "nixos") {
     return "linux-nixos";
   }
-  if (platform3 === "linux" && arch2 === "arm64") {
-    return `linux-arm64-openssl-${libssl}`;
+  if (platform2 === "linux" && arch === "arm64") {
+    return `linux-arm64-openssl-${libssl || defaultLibssl}`;
   }
-  if (platform3 === "linux" && arch2 === "arm") {
-    return `linux-arm-openssl-${libssl}`;
+  if (platform2 === "linux" && arch === "arm") {
+    return `linux-arm-openssl-${libssl || defaultLibssl}`;
   }
-  if (platform3 === "linux" && distro === "musl") {
-    return "linux-musl";
+  if (platform2 === "linux" && distro === "musl") {
+    const base = "linux-musl";
+    if (!libssl) {
+      return base;
+    }
+    if (isLibssl1x(libssl)) {
+      return base;
+    } else {
+      return `${base}-openssl-${libssl}`;
+    }
   }
-  if (platform3 === "linux" && distro && libssl) {
-    return distro + "-openssl-" + libssl;
+  if (platform2 === "linux" && distro && libssl) {
+    return `${distro}-openssl-${libssl}`;
+  }
+  if (platform2 !== "linux") {
+    warnOnce(
+      "platform:undefined",
+      `Prisma detected unknown OS "${platform2}" and may not work as expected. Defaulting to "linux".`
+    );
   }
   if (libssl) {
-    return "debian-openssl-" + libssl;
+    return `${defaultDistro}-openssl-${libssl}`;
   }
   if (distro) {
-    return distro + "-openssl-1.1.x";
+    return `${distro}-openssl-${defaultLibssl}`;
   }
-  return "debian-openssl-1.1.x";
+  return `${defaultDistro}-openssl-${defaultLibssl}`;
 }
 __name(getPlatform, "getPlatform");
+async function discardError(runPromise) {
+  try {
+    return await runPromise();
+  } catch (e2) {
+    return void 0;
+  }
+}
+__name(discardError, "discardError");
+function getFirstSuccessfulExec(commands) {
+  return discardError(async () => {
+    const results = await Promise.allSettled(commands.map((cmd) => exec(cmd)));
+    const idx = results.findIndex(({ status }) => status === "fulfilled");
+    if (idx === -1) {
+      return void 0;
+    }
+    const { value } = results[idx];
+    const output = String(value.stdout);
+    debug3(`Command "${commands[idx]}" successfully returned "${output}"`);
+    return output;
+  });
+}
+__name(getFirstSuccessfulExec, "getFirstSuccessfulExec");
+async function getArchFromUname() {
+  const arch = await getFirstSuccessfulExec(["uname -m"]);
+  return arch?.trim();
+}
+__name(getArchFromUname, "getArchFromUname");
+function isLibssl1x(libssl) {
+  return libssl.startsWith("1.");
+}
+__name(isLibssl1x, "isLibssl1x");
 
 // ../get-platform/src/isNodeAPISupported.ts
-var import_fs2 = __toESM(require("fs"));
+var import_fs3 = __toESM(require("fs"));
 async function isNodeAPISupported() {
   const customLibraryPath = process.env.PRISMA_QUERY_ENGINE_LIBRARY;
-  const customLibraryExists = customLibraryPath && import_fs2.default.existsSync(customLibraryPath);
-  const os3 = await getos();
-  if (!customLibraryExists && (os3.arch === "x32" || os3.arch === "ia32")) {
+  const customLibraryExists = customLibraryPath && import_fs3.default.existsSync(customLibraryPath);
+  const os2 = await getos();
+  if (!customLibraryExists && (os2.arch === "x32" || os2.arch === "ia32")) {
     throw new Error(
       `The default query engine type (Node-API, "library") is currently not supported for 32bit Node. Please set \`engineType = "binary"\` in the "generator" block of your "schema.prisma" file (or use the environment variables "PRISMA_CLIENT_ENGINE_TYPE=binary" and/or "PRISMA_CLI_QUERY_ENGINE_TYPE=binary".)`
     );
@@ -24073,6 +20608,7 @@ var platforms = [
   "linux-arm-openssl-1.0.x",
   "linux-arm-openssl-3.0.x",
   "linux-musl",
+  "linux-musl-openssl-3.0.x",
   "linux-nixos",
   "windows",
   "freebsd11",
@@ -24084,61 +20620,61 @@ var platforms = [
 ];
 
 // ../engines/src/index.ts
-var import_path = __toESM(require("path"));
+var import_path2 = __toESM(require("path"));
 var import_engines_version2 = __toESM(require_engines_version());
-var debug2 = src_default("prisma:engines");
+var debug4 = src_default("prisma:engines");
 function getEnginesPath() {
-  return import_path.default.join(__dirname, "../");
+  return import_path2.default.join(__dirname, "../");
 }
 __name(getEnginesPath, "getEnginesPath");
 var DEFAULT_CLI_QUERY_ENGINE_BINARY_TYPE = "libquery-engine" /* libqueryEngine */;
-import_path.default.join(__dirname, "../query-engine-darwin");
-import_path.default.join(__dirname, "../introspection-engine-darwin");
-import_path.default.join(__dirname, "../prisma-fmt-darwin");
-import_path.default.join(__dirname, "../query-engine-darwin-arm64");
-import_path.default.join(__dirname, "../introspection-engine-darwin-arm64");
-import_path.default.join(__dirname, "../prisma-fmt-darwin-arm64");
-import_path.default.join(__dirname, "../query-engine-debian-openssl-1.0.x");
-import_path.default.join(__dirname, "../introspection-engine-debian-openssl-1.0.x");
-import_path.default.join(__dirname, "../prisma-fmt-debian-openssl-1.0.x");
-import_path.default.join(__dirname, "../query-engine-debian-openssl-1.1.x");
-import_path.default.join(__dirname, "../introspection-engine-debian-openssl-1.1.x");
-import_path.default.join(__dirname, "../prisma-fmt-debian-openssl-1.1.x");
-import_path.default.join(__dirname, "../query-engine-debian-openssl-3.0.x");
-import_path.default.join(__dirname, "../introspection-engine-debian-openssl-3.0.x");
-import_path.default.join(__dirname, "../prisma-fmt-debian-openssl-3.0.x");
-import_path.default.join(__dirname, "../query-engine-rhel-openssl-1.0.x");
-import_path.default.join(__dirname, "../introspection-engine-rhel-openssl-1.0.x");
-import_path.default.join(__dirname, "../prisma-fmt-rhel-openssl-1.0.x");
-import_path.default.join(__dirname, "../query-engine-rhel-openssl-1.1.x");
-import_path.default.join(__dirname, "../introspection-engine-rhel-openssl-1.1.x");
-import_path.default.join(__dirname, "../prisma-fmt-rhel-openssl-1.1.x");
-import_path.default.join(__dirname, "../query-engine-rhel-openssl-3.0.x");
-import_path.default.join(__dirname, "../introspection-engine-rhel-openssl-3.0.x");
-import_path.default.join(__dirname, "../prisma-fmt-rhel-openssl-3.0.x");
-import_path.default.join(__dirname, "../libquery_engine-darwin.dylib.node");
-import_path.default.join(__dirname, "../libquery_engine-darwin-arm64.dylib.node");
-import_path.default.join(__dirname, "../libquery_engine-debian-openssl-1.0.x.so.node");
-import_path.default.join(__dirname, "../libquery_engine-debian-openssl-1.1.x.so.node");
-import_path.default.join(__dirname, "../libquery_engine-debian-openssl-3.0.x.so.node");
-import_path.default.join(__dirname, "../libquery_engine-linux-arm64-openssl-1.0.x.so.node");
-import_path.default.join(__dirname, "../libquery_engine-linux-arm64-openssl-1.1.x.so.node");
-import_path.default.join(__dirname, "../libquery_engine-linux-arm64-openssl-3.0.x.so.node");
-import_path.default.join(__dirname, "../libquery_engine-linux-musl.so.node");
-import_path.default.join(__dirname, "../libquery_engine-rhel-openssl-1.0.x.so.node");
-import_path.default.join(__dirname, "../libquery_engine-rhel-openssl-1.1.x.so.node");
-import_path.default.join(__dirname, "../libquery_engine-rhel-openssl-3.0.x.so.node");
-import_path.default.join(__dirname, "../query_engine-windows.dll.node");
+import_path2.default.join(__dirname, "../query-engine-darwin");
+import_path2.default.join(__dirname, "../introspection-engine-darwin");
+import_path2.default.join(__dirname, "../prisma-fmt-darwin");
+import_path2.default.join(__dirname, "../query-engine-darwin-arm64");
+import_path2.default.join(__dirname, "../introspection-engine-darwin-arm64");
+import_path2.default.join(__dirname, "../prisma-fmt-darwin-arm64");
+import_path2.default.join(__dirname, "../query-engine-debian-openssl-1.0.x");
+import_path2.default.join(__dirname, "../introspection-engine-debian-openssl-1.0.x");
+import_path2.default.join(__dirname, "../prisma-fmt-debian-openssl-1.0.x");
+import_path2.default.join(__dirname, "../query-engine-debian-openssl-1.1.x");
+import_path2.default.join(__dirname, "../introspection-engine-debian-openssl-1.1.x");
+import_path2.default.join(__dirname, "../prisma-fmt-debian-openssl-1.1.x");
+import_path2.default.join(__dirname, "../query-engine-debian-openssl-3.0.x");
+import_path2.default.join(__dirname, "../introspection-engine-debian-openssl-3.0.x");
+import_path2.default.join(__dirname, "../prisma-fmt-debian-openssl-3.0.x");
+import_path2.default.join(__dirname, "../query-engine-rhel-openssl-1.0.x");
+import_path2.default.join(__dirname, "../introspection-engine-rhel-openssl-1.0.x");
+import_path2.default.join(__dirname, "../prisma-fmt-rhel-openssl-1.0.x");
+import_path2.default.join(__dirname, "../query-engine-rhel-openssl-1.1.x");
+import_path2.default.join(__dirname, "../introspection-engine-rhel-openssl-1.1.x");
+import_path2.default.join(__dirname, "../prisma-fmt-rhel-openssl-1.1.x");
+import_path2.default.join(__dirname, "../query-engine-rhel-openssl-3.0.x");
+import_path2.default.join(__dirname, "../introspection-engine-rhel-openssl-3.0.x");
+import_path2.default.join(__dirname, "../prisma-fmt-rhel-openssl-3.0.x");
+import_path2.default.join(__dirname, "../libquery_engine-darwin.dylib.node");
+import_path2.default.join(__dirname, "../libquery_engine-darwin-arm64.dylib.node");
+import_path2.default.join(__dirname, "../libquery_engine-debian-openssl-1.0.x.so.node");
+import_path2.default.join(__dirname, "../libquery_engine-debian-openssl-1.1.x.so.node");
+import_path2.default.join(__dirname, "../libquery_engine-debian-openssl-3.0.x.so.node");
+import_path2.default.join(__dirname, "../libquery_engine-linux-arm64-openssl-1.0.x.so.node");
+import_path2.default.join(__dirname, "../libquery_engine-linux-arm64-openssl-1.1.x.so.node");
+import_path2.default.join(__dirname, "../libquery_engine-linux-arm64-openssl-3.0.x.so.node");
+import_path2.default.join(__dirname, "../libquery_engine-linux-musl.so.node");
+import_path2.default.join(__dirname, "../libquery_engine-linux-musl-openssl-3.0.x.so.node");
+import_path2.default.join(__dirname, "../libquery_engine-rhel-openssl-1.0.x.so.node");
+import_path2.default.join(__dirname, "../libquery_engine-rhel-openssl-1.1.x.so.node");
+import_path2.default.join(__dirname, "../libquery_engine-rhel-openssl-3.0.x.so.node");
+import_path2.default.join(__dirname, "../query_engine-windows.dll.node");
 
 // ../engine-core/src/binary/BinaryEngine.ts
-var import_chalk3 = __toESM(require_source());
+var import_chalk4 = __toESM(require_source());
 var import_child_process2 = require("child_process");
-var import_events = __toESM(require("events"));
 var import_execa = __toESM(require_execa());
-var import_fs4 = __toESM(require("fs"));
+var import_fs5 = __toESM(require("fs"));
 var import_net = __toESM(require("net"));
 var import_p_retry = __toESM(require_p_retry());
-var import_path2 = __toESM(require("path"));
+var import_path3 = __toESM(require("path"));
 var import_url = require("url");
 var import_util4 = require("util");
 
@@ -24163,11 +20699,12 @@ __name(PrismaClientInitializationError, "PrismaClientInitializationError");
 
 // ../engine-core/src/common/errors/PrismaClientKnownRequestError.ts
 var PrismaClientKnownRequestError = class extends Error {
-  constructor(message, code, clientVersion2, meta) {
+  constructor(message, { code, clientVersion: clientVersion2, meta, batchRequestIdx }) {
     super(message);
     this.code = code;
     this.clientVersion = clientVersion2;
     this.meta = meta;
+    this.batchRequestIdx = batchRequestIdx;
   }
   get [Symbol.toStringTag]() {
     return "PrismaClientKnownRequestError";
@@ -24176,67 +20713,47 @@ var PrismaClientKnownRequestError = class extends Error {
 __name(PrismaClientKnownRequestError, "PrismaClientKnownRequestError");
 
 // ../engine-core/src/common/errors/utils/log.ts
-function getMessage(log4) {
-  if (typeof log4 === "string") {
-    return log4;
-  } else if (isRustError(log4)) {
-    return getBacktraceFromRustError(log4);
-  } else if (isRustLog(log4)) {
-    return getBacktraceFromLog(log4);
+function getMessage(log3) {
+  if (typeof log3 === "string") {
+    return log3;
+  } else {
+    return log3.message;
   }
-  return JSON.stringify(log4);
 }
 __name(getMessage, "getMessage");
-function getBacktraceFromLog(log4) {
-  var _a3, _b2, _c, _d, _e, _f, _g;
-  if ((_a3 = log4.fields) == null ? void 0 : _a3.message) {
-    let str = (_b2 = log4.fields) == null ? void 0 : _b2.message;
-    if ((_c = log4.fields) == null ? void 0 : _c.file) {
-      str += ` in ${log4.fields.file}`;
-      if ((_d = log4.fields) == null ? void 0 : _d.line) {
-        str += `:${log4.fields.line}`;
+function getBacktrace(log3) {
+  if (log3.fields?.message) {
+    let str = log3.fields?.message;
+    if (log3.fields?.file) {
+      str += ` in ${log3.fields.file}`;
+      if (log3.fields?.line) {
+        str += `:${log3.fields.line}`;
       }
-      if ((_e = log4.fields) == null ? void 0 : _e.column) {
-        str += `:${log4.fields.column}`;
+      if (log3.fields?.column) {
+        str += `:${log3.fields.column}`;
       }
     }
-    if ((_f = log4.fields) == null ? void 0 : _f.reason) {
+    if (log3.fields?.reason) {
       str += `
-${(_g = log4.fields) == null ? void 0 : _g.reason}`;
+${log3.fields?.reason}`;
     }
     return str;
   }
   return "Unknown error";
 }
-__name(getBacktraceFromLog, "getBacktraceFromLog");
-function getBacktraceFromRustError(err) {
-  let str = "";
-  if (err.is_panic) {
-    str += `PANIC`;
-  }
-  if (err.backtrace) {
-    str += ` in ${err.backtrace}`;
-  }
-  if (err.message) {
-    str += `
-${err.message}`;
-  }
-  return str;
+__name(getBacktrace, "getBacktrace");
+function isPanic(err) {
+  return err.fields?.message === "PANIC";
 }
-__name(getBacktraceFromRustError, "getBacktraceFromRustError");
-function isRustLog(e) {
-  return e.timestamp && typeof e.level === "string" && typeof e.target === "string";
+__name(isPanic, "isPanic");
+function isRustLog(e2) {
+  return e2.timestamp && typeof e2.level === "string" && typeof e2.target === "string";
 }
 __name(isRustLog, "isRustLog");
-function isRustErrorLog(e) {
-  var _a3, _b2;
-  return isRustLog(e) && (e.level === "error" || ((_b2 = (_a3 = e.fields) == null ? void 0 : _a3.message) == null ? void 0 : _b2.includes("fatal error")));
+function isRustErrorLog(e2) {
+  return isRustLog(e2) && (e2.level === "error" || e2.fields?.message?.includes("fatal error"));
 }
 __name(isRustErrorLog, "isRustErrorLog");
-function isRustError(e) {
-  return typeof e.is_panic !== "undefined";
-}
-__name(isRustError, "isRustError");
 function convertLog(rustLog) {
   const isQuery = isQueryLog(rustLog.fields);
   const level = isQuery ? "query" : rustLog.level.toLowerCase();
@@ -24254,23 +20771,17 @@ __name(isQueryLog, "isQueryLog");
 
 // ../engine-core/src/common/errors/PrismaClientRustError.ts
 var PrismaClientRustError = class extends Error {
-  constructor({ clientVersion: clientVersion2, log: log4, error: error2 }) {
-    var __super = (...args) => {
-      super(...args);
-    };
-    if (log4) {
-      const backtrace = getBacktraceFromLog(log4);
-      __super(backtrace != null ? backtrace : "Unknown error");
-    } else if (error2) {
-      const backtrace = getBacktraceFromRustError(error2);
-      __super(backtrace);
-    } else {
-      __super(`Unknown error`);
-    }
+  constructor({ clientVersion: clientVersion2, error: error2 }) {
+    const backtrace = getBacktrace(error2);
+    super(backtrace ?? "Unknown error");
+    this._isPanic = isPanic(error2);
     this.clientVersion = clientVersion2;
   }
   get [Symbol.toStringTag]() {
     return "PrismaClientRustPanicError";
+  }
+  isPanic() {
+    return this._isPanic;
   }
 };
 __name(PrismaClientRustError, "PrismaClientRustError");
@@ -24289,9 +20800,10 @@ __name(PrismaClientRustPanicError, "PrismaClientRustPanicError");
 
 // ../engine-core/src/common/errors/PrismaClientUnknownRequestError.ts
 var PrismaClientUnknownRequestError = class extends Error {
-  constructor(message, clientVersion2) {
+  constructor(message, { clientVersion: clientVersion2, batchRequestIdx }) {
     super(message);
     this.clientVersion = clientVersion2;
+    this.batchRequestIdx = batchRequestIdx;
   }
   get [Symbol.toStringTag]() {
     return "PrismaClientUnknownRequestError";
@@ -24300,35 +20812,35 @@ var PrismaClientUnknownRequestError = class extends Error {
 __name(PrismaClientUnknownRequestError, "PrismaClientUnknownRequestError");
 
 // ../engine-core/src/common/errors/utils/getErrorMessageWithLink.ts
-var import_chalk2 = __toESM(require_source());
+var import_chalk3 = __toESM(require_source());
 var import_strip_ansi = __toESM(require_strip_ansi());
 
 // ../engine-core/src/common/utils/util.ts
-var import_fs3 = __toESM(require("fs"));
+var import_fs4 = __toESM(require("fs"));
 var import_new_github_issue_url = __toESM(require_new_github_issue_url());
-var debug3 = src_default("plusX");
+var debug5 = src_default("plusX");
 function plusX(file) {
-  const s = import_fs3.default.statSync(file);
+  const s = import_fs4.default.statSync(file);
   const newMode = s.mode | 64 | 8 | 1;
   if (s.mode === newMode) {
-    debug3(`Execution permissions of ${file} are fine`);
+    debug5(`Execution permissions of ${file} are fine`);
     return;
   }
   const base8 = newMode.toString(8).slice(-3);
-  debug3(`Have to call plusX on ${file}`);
-  import_fs3.default.chmodSync(file, base8);
+  debug5(`Have to call plusX on ${file}`);
+  import_fs4.default.chmodSync(file, base8);
 }
 __name(plusX, "plusX");
-function transformPlatformToEnvValue(platform3) {
-  return { fromEnvVar: null, value: platform3 };
+function transformPlatformToEnvValue(platform2) {
+  return { fromEnvVar: null, value: platform2 };
 }
 __name(transformPlatformToEnvValue, "transformPlatformToEnvValue");
-function fixBinaryTargets(binaryTargets, platform3) {
+function fixBinaryTargets(binaryTargets, platform2) {
   binaryTargets = binaryTargets || [];
   if (!binaryTargets.find((object) => object.value === "native")) {
     return [transformPlatformToEnvValue("native"), ...binaryTargets];
   }
-  return [...binaryTargets, transformPlatformToEnvValue(platform3)];
+  return [...binaryTargets, transformPlatformToEnvValue(platform2)];
 }
 __name(fixBinaryTargets, "fixBinaryTargets");
 function getGitHubIssueUrl({
@@ -24370,15 +20882,14 @@ __name(normalizeLogs, "normalizeLogs");
 // ../engine-core/src/common/errors/utils/getErrorMessageWithLink.ts
 function getErrorMessageWithLink({
   version,
-  platform: platform3,
+  platform: platform2,
   title,
   description,
   engineVersion,
   database,
   query: query2
 }) {
-  var _a3, _b2;
-  const gotLogs = getLogs(6e3 - ((_a3 = query2 == null ? void 0 : query2.length) != null ? _a3 : 0));
+  const gotLogs = getLogs(6e3 - (query2?.length ?? 0));
   const logs = normalizeLogs((0, import_strip_ansi.default)(gotLogs));
   const moreInfo = description ? `# Description
 \`\`\`
@@ -24390,11 +20901,11 @@ ${description}
 
 | Name            | Version            |
 |-----------------|--------------------|
-| Node            | ${(_b2 = process.version) == null ? void 0 : _b2.padEnd(19)}| 
-| OS              | ${platform3 == null ? void 0 : platform3.padEnd(19)}|
-| Prisma Client   | ${version == null ? void 0 : version.padEnd(19)}|
-| Query Engine    | ${engineVersion == null ? void 0 : engineVersion.padEnd(19)}|
-| Database        | ${database == null ? void 0 : database.padEnd(19)}|
+| Node            | ${process.version?.padEnd(19)}| 
+| OS              | ${platform2?.padEnd(19)}|
+| Prisma Client   | ${version?.padEnd(19)}|
+| Query Engine    | ${engineVersion?.padEnd(19)}|
+| Database        | ${database?.padEnd(19)}|
 
 ${moreInfo}
 
@@ -24424,7 +20935,7 @@ ${query2 ? maskQuery(query2) : ""}
 
 This is a non-recoverable error which probably happens when the Prisma Query Engine has a panic.
 
-${import_chalk2.default.underline(url)}
+${import_chalk3.default.underline(url)}
 
 If you want the Prisma team to look into it, please open the link above \u{1F64F}
 To increase the chance of success, please post your schema and a snippet of
@@ -24434,21 +20945,24 @@ how you used Prisma Client in the issue.
 __name(getErrorMessageWithLink, "getErrorMessageWithLink");
 
 // ../engine-core/src/common/errors/utils/prismaGraphQLToJSError.ts
-function prismaGraphQLToJSError(error2, clientVersion2) {
-  if (error2.user_facing_error.error_code) {
-    return new PrismaClientKnownRequestError(
-      error2.user_facing_error.message,
-      error2.user_facing_error.error_code,
-      clientVersion2,
-      error2.user_facing_error.meta
-    );
+function prismaGraphQLToJSError({ error: error2, user_facing_error }, clientVersion2) {
+  if (user_facing_error.error_code) {
+    return new PrismaClientKnownRequestError(user_facing_error.message, {
+      code: user_facing_error.error_code,
+      clientVersion: clientVersion2,
+      meta: user_facing_error.meta,
+      batchRequestIdx: user_facing_error.batch_request_idx
+    });
   }
-  return new PrismaClientUnknownRequestError(error2.error, clientVersion2);
+  return new PrismaClientUnknownRequestError(error2, {
+    clientVersion: clientVersion2,
+    batchRequestIdx: user_facing_error.batch_request_idx
+  });
 }
 __name(prismaGraphQLToJSError, "prismaGraphQLToJSError");
 
 // ../engine-core/src/common/utils/printGeneratorConfig.ts
-var import_indent_string2 = __toESM(require_indent_string());
+var import_indent_string = __toESM(require_indent_string());
 function printGeneratorConfig(config2) {
   return String(new GeneratorConfigClass(config2));
 }
@@ -24467,7 +20981,7 @@ var GeneratorConfigClass = class {
       })
     );
     return `generator ${config2.name} {
-${(0, import_indent_string2.default)(printDatamodelObject(obj), 2)}
+${(0, import_indent_string.default)(printDatamodelObject(obj), 2)}
 }`;
   }
 };
@@ -24503,17 +21017,6 @@ function niceStringify(value) {
   );
 }
 __name(niceStringify, "niceStringify");
-
-// ../engine-core/src/common/utils/runtimeHeadersToHttpHeaders.ts
-function runtimeHeadersToHttpHeaders(headers) {
-  if (headers.transactionId) {
-    const { transactionId, ...httpHeaders } = headers;
-    httpHeaders["X-transaction-id"] = transactionId;
-    return httpHeaders;
-  }
-  return headers;
-}
-__name(runtimeHeadersToHttpHeaders, "runtimeHeadersToHttpHeaders");
 
 // ../engine-core/src/tools/byline.ts
 var import_stream = __toESM(require("stream"));
@@ -24619,200 +21122,839 @@ function omit(obj, keys2) {
 }
 __name(omit, "omit");
 
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/trace/suppress-tracing.js
-var SUPPRESS_TRACING_KEY = createContextKey("OpenTelemetry SDK Context Key SUPPRESS_TRACING");
-function suppressTracing(context3) {
-  return context3.setValue(SUPPRESS_TRACING_KEY, true);
-}
-__name(suppressTracing, "suppressTracing");
-function isTracingSuppressed(context3) {
-  return context3.getValue(SUPPRESS_TRACING_KEY) === true;
-}
-__name(isTracingSuppressed, "isTracingSuppressed");
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/platform/node/globalThis.js
+var _globalThis = typeof globalThis === "object" ? globalThis : global;
 
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/baggage/constants.js
-var BAGGAGE_KEY_PAIR_SEPARATOR = "=";
-var BAGGAGE_PROPERTIES_SEPARATOR = ";";
-var BAGGAGE_ITEMS_SEPARATOR = ",";
-var BAGGAGE_HEADER = "baggage";
-var BAGGAGE_MAX_NAME_VALUE_PAIRS = 180;
-var BAGGAGE_MAX_PER_NAME_VALUE_PAIRS = 4096;
-var BAGGAGE_MAX_TOTAL_LENGTH = 8192;
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/version.js
+var VERSION = "1.3.0";
 
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/baggage/utils.js
-var __read = function(o, n) {
-  var m = typeof Symbol === "function" && o[Symbol.iterator];
-  if (!m)
-    return o;
-  var i = m.call(o), r, ar = [], e;
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/internal/semver.js
+var re = /^(\d+)\.(\d+)\.(\d+)(-(.+))?$/;
+function _makeCompatibilityCheck(ownVersion) {
+  var acceptedVersions = /* @__PURE__ */ new Set([ownVersion]);
+  var rejectedVersions = /* @__PURE__ */ new Set();
+  var myVersionMatch = ownVersion.match(re);
+  if (!myVersionMatch) {
+    return function() {
+      return false;
+    };
+  }
+  var ownVersionParsed = {
+    major: +myVersionMatch[1],
+    minor: +myVersionMatch[2],
+    patch: +myVersionMatch[3],
+    prerelease: myVersionMatch[4]
+  };
+  if (ownVersionParsed.prerelease != null) {
+    return /* @__PURE__ */ __name(function isExactmatch(globalVersion) {
+      return globalVersion === ownVersion;
+    }, "isExactmatch");
+  }
+  function _reject(v) {
+    rejectedVersions.add(v);
+    return false;
+  }
+  __name(_reject, "_reject");
+  function _accept(v) {
+    acceptedVersions.add(v);
+    return true;
+  }
+  __name(_accept, "_accept");
+  return /* @__PURE__ */ __name(function isCompatible2(globalVersion) {
+    if (acceptedVersions.has(globalVersion)) {
+      return true;
+    }
+    if (rejectedVersions.has(globalVersion)) {
+      return false;
+    }
+    var globalVersionMatch = globalVersion.match(re);
+    if (!globalVersionMatch) {
+      return _reject(globalVersion);
+    }
+    var globalVersionParsed = {
+      major: +globalVersionMatch[1],
+      minor: +globalVersionMatch[2],
+      patch: +globalVersionMatch[3],
+      prerelease: globalVersionMatch[4]
+    };
+    if (globalVersionParsed.prerelease != null) {
+      return _reject(globalVersion);
+    }
+    if (ownVersionParsed.major !== globalVersionParsed.major) {
+      return _reject(globalVersion);
+    }
+    if (ownVersionParsed.major === 0) {
+      if (ownVersionParsed.minor === globalVersionParsed.minor && ownVersionParsed.patch <= globalVersionParsed.patch) {
+        return _accept(globalVersion);
+      }
+      return _reject(globalVersion);
+    }
+    if (ownVersionParsed.minor <= globalVersionParsed.minor) {
+      return _accept(globalVersion);
+    }
+    return _reject(globalVersion);
+  }, "isCompatible");
+}
+__name(_makeCompatibilityCheck, "_makeCompatibilityCheck");
+var isCompatible = _makeCompatibilityCheck(VERSION);
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/internal/global-utils.js
+var major = VERSION.split(".")[0];
+var GLOBAL_OPENTELEMETRY_API_KEY = Symbol.for("opentelemetry.js.api." + major);
+var _global = _globalThis;
+function registerGlobal(type, instance, diag2, allowOverride) {
+  var _a;
+  if (allowOverride === void 0) {
+    allowOverride = false;
+  }
+  var api = _global[GLOBAL_OPENTELEMETRY_API_KEY] = (_a = _global[GLOBAL_OPENTELEMETRY_API_KEY]) !== null && _a !== void 0 ? _a : {
+    version: VERSION
+  };
+  if (!allowOverride && api[type]) {
+    var err = new Error("@opentelemetry/api: Attempted duplicate registration of API: " + type);
+    diag2.error(err.stack || err.message);
+    return false;
+  }
+  if (api.version !== VERSION) {
+    var err = new Error("@opentelemetry/api: All API registration versions must match");
+    diag2.error(err.stack || err.message);
+    return false;
+  }
+  api[type] = instance;
+  diag2.debug("@opentelemetry/api: Registered a global for " + type + " v" + VERSION + ".");
+  return true;
+}
+__name(registerGlobal, "registerGlobal");
+function getGlobal(type) {
+  var _a, _b;
+  var globalVersion = (_a = _global[GLOBAL_OPENTELEMETRY_API_KEY]) === null || _a === void 0 ? void 0 : _a.version;
+  if (!globalVersion || !isCompatible(globalVersion)) {
+    return;
+  }
+  return (_b = _global[GLOBAL_OPENTELEMETRY_API_KEY]) === null || _b === void 0 ? void 0 : _b[type];
+}
+__name(getGlobal, "getGlobal");
+function unregisterGlobal(type, diag2) {
+  diag2.debug("@opentelemetry/api: Unregistering a global for " + type + " v" + VERSION + ".");
+  var api = _global[GLOBAL_OPENTELEMETRY_API_KEY];
+  if (api) {
+    delete api[type];
+  }
+}
+__name(unregisterGlobal, "unregisterGlobal");
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/diag/ComponentLogger.js
+var __read = function(o2, n2) {
+  var m2 = typeof Symbol === "function" && o2[Symbol.iterator];
+  if (!m2)
+    return o2;
+  var i = m2.call(o2), r2, ar = [], e2;
   try {
-    while ((n === void 0 || n-- > 0) && !(r = i.next()).done)
-      ar.push(r.value);
+    while ((n2 === void 0 || n2-- > 0) && !(r2 = i.next()).done)
+      ar.push(r2.value);
   } catch (error2) {
-    e = { error: error2 };
+    e2 = { error: error2 };
   } finally {
     try {
-      if (r && !r.done && (m = i["return"]))
-        m.call(i);
+      if (r2 && !r2.done && (m2 = i["return"]))
+        m2.call(i);
     } finally {
-      if (e)
-        throw e.error;
+      if (e2)
+        throw e2.error;
     }
   }
   return ar;
 };
-function serializeKeyPairs(keyPairs) {
-  return keyPairs.reduce(function(hValue, current) {
-    var value = "" + hValue + (hValue !== "" ? BAGGAGE_ITEMS_SEPARATOR : "") + current;
-    return value.length > BAGGAGE_MAX_TOTAL_LENGTH ? hValue : value;
-  }, "");
-}
-__name(serializeKeyPairs, "serializeKeyPairs");
-function getKeyPairs(baggage) {
-  return baggage.getAllEntries().map(function(_a3) {
-    var _b2 = __read(_a3, 2), key = _b2[0], value = _b2[1];
-    var entry = encodeURIComponent(key) + "=" + encodeURIComponent(value.value);
-    if (value.metadata !== void 0) {
-      entry += BAGGAGE_PROPERTIES_SEPARATOR + value.metadata.toString();
-    }
-    return entry;
-  });
-}
-__name(getKeyPairs, "getKeyPairs");
-function parsePairKeyValue(entry) {
-  var valueProps = entry.split(BAGGAGE_PROPERTIES_SEPARATOR);
-  if (valueProps.length <= 0)
-    return;
-  var keyPairPart = valueProps.shift();
-  if (!keyPairPart)
-    return;
-  var keyPair = keyPairPart.split(BAGGAGE_KEY_PAIR_SEPARATOR);
-  if (keyPair.length !== 2)
-    return;
-  var key = decodeURIComponent(keyPair[0].trim());
-  var value = decodeURIComponent(keyPair[1].trim());
-  var metadata;
-  if (valueProps.length > 0) {
-    metadata = baggageEntryMetadataFromString(valueProps.join(BAGGAGE_PROPERTIES_SEPARATOR));
-  }
-  return { key, value, metadata };
-}
-__name(parsePairKeyValue, "parsePairKeyValue");
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/baggage/propagation/W3CBaggagePropagator.js
-var W3CBaggagePropagator = function() {
-  function W3CBaggagePropagator2() {
-  }
-  __name(W3CBaggagePropagator2, "W3CBaggagePropagator");
-  W3CBaggagePropagator2.prototype.inject = function(context3, carrier, setter) {
-    var baggage = propagation.getBaggage(context3);
-    if (!baggage || isTracingSuppressed(context3))
-      return;
-    var keyPairs = getKeyPairs(baggage).filter(function(pair) {
-      return pair.length <= BAGGAGE_MAX_PER_NAME_VALUE_PAIRS;
-    }).slice(0, BAGGAGE_MAX_NAME_VALUE_PAIRS);
-    var headerValue = serializeKeyPairs(keyPairs);
-    if (headerValue.length > 0) {
-      setter.set(carrier, BAGGAGE_HEADER, headerValue);
-    }
-  };
-  W3CBaggagePropagator2.prototype.extract = function(context3, carrier, getter) {
-    var headerValue = getter.get(carrier, BAGGAGE_HEADER);
-    var baggageString = Array.isArray(headerValue) ? headerValue.join(BAGGAGE_ITEMS_SEPARATOR) : headerValue;
-    if (!baggageString)
-      return context3;
-    var baggage = {};
-    if (baggageString.length === 0) {
-      return context3;
-    }
-    var pairs = baggageString.split(BAGGAGE_ITEMS_SEPARATOR);
-    pairs.forEach(function(entry) {
-      var keyPair = parsePairKeyValue(entry);
-      if (keyPair) {
-        var baggageEntry = { value: keyPair.value };
-        if (keyPair.metadata) {
-          baggageEntry.metadata = keyPair.metadata;
-        }
-        baggage[keyPair.key] = baggageEntry;
+var __spreadArray = function(to, from, pack) {
+  if (pack || arguments.length === 2)
+    for (var i = 0, l = from.length, ar; i < l; i++) {
+      if (ar || !(i in from)) {
+        if (!ar)
+          ar = Array.prototype.slice.call(from, 0, i);
+        ar[i] = from[i];
       }
-    });
-    if (Object.entries(baggage).length === 0) {
-      return context3;
     }
-    return propagation.setBaggage(context3, propagation.createBaggage(baggage));
-  };
-  W3CBaggagePropagator2.prototype.fields = function() {
-    return [BAGGAGE_HEADER];
-  };
-  return W3CBaggagePropagator2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/common/anchored-clock.js
-var AnchoredClock = function() {
-  function AnchoredClock2(systemClock, monotonicClock) {
-    this._monotonicClock = monotonicClock;
-    this._epochMillis = systemClock.now();
-    this._performanceMillis = monotonicClock.now();
+  return to.concat(ar || Array.prototype.slice.call(from));
+};
+var DiagComponentLogger = function() {
+  function DiagComponentLogger2(props) {
+    this._namespace = props.namespace || "DiagComponentLogger";
   }
-  __name(AnchoredClock2, "AnchoredClock");
-  AnchoredClock2.prototype.now = function() {
-    var delta = this._monotonicClock.now() - this._performanceMillis;
-    return this._epochMillis + delta;
+  __name(DiagComponentLogger2, "DiagComponentLogger");
+  DiagComponentLogger2.prototype.debug = function() {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args[_i] = arguments[_i];
+    }
+    return logProxy("debug", this._namespace, args);
   };
-  return AnchoredClock2;
+  DiagComponentLogger2.prototype.error = function() {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args[_i] = arguments[_i];
+    }
+    return logProxy("error", this._namespace, args);
+  };
+  DiagComponentLogger2.prototype.info = function() {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args[_i] = arguments[_i];
+    }
+    return logProxy("info", this._namespace, args);
+  };
+  DiagComponentLogger2.prototype.warn = function() {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args[_i] = arguments[_i];
+    }
+    return logProxy("warn", this._namespace, args);
+  };
+  DiagComponentLogger2.prototype.verbose = function() {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args[_i] = arguments[_i];
+    }
+    return logProxy("verbose", this._namespace, args);
+  };
+  return DiagComponentLogger2;
+}();
+function logProxy(funcName, namespace, args) {
+  var logger2 = getGlobal("diag");
+  if (!logger2) {
+    return;
+  }
+  args.unshift(namespace);
+  return logger2[funcName].apply(logger2, __spreadArray([], __read(args), false));
+}
+__name(logProxy, "logProxy");
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/diag/types.js
+var DiagLogLevel;
+(function(DiagLogLevel2) {
+  DiagLogLevel2[DiagLogLevel2["NONE"] = 0] = "NONE";
+  DiagLogLevel2[DiagLogLevel2["ERROR"] = 30] = "ERROR";
+  DiagLogLevel2[DiagLogLevel2["WARN"] = 50] = "WARN";
+  DiagLogLevel2[DiagLogLevel2["INFO"] = 60] = "INFO";
+  DiagLogLevel2[DiagLogLevel2["DEBUG"] = 70] = "DEBUG";
+  DiagLogLevel2[DiagLogLevel2["VERBOSE"] = 80] = "VERBOSE";
+  DiagLogLevel2[DiagLogLevel2["ALL"] = 9999] = "ALL";
+})(DiagLogLevel || (DiagLogLevel = {}));
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/diag/internal/logLevelLogger.js
+function createLogLevelDiagLogger(maxLevel, logger2) {
+  if (maxLevel < DiagLogLevel.NONE) {
+    maxLevel = DiagLogLevel.NONE;
+  } else if (maxLevel > DiagLogLevel.ALL) {
+    maxLevel = DiagLogLevel.ALL;
+  }
+  logger2 = logger2 || {};
+  function _filterFunc(funcName, theLevel) {
+    var theFunc = logger2[funcName];
+    if (typeof theFunc === "function" && maxLevel >= theLevel) {
+      return theFunc.bind(logger2);
+    }
+    return function() {
+    };
+  }
+  __name(_filterFunc, "_filterFunc");
+  return {
+    error: _filterFunc("error", DiagLogLevel.ERROR),
+    warn: _filterFunc("warn", DiagLogLevel.WARN),
+    info: _filterFunc("info", DiagLogLevel.INFO),
+    debug: _filterFunc("debug", DiagLogLevel.DEBUG),
+    verbose: _filterFunc("verbose", DiagLogLevel.VERBOSE)
+  };
+}
+__name(createLogLevelDiagLogger, "createLogLevelDiagLogger");
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/api/diag.js
+var __read2 = function(o2, n2) {
+  var m2 = typeof Symbol === "function" && o2[Symbol.iterator];
+  if (!m2)
+    return o2;
+  var i = m2.call(o2), r2, ar = [], e2;
+  try {
+    while ((n2 === void 0 || n2-- > 0) && !(r2 = i.next()).done)
+      ar.push(r2.value);
+  } catch (error2) {
+    e2 = { error: error2 };
+  } finally {
+    try {
+      if (r2 && !r2.done && (m2 = i["return"]))
+        m2.call(i);
+    } finally {
+      if (e2)
+        throw e2.error;
+    }
+  }
+  return ar;
+};
+var __spreadArray2 = function(to, from, pack) {
+  if (pack || arguments.length === 2)
+    for (var i = 0, l = from.length, ar; i < l; i++) {
+      if (ar || !(i in from)) {
+        if (!ar)
+          ar = Array.prototype.slice.call(from, 0, i);
+        ar[i] = from[i];
+      }
+    }
+  return to.concat(ar || Array.prototype.slice.call(from));
+};
+var API_NAME = "diag";
+var DiagAPI = function() {
+  function DiagAPI2() {
+    function _logProxy(funcName) {
+      return function() {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+          args[_i] = arguments[_i];
+        }
+        var logger2 = getGlobal("diag");
+        if (!logger2)
+          return;
+        return logger2[funcName].apply(logger2, __spreadArray2([], __read2(args), false));
+      };
+    }
+    __name(_logProxy, "_logProxy");
+    var self2 = this;
+    var setLogger = /* @__PURE__ */ __name(function(logger2, optionsOrLogLevel) {
+      var _a, _b, _c;
+      if (optionsOrLogLevel === void 0) {
+        optionsOrLogLevel = { logLevel: DiagLogLevel.INFO };
+      }
+      if (logger2 === self2) {
+        var err = new Error("Cannot use diag as the logger for itself. Please use a DiagLogger implementation like ConsoleDiagLogger or a custom implementation");
+        self2.error((_a = err.stack) !== null && _a !== void 0 ? _a : err.message);
+        return false;
+      }
+      if (typeof optionsOrLogLevel === "number") {
+        optionsOrLogLevel = {
+          logLevel: optionsOrLogLevel
+        };
+      }
+      var oldLogger = getGlobal("diag");
+      var newLogger = createLogLevelDiagLogger((_b = optionsOrLogLevel.logLevel) !== null && _b !== void 0 ? _b : DiagLogLevel.INFO, logger2);
+      if (oldLogger && !optionsOrLogLevel.suppressOverrideMessage) {
+        var stack = (_c = new Error().stack) !== null && _c !== void 0 ? _c : "<failed to generate stacktrace>";
+        oldLogger.warn("Current logger will be overwritten from " + stack);
+        newLogger.warn("Current logger will overwrite one already registered from " + stack);
+      }
+      return registerGlobal("diag", newLogger, self2, true);
+    }, "setLogger");
+    self2.setLogger = setLogger;
+    self2.disable = function() {
+      unregisterGlobal(API_NAME, self2);
+    };
+    self2.createComponentLogger = function(options) {
+      return new DiagComponentLogger(options);
+    };
+    self2.verbose = _logProxy("verbose");
+    self2.debug = _logProxy("debug");
+    self2.info = _logProxy("info");
+    self2.warn = _logProxy("warn");
+    self2.error = _logProxy("error");
+  }
+  __name(DiagAPI2, "DiagAPI");
+  DiagAPI2.instance = function() {
+    if (!this._instance) {
+      this._instance = new DiagAPI2();
+    }
+    return this._instance;
+  };
+  return DiagAPI2;
 }();
 
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/common/attributes.js
-var __values = function(o) {
-  var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-  if (m)
-    return m.call(o);
-  if (o && typeof o.length === "number")
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/context/context.js
+function createContextKey(description) {
+  return Symbol.for(description);
+}
+__name(createContextKey, "createContextKey");
+var BaseContext = function() {
+  function BaseContext2(parentContext) {
+    var self2 = this;
+    self2._currentContext = parentContext ? new Map(parentContext) : /* @__PURE__ */ new Map();
+    self2.getValue = function(key) {
+      return self2._currentContext.get(key);
+    };
+    self2.setValue = function(key, value) {
+      var context2 = new BaseContext2(self2._currentContext);
+      context2._currentContext.set(key, value);
+      return context2;
+    };
+    self2.deleteValue = function(key) {
+      var context2 = new BaseContext2(self2._currentContext);
+      context2._currentContext.delete(key);
+      return context2;
+    };
+  }
+  __name(BaseContext2, "BaseContext");
+  return BaseContext2;
+}();
+var ROOT_CONTEXT = new BaseContext();
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/context/NoopContextManager.js
+var __read3 = function(o2, n2) {
+  var m2 = typeof Symbol === "function" && o2[Symbol.iterator];
+  if (!m2)
+    return o2;
+  var i = m2.call(o2), r2, ar = [], e2;
+  try {
+    while ((n2 === void 0 || n2-- > 0) && !(r2 = i.next()).done)
+      ar.push(r2.value);
+  } catch (error2) {
+    e2 = { error: error2 };
+  } finally {
+    try {
+      if (r2 && !r2.done && (m2 = i["return"]))
+        m2.call(i);
+    } finally {
+      if (e2)
+        throw e2.error;
+    }
+  }
+  return ar;
+};
+var __spreadArray3 = function(to, from, pack) {
+  if (pack || arguments.length === 2)
+    for (var i = 0, l = from.length, ar; i < l; i++) {
+      if (ar || !(i in from)) {
+        if (!ar)
+          ar = Array.prototype.slice.call(from, 0, i);
+        ar[i] = from[i];
+      }
+    }
+  return to.concat(ar || Array.prototype.slice.call(from));
+};
+var NoopContextManager = function() {
+  function NoopContextManager2() {
+  }
+  __name(NoopContextManager2, "NoopContextManager");
+  NoopContextManager2.prototype.active = function() {
+    return ROOT_CONTEXT;
+  };
+  NoopContextManager2.prototype.with = function(_context, fn, thisArg) {
+    var args = [];
+    for (var _i = 3; _i < arguments.length; _i++) {
+      args[_i - 3] = arguments[_i];
+    }
+    return fn.call.apply(fn, __spreadArray3([thisArg], __read3(args), false));
+  };
+  NoopContextManager2.prototype.bind = function(_context, target) {
+    return target;
+  };
+  NoopContextManager2.prototype.enable = function() {
+    return this;
+  };
+  NoopContextManager2.prototype.disable = function() {
+    return this;
+  };
+  return NoopContextManager2;
+}();
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/api/context.js
+var __read4 = function(o2, n2) {
+  var m2 = typeof Symbol === "function" && o2[Symbol.iterator];
+  if (!m2)
+    return o2;
+  var i = m2.call(o2), r2, ar = [], e2;
+  try {
+    while ((n2 === void 0 || n2-- > 0) && !(r2 = i.next()).done)
+      ar.push(r2.value);
+  } catch (error2) {
+    e2 = { error: error2 };
+  } finally {
+    try {
+      if (r2 && !r2.done && (m2 = i["return"]))
+        m2.call(i);
+    } finally {
+      if (e2)
+        throw e2.error;
+    }
+  }
+  return ar;
+};
+var __spreadArray4 = function(to, from, pack) {
+  if (pack || arguments.length === 2)
+    for (var i = 0, l = from.length, ar; i < l; i++) {
+      if (ar || !(i in from)) {
+        if (!ar)
+          ar = Array.prototype.slice.call(from, 0, i);
+        ar[i] = from[i];
+      }
+    }
+  return to.concat(ar || Array.prototype.slice.call(from));
+};
+var API_NAME2 = "context";
+var NOOP_CONTEXT_MANAGER = new NoopContextManager();
+var ContextAPI = function() {
+  function ContextAPI2() {
+  }
+  __name(ContextAPI2, "ContextAPI");
+  ContextAPI2.getInstance = function() {
+    if (!this._instance) {
+      this._instance = new ContextAPI2();
+    }
+    return this._instance;
+  };
+  ContextAPI2.prototype.setGlobalContextManager = function(contextManager) {
+    return registerGlobal(API_NAME2, contextManager, DiagAPI.instance());
+  };
+  ContextAPI2.prototype.active = function() {
+    return this._getContextManager().active();
+  };
+  ContextAPI2.prototype.with = function(context2, fn, thisArg) {
+    var _a;
+    var args = [];
+    for (var _i = 3; _i < arguments.length; _i++) {
+      args[_i - 3] = arguments[_i];
+    }
+    return (_a = this._getContextManager()).with.apply(_a, __spreadArray4([context2, fn, thisArg], __read4(args), false));
+  };
+  ContextAPI2.prototype.bind = function(context2, target) {
+    return this._getContextManager().bind(context2, target);
+  };
+  ContextAPI2.prototype._getContextManager = function() {
+    return getGlobal(API_NAME2) || NOOP_CONTEXT_MANAGER;
+  };
+  ContextAPI2.prototype.disable = function() {
+    this._getContextManager().disable();
+    unregisterGlobal(API_NAME2, DiagAPI.instance());
+  };
+  return ContextAPI2;
+}();
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/trace/trace_flags.js
+var TraceFlags;
+(function(TraceFlags2) {
+  TraceFlags2[TraceFlags2["NONE"] = 0] = "NONE";
+  TraceFlags2[TraceFlags2["SAMPLED"] = 1] = "SAMPLED";
+})(TraceFlags || (TraceFlags = {}));
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/trace/invalid-span-constants.js
+var INVALID_SPANID = "0000000000000000";
+var INVALID_TRACEID = "00000000000000000000000000000000";
+var INVALID_SPAN_CONTEXT = {
+  traceId: INVALID_TRACEID,
+  spanId: INVALID_SPANID,
+  traceFlags: TraceFlags.NONE
+};
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/trace/NonRecordingSpan.js
+var NonRecordingSpan = function() {
+  function NonRecordingSpan2(_spanContext) {
+    if (_spanContext === void 0) {
+      _spanContext = INVALID_SPAN_CONTEXT;
+    }
+    this._spanContext = _spanContext;
+  }
+  __name(NonRecordingSpan2, "NonRecordingSpan");
+  NonRecordingSpan2.prototype.spanContext = function() {
+    return this._spanContext;
+  };
+  NonRecordingSpan2.prototype.setAttribute = function(_key, _value) {
+    return this;
+  };
+  NonRecordingSpan2.prototype.setAttributes = function(_attributes) {
+    return this;
+  };
+  NonRecordingSpan2.prototype.addEvent = function(_name, _attributes) {
+    return this;
+  };
+  NonRecordingSpan2.prototype.setStatus = function(_status) {
+    return this;
+  };
+  NonRecordingSpan2.prototype.updateName = function(_name) {
+    return this;
+  };
+  NonRecordingSpan2.prototype.end = function(_endTime) {
+  };
+  NonRecordingSpan2.prototype.isRecording = function() {
+    return false;
+  };
+  NonRecordingSpan2.prototype.recordException = function(_exception, _time) {
+  };
+  return NonRecordingSpan2;
+}();
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/trace/context-utils.js
+var SPAN_KEY = createContextKey("OpenTelemetry Context Key SPAN");
+function getSpan(context2) {
+  return context2.getValue(SPAN_KEY) || void 0;
+}
+__name(getSpan, "getSpan");
+function getActiveSpan() {
+  return getSpan(ContextAPI.getInstance().active());
+}
+__name(getActiveSpan, "getActiveSpan");
+function setSpan(context2, span) {
+  return context2.setValue(SPAN_KEY, span);
+}
+__name(setSpan, "setSpan");
+function deleteSpan(context2) {
+  return context2.deleteValue(SPAN_KEY);
+}
+__name(deleteSpan, "deleteSpan");
+function setSpanContext(context2, spanContext) {
+  return setSpan(context2, new NonRecordingSpan(spanContext));
+}
+__name(setSpanContext, "setSpanContext");
+function getSpanContext(context2) {
+  var _a;
+  return (_a = getSpan(context2)) === null || _a === void 0 ? void 0 : _a.spanContext();
+}
+__name(getSpanContext, "getSpanContext");
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/trace/spancontext-utils.js
+var VALID_TRACEID_REGEX = /^([0-9a-f]{32})$/i;
+var VALID_SPANID_REGEX = /^[0-9a-f]{16}$/i;
+function isValidTraceId(traceId) {
+  return VALID_TRACEID_REGEX.test(traceId) && traceId !== INVALID_TRACEID;
+}
+__name(isValidTraceId, "isValidTraceId");
+function isValidSpanId(spanId) {
+  return VALID_SPANID_REGEX.test(spanId) && spanId !== INVALID_SPANID;
+}
+__name(isValidSpanId, "isValidSpanId");
+function isSpanContextValid(spanContext) {
+  return isValidTraceId(spanContext.traceId) && isValidSpanId(spanContext.spanId);
+}
+__name(isSpanContextValid, "isSpanContextValid");
+function wrapSpanContext(spanContext) {
+  return new NonRecordingSpan(spanContext);
+}
+__name(wrapSpanContext, "wrapSpanContext");
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracer.js
+var contextApi = ContextAPI.getInstance();
+var NoopTracer = function() {
+  function NoopTracer2() {
+  }
+  __name(NoopTracer2, "NoopTracer");
+  NoopTracer2.prototype.startSpan = function(name, options, context2) {
+    var root = Boolean(options === null || options === void 0 ? void 0 : options.root);
+    if (root) {
+      return new NonRecordingSpan();
+    }
+    var parentFromContext = context2 && getSpanContext(context2);
+    if (isSpanContext(parentFromContext) && isSpanContextValid(parentFromContext)) {
+      return new NonRecordingSpan(parentFromContext);
+    } else {
+      return new NonRecordingSpan();
+    }
+  };
+  NoopTracer2.prototype.startActiveSpan = function(name, arg2, arg3, arg4) {
+    var opts;
+    var ctx;
+    var fn;
+    if (arguments.length < 2) {
+      return;
+    } else if (arguments.length === 2) {
+      fn = arg2;
+    } else if (arguments.length === 3) {
+      opts = arg2;
+      fn = arg3;
+    } else {
+      opts = arg2;
+      ctx = arg3;
+      fn = arg4;
+    }
+    var parentContext = ctx !== null && ctx !== void 0 ? ctx : contextApi.active();
+    var span = this.startSpan(name, opts, parentContext);
+    var contextWithSpanSet = setSpan(parentContext, span);
+    return contextApi.with(contextWithSpanSet, fn, void 0, span);
+  };
+  return NoopTracer2;
+}();
+function isSpanContext(spanContext) {
+  return typeof spanContext === "object" && typeof spanContext["spanId"] === "string" && typeof spanContext["traceId"] === "string" && typeof spanContext["traceFlags"] === "number";
+}
+__name(isSpanContext, "isSpanContext");
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracer.js
+var NOOP_TRACER = new NoopTracer();
+var ProxyTracer = function() {
+  function ProxyTracer2(_provider, name, version, options) {
+    this._provider = _provider;
+    this.name = name;
+    this.version = version;
+    this.options = options;
+  }
+  __name(ProxyTracer2, "ProxyTracer");
+  ProxyTracer2.prototype.startSpan = function(name, options, context2) {
+    return this._getTracer().startSpan(name, options, context2);
+  };
+  ProxyTracer2.prototype.startActiveSpan = function(_name, _options, _context, _fn) {
+    var tracer = this._getTracer();
+    return Reflect.apply(tracer.startActiveSpan, tracer, arguments);
+  };
+  ProxyTracer2.prototype._getTracer = function() {
+    if (this._delegate) {
+      return this._delegate;
+    }
+    var tracer = this._provider.getDelegateTracer(this.name, this.version, this.options);
+    if (!tracer) {
+      return NOOP_TRACER;
+    }
+    this._delegate = tracer;
+    return this._delegate;
+  };
+  return ProxyTracer2;
+}();
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracerProvider.js
+var NoopTracerProvider = function() {
+  function NoopTracerProvider2() {
+  }
+  __name(NoopTracerProvider2, "NoopTracerProvider");
+  NoopTracerProvider2.prototype.getTracer = function(_name, _version, _options) {
+    return new NoopTracer();
+  };
+  return NoopTracerProvider2;
+}();
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracerProvider.js
+var NOOP_TRACER_PROVIDER = new NoopTracerProvider();
+var ProxyTracerProvider = function() {
+  function ProxyTracerProvider2() {
+  }
+  __name(ProxyTracerProvider2, "ProxyTracerProvider");
+  ProxyTracerProvider2.prototype.getTracer = function(name, version, options) {
+    var _a;
+    return (_a = this.getDelegateTracer(name, version, options)) !== null && _a !== void 0 ? _a : new ProxyTracer(this, name, version, options);
+  };
+  ProxyTracerProvider2.prototype.getDelegate = function() {
+    var _a;
+    return (_a = this._delegate) !== null && _a !== void 0 ? _a : NOOP_TRACER_PROVIDER;
+  };
+  ProxyTracerProvider2.prototype.setDelegate = function(delegate) {
+    this._delegate = delegate;
+  };
+  ProxyTracerProvider2.prototype.getDelegateTracer = function(name, version, options) {
+    var _a;
+    return (_a = this._delegate) === null || _a === void 0 ? void 0 : _a.getTracer(name, version, options);
+  };
+  return ProxyTracerProvider2;
+}();
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/trace/span_kind.js
+var SpanKind;
+(function(SpanKind2) {
+  SpanKind2[SpanKind2["INTERNAL"] = 0] = "INTERNAL";
+  SpanKind2[SpanKind2["SERVER"] = 1] = "SERVER";
+  SpanKind2[SpanKind2["CLIENT"] = 2] = "CLIENT";
+  SpanKind2[SpanKind2["PRODUCER"] = 3] = "PRODUCER";
+  SpanKind2[SpanKind2["CONSUMER"] = 4] = "CONSUMER";
+})(SpanKind || (SpanKind = {}));
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/trace/status.js
+var SpanStatusCode;
+(function(SpanStatusCode2) {
+  SpanStatusCode2[SpanStatusCode2["UNSET"] = 0] = "UNSET";
+  SpanStatusCode2[SpanStatusCode2["OK"] = 1] = "OK";
+  SpanStatusCode2[SpanStatusCode2["ERROR"] = 2] = "ERROR";
+})(SpanStatusCode || (SpanStatusCode = {}));
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/context-api.js
+var context = ContextAPI.getInstance();
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/diag-api.js
+var diag = DiagAPI.instance();
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/api/trace.js
+var API_NAME3 = "trace";
+var TraceAPI = function() {
+  function TraceAPI2() {
+    this._proxyTracerProvider = new ProxyTracerProvider();
+    this.wrapSpanContext = wrapSpanContext;
+    this.isSpanContextValid = isSpanContextValid;
+    this.deleteSpan = deleteSpan;
+    this.getSpan = getSpan;
+    this.getActiveSpan = getActiveSpan;
+    this.getSpanContext = getSpanContext;
+    this.setSpan = setSpan;
+    this.setSpanContext = setSpanContext;
+  }
+  __name(TraceAPI2, "TraceAPI");
+  TraceAPI2.getInstance = function() {
+    if (!this._instance) {
+      this._instance = new TraceAPI2();
+    }
+    return this._instance;
+  };
+  TraceAPI2.prototype.setGlobalTracerProvider = function(provider) {
+    var success = registerGlobal(API_NAME3, this._proxyTracerProvider, DiagAPI.instance());
+    if (success) {
+      this._proxyTracerProvider.setDelegate(provider);
+    }
+    return success;
+  };
+  TraceAPI2.prototype.getTracerProvider = function() {
+    return getGlobal(API_NAME3) || this._proxyTracerProvider;
+  };
+  TraceAPI2.prototype.getTracer = function(name, version) {
+    return this.getTracerProvider().getTracer(name, version);
+  };
+  TraceAPI2.prototype.disable = function() {
+    unregisterGlobal(API_NAME3, DiagAPI.instance());
+    this._proxyTracerProvider = new ProxyTracerProvider();
+  };
+  return TraceAPI2;
+}();
+
+// ../../node_modules/.pnpm/@opentelemetry+api@1.3.0/node_modules/@opentelemetry/api/build/esm/trace-api.js
+var trace = TraceAPI.getInstance();
+
+// ../../node_modules/.pnpm/@opentelemetry+core@1.8.0_@opentelemetry+api@1.3.0/node_modules/@opentelemetry/core/build/esm/common/attributes.js
+var __values = function(o2) {
+  var s = typeof Symbol === "function" && Symbol.iterator, m2 = s && o2[s], i = 0;
+  if (m2)
+    return m2.call(o2);
+  if (o2 && typeof o2.length === "number")
     return {
       next: function() {
-        if (o && i >= o.length)
-          o = void 0;
-        return { value: o && o[i++], done: !o };
+        if (o2 && i >= o2.length)
+          o2 = void 0;
+        return { value: o2 && o2[i++], done: !o2 };
       }
     };
   throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read2 = function(o, n) {
-  var m = typeof Symbol === "function" && o[Symbol.iterator];
-  if (!m)
-    return o;
-  var i = m.call(o), r, ar = [], e;
+var __read5 = function(o2, n2) {
+  var m2 = typeof Symbol === "function" && o2[Symbol.iterator];
+  if (!m2)
+    return o2;
+  var i = m2.call(o2), r2, ar = [], e2;
   try {
-    while ((n === void 0 || n-- > 0) && !(r = i.next()).done)
-      ar.push(r.value);
+    while ((n2 === void 0 || n2-- > 0) && !(r2 = i.next()).done)
+      ar.push(r2.value);
   } catch (error2) {
-    e = { error: error2 };
+    e2 = { error: error2 };
   } finally {
     try {
-      if (r && !r.done && (m = i["return"]))
-        m.call(i);
+      if (r2 && !r2.done && (m2 = i["return"]))
+        m2.call(i);
     } finally {
-      if (e)
-        throw e.error;
+      if (e2)
+        throw e2.error;
     }
   }
   return ar;
 };
 function sanitizeAttributes(attributes) {
-  var e_1, _a3;
+  var e_1, _a;
   var out = {};
   if (typeof attributes !== "object" || attributes == null) {
     return out;
   }
   try {
-    for (var _b2 = __values(Object.entries(attributes)), _c = _b2.next(); !_c.done; _c = _b2.next()) {
-      var _d = __read2(_c.value, 2), key = _d[0], val = _d[1];
+    for (var _b = __values(Object.entries(attributes)), _c = _b.next(); !_c.done; _c = _b.next()) {
+      var _d = __read5(_c.value, 2), key = _d[0], val = _d[1];
       if (!isAttributeKey(key)) {
-        diag2.warn("Invalid attribute key: " + key);
+        diag.warn("Invalid attribute key: " + key);
         continue;
       }
       if (!isAttributeValue(val)) {
-        diag2.warn("Invalid attribute value set for key: " + key);
+        diag.warn("Invalid attribute value set for key: " + key);
         continue;
       }
       if (Array.isArray(val)) {
@@ -24825,8 +21967,8 @@ function sanitizeAttributes(attributes) {
     e_1 = { error: e_1_1 };
   } finally {
     try {
-      if (_c && !_c.done && (_a3 = _b2.return))
-        _a3.call(_b2);
+      if (_c && !_c.done && (_a = _b.return))
+        _a.call(_b);
     } finally {
       if (e_1)
         throw e_1.error;
@@ -24850,7 +21992,7 @@ function isAttributeValue(val) {
 }
 __name(isAttributeValue, "isAttributeValue");
 function isHomogeneousAttributeValueArray(arr) {
-  var e_2, _a3;
+  var e_2, _a;
   var type;
   try {
     for (var arr_1 = __values(arr), arr_1_1 = arr_1.next(); !arr_1_1.done; arr_1_1 = arr_1.next()) {
@@ -24873,8 +22015,8 @@ function isHomogeneousAttributeValueArray(arr) {
     e_2 = { error: e_2_1 };
   } finally {
     try {
-      if (arr_1_1 && !arr_1_1.done && (_a3 = arr_1.return))
-        _a3.call(arr_1);
+      if (arr_1_1 && !arr_1_1.done && (_a = arr_1.return))
+        _a.call(arr_1);
     } finally {
       if (e_2)
         throw e_2.error;
@@ -24894,288 +22036,11 @@ function isValidPrimitiveAttributeValue(val) {
 }
 __name(isValidPrimitiveAttributeValue, "isValidPrimitiveAttributeValue");
 
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/common/logging-error-handler.js
-function loggingErrorHandler() {
-  return function(ex) {
-    diag2.error(stringifyException(ex));
-  };
-}
-__name(loggingErrorHandler, "loggingErrorHandler");
-function stringifyException(ex) {
-  if (typeof ex === "string") {
-    return ex;
-  } else {
-    return JSON.stringify(flattenException(ex));
-  }
-}
-__name(stringifyException, "stringifyException");
-function flattenException(ex) {
-  var result = {};
-  var current = ex;
-  while (current !== null) {
-    Object.getOwnPropertyNames(current).forEach(function(propertyName) {
-      if (result[propertyName])
-        return;
-      var value = current[propertyName];
-      if (value) {
-        result[propertyName] = String(value);
-      }
-    });
-    current = Object.getPrototypeOf(current);
-  }
-  return result;
-}
-__name(flattenException, "flattenException");
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/common/global-error-handler.js
-var delegateHandler = loggingErrorHandler();
-function globalErrorHandler(ex) {
-  try {
-    delegateHandler(ex);
-  } catch (_a3) {
-  }
-}
-__name(globalErrorHandler, "globalErrorHandler");
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/platform/node/environment.js
-var os2 = __toESM(require("os"));
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/utils/sampling.js
-var TracesSamplerValues;
-(function(TracesSamplerValues2) {
-  TracesSamplerValues2["AlwaysOff"] = "always_off";
-  TracesSamplerValues2["AlwaysOn"] = "always_on";
-  TracesSamplerValues2["ParentBasedAlwaysOff"] = "parentbased_always_off";
-  TracesSamplerValues2["ParentBasedAlwaysOn"] = "parentbased_always_on";
-  TracesSamplerValues2["ParentBasedTraceIdRatio"] = "parentbased_traceidratio";
-  TracesSamplerValues2["TraceIdRatio"] = "traceidratio";
-})(TracesSamplerValues || (TracesSamplerValues = {}));
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/platform/browser/globalThis.js
-var _globalThis2 = typeof globalThis === "object" ? globalThis : typeof self === "object" ? self : typeof window === "object" ? window : typeof global === "object" ? global : {};
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/utils/environment.js
-var DEFAULT_LIST_SEPARATOR = ",";
-var ENVIRONMENT_NUMBERS_KEYS = [
-  "OTEL_BSP_EXPORT_TIMEOUT",
-  "OTEL_BSP_MAX_EXPORT_BATCH_SIZE",
-  "OTEL_BSP_MAX_QUEUE_SIZE",
-  "OTEL_BSP_SCHEDULE_DELAY",
-  "OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT",
-  "OTEL_ATTRIBUTE_COUNT_LIMIT",
-  "OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT",
-  "OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT",
-  "OTEL_SPAN_EVENT_COUNT_LIMIT",
-  "OTEL_SPAN_LINK_COUNT_LIMIT",
-  "OTEL_EXPORTER_OTLP_TIMEOUT",
-  "OTEL_EXPORTER_OTLP_TRACES_TIMEOUT",
-  "OTEL_EXPORTER_OTLP_METRICS_TIMEOUT",
-  "OTEL_EXPORTER_JAEGER_AGENT_PORT"
-];
-function isEnvVarANumber(key) {
-  return ENVIRONMENT_NUMBERS_KEYS.indexOf(key) > -1;
-}
-__name(isEnvVarANumber, "isEnvVarANumber");
-var ENVIRONMENT_LISTS_KEYS = [
-  "OTEL_NO_PATCH_MODULES",
-  "OTEL_PROPAGATORS"
-];
-function isEnvVarAList(key) {
-  return ENVIRONMENT_LISTS_KEYS.indexOf(key) > -1;
-}
-__name(isEnvVarAList, "isEnvVarAList");
-var DEFAULT_ATTRIBUTE_VALUE_LENGTH_LIMIT = Infinity;
-var DEFAULT_ATTRIBUTE_COUNT_LIMIT = 128;
-var DEFAULT_ENVIRONMENT = {
-  CONTAINER_NAME: "",
-  ECS_CONTAINER_METADATA_URI_V4: "",
-  ECS_CONTAINER_METADATA_URI: "",
-  HOSTNAME: "",
-  KUBERNETES_SERVICE_HOST: "",
-  NAMESPACE: "",
-  OTEL_BSP_EXPORT_TIMEOUT: 3e4,
-  OTEL_BSP_MAX_EXPORT_BATCH_SIZE: 512,
-  OTEL_BSP_MAX_QUEUE_SIZE: 2048,
-  OTEL_BSP_SCHEDULE_DELAY: 5e3,
-  OTEL_EXPORTER_JAEGER_AGENT_HOST: "",
-  OTEL_EXPORTER_JAEGER_AGENT_PORT: 6832,
-  OTEL_EXPORTER_JAEGER_ENDPOINT: "",
-  OTEL_EXPORTER_JAEGER_PASSWORD: "",
-  OTEL_EXPORTER_JAEGER_USER: "",
-  OTEL_EXPORTER_OTLP_ENDPOINT: "",
-  OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "",
-  OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: "",
-  OTEL_EXPORTER_OTLP_HEADERS: "",
-  OTEL_EXPORTER_OTLP_TRACES_HEADERS: "",
-  OTEL_EXPORTER_OTLP_METRICS_HEADERS: "",
-  OTEL_EXPORTER_OTLP_TIMEOUT: 1e4,
-  OTEL_EXPORTER_OTLP_TRACES_TIMEOUT: 1e4,
-  OTEL_EXPORTER_OTLP_METRICS_TIMEOUT: 1e4,
-  OTEL_EXPORTER_ZIPKIN_ENDPOINT: "http://localhost:9411/api/v2/spans",
-  OTEL_LOG_LEVEL: DiagLogLevel.INFO,
-  OTEL_NO_PATCH_MODULES: [],
-  OTEL_PROPAGATORS: ["tracecontext", "baggage"],
-  OTEL_RESOURCE_ATTRIBUTES: "",
-  OTEL_SERVICE_NAME: "",
-  OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT: DEFAULT_ATTRIBUTE_VALUE_LENGTH_LIMIT,
-  OTEL_ATTRIBUTE_COUNT_LIMIT: DEFAULT_ATTRIBUTE_COUNT_LIMIT,
-  OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT: DEFAULT_ATTRIBUTE_VALUE_LENGTH_LIMIT,
-  OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT: DEFAULT_ATTRIBUTE_COUNT_LIMIT,
-  OTEL_SPAN_EVENT_COUNT_LIMIT: 128,
-  OTEL_SPAN_LINK_COUNT_LIMIT: 128,
-  OTEL_TRACES_EXPORTER: "none",
-  OTEL_TRACES_SAMPLER: TracesSamplerValues.ParentBasedAlwaysOn,
-  OTEL_TRACES_SAMPLER_ARG: "",
-  OTEL_EXPORTER_OTLP_INSECURE: "",
-  OTEL_EXPORTER_OTLP_TRACES_INSECURE: "",
-  OTEL_EXPORTER_OTLP_METRICS_INSECURE: "",
-  OTEL_EXPORTER_OTLP_CERTIFICATE: "",
-  OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE: "",
-  OTEL_EXPORTER_OTLP_METRICS_CERTIFICATE: "",
-  OTEL_EXPORTER_OTLP_COMPRESSION: "",
-  OTEL_EXPORTER_OTLP_TRACES_COMPRESSION: "",
-  OTEL_EXPORTER_OTLP_METRICS_COMPRESSION: "",
-  OTEL_EXPORTER_OTLP_CLIENT_KEY: "",
-  OTEL_EXPORTER_OTLP_TRACES_CLIENT_KEY: "",
-  OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY: "",
-  OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE: "",
-  OTEL_EXPORTER_OTLP_TRACES_CLIENT_CERTIFICATE: "",
-  OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE: ""
-};
-function parseNumber(name, environment, values, min2, max2) {
-  if (min2 === void 0) {
-    min2 = -Infinity;
-  }
-  if (max2 === void 0) {
-    max2 = Infinity;
-  }
-  if (typeof values[name] !== "undefined") {
-    var value = Number(values[name]);
-    if (!isNaN(value)) {
-      if (value < min2) {
-        environment[name] = min2;
-      } else if (value > max2) {
-        environment[name] = max2;
-      } else {
-        environment[name] = value;
-      }
-    }
-  }
-}
-__name(parseNumber, "parseNumber");
-function parseStringList(name, output, input, separator) {
-  if (separator === void 0) {
-    separator = DEFAULT_LIST_SEPARATOR;
-  }
-  var givenValue = input[name];
-  if (typeof givenValue === "string") {
-    output[name] = givenValue.split(separator).map(function(v) {
-      return v.trim();
-    });
-  }
-}
-__name(parseStringList, "parseStringList");
-var logLevelMap = {
-  ALL: DiagLogLevel.ALL,
-  VERBOSE: DiagLogLevel.VERBOSE,
-  DEBUG: DiagLogLevel.DEBUG,
-  INFO: DiagLogLevel.INFO,
-  WARN: DiagLogLevel.WARN,
-  ERROR: DiagLogLevel.ERROR,
-  NONE: DiagLogLevel.NONE
-};
-function setLogLevelFromEnv(key, environment, values) {
-  var value = values[key];
-  if (typeof value === "string") {
-    var theLevel = logLevelMap[value.toUpperCase()];
-    if (theLevel != null) {
-      environment[key] = theLevel;
-    }
-  }
-}
-__name(setLogLevelFromEnv, "setLogLevelFromEnv");
-function parseEnvironment(values) {
-  var environment = {};
-  for (var env2 in DEFAULT_ENVIRONMENT) {
-    var key = env2;
-    switch (key) {
-      case "OTEL_LOG_LEVEL":
-        setLogLevelFromEnv(key, environment, values);
-        break;
-      default:
-        if (isEnvVarANumber(key)) {
-          parseNumber(key, environment, values);
-        } else if (isEnvVarAList(key)) {
-          parseStringList(key, environment, values);
-        } else {
-          var value = values[key];
-          if (typeof value !== "undefined" && value !== null) {
-            environment[key] = String(value);
-          }
-        }
-    }
-  }
-  return environment;
-}
-__name(parseEnvironment, "parseEnvironment");
-function getEnvWithoutDefaults() {
-  return typeof process !== "undefined" ? parseEnvironment(process.env) : parseEnvironment(_globalThis2);
-}
-__name(getEnvWithoutDefaults, "getEnvWithoutDefaults");
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/platform/node/environment.js
-function getEnv() {
-  var processEnv = parseEnvironment(process.env);
-  return Object.assign({
-    HOSTNAME: os2.hostname()
-  }, DEFAULT_ENVIRONMENT, processEnv);
-}
-__name(getEnv, "getEnv");
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/platform/node/globalThis.js
-var _globalThis3 = typeof globalThis === "object" ? globalThis : global;
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/platform/node/hex-to-base64.js
-var buf8 = Buffer.alloc(8);
-var buf16 = Buffer.alloc(16);
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/platform/node/RandomIdGenerator.js
-var SPAN_ID_BYTES = 8;
-var TRACE_ID_BYTES = 16;
-var RandomIdGenerator = function() {
-  function RandomIdGenerator3() {
-    this.generateTraceId = getIdGenerator(TRACE_ID_BYTES);
-    this.generateSpanId = getIdGenerator(SPAN_ID_BYTES);
-  }
-  __name(RandomIdGenerator3, "RandomIdGenerator");
-  return RandomIdGenerator3;
-}();
-var SHARED_BUFFER = Buffer.allocUnsafe(TRACE_ID_BYTES);
-function getIdGenerator(bytes) {
-  return /* @__PURE__ */ __name(function generateId() {
-    for (var i = 0; i < bytes / 4; i++) {
-      SHARED_BUFFER.writeUInt32BE(Math.random() * Math.pow(2, 32) >>> 0, i * 4);
-    }
-    for (var i = 0; i < bytes; i++) {
-      if (SHARED_BUFFER[i] > 0) {
-        break;
-      } else if (i === bytes - 1) {
-        SHARED_BUFFER[bytes - 1] = 1;
-      }
-    }
-    return SHARED_BUFFER.toString("hex", 0, bytes);
-  }, "generateId");
-}
-__name(getIdGenerator, "getIdGenerator");
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/platform/node/performance.js
+// ../../node_modules/.pnpm/@opentelemetry+core@1.8.0_@opentelemetry+api@1.3.0/node_modules/@opentelemetry/core/build/esm/platform/node/performance.js
 var import_perf_hooks = require("perf_hooks");
 var otperformance = import_perf_hooks.performance;
 
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/version.js
-var VERSION2 = "1.7.0";
-
-// ../../node_modules/.pnpm/@opentelemetry+semantic-conventions@1.7.0/node_modules/@opentelemetry/semantic-conventions/build/esm/trace/SemanticAttributes.js
+// ../../node_modules/.pnpm/@opentelemetry+semantic-conventions@1.8.0/node_modules/@opentelemetry/semantic-conventions/build/esm/trace/SemanticAttributes.js
 var SemanticAttributes = {
   AWS_LAMBDA_INVOKED_ARN: "aws.lambda.invoked_arn",
   DB_SYSTEM: "db.system",
@@ -25307,114 +22172,7 @@ var SemanticAttributes = {
   MESSAGE_UNCOMPRESSED_SIZE: "message.uncompressed_size"
 };
 
-// ../../node_modules/.pnpm/@opentelemetry+semantic-conventions@1.7.0/node_modules/@opentelemetry/semantic-conventions/build/esm/resource/SemanticResourceAttributes.js
-var SemanticResourceAttributes = {
-  CLOUD_PROVIDER: "cloud.provider",
-  CLOUD_ACCOUNT_ID: "cloud.account.id",
-  CLOUD_REGION: "cloud.region",
-  CLOUD_AVAILABILITY_ZONE: "cloud.availability_zone",
-  CLOUD_PLATFORM: "cloud.platform",
-  AWS_ECS_CONTAINER_ARN: "aws.ecs.container.arn",
-  AWS_ECS_CLUSTER_ARN: "aws.ecs.cluster.arn",
-  AWS_ECS_LAUNCHTYPE: "aws.ecs.launchtype",
-  AWS_ECS_TASK_ARN: "aws.ecs.task.arn",
-  AWS_ECS_TASK_FAMILY: "aws.ecs.task.family",
-  AWS_ECS_TASK_REVISION: "aws.ecs.task.revision",
-  AWS_EKS_CLUSTER_ARN: "aws.eks.cluster.arn",
-  AWS_LOG_GROUP_NAMES: "aws.log.group.names",
-  AWS_LOG_GROUP_ARNS: "aws.log.group.arns",
-  AWS_LOG_STREAM_NAMES: "aws.log.stream.names",
-  AWS_LOG_STREAM_ARNS: "aws.log.stream.arns",
-  CONTAINER_NAME: "container.name",
-  CONTAINER_ID: "container.id",
-  CONTAINER_RUNTIME: "container.runtime",
-  CONTAINER_IMAGE_NAME: "container.image.name",
-  CONTAINER_IMAGE_TAG: "container.image.tag",
-  DEPLOYMENT_ENVIRONMENT: "deployment.environment",
-  DEVICE_ID: "device.id",
-  DEVICE_MODEL_IDENTIFIER: "device.model.identifier",
-  DEVICE_MODEL_NAME: "device.model.name",
-  FAAS_NAME: "faas.name",
-  FAAS_ID: "faas.id",
-  FAAS_VERSION: "faas.version",
-  FAAS_INSTANCE: "faas.instance",
-  FAAS_MAX_MEMORY: "faas.max_memory",
-  HOST_ID: "host.id",
-  HOST_NAME: "host.name",
-  HOST_TYPE: "host.type",
-  HOST_ARCH: "host.arch",
-  HOST_IMAGE_NAME: "host.image.name",
-  HOST_IMAGE_ID: "host.image.id",
-  HOST_IMAGE_VERSION: "host.image.version",
-  K8S_CLUSTER_NAME: "k8s.cluster.name",
-  K8S_NODE_NAME: "k8s.node.name",
-  K8S_NODE_UID: "k8s.node.uid",
-  K8S_NAMESPACE_NAME: "k8s.namespace.name",
-  K8S_POD_UID: "k8s.pod.uid",
-  K8S_POD_NAME: "k8s.pod.name",
-  K8S_CONTAINER_NAME: "k8s.container.name",
-  K8S_REPLICASET_UID: "k8s.replicaset.uid",
-  K8S_REPLICASET_NAME: "k8s.replicaset.name",
-  K8S_DEPLOYMENT_UID: "k8s.deployment.uid",
-  K8S_DEPLOYMENT_NAME: "k8s.deployment.name",
-  K8S_STATEFULSET_UID: "k8s.statefulset.uid",
-  K8S_STATEFULSET_NAME: "k8s.statefulset.name",
-  K8S_DAEMONSET_UID: "k8s.daemonset.uid",
-  K8S_DAEMONSET_NAME: "k8s.daemonset.name",
-  K8S_JOB_UID: "k8s.job.uid",
-  K8S_JOB_NAME: "k8s.job.name",
-  K8S_CRONJOB_UID: "k8s.cronjob.uid",
-  K8S_CRONJOB_NAME: "k8s.cronjob.name",
-  OS_TYPE: "os.type",
-  OS_DESCRIPTION: "os.description",
-  OS_NAME: "os.name",
-  OS_VERSION: "os.version",
-  PROCESS_PID: "process.pid",
-  PROCESS_EXECUTABLE_NAME: "process.executable.name",
-  PROCESS_EXECUTABLE_PATH: "process.executable.path",
-  PROCESS_COMMAND: "process.command",
-  PROCESS_COMMAND_LINE: "process.command_line",
-  PROCESS_COMMAND_ARGS: "process.command_args",
-  PROCESS_OWNER: "process.owner",
-  PROCESS_RUNTIME_NAME: "process.runtime.name",
-  PROCESS_RUNTIME_VERSION: "process.runtime.version",
-  PROCESS_RUNTIME_DESCRIPTION: "process.runtime.description",
-  SERVICE_NAME: "service.name",
-  SERVICE_NAMESPACE: "service.namespace",
-  SERVICE_INSTANCE_ID: "service.instance.id",
-  SERVICE_VERSION: "service.version",
-  TELEMETRY_SDK_NAME: "telemetry.sdk.name",
-  TELEMETRY_SDK_LANGUAGE: "telemetry.sdk.language",
-  TELEMETRY_SDK_VERSION: "telemetry.sdk.version",
-  TELEMETRY_AUTO_VERSION: "telemetry.auto.version",
-  WEBENGINE_NAME: "webengine.name",
-  WEBENGINE_VERSION: "webengine.version",
-  WEBENGINE_DESCRIPTION: "webengine.description"
-};
-var TelemetrySdkLanguageValues = {
-  CPP: "cpp",
-  DOTNET: "dotnet",
-  ERLANG: "erlang",
-  GO: "go",
-  JAVA: "java",
-  NODEJS: "nodejs",
-  PHP: "php",
-  PYTHON: "python",
-  RUBY: "ruby",
-  WEBJS: "webjs"
-};
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/platform/node/sdk-info.js
-var _a2;
-var SDK_INFO = (_a2 = {}, _a2[SemanticResourceAttributes.TELEMETRY_SDK_NAME] = "opentelemetry", _a2[SemanticResourceAttributes.PROCESS_RUNTIME_NAME] = "node", _a2[SemanticResourceAttributes.TELEMETRY_SDK_LANGUAGE] = TelemetrySdkLanguageValues.NODEJS, _a2[SemanticResourceAttributes.TELEMETRY_SDK_VERSION] = VERSION2, _a2);
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/platform/node/timer-util.js
-function unrefTimer(timer) {
-  timer.unref();
-}
-__name(unrefTimer, "unrefTimer");
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/common/time.js
+// ../../node_modules/.pnpm/@opentelemetry+core@1.8.0_@opentelemetry+api@1.3.0/node_modules/@opentelemetry/core/build/esm/common/time.js
 var NANOSECOND_DIGITS = 9;
 var SECOND_TO_NANOSECONDS = Math.pow(10, NANOSECOND_DIGITS);
 function numberToHrtime(epochMillis) {
@@ -25471,10 +22229,6 @@ function hrTimeDuration(startTime, endTime) {
   return [seconds, nanos];
 }
 __name(hrTimeDuration, "hrTimeDuration");
-function hrTimeToMicroseconds(time) {
-  return Math.round(time[0] * 1e6 + time[1] / 1e3);
-}
-__name(hrTimeToMicroseconds, "hrTimeToMicroseconds");
 function isTimeInputHrTime(value) {
   return Array.isArray(value) && value.length === 2 && typeof value[0] === "number" && typeof value[1] === "number";
 }
@@ -25484,668 +22238,47 @@ function isTimeInput(value) {
 }
 __name(isTimeInput, "isTimeInput");
 
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/ExportResult.js
-var ExportResultCode;
-(function(ExportResultCode2) {
-  ExportResultCode2[ExportResultCode2["SUCCESS"] = 0] = "SUCCESS";
-  ExportResultCode2[ExportResultCode2["FAILED"] = 1] = "FAILED";
-})(ExportResultCode || (ExportResultCode = {}));
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/propagation/composite.js
-var __values2 = function(o) {
-  var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-  if (m)
-    return m.call(o);
-  if (o && typeof o.length === "number")
-    return {
-      next: function() {
-        if (o && i >= o.length)
-          o = void 0;
-        return { value: o && o[i++], done: !o };
-      }
-    };
-  throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
-var CompositePropagator = function() {
-  function CompositePropagator2(config2) {
-    if (config2 === void 0) {
-      config2 = {};
-    }
-    var _a3;
-    this._propagators = (_a3 = config2.propagators) !== null && _a3 !== void 0 ? _a3 : [];
-    this._fields = Array.from(new Set(this._propagators.map(function(p) {
-      return typeof p.fields === "function" ? p.fields() : [];
-    }).reduce(function(x, y) {
-      return x.concat(y);
-    }, [])));
-  }
-  __name(CompositePropagator2, "CompositePropagator");
-  CompositePropagator2.prototype.inject = function(context3, carrier, setter) {
-    var e_1, _a3;
-    try {
-      for (var _b2 = __values2(this._propagators), _c = _b2.next(); !_c.done; _c = _b2.next()) {
-        var propagator = _c.value;
-        try {
-          propagator.inject(context3, carrier, setter);
-        } catch (err) {
-          diag2.warn("Failed to inject with " + propagator.constructor.name + ". Err: " + err.message);
-        }
-      }
-    } catch (e_1_1) {
-      e_1 = { error: e_1_1 };
-    } finally {
-      try {
-        if (_c && !_c.done && (_a3 = _b2.return))
-          _a3.call(_b2);
-      } finally {
-        if (e_1)
-          throw e_1.error;
-      }
-    }
-  };
-  CompositePropagator2.prototype.extract = function(context3, carrier, getter) {
-    return this._propagators.reduce(function(ctx, propagator) {
-      try {
-        return propagator.extract(ctx, carrier, getter);
-      } catch (err) {
-        diag2.warn("Failed to inject with " + propagator.constructor.name + ". Err: " + err.message);
-      }
-      return ctx;
-    }, context3);
-  };
-  CompositePropagator2.prototype.fields = function() {
-    return this._fields.slice();
-  };
-  return CompositePropagator2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/internal/validators.js
-var VALID_KEY_CHAR_RANGE2 = "[_0-9a-z-*/]";
-var VALID_KEY2 = "[a-z]" + VALID_KEY_CHAR_RANGE2 + "{0,255}";
-var VALID_VENDOR_KEY2 = "[a-z0-9]" + VALID_KEY_CHAR_RANGE2 + "{0,240}@[a-z]" + VALID_KEY_CHAR_RANGE2 + "{0,13}";
-var VALID_KEY_REGEX2 = new RegExp("^(?:" + VALID_KEY2 + "|" + VALID_VENDOR_KEY2 + ")$");
-var VALID_VALUE_BASE_REGEX2 = /^[ -~]{0,255}[!-~]$/;
-var INVALID_VALUE_COMMA_EQUAL_REGEX2 = /,|=/;
-function validateKey2(key) {
-  return VALID_KEY_REGEX2.test(key);
-}
-__name(validateKey2, "validateKey");
-function validateValue2(value) {
-  return VALID_VALUE_BASE_REGEX2.test(value) && !INVALID_VALUE_COMMA_EQUAL_REGEX2.test(value);
-}
-__name(validateValue2, "validateValue");
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/trace/TraceState.js
-var MAX_TRACE_STATE_ITEMS2 = 32;
-var MAX_TRACE_STATE_LEN2 = 512;
-var LIST_MEMBERS_SEPARATOR2 = ",";
-var LIST_MEMBER_KEY_VALUE_SPLITTER2 = "=";
-var TraceState = function() {
-  function TraceState2(rawTraceState) {
-    this._internalState = /* @__PURE__ */ new Map();
-    if (rawTraceState)
-      this._parse(rawTraceState);
-  }
-  __name(TraceState2, "TraceState");
-  TraceState2.prototype.set = function(key, value) {
-    var traceState = this._clone();
-    if (traceState._internalState.has(key)) {
-      traceState._internalState.delete(key);
-    }
-    traceState._internalState.set(key, value);
-    return traceState;
-  };
-  TraceState2.prototype.unset = function(key) {
-    var traceState = this._clone();
-    traceState._internalState.delete(key);
-    return traceState;
-  };
-  TraceState2.prototype.get = function(key) {
-    return this._internalState.get(key);
-  };
-  TraceState2.prototype.serialize = function() {
-    var _this = this;
-    return this._keys().reduce(function(agg, key) {
-      agg.push(key + LIST_MEMBER_KEY_VALUE_SPLITTER2 + _this.get(key));
-      return agg;
-    }, []).join(LIST_MEMBERS_SEPARATOR2);
-  };
-  TraceState2.prototype._parse = function(rawTraceState) {
-    if (rawTraceState.length > MAX_TRACE_STATE_LEN2)
-      return;
-    this._internalState = rawTraceState.split(LIST_MEMBERS_SEPARATOR2).reverse().reduce(function(agg, part) {
-      var listMember = part.trim();
-      var i = listMember.indexOf(LIST_MEMBER_KEY_VALUE_SPLITTER2);
-      if (i !== -1) {
-        var key = listMember.slice(0, i);
-        var value = listMember.slice(i + 1, part.length);
-        if (validateKey2(key) && validateValue2(value)) {
-          agg.set(key, value);
-        } else {
-        }
-      }
-      return agg;
-    }, /* @__PURE__ */ new Map());
-    if (this._internalState.size > MAX_TRACE_STATE_ITEMS2) {
-      this._internalState = new Map(Array.from(this._internalState.entries()).reverse().slice(0, MAX_TRACE_STATE_ITEMS2));
-    }
-  };
-  TraceState2.prototype._keys = function() {
-    return Array.from(this._internalState.keys()).reverse();
-  };
-  TraceState2.prototype._clone = function() {
-    var traceState = new TraceState2();
-    traceState._internalState = new Map(this._internalState);
-    return traceState;
-  };
-  return TraceState2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/trace/W3CTraceContextPropagator.js
-var TRACE_PARENT_HEADER = "traceparent";
-var TRACE_STATE_HEADER = "tracestate";
-var VERSION3 = "00";
-var VERSION_PART = "(?!ff)[\\da-f]{2}";
-var TRACE_ID_PART = "(?![0]{32})[\\da-f]{32}";
-var PARENT_ID_PART = "(?![0]{16})[\\da-f]{16}";
-var FLAGS_PART = "[\\da-f]{2}";
-var TRACE_PARENT_REGEX = new RegExp("^\\s?(" + VERSION_PART + ")-(" + TRACE_ID_PART + ")-(" + PARENT_ID_PART + ")-(" + FLAGS_PART + ")(-.*)?\\s?$");
-function parseTraceParent(traceParent) {
-  var match = TRACE_PARENT_REGEX.exec(traceParent);
-  if (!match)
-    return null;
-  if (match[1] === "00" && match[5])
-    return null;
-  return {
-    traceId: match[2],
-    spanId: match[3],
-    traceFlags: parseInt(match[4], 16)
-  };
-}
-__name(parseTraceParent, "parseTraceParent");
-var W3CTraceContextPropagator = function() {
-  function W3CTraceContextPropagator2() {
-  }
-  __name(W3CTraceContextPropagator2, "W3CTraceContextPropagator");
-  W3CTraceContextPropagator2.prototype.inject = function(context3, carrier, setter) {
-    var spanContext = trace.getSpanContext(context3);
-    if (!spanContext || isTracingSuppressed(context3) || !isSpanContextValid(spanContext))
-      return;
-    var traceParent = VERSION3 + "-" + spanContext.traceId + "-" + spanContext.spanId + "-0" + Number(spanContext.traceFlags || TraceFlags.NONE).toString(16);
-    setter.set(carrier, TRACE_PARENT_HEADER, traceParent);
-    if (spanContext.traceState) {
-      setter.set(carrier, TRACE_STATE_HEADER, spanContext.traceState.serialize());
-    }
-  };
-  W3CTraceContextPropagator2.prototype.extract = function(context3, carrier, getter) {
-    var traceParentHeader = getter.get(carrier, TRACE_PARENT_HEADER);
-    if (!traceParentHeader)
-      return context3;
-    var traceParent = Array.isArray(traceParentHeader) ? traceParentHeader[0] : traceParentHeader;
-    if (typeof traceParent !== "string")
-      return context3;
-    var spanContext = parseTraceParent(traceParent);
-    if (!spanContext)
-      return context3;
-    spanContext.isRemote = true;
-    var traceStateHeader = getter.get(carrier, TRACE_STATE_HEADER);
-    if (traceStateHeader) {
-      var state = Array.isArray(traceStateHeader) ? traceStateHeader.join(",") : traceStateHeader;
-      spanContext.traceState = new TraceState(typeof state === "string" ? state : void 0);
-    }
-    return trace.setSpanContext(context3, spanContext);
-  };
-  W3CTraceContextPropagator2.prototype.fields = function() {
-    return [TRACE_PARENT_HEADER, TRACE_STATE_HEADER];
-  };
-  return W3CTraceContextPropagator2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/trace/rpc-metadata.js
-var RPC_METADATA_KEY = createContextKey("OpenTelemetry SDK Context Key RPC_METADATA");
-var RPCType;
-(function(RPCType2) {
-  RPCType2["HTTP"] = "http";
-})(RPCType || (RPCType = {}));
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/trace/sampler/AlwaysOffSampler.js
-var AlwaysOffSampler = function() {
-  function AlwaysOffSampler3() {
-  }
-  __name(AlwaysOffSampler3, "AlwaysOffSampler");
-  AlwaysOffSampler3.prototype.shouldSample = function() {
-    return {
-      decision: SamplingDecision.NOT_RECORD
-    };
-  };
-  AlwaysOffSampler3.prototype.toString = function() {
-    return "AlwaysOffSampler";
-  };
-  return AlwaysOffSampler3;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/trace/sampler/AlwaysOnSampler.js
-var AlwaysOnSampler = function() {
-  function AlwaysOnSampler3() {
-  }
-  __name(AlwaysOnSampler3, "AlwaysOnSampler");
-  AlwaysOnSampler3.prototype.shouldSample = function() {
-    return {
-      decision: SamplingDecision.RECORD_AND_SAMPLED
-    };
-  };
-  AlwaysOnSampler3.prototype.toString = function() {
-    return "AlwaysOnSampler";
-  };
-  return AlwaysOnSampler3;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/trace/sampler/ParentBasedSampler.js
-var ParentBasedSampler = function() {
-  function ParentBasedSampler3(config2) {
-    var _a3, _b2, _c, _d;
-    this._root = config2.root;
-    if (!this._root) {
-      globalErrorHandler(new Error("ParentBasedSampler must have a root sampler configured"));
-      this._root = new AlwaysOnSampler();
-    }
-    this._remoteParentSampled = (_a3 = config2.remoteParentSampled) !== null && _a3 !== void 0 ? _a3 : new AlwaysOnSampler();
-    this._remoteParentNotSampled = (_b2 = config2.remoteParentNotSampled) !== null && _b2 !== void 0 ? _b2 : new AlwaysOffSampler();
-    this._localParentSampled = (_c = config2.localParentSampled) !== null && _c !== void 0 ? _c : new AlwaysOnSampler();
-    this._localParentNotSampled = (_d = config2.localParentNotSampled) !== null && _d !== void 0 ? _d : new AlwaysOffSampler();
-  }
-  __name(ParentBasedSampler3, "ParentBasedSampler");
-  ParentBasedSampler3.prototype.shouldSample = function(context3, traceId, spanName, spanKind, attributes, links) {
-    var parentContext = trace.getSpanContext(context3);
-    if (!parentContext || !isSpanContextValid(parentContext)) {
-      return this._root.shouldSample(context3, traceId, spanName, spanKind, attributes, links);
-    }
-    if (parentContext.isRemote) {
-      if (parentContext.traceFlags & TraceFlags.SAMPLED) {
-        return this._remoteParentSampled.shouldSample(context3, traceId, spanName, spanKind, attributes, links);
-      }
-      return this._remoteParentNotSampled.shouldSample(context3, traceId, spanName, spanKind, attributes, links);
-    }
-    if (parentContext.traceFlags & TraceFlags.SAMPLED) {
-      return this._localParentSampled.shouldSample(context3, traceId, spanName, spanKind, attributes, links);
-    }
-    return this._localParentNotSampled.shouldSample(context3, traceId, spanName, spanKind, attributes, links);
-  };
-  ParentBasedSampler3.prototype.toString = function() {
-    return "ParentBased{root=" + this._root.toString() + ", remoteParentSampled=" + this._remoteParentSampled.toString() + ", remoteParentNotSampled=" + this._remoteParentNotSampled.toString() + ", localParentSampled=" + this._localParentSampled.toString() + ", localParentNotSampled=" + this._localParentNotSampled.toString() + "}";
-  };
-  return ParentBasedSampler3;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/trace/sampler/TraceIdRatioBasedSampler.js
-var TraceIdRatioBasedSampler = function() {
-  function TraceIdRatioBasedSampler3(_ratio) {
-    if (_ratio === void 0) {
-      _ratio = 0;
-    }
-    this._ratio = _ratio;
-    this._ratio = this._normalize(_ratio);
-    this._upperBound = Math.floor(this._ratio * 4294967295);
-  }
-  __name(TraceIdRatioBasedSampler3, "TraceIdRatioBasedSampler");
-  TraceIdRatioBasedSampler3.prototype.shouldSample = function(context3, traceId) {
-    return {
-      decision: isValidTraceId(traceId) && this._accumulate(traceId) < this._upperBound ? SamplingDecision.RECORD_AND_SAMPLED : SamplingDecision.NOT_RECORD
-    };
-  };
-  TraceIdRatioBasedSampler3.prototype.toString = function() {
-    return "TraceIdRatioBased{" + this._ratio + "}";
-  };
-  TraceIdRatioBasedSampler3.prototype._normalize = function(ratio) {
-    if (typeof ratio !== "number" || isNaN(ratio))
-      return 0;
-    return ratio >= 1 ? 1 : ratio <= 0 ? 0 : ratio;
-  };
-  TraceIdRatioBasedSampler3.prototype._accumulate = function(traceId) {
-    var accumulation = 0;
-    for (var i = 0; i < traceId.length / 8; i++) {
-      var pos = i * 8;
-      var part = parseInt(traceId.slice(pos, pos + 8), 16);
-      accumulation = (accumulation ^ part) >>> 0;
-    }
-    return accumulation;
-  };
-  return TraceIdRatioBasedSampler3;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/utils/lodash.merge.js
-var objectTag = "[object Object]";
-var nullTag = "[object Null]";
-var undefinedTag = "[object Undefined]";
-var funcProto = Function.prototype;
-var funcToString = funcProto.toString;
-var objectCtorString = funcToString.call(Object);
-var getPrototype = overArg(Object.getPrototypeOf, Object);
-var objectProto = Object.prototype;
-var hasOwnProperty = objectProto.hasOwnProperty;
-var symToStringTag = Symbol ? Symbol.toStringTag : void 0;
-var nativeObjectToString = objectProto.toString;
-function overArg(func, transform) {
-  return function(arg2) {
-    return func(transform(arg2));
-  };
-}
-__name(overArg, "overArg");
-function isPlainObject(value) {
-  if (!isObjectLike(value) || baseGetTag(value) !== objectTag) {
-    return false;
-  }
-  var proto = getPrototype(value);
-  if (proto === null) {
-    return true;
-  }
-  var Ctor = hasOwnProperty.call(proto, "constructor") && proto.constructor;
-  return typeof Ctor == "function" && Ctor instanceof Ctor && funcToString.call(Ctor) === objectCtorString;
-}
-__name(isPlainObject, "isPlainObject");
-function isObjectLike(value) {
-  return value != null && typeof value == "object";
-}
-__name(isObjectLike, "isObjectLike");
-function baseGetTag(value) {
-  if (value == null) {
-    return value === void 0 ? undefinedTag : nullTag;
-  }
-  return symToStringTag && symToStringTag in Object(value) ? getRawTag(value) : objectToString(value);
-}
-__name(baseGetTag, "baseGetTag");
-function getRawTag(value) {
-  var isOwn = hasOwnProperty.call(value, symToStringTag), tag2 = value[symToStringTag];
-  var unmasked = false;
-  try {
-    value[symToStringTag] = void 0;
-    unmasked = true;
-  } catch (e) {
-  }
-  var result = nativeObjectToString.call(value);
-  if (unmasked) {
-    if (isOwn) {
-      value[symToStringTag] = tag2;
-    } else {
-      delete value[symToStringTag];
-    }
-  }
-  return result;
-}
-__name(getRawTag, "getRawTag");
-function objectToString(value) {
-  return nativeObjectToString.call(value);
-}
-__name(objectToString, "objectToString");
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/utils/merge.js
-var MAX_LEVEL = 20;
-function merge() {
-  var args = [];
-  for (var _i = 0; _i < arguments.length; _i++) {
-    args[_i] = arguments[_i];
-  }
-  var result = args.shift();
-  var objects = /* @__PURE__ */ new WeakMap();
-  while (args.length > 0) {
-    result = mergeTwoObjects(result, args.shift(), 0, objects);
-  }
-  return result;
-}
-__name(merge, "merge");
-function takeValue(value) {
-  if (isArray(value)) {
-    return value.slice();
-  }
-  return value;
-}
-__name(takeValue, "takeValue");
-function mergeTwoObjects(one, two, level, objects) {
-  if (level === void 0) {
-    level = 0;
-  }
-  var result;
-  if (level > MAX_LEVEL) {
-    return void 0;
-  }
-  level++;
-  if (isPrimitive(one) || isPrimitive(two) || isFunction(two)) {
-    result = takeValue(two);
-  } else if (isArray(one)) {
-    result = one.slice();
-    if (isArray(two)) {
-      for (var i = 0, j = two.length; i < j; i++) {
-        result.push(takeValue(two[i]));
-      }
-    } else if (isObject(two)) {
-      var keys2 = Object.keys(two);
-      for (var i = 0, j = keys2.length; i < j; i++) {
-        var key = keys2[i];
-        result[key] = takeValue(two[key]);
-      }
-    }
-  } else if (isObject(one)) {
-    if (isObject(two)) {
-      if (!shouldMerge(one, two)) {
-        return two;
-      }
-      result = Object.assign({}, one);
-      var keys2 = Object.keys(two);
-      for (var i = 0, j = keys2.length; i < j; i++) {
-        var key = keys2[i];
-        var twoValue = two[key];
-        if (isPrimitive(twoValue)) {
-          if (typeof twoValue === "undefined") {
-            delete result[key];
-          } else {
-            result[key] = twoValue;
-          }
-        } else {
-          var obj1 = result[key];
-          var obj2 = twoValue;
-          if (wasObjectReferenced(one, key, objects) || wasObjectReferenced(two, key, objects)) {
-            delete result[key];
-          } else {
-            if (isObject(obj1) && isObject(obj2)) {
-              var arr1 = objects.get(obj1) || [];
-              var arr2 = objects.get(obj2) || [];
-              arr1.push({ obj: one, key });
-              arr2.push({ obj: two, key });
-              objects.set(obj1, arr1);
-              objects.set(obj2, arr2);
-            }
-            result[key] = mergeTwoObjects(result[key], twoValue, level, objects);
-          }
-        }
-      }
-    } else {
-      result = two;
-    }
-  }
-  return result;
-}
-__name(mergeTwoObjects, "mergeTwoObjects");
-function wasObjectReferenced(obj, key, objects) {
-  var arr = objects.get(obj[key]) || [];
-  for (var i = 0, j = arr.length; i < j; i++) {
-    var info2 = arr[i];
-    if (info2.key === key && info2.obj === obj) {
-      return true;
-    }
-  }
-  return false;
-}
-__name(wasObjectReferenced, "wasObjectReferenced");
-function isArray(value) {
-  return Array.isArray(value);
-}
-__name(isArray, "isArray");
-function isFunction(value) {
-  return typeof value === "function";
-}
-__name(isFunction, "isFunction");
-function isObject(value) {
-  return !isPrimitive(value) && !isArray(value) && !isFunction(value) && typeof value === "object";
-}
-__name(isObject, "isObject");
-function isPrimitive(value) {
-  return typeof value === "string" || typeof value === "number" || typeof value === "boolean" || typeof value === "undefined" || value instanceof Date || value instanceof RegExp || value === null;
-}
-__name(isPrimitive, "isPrimitive");
-function shouldMerge(one, two) {
-  if (!isPlainObject(one) || !isPlainObject(two)) {
-    return false;
-  }
-  return true;
-}
-__name(shouldMerge, "shouldMerge");
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/utils/promise.js
-var Deferred = function() {
-  function Deferred2() {
-    var _this = this;
-    this._promise = new Promise(function(resolve, reject) {
-      _this._resolve = resolve;
-      _this._reject = reject;
-    });
-  }
-  __name(Deferred2, "Deferred");
-  Object.defineProperty(Deferred2.prototype, "promise", {
-    get: function() {
-      return this._promise;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Deferred2.prototype.resolve = function(val) {
-    this._resolve(val);
-  };
-  Deferred2.prototype.reject = function(err) {
-    this._reject(err);
-  };
-  return Deferred2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+core@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/core/build/esm/utils/callback.js
-var __read3 = function(o, n) {
-  var m = typeof Symbol === "function" && o[Symbol.iterator];
-  if (!m)
-    return o;
-  var i = m.call(o), r, ar = [], e;
-  try {
-    while ((n === void 0 || n-- > 0) && !(r = i.next()).done)
-      ar.push(r.value);
-  } catch (error2) {
-    e = { error: error2 };
-  } finally {
-    try {
-      if (r && !r.done && (m = i["return"]))
-        m.call(i);
-    } finally {
-      if (e)
-        throw e.error;
-    }
-  }
-  return ar;
-};
-var __spreadArray3 = function(to, from, pack) {
-  if (pack || arguments.length === 2)
-    for (var i = 0, l = from.length, ar; i < l; i++) {
-      if (ar || !(i in from)) {
-        if (!ar)
-          ar = Array.prototype.slice.call(from, 0, i);
-        ar[i] = from[i];
-      }
-    }
-  return to.concat(ar || Array.prototype.slice.call(from));
-};
-var BindOnceFuture = function() {
-  function BindOnceFuture2(_callback, _that) {
-    this._callback = _callback;
-    this._that = _that;
-    this._isCalled = false;
-    this._deferred = new Deferred();
-  }
-  __name(BindOnceFuture2, "BindOnceFuture");
-  Object.defineProperty(BindOnceFuture2.prototype, "isCalled", {
-    get: function() {
-      return this._isCalled;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(BindOnceFuture2.prototype, "promise", {
-    get: function() {
-      return this._deferred.promise;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  BindOnceFuture2.prototype.call = function() {
-    var _a3;
-    var _this = this;
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      args[_i] = arguments[_i];
-    }
-    if (!this._isCalled) {
-      this._isCalled = true;
-      try {
-        Promise.resolve((_a3 = this._callback).call.apply(_a3, __spreadArray3([this._that], __read3(args), false))).then(function(val) {
-          return _this._deferred.resolve(val);
-        }, function(err) {
-          return _this._deferred.reject(err);
-        });
-      } catch (err) {
-        this._deferred.reject(err);
-      }
-    }
-    return this._deferred.promise;
-  };
-  return BindOnceFuture2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/enums.js
+// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.8.0_@opentelemetry+api@1.3.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/enums.js
 var ExceptionEventName = "exception";
 
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/Span.js
-var __values3 = function(o) {
-  var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-  if (m)
-    return m.call(o);
-  if (o && typeof o.length === "number")
+// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.8.0_@opentelemetry+api@1.3.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/Span.js
+var __values2 = function(o2) {
+  var s = typeof Symbol === "function" && Symbol.iterator, m2 = s && o2[s], i = 0;
+  if (m2)
+    return m2.call(o2);
+  if (o2 && typeof o2.length === "number")
     return {
       next: function() {
-        if (o && i >= o.length)
-          o = void 0;
-        return { value: o && o[i++], done: !o };
+        if (o2 && i >= o2.length)
+          o2 = void 0;
+        return { value: o2 && o2[i++], done: !o2 };
       }
     };
   throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read4 = function(o, n) {
-  var m = typeof Symbol === "function" && o[Symbol.iterator];
-  if (!m)
-    return o;
-  var i = m.call(o), r, ar = [], e;
+var __read6 = function(o2, n2) {
+  var m2 = typeof Symbol === "function" && o2[Symbol.iterator];
+  if (!m2)
+    return o2;
+  var i = m2.call(o2), r2, ar = [], e2;
   try {
-    while ((n === void 0 || n-- > 0) && !(r = i.next()).done)
-      ar.push(r.value);
+    while ((n2 === void 0 || n2-- > 0) && !(r2 = i.next()).done)
+      ar.push(r2.value);
   } catch (error2) {
-    e = { error: error2 };
+    e2 = { error: error2 };
   } finally {
     try {
-      if (r && !r.done && (m = i["return"]))
-        m.call(i);
+      if (r2 && !r2.done && (m2 = i["return"]))
+        m2.call(i);
     } finally {
-      if (e)
-        throw e.error;
+      if (e2)
+        throw e2.error;
     }
   }
   return ar;
 };
 var Span = function() {
-  function Span3(parentTracer, context3, spanName, spanContext, kind, parentSpanId, links, startTime, clock) {
+  function Span3(parentTracer, context2, spanName, spanContext, kind, parentSpanId, links, startTime, clock) {
     if (links === void 0) {
       links = [];
     }
@@ -26172,7 +22305,7 @@ var Span = function() {
     this.instrumentationLibrary = parentTracer.instrumentationLibrary;
     this._spanLimits = parentTracer.getSpanLimits();
     this._spanProcessor = parentTracer.getActiveSpanProcessor();
-    this._spanProcessor.onStart(this, context3);
+    this._spanProcessor.onStart(this, context2);
     this._attributeValueLengthLimit = this._spanLimits.attributeValueLengthLimit || 0;
   }
   __name(Span3, "Span");
@@ -26183,11 +22316,11 @@ var Span = function() {
     if (value == null || this._isSpanEnded())
       return this;
     if (key.length === 0) {
-      diag2.warn("Invalid attribute key: " + key);
+      diag.warn("Invalid attribute key: " + key);
       return this;
     }
     if (!isAttributeValue(value)) {
-      diag2.warn("Invalid attribute value set for key: " + key);
+      diag.warn("Invalid attribute value set for key: " + key);
       return this;
     }
     if (Object.keys(this.attributes).length >= this._spanLimits.attributeCountLimit && !Object.prototype.hasOwnProperty.call(this.attributes, key)) {
@@ -26197,18 +22330,18 @@ var Span = function() {
     return this;
   };
   Span3.prototype.setAttributes = function(attributes) {
-    var e_1, _a3;
+    var e_1, _a;
     try {
-      for (var _b2 = __values3(Object.entries(attributes)), _c = _b2.next(); !_c.done; _c = _b2.next()) {
-        var _d = __read4(_c.value, 2), k = _d[0], v = _d[1];
+      for (var _b = __values2(Object.entries(attributes)), _c = _b.next(); !_c.done; _c = _b.next()) {
+        var _d = __read6(_c.value, 2), k = _d[0], v = _d[1];
         this.setAttribute(k, v);
       }
     } catch (e_1_1) {
       e_1 = { error: e_1_1 };
     } finally {
       try {
-        if (_c && !_c.done && (_a3 = _b2.return))
-          _a3.call(_b2);
+        if (_c && !_c.done && (_a = _b.return))
+          _a.call(_b);
       } finally {
         if (e_1)
           throw e_1.error;
@@ -26220,11 +22353,11 @@ var Span = function() {
     if (this._isSpanEnded())
       return this;
     if (this._spanLimits.eventCountLimit === 0) {
-      diag2.warn("No events allowed.");
+      diag.warn("No events allowed.");
       return this;
     }
     if (this.events.length >= this._spanLimits.eventCountLimit) {
-      diag2.warn("Dropping extra events.");
+      diag.warn("Dropping extra events.");
       this.events.shift();
     }
     if (isTimeInput(attributesOrStartTime)) {
@@ -26258,14 +22391,16 @@ var Span = function() {
   };
   Span3.prototype.end = function(endTime) {
     if (this._isSpanEnded()) {
-      diag2.error("You can only call end() on a span once.");
+      diag.error("You can only call end() on a span once.");
       return;
     }
     this._ended = true;
     this.endTime = timeInputToHrTime(endTime !== null && endTime !== void 0 ? endTime : this._clock.now());
     this._duration = hrTimeDuration(this.startTime, this.endTime);
     if (this._duration[0] < 0) {
-      diag2.warn("Inconsistent start and end time, startTime > endTime", this.startTime, this.endTime);
+      diag.warn("Inconsistent start and end time, startTime > endTime. Setting span duration to 0ms.", this.startTime, this.endTime);
+      this.endTime = this.startTime.slice();
+      this._duration = [0, 0];
     }
     this._spanProcessor.onEnd(this);
   };
@@ -26295,7 +22430,7 @@ var Span = function() {
     if (attributes[SemanticAttributes.EXCEPTION_TYPE] || attributes[SemanticAttributes.EXCEPTION_MESSAGE]) {
       this.addEvent(ExceptionEventName, attributes, time);
     } else {
-      diag2.warn("Failed to record an exception " + exception);
+      diag.warn("Failed to record an exception " + exception);
     }
   };
   Object.defineProperty(Span3.prototype, "duration", {
@@ -26314,7 +22449,7 @@ var Span = function() {
   });
   Span3.prototype._isSpanEnded = function() {
     if (this._ended) {
-      diag2.warn("Can not execute the operation on ended Span {traceId: " + this._spanContext.traceId + ", spanId: " + this._spanContext.spanId + "}");
+      diag.warn("Can not execute the operation on ended Span {traceId: " + this._spanContext.traceId + ", spanId: " + this._spanContext.spanId + "}");
     }
     return this._ended;
   };
@@ -26328,7 +22463,7 @@ var Span = function() {
     var _this = this;
     var limit = this._attributeValueLengthLimit;
     if (limit <= 0) {
-      diag2.warn("Attribute value limit must be positive, got " + limit);
+      diag.warn("Attribute value limit must be positive, got " + limit);
       return value;
     }
     if (typeof value === "string") {
@@ -26344,1810 +22479,17 @@ var Span = function() {
   return Span3;
 }();
 
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/Sampler.js
-var SamplingDecision2;
-(function(SamplingDecision3) {
-  SamplingDecision3[SamplingDecision3["NOT_RECORD"] = 0] = "NOT_RECORD";
-  SamplingDecision3[SamplingDecision3["RECORD"] = 1] = "RECORD";
-  SamplingDecision3[SamplingDecision3["RECORD_AND_SAMPLED"] = 2] = "RECORD_AND_SAMPLED";
-})(SamplingDecision2 || (SamplingDecision2 = {}));
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/sampler/AlwaysOffSampler.js
-var AlwaysOffSampler2 = function() {
-  function AlwaysOffSampler3() {
-  }
-  __name(AlwaysOffSampler3, "AlwaysOffSampler");
-  AlwaysOffSampler3.prototype.shouldSample = function() {
-    return {
-      decision: SamplingDecision2.NOT_RECORD
-    };
-  };
-  AlwaysOffSampler3.prototype.toString = function() {
-    return "AlwaysOffSampler";
-  };
-  return AlwaysOffSampler3;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/sampler/AlwaysOnSampler.js
-var AlwaysOnSampler2 = function() {
-  function AlwaysOnSampler3() {
-  }
-  __name(AlwaysOnSampler3, "AlwaysOnSampler");
-  AlwaysOnSampler3.prototype.shouldSample = function() {
-    return {
-      decision: SamplingDecision2.RECORD_AND_SAMPLED
-    };
-  };
-  AlwaysOnSampler3.prototype.toString = function() {
-    return "AlwaysOnSampler";
-  };
-  return AlwaysOnSampler3;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/sampler/ParentBasedSampler.js
-var ParentBasedSampler2 = function() {
-  function ParentBasedSampler3(config2) {
-    var _a3, _b2, _c, _d;
-    this._root = config2.root;
-    if (!this._root) {
-      globalErrorHandler(new Error("ParentBasedSampler must have a root sampler configured"));
-      this._root = new AlwaysOnSampler2();
-    }
-    this._remoteParentSampled = (_a3 = config2.remoteParentSampled) !== null && _a3 !== void 0 ? _a3 : new AlwaysOnSampler2();
-    this._remoteParentNotSampled = (_b2 = config2.remoteParentNotSampled) !== null && _b2 !== void 0 ? _b2 : new AlwaysOffSampler2();
-    this._localParentSampled = (_c = config2.localParentSampled) !== null && _c !== void 0 ? _c : new AlwaysOnSampler2();
-    this._localParentNotSampled = (_d = config2.localParentNotSampled) !== null && _d !== void 0 ? _d : new AlwaysOffSampler2();
-  }
-  __name(ParentBasedSampler3, "ParentBasedSampler");
-  ParentBasedSampler3.prototype.shouldSample = function(context3, traceId, spanName, spanKind, attributes, links) {
-    var parentContext = trace.getSpanContext(context3);
-    if (!parentContext || !isSpanContextValid(parentContext)) {
-      return this._root.shouldSample(context3, traceId, spanName, spanKind, attributes, links);
-    }
-    if (parentContext.isRemote) {
-      if (parentContext.traceFlags & TraceFlags.SAMPLED) {
-        return this._remoteParentSampled.shouldSample(context3, traceId, spanName, spanKind, attributes, links);
-      }
-      return this._remoteParentNotSampled.shouldSample(context3, traceId, spanName, spanKind, attributes, links);
-    }
-    if (parentContext.traceFlags & TraceFlags.SAMPLED) {
-      return this._localParentSampled.shouldSample(context3, traceId, spanName, spanKind, attributes, links);
-    }
-    return this._localParentNotSampled.shouldSample(context3, traceId, spanName, spanKind, attributes, links);
-  };
-  ParentBasedSampler3.prototype.toString = function() {
-    return "ParentBased{root=" + this._root.toString() + ", remoteParentSampled=" + this._remoteParentSampled.toString() + ", remoteParentNotSampled=" + this._remoteParentNotSampled.toString() + ", localParentSampled=" + this._localParentSampled.toString() + ", localParentNotSampled=" + this._localParentNotSampled.toString() + "}";
-  };
-  return ParentBasedSampler3;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/sampler/TraceIdRatioBasedSampler.js
-var TraceIdRatioBasedSampler2 = function() {
-  function TraceIdRatioBasedSampler3(_ratio) {
-    if (_ratio === void 0) {
-      _ratio = 0;
-    }
-    this._ratio = _ratio;
-    this._ratio = this._normalize(_ratio);
-    this._upperBound = Math.floor(this._ratio * 4294967295);
-  }
-  __name(TraceIdRatioBasedSampler3, "TraceIdRatioBasedSampler");
-  TraceIdRatioBasedSampler3.prototype.shouldSample = function(context3, traceId) {
-    return {
-      decision: isValidTraceId(traceId) && this._accumulate(traceId) < this._upperBound ? SamplingDecision2.RECORD_AND_SAMPLED : SamplingDecision2.NOT_RECORD
-    };
-  };
-  TraceIdRatioBasedSampler3.prototype.toString = function() {
-    return "TraceIdRatioBased{" + this._ratio + "}";
-  };
-  TraceIdRatioBasedSampler3.prototype._normalize = function(ratio) {
-    if (typeof ratio !== "number" || isNaN(ratio))
-      return 0;
-    return ratio >= 1 ? 1 : ratio <= 0 ? 0 : ratio;
-  };
-  TraceIdRatioBasedSampler3.prototype._accumulate = function(traceId) {
-    var accumulation = 0;
-    for (var i = 0; i < traceId.length / 8; i++) {
-      var pos = i * 8;
-      var part = parseInt(traceId.slice(pos, pos + 8), 16);
-      accumulation = (accumulation ^ part) >>> 0;
-    }
-    return accumulation;
-  };
-  return TraceIdRatioBasedSampler3;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/config.js
-var env = getEnv();
-var FALLBACK_OTEL_TRACES_SAMPLER = TracesSamplerValues.AlwaysOn;
-var DEFAULT_RATIO = 1;
-function loadDefaultConfig() {
-  return {
-    sampler: buildSamplerFromEnv(env),
-    forceFlushTimeoutMillis: 3e4,
-    generalLimits: {
-      attributeValueLengthLimit: getEnv().OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT,
-      attributeCountLimit: getEnv().OTEL_ATTRIBUTE_COUNT_LIMIT
-    },
-    spanLimits: {
-      attributeValueLengthLimit: getEnv().OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT,
-      attributeCountLimit: getEnv().OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT,
-      linkCountLimit: getEnv().OTEL_SPAN_LINK_COUNT_LIMIT,
-      eventCountLimit: getEnv().OTEL_SPAN_EVENT_COUNT_LIMIT
-    }
-  };
-}
-__name(loadDefaultConfig, "loadDefaultConfig");
-function buildSamplerFromEnv(environment) {
-  if (environment === void 0) {
-    environment = getEnv();
-  }
-  switch (environment.OTEL_TRACES_SAMPLER) {
-    case TracesSamplerValues.AlwaysOn:
-      return new AlwaysOnSampler2();
-    case TracesSamplerValues.AlwaysOff:
-      return new AlwaysOffSampler2();
-    case TracesSamplerValues.ParentBasedAlwaysOn:
-      return new ParentBasedSampler2({
-        root: new AlwaysOnSampler2()
-      });
-    case TracesSamplerValues.ParentBasedAlwaysOff:
-      return new ParentBasedSampler2({
-        root: new AlwaysOffSampler2()
-      });
-    case TracesSamplerValues.TraceIdRatio:
-      return new TraceIdRatioBasedSampler2(getSamplerProbabilityFromEnv(environment));
-    case TracesSamplerValues.ParentBasedTraceIdRatio:
-      return new ParentBasedSampler2({
-        root: new TraceIdRatioBasedSampler2(getSamplerProbabilityFromEnv(environment))
-      });
-    default:
-      diag2.error('OTEL_TRACES_SAMPLER value "' + environment.OTEL_TRACES_SAMPLER + " invalid, defaulting to " + FALLBACK_OTEL_TRACES_SAMPLER + '".');
-      return new AlwaysOnSampler2();
-  }
-}
-__name(buildSamplerFromEnv, "buildSamplerFromEnv");
-function getSamplerProbabilityFromEnv(environment) {
-  if (environment.OTEL_TRACES_SAMPLER_ARG === void 0 || environment.OTEL_TRACES_SAMPLER_ARG === "") {
-    diag2.error("OTEL_TRACES_SAMPLER_ARG is blank, defaulting to " + DEFAULT_RATIO + ".");
-    return DEFAULT_RATIO;
-  }
-  var probability = Number(environment.OTEL_TRACES_SAMPLER_ARG);
-  if (isNaN(probability)) {
-    diag2.error("OTEL_TRACES_SAMPLER_ARG=" + environment.OTEL_TRACES_SAMPLER_ARG + " was given, but it is invalid, defaulting to " + DEFAULT_RATIO + ".");
-    return DEFAULT_RATIO;
-  }
-  if (probability < 0 || probability > 1) {
-    diag2.error("OTEL_TRACES_SAMPLER_ARG=" + environment.OTEL_TRACES_SAMPLER_ARG + " was given, but it is out of range ([0..1]), defaulting to " + DEFAULT_RATIO + ".");
-    return DEFAULT_RATIO;
-  }
-  return probability;
-}
-__name(getSamplerProbabilityFromEnv, "getSamplerProbabilityFromEnv");
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/utility.js
-function mergeConfig(userConfig) {
-  var perInstanceDefaults = {
-    sampler: buildSamplerFromEnv()
-  };
-  var DEFAULT_CONFIG = loadDefaultConfig();
-  var target = Object.assign({}, DEFAULT_CONFIG, perInstanceDefaults, userConfig);
-  target.generalLimits = Object.assign({}, DEFAULT_CONFIG.generalLimits, userConfig.generalLimits || {});
-  target.spanLimits = Object.assign({}, DEFAULT_CONFIG.spanLimits, userConfig.spanLimits || {});
-  return target;
-}
-__name(mergeConfig, "mergeConfig");
-function reconfigureLimits(userConfig) {
-  var _a3, _b2, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-  var spanLimits = Object.assign({}, userConfig.spanLimits);
-  var parsedEnvConfig = getEnvWithoutDefaults();
-  spanLimits.attributeCountLimit = (_f = (_e = (_d = (_b2 = (_a3 = userConfig.spanLimits) === null || _a3 === void 0 ? void 0 : _a3.attributeCountLimit) !== null && _b2 !== void 0 ? _b2 : (_c = userConfig.generalLimits) === null || _c === void 0 ? void 0 : _c.attributeCountLimit) !== null && _d !== void 0 ? _d : parsedEnvConfig.OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT) !== null && _e !== void 0 ? _e : parsedEnvConfig.OTEL_ATTRIBUTE_COUNT_LIMIT) !== null && _f !== void 0 ? _f : DEFAULT_ATTRIBUTE_COUNT_LIMIT;
-  spanLimits.attributeValueLengthLimit = (_m = (_l = (_k = (_h = (_g = userConfig.spanLimits) === null || _g === void 0 ? void 0 : _g.attributeValueLengthLimit) !== null && _h !== void 0 ? _h : (_j = userConfig.generalLimits) === null || _j === void 0 ? void 0 : _j.attributeValueLengthLimit) !== null && _k !== void 0 ? _k : parsedEnvConfig.OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT) !== null && _l !== void 0 ? _l : parsedEnvConfig.OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT) !== null && _m !== void 0 ? _m : DEFAULT_ATTRIBUTE_VALUE_LENGTH_LIMIT;
-  return Object.assign({}, userConfig, { spanLimits });
-}
-__name(reconfigureLimits, "reconfigureLimits");
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/export/BatchSpanProcessorBase.js
-var BatchSpanProcessorBase = function() {
-  function BatchSpanProcessorBase2(_exporter, config2) {
-    this._exporter = _exporter;
-    this._finishedSpans = [];
-    var env2 = getEnv();
-    this._maxExportBatchSize = typeof (config2 === null || config2 === void 0 ? void 0 : config2.maxExportBatchSize) === "number" ? config2.maxExportBatchSize : env2.OTEL_BSP_MAX_EXPORT_BATCH_SIZE;
-    this._maxQueueSize = typeof (config2 === null || config2 === void 0 ? void 0 : config2.maxQueueSize) === "number" ? config2.maxQueueSize : env2.OTEL_BSP_MAX_QUEUE_SIZE;
-    this._scheduledDelayMillis = typeof (config2 === null || config2 === void 0 ? void 0 : config2.scheduledDelayMillis) === "number" ? config2.scheduledDelayMillis : env2.OTEL_BSP_SCHEDULE_DELAY;
-    this._exportTimeoutMillis = typeof (config2 === null || config2 === void 0 ? void 0 : config2.exportTimeoutMillis) === "number" ? config2.exportTimeoutMillis : env2.OTEL_BSP_EXPORT_TIMEOUT;
-    this._shutdownOnce = new BindOnceFuture(this._shutdown, this);
-  }
-  __name(BatchSpanProcessorBase2, "BatchSpanProcessorBase");
-  BatchSpanProcessorBase2.prototype.forceFlush = function() {
-    if (this._shutdownOnce.isCalled) {
-      return this._shutdownOnce.promise;
-    }
-    return this._flushAll();
-  };
-  BatchSpanProcessorBase2.prototype.onStart = function(_span, _parentContext) {
-  };
-  BatchSpanProcessorBase2.prototype.onEnd = function(span) {
-    if (this._shutdownOnce.isCalled) {
-      return;
-    }
-    if ((span.spanContext().traceFlags & TraceFlags.SAMPLED) === 0) {
-      return;
-    }
-    this._addToBuffer(span);
-  };
-  BatchSpanProcessorBase2.prototype.shutdown = function() {
-    return this._shutdownOnce.call();
-  };
-  BatchSpanProcessorBase2.prototype._shutdown = function() {
-    var _this = this;
-    return Promise.resolve().then(function() {
-      return _this.onShutdown();
-    }).then(function() {
-      return _this._flushAll();
-    }).then(function() {
-      return _this._exporter.shutdown();
-    });
-  };
-  BatchSpanProcessorBase2.prototype._addToBuffer = function(span) {
-    if (this._finishedSpans.length >= this._maxQueueSize) {
-      return;
-    }
-    this._finishedSpans.push(span);
-    this._maybeStartTimer();
-  };
-  BatchSpanProcessorBase2.prototype._flushAll = function() {
-    var _this = this;
-    return new Promise(function(resolve, reject) {
-      var promises = [];
-      var count2 = Math.ceil(_this._finishedSpans.length / _this._maxExportBatchSize);
-      for (var i = 0, j = count2; i < j; i++) {
-        promises.push(_this._flushOneBatch());
-      }
-      Promise.all(promises).then(function() {
-        resolve();
-      }).catch(reject);
-    });
-  };
-  BatchSpanProcessorBase2.prototype._flushOneBatch = function() {
-    var _this = this;
-    this._clearTimer();
-    if (this._finishedSpans.length === 0) {
-      return Promise.resolve();
-    }
-    return new Promise(function(resolve, reject) {
-      var timer = setTimeout(function() {
-        reject(new Error("Timeout"));
-      }, _this._exportTimeoutMillis);
-      context2.with(suppressTracing(context2.active()), function() {
-        _this._exporter.export(_this._finishedSpans.splice(0, _this._maxExportBatchSize), function(result) {
-          var _a3;
-          clearTimeout(timer);
-          if (result.code === ExportResultCode.SUCCESS) {
-            resolve();
-          } else {
-            reject((_a3 = result.error) !== null && _a3 !== void 0 ? _a3 : new Error("BatchSpanProcessor: span export failed"));
-          }
-        });
-      });
-    });
-  };
-  BatchSpanProcessorBase2.prototype._maybeStartTimer = function() {
-    var _this = this;
-    if (this._timer !== void 0)
-      return;
-    this._timer = setTimeout(function() {
-      _this._flushOneBatch().then(function() {
-        if (_this._finishedSpans.length > 0) {
-          _this._clearTimer();
-          _this._maybeStartTimer();
-        }
-      }).catch(function(e) {
-        globalErrorHandler(e);
-      });
-    }, this._scheduledDelayMillis);
-    unrefTimer(this._timer);
-  };
-  BatchSpanProcessorBase2.prototype._clearTimer = function() {
-    if (this._timer !== void 0) {
-      clearTimeout(this._timer);
-      this._timer = void 0;
-    }
-  };
-  return BatchSpanProcessorBase2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/platform/node/export/BatchSpanProcessor.js
-var __extends = function() {
-  var extendStatics = /* @__PURE__ */ __name(function(d, b) {
-    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-      d2.__proto__ = b2;
-    } || function(d2, b2) {
-      for (var p in b2)
-        if (Object.prototype.hasOwnProperty.call(b2, p))
-          d2[p] = b2[p];
-    };
-    return extendStatics(d, b);
-  }, "extendStatics");
-  return function(d, b) {
-    if (typeof b !== "function" && b !== null)
-      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    __name(__, "__");
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-var BatchSpanProcessor = function(_super) {
-  __extends(BatchSpanProcessor2, _super);
-  function BatchSpanProcessor2() {
-    return _super !== null && _super.apply(this, arguments) || this;
-  }
-  __name(BatchSpanProcessor2, "BatchSpanProcessor");
-  BatchSpanProcessor2.prototype.onShutdown = function() {
-  };
-  return BatchSpanProcessor2;
-}(BatchSpanProcessorBase);
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/platform/node/RandomIdGenerator.js
-var SPAN_ID_BYTES2 = 8;
-var TRACE_ID_BYTES2 = 16;
-var RandomIdGenerator2 = function() {
-  function RandomIdGenerator3() {
-    this.generateTraceId = getIdGenerator2(TRACE_ID_BYTES2);
-    this.generateSpanId = getIdGenerator2(SPAN_ID_BYTES2);
-  }
-  __name(RandomIdGenerator3, "RandomIdGenerator");
-  return RandomIdGenerator3;
-}();
-var SHARED_BUFFER2 = Buffer.allocUnsafe(TRACE_ID_BYTES2);
-function getIdGenerator2(bytes) {
-  return /* @__PURE__ */ __name(function generateId() {
-    for (var i = 0; i < bytes / 4; i++) {
-      SHARED_BUFFER2.writeUInt32BE(Math.random() * Math.pow(2, 32) >>> 0, i * 4);
-    }
-    for (var i = 0; i < bytes; i++) {
-      if (SHARED_BUFFER2[i] > 0) {
-        break;
-      } else if (i === bytes - 1) {
-        SHARED_BUFFER2[bytes - 1] = 1;
-      }
-    }
-    return SHARED_BUFFER2.toString("hex", 0, bytes);
-  }, "generateId");
-}
-__name(getIdGenerator2, "getIdGenerator");
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/Tracer.js
-var Tracer = function() {
-  function Tracer3(instrumentationLibrary, config2, _tracerProvider) {
-    this._tracerProvider = _tracerProvider;
-    var localConfig = mergeConfig(config2);
-    this._sampler = localConfig.sampler;
-    this._generalLimits = localConfig.generalLimits;
-    this._spanLimits = localConfig.spanLimits;
-    this._idGenerator = config2.idGenerator || new RandomIdGenerator2();
-    this.resource = _tracerProvider.resource;
-    this.instrumentationLibrary = instrumentationLibrary;
-  }
-  __name(Tracer3, "Tracer");
-  Tracer3.prototype.startSpan = function(name, options, context3) {
-    var _a3, _b2;
-    if (options === void 0) {
-      options = {};
-    }
-    if (context3 === void 0) {
-      context3 = context2.active();
-    }
-    if (options.root) {
-      context3 = trace.deleteSpan(context3);
-    }
-    var parentSpan = trace.getSpan(context3);
-    var clock;
-    if (parentSpan) {
-      clock = parentSpan["_clock"];
-    }
-    if (!clock) {
-      clock = new AnchoredClock(Date, otperformance);
-      if (parentSpan) {
-        parentSpan["_clock"] = clock;
-      }
-    }
-    if (isTracingSuppressed(context3)) {
-      diag2.debug("Instrumentation suppressed, returning Noop Span");
-      var nonRecordingSpan = trace.wrapSpanContext(INVALID_SPAN_CONTEXT);
-      nonRecordingSpan["_clock"] = clock;
-      return nonRecordingSpan;
-    }
-    var parentSpanContext = parentSpan === null || parentSpan === void 0 ? void 0 : parentSpan.spanContext();
-    var spanId = this._idGenerator.generateSpanId();
-    var traceId;
-    var traceState;
-    var parentSpanId;
-    if (!parentSpanContext || !trace.isSpanContextValid(parentSpanContext)) {
-      traceId = this._idGenerator.generateTraceId();
-    } else {
-      traceId = parentSpanContext.traceId;
-      traceState = parentSpanContext.traceState;
-      parentSpanId = parentSpanContext.spanId;
-    }
-    var spanKind = (_a3 = options.kind) !== null && _a3 !== void 0 ? _a3 : SpanKind.INTERNAL;
-    var links = ((_b2 = options.links) !== null && _b2 !== void 0 ? _b2 : []).map(function(link) {
-      return {
-        context: link.context,
-        attributes: sanitizeAttributes(link.attributes)
-      };
-    });
-    var attributes = sanitizeAttributes(options.attributes);
-    var samplingResult = this._sampler.shouldSample(context3, traceId, name, spanKind, attributes, links);
-    var traceFlags = samplingResult.decision === SamplingDecision.RECORD_AND_SAMPLED ? TraceFlags.SAMPLED : TraceFlags.NONE;
-    var spanContext = { traceId, spanId, traceFlags, traceState };
-    if (samplingResult.decision === SamplingDecision.NOT_RECORD) {
-      diag2.debug("Recording is off, propagating context in a non-recording span");
-      var nonRecordingSpan = trace.wrapSpanContext(spanContext);
-      nonRecordingSpan["_clock"] = clock;
-      return nonRecordingSpan;
-    }
-    var span = new Span(this, context3, name, spanContext, spanKind, parentSpanId, links, options.startTime, clock);
-    var initAttributes = sanitizeAttributes(Object.assign(attributes, samplingResult.attributes));
-    span.setAttributes(initAttributes);
-    return span;
-  };
-  Tracer3.prototype.startActiveSpan = function(name, arg2, arg3, arg4) {
-    var opts;
-    var ctx;
-    var fn;
-    if (arguments.length < 2) {
-      return;
-    } else if (arguments.length === 2) {
-      fn = arg2;
-    } else if (arguments.length === 3) {
-      opts = arg2;
-      fn = arg3;
-    } else {
-      opts = arg2;
-      ctx = arg3;
-      fn = arg4;
-    }
-    var parentContext = ctx !== null && ctx !== void 0 ? ctx : context2.active();
-    var span = this.startSpan(name, opts, parentContext);
-    var contextWithSpanSet = trace.setSpan(parentContext, span);
-    return context2.with(contextWithSpanSet, fn, void 0, span);
-  };
-  Tracer3.prototype.getGeneralLimits = function() {
-    return this._generalLimits;
-  };
-  Tracer3.prototype.getSpanLimits = function() {
-    return this._spanLimits;
-  };
-  Tracer3.prototype.getActiveSpanProcessor = function() {
-    return this._tracerProvider.getActiveSpanProcessor();
-  };
-  return Tracer3;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+resources@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/resources/build/esm/platform/node/default-service-name.js
-function defaultServiceName() {
-  return "unknown_service:" + process.argv0;
-}
-__name(defaultServiceName, "defaultServiceName");
-
-// ../../node_modules/.pnpm/@opentelemetry+resources@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/resources/build/esm/platform/node/HostDetector.js
-var import_os2 = require("os");
-var __awaiter = function(thisArg, _arguments, P3, generator) {
-  function adopt(value) {
-    return value instanceof P3 ? value : new P3(function(resolve) {
-      resolve(value);
-    });
-  }
-  __name(adopt, "adopt");
-  return new (P3 || (P3 = Promise))(function(resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    __name(fulfilled, "fulfilled");
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    __name(rejected, "rejected");
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-    __name(step, "step");
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-var __generator = function(thisArg, body) {
-  var _ = { label: 0, sent: function() {
-    if (t[0] & 1)
-      throw t[1];
-    return t[1];
-  }, trys: [], ops: [] }, f, y, t, g;
-  return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
-    return this;
-  }), g;
-  function verb(n) {
-    return function(v) {
-      return step([n, v]);
-    };
-  }
-  __name(verb, "verb");
-  function step(op) {
-    if (f)
-      throw new TypeError("Generator is already executing.");
-    while (_)
-      try {
-        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
-          return t;
-        if (y = 0, t)
-          op = [op[0] & 2, t.value];
-        switch (op[0]) {
-          case 0:
-          case 1:
-            t = op;
-            break;
-          case 4:
-            _.label++;
-            return { value: op[1], done: false };
-          case 5:
-            _.label++;
-            y = op[1];
-            op = [0];
-            continue;
-          case 7:
-            op = _.ops.pop();
-            _.trys.pop();
-            continue;
-          default:
-            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-              _ = 0;
-              continue;
-            }
-            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-              _.label = op[1];
-              break;
-            }
-            if (op[0] === 6 && _.label < t[1]) {
-              _.label = t[1];
-              t = op;
-              break;
-            }
-            if (t && _.label < t[2]) {
-              _.label = t[2];
-              _.ops.push(op);
-              break;
-            }
-            if (t[2])
-              _.ops.pop();
-            _.trys.pop();
-            continue;
-        }
-        op = body.call(thisArg, _);
-      } catch (e) {
-        op = [6, e];
-        y = 0;
-      } finally {
-        f = t = 0;
-      }
-    if (op[0] & 5)
-      throw op[1];
-    return { value: op[0] ? op[1] : void 0, done: true };
-  }
-  __name(step, "step");
-};
-var HostDetector = function() {
-  function HostDetector2() {
-  }
-  __name(HostDetector2, "HostDetector");
-  HostDetector2.prototype.detect = function(_config) {
-    return __awaiter(this, void 0, void 0, function() {
-      var attributes;
-      var _a3;
-      return __generator(this, function(_b2) {
-        attributes = (_a3 = {}, _a3[SemanticResourceAttributes.HOST_NAME] = (0, import_os2.hostname)(), _a3[SemanticResourceAttributes.HOST_ARCH] = this._normalizeArch((0, import_os2.arch)()), _a3);
-        return [2, new Resource(attributes)];
-      });
-    });
-  };
-  HostDetector2.prototype._normalizeArch = function(nodeArchString) {
-    switch (nodeArchString) {
-      case "arm":
-        return "arm32";
-      case "ppc":
-        return "ppc32";
-      case "x64":
-        return "amd64";
-      default:
-        return nodeArchString;
-    }
-  };
-  return HostDetector2;
-}();
-var hostDetector = new HostDetector();
-
-// ../../node_modules/.pnpm/@opentelemetry+resources@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/resources/build/esm/platform/node/OSDetector.js
-var import_os3 = require("os");
-var __awaiter2 = function(thisArg, _arguments, P3, generator) {
-  function adopt(value) {
-    return value instanceof P3 ? value : new P3(function(resolve) {
-      resolve(value);
-    });
-  }
-  __name(adopt, "adopt");
-  return new (P3 || (P3 = Promise))(function(resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    __name(fulfilled, "fulfilled");
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    __name(rejected, "rejected");
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-    __name(step, "step");
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-var __generator2 = function(thisArg, body) {
-  var _ = { label: 0, sent: function() {
-    if (t[0] & 1)
-      throw t[1];
-    return t[1];
-  }, trys: [], ops: [] }, f, y, t, g;
-  return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
-    return this;
-  }), g;
-  function verb(n) {
-    return function(v) {
-      return step([n, v]);
-    };
-  }
-  __name(verb, "verb");
-  function step(op) {
-    if (f)
-      throw new TypeError("Generator is already executing.");
-    while (_)
-      try {
-        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
-          return t;
-        if (y = 0, t)
-          op = [op[0] & 2, t.value];
-        switch (op[0]) {
-          case 0:
-          case 1:
-            t = op;
-            break;
-          case 4:
-            _.label++;
-            return { value: op[1], done: false };
-          case 5:
-            _.label++;
-            y = op[1];
-            op = [0];
-            continue;
-          case 7:
-            op = _.ops.pop();
-            _.trys.pop();
-            continue;
-          default:
-            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-              _ = 0;
-              continue;
-            }
-            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-              _.label = op[1];
-              break;
-            }
-            if (op[0] === 6 && _.label < t[1]) {
-              _.label = t[1];
-              t = op;
-              break;
-            }
-            if (t && _.label < t[2]) {
-              _.label = t[2];
-              _.ops.push(op);
-              break;
-            }
-            if (t[2])
-              _.ops.pop();
-            _.trys.pop();
-            continue;
-        }
-        op = body.call(thisArg, _);
-      } catch (e) {
-        op = [6, e];
-        y = 0;
-      } finally {
-        f = t = 0;
-      }
-    if (op[0] & 5)
-      throw op[1];
-    return { value: op[0] ? op[1] : void 0, done: true };
-  }
-  __name(step, "step");
-};
-var OSDetector = function() {
-  function OSDetector2() {
-  }
-  __name(OSDetector2, "OSDetector");
-  OSDetector2.prototype.detect = function(_config) {
-    return __awaiter2(this, void 0, void 0, function() {
-      var attributes;
-      var _a3;
-      return __generator2(this, function(_b2) {
-        attributes = (_a3 = {}, _a3[SemanticResourceAttributes.OS_TYPE] = this._normalizeType((0, import_os3.platform)()), _a3[SemanticResourceAttributes.OS_VERSION] = (0, import_os3.release)(), _a3);
-        return [2, new Resource(attributes)];
-      });
-    });
-  };
-  OSDetector2.prototype._normalizeType = function(nodePlatform) {
-    switch (nodePlatform) {
-      case "sunos":
-        return "solaris";
-      case "win32":
-        return "windows";
-      default:
-        return nodePlatform;
-    }
-  };
-  return OSDetector2;
-}();
-var osDetector = new OSDetector();
-
-// ../../node_modules/.pnpm/@opentelemetry+resources@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/resources/build/esm/Resource.js
-var Resource = function() {
-  function Resource2(attributes) {
-    this.attributes = attributes;
-  }
-  __name(Resource2, "Resource");
-  Resource2.empty = function() {
-    return Resource2.EMPTY;
-  };
-  Resource2.default = function() {
-    var _a3;
-    return new Resource2((_a3 = {}, _a3[SemanticResourceAttributes.SERVICE_NAME] = defaultServiceName(), _a3[SemanticResourceAttributes.TELEMETRY_SDK_LANGUAGE] = SDK_INFO[SemanticResourceAttributes.TELEMETRY_SDK_LANGUAGE], _a3[SemanticResourceAttributes.TELEMETRY_SDK_NAME] = SDK_INFO[SemanticResourceAttributes.TELEMETRY_SDK_NAME], _a3[SemanticResourceAttributes.TELEMETRY_SDK_VERSION] = SDK_INFO[SemanticResourceAttributes.TELEMETRY_SDK_VERSION], _a3));
-  };
-  Resource2.prototype.merge = function(other) {
-    if (!other || !Object.keys(other.attributes).length)
-      return this;
-    var mergedAttributes = Object.assign({}, this.attributes, other.attributes);
-    return new Resource2(mergedAttributes);
-  };
-  Resource2.EMPTY = new Resource2({});
-  return Resource2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+resources@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/resources/build/esm/detectors/BrowserDetector.js
-var __assign = function() {
-  __assign = Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-      s = arguments[i];
-      for (var p in s)
-        if (Object.prototype.hasOwnProperty.call(s, p))
-          t[p] = s[p];
-    }
-    return t;
-  };
-  return __assign.apply(this, arguments);
-};
-var __awaiter3 = function(thisArg, _arguments, P3, generator) {
-  function adopt(value) {
-    return value instanceof P3 ? value : new P3(function(resolve) {
-      resolve(value);
-    });
-  }
-  __name(adopt, "adopt");
-  return new (P3 || (P3 = Promise))(function(resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    __name(fulfilled, "fulfilled");
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    __name(rejected, "rejected");
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-    __name(step, "step");
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-var __generator3 = function(thisArg, body) {
-  var _ = { label: 0, sent: function() {
-    if (t[0] & 1)
-      throw t[1];
-    return t[1];
-  }, trys: [], ops: [] }, f, y, t, g;
-  return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
-    return this;
-  }), g;
-  function verb(n) {
-    return function(v) {
-      return step([n, v]);
-    };
-  }
-  __name(verb, "verb");
-  function step(op) {
-    if (f)
-      throw new TypeError("Generator is already executing.");
-    while (_)
-      try {
-        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
-          return t;
-        if (y = 0, t)
-          op = [op[0] & 2, t.value];
-        switch (op[0]) {
-          case 0:
-          case 1:
-            t = op;
-            break;
-          case 4:
-            _.label++;
-            return { value: op[1], done: false };
-          case 5:
-            _.label++;
-            y = op[1];
-            op = [0];
-            continue;
-          case 7:
-            op = _.ops.pop();
-            _.trys.pop();
-            continue;
-          default:
-            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-              _ = 0;
-              continue;
-            }
-            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-              _.label = op[1];
-              break;
-            }
-            if (op[0] === 6 && _.label < t[1]) {
-              _.label = t[1];
-              t = op;
-              break;
-            }
-            if (t && _.label < t[2]) {
-              _.label = t[2];
-              _.ops.push(op);
-              break;
-            }
-            if (t[2])
-              _.ops.pop();
-            _.trys.pop();
-            continue;
-        }
-        op = body.call(thisArg, _);
-      } catch (e) {
-        op = [6, e];
-        y = 0;
-      } finally {
-        f = t = 0;
-      }
-    if (op[0] & 5)
-      throw op[1];
-    return { value: op[0] ? op[1] : void 0, done: true };
-  }
-  __name(step, "step");
-};
-var BrowserDetector = function() {
-  function BrowserDetector2() {
-  }
-  __name(BrowserDetector2, "BrowserDetector");
-  BrowserDetector2.prototype.detect = function(config2) {
-    return __awaiter3(this, void 0, void 0, function() {
-      var isBrowser, browserResource;
-      var _a3;
-      return __generator3(this, function(_b2) {
-        isBrowser = typeof navigator !== "undefined";
-        if (!isBrowser) {
-          return [2, Resource.empty()];
-        }
-        browserResource = (_a3 = {}, _a3[SemanticResourceAttributes.PROCESS_RUNTIME_NAME] = "browser", _a3[SemanticResourceAttributes.PROCESS_RUNTIME_DESCRIPTION] = "Web Browser", _a3[SemanticResourceAttributes.PROCESS_RUNTIME_VERSION] = navigator.userAgent, _a3);
-        return [2, this._getResourceAttributes(browserResource, config2)];
-      });
-    });
-  };
-  BrowserDetector2.prototype._getResourceAttributes = function(browserResource, _config) {
-    if (browserResource[SemanticResourceAttributes.PROCESS_RUNTIME_VERSION] === "") {
-      diag2.debug("BrowserDetector failed: Unable to find required browser resources. ");
-      return Resource.empty();
-    } else {
-      return new Resource(__assign({}, browserResource));
-    }
-  };
-  return BrowserDetector2;
-}();
-var browserDetector = new BrowserDetector();
-
-// ../../node_modules/.pnpm/@opentelemetry+resources@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/resources/build/esm/detectors/EnvDetector.js
-var __awaiter4 = function(thisArg, _arguments, P3, generator) {
-  function adopt(value) {
-    return value instanceof P3 ? value : new P3(function(resolve) {
-      resolve(value);
-    });
-  }
-  __name(adopt, "adopt");
-  return new (P3 || (P3 = Promise))(function(resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    __name(fulfilled, "fulfilled");
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    __name(rejected, "rejected");
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-    __name(step, "step");
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-var __generator4 = function(thisArg, body) {
-  var _ = { label: 0, sent: function() {
-    if (t[0] & 1)
-      throw t[1];
-    return t[1];
-  }, trys: [], ops: [] }, f, y, t, g;
-  return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
-    return this;
-  }), g;
-  function verb(n) {
-    return function(v) {
-      return step([n, v]);
-    };
-  }
-  __name(verb, "verb");
-  function step(op) {
-    if (f)
-      throw new TypeError("Generator is already executing.");
-    while (_)
-      try {
-        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
-          return t;
-        if (y = 0, t)
-          op = [op[0] & 2, t.value];
-        switch (op[0]) {
-          case 0:
-          case 1:
-            t = op;
-            break;
-          case 4:
-            _.label++;
-            return { value: op[1], done: false };
-          case 5:
-            _.label++;
-            y = op[1];
-            op = [0];
-            continue;
-          case 7:
-            op = _.ops.pop();
-            _.trys.pop();
-            continue;
-          default:
-            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-              _ = 0;
-              continue;
-            }
-            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-              _.label = op[1];
-              break;
-            }
-            if (op[0] === 6 && _.label < t[1]) {
-              _.label = t[1];
-              t = op;
-              break;
-            }
-            if (t && _.label < t[2]) {
-              _.label = t[2];
-              _.ops.push(op);
-              break;
-            }
-            if (t[2])
-              _.ops.pop();
-            _.trys.pop();
-            continue;
-        }
-        op = body.call(thisArg, _);
-      } catch (e) {
-        op = [6, e];
-        y = 0;
-      } finally {
-        f = t = 0;
-      }
-    if (op[0] & 5)
-      throw op[1];
-    return { value: op[0] ? op[1] : void 0, done: true };
-  }
-  __name(step, "step");
-};
-var __values4 = function(o) {
-  var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-  if (m)
-    return m.call(o);
-  if (o && typeof o.length === "number")
-    return {
-      next: function() {
-        if (o && i >= o.length)
-          o = void 0;
-        return { value: o && o[i++], done: !o };
-      }
-    };
-  throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
-var __read5 = function(o, n) {
-  var m = typeof Symbol === "function" && o[Symbol.iterator];
-  if (!m)
-    return o;
-  var i = m.call(o), r, ar = [], e;
-  try {
-    while ((n === void 0 || n-- > 0) && !(r = i.next()).done)
-      ar.push(r.value);
-  } catch (error2) {
-    e = { error: error2 };
-  } finally {
-    try {
-      if (r && !r.done && (m = i["return"]))
-        m.call(i);
-    } finally {
-      if (e)
-        throw e.error;
-    }
-  }
-  return ar;
-};
-var EnvDetector = function() {
-  function EnvDetector2() {
-    this._MAX_LENGTH = 255;
-    this._COMMA_SEPARATOR = ",";
-    this._LABEL_KEY_VALUE_SPLITTER = "=";
-    this._ERROR_MESSAGE_INVALID_CHARS = "should be a ASCII string with a length greater than 0 and not exceed " + this._MAX_LENGTH + " characters.";
-    this._ERROR_MESSAGE_INVALID_VALUE = "should be a ASCII string with a length not exceed " + this._MAX_LENGTH + " characters.";
-  }
-  __name(EnvDetector2, "EnvDetector");
-  EnvDetector2.prototype.detect = function(_config) {
-    return __awaiter4(this, void 0, void 0, function() {
-      var attributes, env2, rawAttributes, serviceName, parsedAttributes;
-      return __generator4(this, function(_a3) {
-        attributes = {};
-        env2 = getEnv();
-        rawAttributes = env2.OTEL_RESOURCE_ATTRIBUTES;
-        serviceName = env2.OTEL_SERVICE_NAME;
-        if (rawAttributes) {
-          try {
-            parsedAttributes = this._parseResourceAttributes(rawAttributes);
-            Object.assign(attributes, parsedAttributes);
-          } catch (e) {
-            diag2.debug("EnvDetector failed: " + e.message);
-          }
-        }
-        if (serviceName) {
-          attributes[SemanticResourceAttributes.SERVICE_NAME] = serviceName;
-        }
-        return [2, new Resource(attributes)];
-      });
-    });
-  };
-  EnvDetector2.prototype._parseResourceAttributes = function(rawEnvAttributes) {
-    var e_1, _a3;
-    if (!rawEnvAttributes)
-      return {};
-    var attributes = {};
-    var rawAttributes = rawEnvAttributes.split(this._COMMA_SEPARATOR, -1);
-    try {
-      for (var rawAttributes_1 = __values4(rawAttributes), rawAttributes_1_1 = rawAttributes_1.next(); !rawAttributes_1_1.done; rawAttributes_1_1 = rawAttributes_1.next()) {
-        var rawAttribute = rawAttributes_1_1.value;
-        var keyValuePair = rawAttribute.split(this._LABEL_KEY_VALUE_SPLITTER, -1);
-        if (keyValuePair.length !== 2) {
-          continue;
-        }
-        var _b2 = __read5(keyValuePair, 2), key = _b2[0], value = _b2[1];
-        key = key.trim();
-        value = value.trim().split('^"|"$').join("");
-        if (!this._isValidAndNotEmpty(key)) {
-          throw new Error("Attribute key " + this._ERROR_MESSAGE_INVALID_CHARS);
-        }
-        if (!this._isValid(value)) {
-          throw new Error("Attribute value " + this._ERROR_MESSAGE_INVALID_VALUE);
-        }
-        attributes[key] = value;
-      }
-    } catch (e_1_1) {
-      e_1 = { error: e_1_1 };
-    } finally {
-      try {
-        if (rawAttributes_1_1 && !rawAttributes_1_1.done && (_a3 = rawAttributes_1.return))
-          _a3.call(rawAttributes_1);
-      } finally {
-        if (e_1)
-          throw e_1.error;
-      }
-    }
-    return attributes;
-  };
-  EnvDetector2.prototype._isValid = function(name) {
-    return name.length <= this._MAX_LENGTH && this._isPrintableString(name);
-  };
-  EnvDetector2.prototype._isPrintableString = function(str) {
-    for (var i = 0; i < str.length; i++) {
-      var ch = str.charAt(i);
-      if (ch <= " " || ch >= "~") {
-        return false;
-      }
-    }
-    return true;
-  };
-  EnvDetector2.prototype._isValidAndNotEmpty = function(str) {
-    return str.length > 0 && this._isValid(str);
-  };
-  return EnvDetector2;
-}();
-var envDetector = new EnvDetector();
-
-// ../../node_modules/.pnpm/@opentelemetry+resources@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/resources/build/esm/detectors/ProcessDetector.js
-var __assign2 = function() {
-  __assign2 = Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-      s = arguments[i];
-      for (var p in s)
-        if (Object.prototype.hasOwnProperty.call(s, p))
-          t[p] = s[p];
-    }
-    return t;
-  };
-  return __assign2.apply(this, arguments);
-};
-var __awaiter5 = function(thisArg, _arguments, P3, generator) {
-  function adopt(value) {
-    return value instanceof P3 ? value : new P3(function(resolve) {
-      resolve(value);
-    });
-  }
-  __name(adopt, "adopt");
-  return new (P3 || (P3 = Promise))(function(resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    __name(fulfilled, "fulfilled");
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    __name(rejected, "rejected");
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-    __name(step, "step");
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-var __generator5 = function(thisArg, body) {
-  var _ = { label: 0, sent: function() {
-    if (t[0] & 1)
-      throw t[1];
-    return t[1];
-  }, trys: [], ops: [] }, f, y, t, g;
-  return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
-    return this;
-  }), g;
-  function verb(n) {
-    return function(v) {
-      return step([n, v]);
-    };
-  }
-  __name(verb, "verb");
-  function step(op) {
-    if (f)
-      throw new TypeError("Generator is already executing.");
-    while (_)
-      try {
-        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
-          return t;
-        if (y = 0, t)
-          op = [op[0] & 2, t.value];
-        switch (op[0]) {
-          case 0:
-          case 1:
-            t = op;
-            break;
-          case 4:
-            _.label++;
-            return { value: op[1], done: false };
-          case 5:
-            _.label++;
-            y = op[1];
-            op = [0];
-            continue;
-          case 7:
-            op = _.ops.pop();
-            _.trys.pop();
-            continue;
-          default:
-            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-              _ = 0;
-              continue;
-            }
-            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-              _.label = op[1];
-              break;
-            }
-            if (op[0] === 6 && _.label < t[1]) {
-              _.label = t[1];
-              t = op;
-              break;
-            }
-            if (t && _.label < t[2]) {
-              _.label = t[2];
-              _.ops.push(op);
-              break;
-            }
-            if (t[2])
-              _.ops.pop();
-            _.trys.pop();
-            continue;
-        }
-        op = body.call(thisArg, _);
-      } catch (e) {
-        op = [6, e];
-        y = 0;
-      } finally {
-        f = t = 0;
-      }
-    if (op[0] & 5)
-      throw op[1];
-    return { value: op[0] ? op[1] : void 0, done: true };
-  }
-  __name(step, "step");
-};
-var ProcessDetector = function() {
-  function ProcessDetector2() {
-  }
-  __name(ProcessDetector2, "ProcessDetector");
-  ProcessDetector2.prototype.detect = function(config2) {
-    return __awaiter5(this, void 0, void 0, function() {
-      var processResource;
-      var _a3;
-      return __generator5(this, function(_b2) {
-        if (typeof process !== "object") {
-          return [2, Resource.empty()];
-        }
-        processResource = (_a3 = {}, _a3[SemanticResourceAttributes.PROCESS_PID] = process.pid, _a3[SemanticResourceAttributes.PROCESS_EXECUTABLE_NAME] = process.title || "", _a3[SemanticResourceAttributes.PROCESS_COMMAND] = process.argv[1] || "", _a3[SemanticResourceAttributes.PROCESS_COMMAND_LINE] = process.argv.join(" ") || "", _a3[SemanticResourceAttributes.PROCESS_RUNTIME_VERSION] = process.versions.node, _a3[SemanticResourceAttributes.PROCESS_RUNTIME_NAME] = "nodejs", _a3[SemanticResourceAttributes.PROCESS_RUNTIME_DESCRIPTION] = "Node.js", _a3);
-        return [2, this._getResourceAttributes(processResource, config2)];
-      });
-    });
-  };
-  ProcessDetector2.prototype._getResourceAttributes = function(processResource, _config) {
-    if (processResource[SemanticResourceAttributes.PROCESS_EXECUTABLE_NAME] === "" || processResource[SemanticResourceAttributes.PROCESS_EXECUTABLE_PATH] === "" || processResource[SemanticResourceAttributes.PROCESS_COMMAND] === "" || processResource[SemanticResourceAttributes.PROCESS_COMMAND_LINE] === "" || processResource[SemanticResourceAttributes.PROCESS_RUNTIME_VERSION] === "") {
-      diag2.debug("ProcessDetector failed: Unable to find required process resources. ");
-      return Resource.empty();
-    } else {
-      return new Resource(__assign2({}, processResource));
-    }
-  };
-  return ProcessDetector2;
-}();
-var processDetector = new ProcessDetector();
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/MultiSpanProcessor.js
-var __values5 = function(o) {
-  var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-  if (m)
-    return m.call(o);
-  if (o && typeof o.length === "number")
-    return {
-      next: function() {
-        if (o && i >= o.length)
-          o = void 0;
-        return { value: o && o[i++], done: !o };
-      }
-    };
-  throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
-var MultiSpanProcessor = function() {
-  function MultiSpanProcessor2(_spanProcessors) {
-    this._spanProcessors = _spanProcessors;
-  }
-  __name(MultiSpanProcessor2, "MultiSpanProcessor");
-  MultiSpanProcessor2.prototype.forceFlush = function() {
-    var e_1, _a3;
-    var promises = [];
-    try {
-      for (var _b2 = __values5(this._spanProcessors), _c = _b2.next(); !_c.done; _c = _b2.next()) {
-        var spanProcessor = _c.value;
-        promises.push(spanProcessor.forceFlush());
-      }
-    } catch (e_1_1) {
-      e_1 = { error: e_1_1 };
-    } finally {
-      try {
-        if (_c && !_c.done && (_a3 = _b2.return))
-          _a3.call(_b2);
-      } finally {
-        if (e_1)
-          throw e_1.error;
-      }
-    }
-    return new Promise(function(resolve) {
-      Promise.all(promises).then(function() {
-        resolve();
-      }).catch(function(error2) {
-        globalErrorHandler(error2 || new Error("MultiSpanProcessor: forceFlush failed"));
-        resolve();
-      });
-    });
-  };
-  MultiSpanProcessor2.prototype.onStart = function(span, context3) {
-    var e_2, _a3;
-    try {
-      for (var _b2 = __values5(this._spanProcessors), _c = _b2.next(); !_c.done; _c = _b2.next()) {
-        var spanProcessor = _c.value;
-        spanProcessor.onStart(span, context3);
-      }
-    } catch (e_2_1) {
-      e_2 = { error: e_2_1 };
-    } finally {
-      try {
-        if (_c && !_c.done && (_a3 = _b2.return))
-          _a3.call(_b2);
-      } finally {
-        if (e_2)
-          throw e_2.error;
-      }
-    }
-  };
-  MultiSpanProcessor2.prototype.onEnd = function(span) {
-    var e_3, _a3;
-    try {
-      for (var _b2 = __values5(this._spanProcessors), _c = _b2.next(); !_c.done; _c = _b2.next()) {
-        var spanProcessor = _c.value;
-        spanProcessor.onEnd(span);
-      }
-    } catch (e_3_1) {
-      e_3 = { error: e_3_1 };
-    } finally {
-      try {
-        if (_c && !_c.done && (_a3 = _b2.return))
-          _a3.call(_b2);
-      } finally {
-        if (e_3)
-          throw e_3.error;
-      }
-    }
-  };
-  MultiSpanProcessor2.prototype.shutdown = function() {
-    var e_4, _a3;
-    var promises = [];
-    try {
-      for (var _b2 = __values5(this._spanProcessors), _c = _b2.next(); !_c.done; _c = _b2.next()) {
-        var spanProcessor = _c.value;
-        promises.push(spanProcessor.shutdown());
-      }
-    } catch (e_4_1) {
-      e_4 = { error: e_4_1 };
-    } finally {
-      try {
-        if (_c && !_c.done && (_a3 = _b2.return))
-          _a3.call(_b2);
-      } finally {
-        if (e_4)
-          throw e_4.error;
-      }
-    }
-    return new Promise(function(resolve, reject) {
-      Promise.all(promises).then(function() {
-        resolve();
-      }, reject);
-    });
-  };
-  return MultiSpanProcessor2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/export/NoopSpanProcessor.js
-var NoopSpanProcessor = function() {
-  function NoopSpanProcessor2() {
-  }
-  __name(NoopSpanProcessor2, "NoopSpanProcessor");
-  NoopSpanProcessor2.prototype.onStart = function(_span, _context) {
-  };
-  NoopSpanProcessor2.prototype.onEnd = function(_span) {
-  };
-  NoopSpanProcessor2.prototype.shutdown = function() {
-    return Promise.resolve();
-  };
-  NoopSpanProcessor2.prototype.forceFlush = function() {
-    return Promise.resolve();
-  };
-  return NoopSpanProcessor2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/BasicTracerProvider.js
-var ForceFlushState;
-(function(ForceFlushState2) {
-  ForceFlushState2[ForceFlushState2["resolved"] = 0] = "resolved";
-  ForceFlushState2[ForceFlushState2["timeout"] = 1] = "timeout";
-  ForceFlushState2[ForceFlushState2["error"] = 2] = "error";
-  ForceFlushState2[ForceFlushState2["unresolved"] = 3] = "unresolved";
-})(ForceFlushState || (ForceFlushState = {}));
-var BasicTracerProvider = function() {
-  function BasicTracerProvider2(config2) {
-    if (config2 === void 0) {
-      config2 = {};
-    }
-    var _a3;
-    this._registeredSpanProcessors = [];
-    this._tracers = /* @__PURE__ */ new Map();
-    var mergedConfig = merge({}, loadDefaultConfig(), reconfigureLimits(config2));
-    this.resource = (_a3 = mergedConfig.resource) !== null && _a3 !== void 0 ? _a3 : Resource.empty();
-    this.resource = Resource.default().merge(this.resource);
-    this._config = Object.assign({}, mergedConfig, {
-      resource: this.resource
-    });
-    var defaultExporter = this._buildExporterFromEnv();
-    if (defaultExporter !== void 0) {
-      var batchProcessor = new BatchSpanProcessor(defaultExporter);
-      this.activeSpanProcessor = batchProcessor;
-    } else {
-      this.activeSpanProcessor = new NoopSpanProcessor();
-    }
-  }
-  __name(BasicTracerProvider2, "BasicTracerProvider");
-  BasicTracerProvider2.prototype.getTracer = function(name, version, options) {
-    var key = name + "@" + (version || "") + ":" + ((options === null || options === void 0 ? void 0 : options.schemaUrl) || "");
-    if (!this._tracers.has(key)) {
-      this._tracers.set(key, new Tracer({ name, version, schemaUrl: options === null || options === void 0 ? void 0 : options.schemaUrl }, this._config, this));
-    }
-    return this._tracers.get(key);
-  };
-  BasicTracerProvider2.prototype.addSpanProcessor = function(spanProcessor) {
-    if (this._registeredSpanProcessors.length === 0) {
-      this.activeSpanProcessor.shutdown().catch(function(err) {
-        return diag2.error("Error while trying to shutdown current span processor", err);
-      });
-    }
-    this._registeredSpanProcessors.push(spanProcessor);
-    this.activeSpanProcessor = new MultiSpanProcessor(this._registeredSpanProcessors);
-  };
-  BasicTracerProvider2.prototype.getActiveSpanProcessor = function() {
-    return this.activeSpanProcessor;
-  };
-  BasicTracerProvider2.prototype.register = function(config2) {
-    if (config2 === void 0) {
-      config2 = {};
-    }
-    trace.setGlobalTracerProvider(this);
-    if (config2.propagator === void 0) {
-      config2.propagator = this._buildPropagatorFromEnv();
-    }
-    if (config2.contextManager) {
-      context2.setGlobalContextManager(config2.contextManager);
-    }
-    if (config2.propagator) {
-      propagation.setGlobalPropagator(config2.propagator);
-    }
-  };
-  BasicTracerProvider2.prototype.forceFlush = function() {
-    var timeout = this._config.forceFlushTimeoutMillis;
-    var promises = this._registeredSpanProcessors.map(function(spanProcessor) {
-      return new Promise(function(resolve) {
-        var state;
-        var timeoutInterval = setTimeout(function() {
-          resolve(new Error("Span processor did not completed within timeout period of " + timeout + " ms"));
-          state = ForceFlushState.timeout;
-        }, timeout);
-        spanProcessor.forceFlush().then(function() {
-          clearTimeout(timeoutInterval);
-          if (state !== ForceFlushState.timeout) {
-            state = ForceFlushState.resolved;
-            resolve(state);
-          }
-        }).catch(function(error2) {
-          clearTimeout(timeoutInterval);
-          state = ForceFlushState.error;
-          resolve(error2);
-        });
-      });
-    });
-    return new Promise(function(resolve, reject) {
-      Promise.all(promises).then(function(results) {
-        var errors = results.filter(function(result) {
-          return result !== ForceFlushState.resolved;
-        });
-        if (errors.length > 0) {
-          reject(errors);
-        } else {
-          resolve();
-        }
-      }).catch(function(error2) {
-        return reject([error2]);
-      });
-    });
-  };
-  BasicTracerProvider2.prototype.shutdown = function() {
-    return this.activeSpanProcessor.shutdown();
-  };
-  BasicTracerProvider2.prototype._getPropagator = function(name) {
-    var _a3;
-    return (_a3 = this.constructor._registeredPropagators.get(name)) === null || _a3 === void 0 ? void 0 : _a3();
-  };
-  BasicTracerProvider2.prototype._getSpanExporter = function(name) {
-    var _a3;
-    return (_a3 = this.constructor._registeredExporters.get(name)) === null || _a3 === void 0 ? void 0 : _a3();
-  };
-  BasicTracerProvider2.prototype._buildPropagatorFromEnv = function() {
-    var _this = this;
-    var uniquePropagatorNames = Array.from(new Set(getEnv().OTEL_PROPAGATORS));
-    var propagators = uniquePropagatorNames.map(function(name) {
-      var propagator = _this._getPropagator(name);
-      if (!propagator) {
-        diag2.warn('Propagator "' + name + '" requested through environment variable is unavailable.');
-      }
-      return propagator;
-    });
-    var validPropagators = propagators.reduce(function(list, item) {
-      if (item) {
-        list.push(item);
-      }
-      return list;
-    }, []);
-    if (validPropagators.length === 0) {
-      return;
-    } else if (uniquePropagatorNames.length === 1) {
-      return validPropagators[0];
-    } else {
-      return new CompositePropagator({
-        propagators: validPropagators
-      });
-    }
-  };
-  BasicTracerProvider2.prototype._buildExporterFromEnv = function() {
-    var exporterName = getEnv().OTEL_TRACES_EXPORTER;
-    if (exporterName === "none")
-      return;
-    var exporter = this._getSpanExporter(exporterName);
-    if (!exporter) {
-      diag2.error('Exporter "' + exporterName + '" requested through environment variable is unavailable.');
-    }
-    return exporter;
-  };
-  BasicTracerProvider2._registeredPropagators = /* @__PURE__ */ new Map([
-    ["tracecontext", function() {
-      return new W3CTraceContextPropagator();
-    }],
-    ["baggage", function() {
-      return new W3CBaggagePropagator();
-    }]
-  ]);
-  BasicTracerProvider2._registeredExporters = /* @__PURE__ */ new Map();
-  return BasicTracerProvider2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/export/ConsoleSpanExporter.js
-var __values6 = function(o) {
-  var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-  if (m)
-    return m.call(o);
-  if (o && typeof o.length === "number")
-    return {
-      next: function() {
-        if (o && i >= o.length)
-          o = void 0;
-        return { value: o && o[i++], done: !o };
-      }
-    };
-  throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
-var ConsoleSpanExporter = function() {
-  function ConsoleSpanExporter2() {
-  }
-  __name(ConsoleSpanExporter2, "ConsoleSpanExporter");
-  ConsoleSpanExporter2.prototype.export = function(spans, resultCallback) {
-    return this._sendSpans(spans, resultCallback);
-  };
-  ConsoleSpanExporter2.prototype.shutdown = function() {
-    this._sendSpans([]);
-    return Promise.resolve();
-  };
-  ConsoleSpanExporter2.prototype._exportInfo = function(span) {
-    return {
-      traceId: span.spanContext().traceId,
-      parentId: span.parentSpanId,
-      name: span.name,
-      id: span.spanContext().spanId,
-      kind: span.kind,
-      timestamp: hrTimeToMicroseconds(span.startTime),
-      duration: hrTimeToMicroseconds(span.duration),
-      attributes: span.attributes,
-      status: span.status,
-      events: span.events,
-      links: span.links
-    };
-  };
-  ConsoleSpanExporter2.prototype._sendSpans = function(spans, done) {
-    var e_1, _a3;
-    try {
-      for (var spans_1 = __values6(spans), spans_1_1 = spans_1.next(); !spans_1_1.done; spans_1_1 = spans_1.next()) {
-        var span = spans_1_1.value;
-        console.dir(this._exportInfo(span), { depth: 3 });
-      }
-    } catch (e_1_1) {
-      e_1 = { error: e_1_1 };
-    } finally {
-      try {
-        if (spans_1_1 && !spans_1_1.done && (_a3 = spans_1.return))
-          _a3.call(spans_1);
-      } finally {
-        if (e_1)
-          throw e_1.error;
-      }
-    }
-    if (done) {
-      return done({ code: ExportResultCode.SUCCESS });
-    }
-  };
-  return ConsoleSpanExporter2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/export/InMemorySpanExporter.js
-var __read6 = function(o, n) {
-  var m = typeof Symbol === "function" && o[Symbol.iterator];
-  if (!m)
-    return o;
-  var i = m.call(o), r, ar = [], e;
-  try {
-    while ((n === void 0 || n-- > 0) && !(r = i.next()).done)
-      ar.push(r.value);
-  } catch (error2) {
-    e = { error: error2 };
-  } finally {
-    try {
-      if (r && !r.done && (m = i["return"]))
-        m.call(i);
-    } finally {
-      if (e)
-        throw e.error;
-    }
-  }
-  return ar;
-};
-var __spreadArray4 = function(to, from, pack) {
-  if (pack || arguments.length === 2)
-    for (var i = 0, l = from.length, ar; i < l; i++) {
-      if (ar || !(i in from)) {
-        if (!ar)
-          ar = Array.prototype.slice.call(from, 0, i);
-        ar[i] = from[i];
-      }
-    }
-  return to.concat(ar || Array.prototype.slice.call(from));
-};
-var InMemorySpanExporter = function() {
-  function InMemorySpanExporter2() {
-    this._finishedSpans = [];
-    this._stopped = false;
-  }
-  __name(InMemorySpanExporter2, "InMemorySpanExporter");
-  InMemorySpanExporter2.prototype.export = function(spans, resultCallback) {
-    var _a3;
-    if (this._stopped)
-      return resultCallback({
-        code: ExportResultCode.FAILED,
-        error: new Error("Exporter has been stopped")
-      });
-    (_a3 = this._finishedSpans).push.apply(_a3, __spreadArray4([], __read6(spans), false));
-    setTimeout(function() {
-      return resultCallback({ code: ExportResultCode.SUCCESS });
-    }, 0);
-  };
-  InMemorySpanExporter2.prototype.shutdown = function() {
-    this._stopped = true;
-    this._finishedSpans = [];
-    return Promise.resolve();
-  };
-  InMemorySpanExporter2.prototype.reset = function() {
-    this._finishedSpans = [];
-  };
-  InMemorySpanExporter2.prototype.getFinishedSpans = function() {
-    return this._finishedSpans;
-  };
-  return InMemorySpanExporter2;
-}();
-
-// ../../node_modules/.pnpm/@opentelemetry+sdk-trace-base@1.7.0_@opentelemetry+api@1.2.0/node_modules/@opentelemetry/sdk-trace-base/build/esm/export/SimpleSpanProcessor.js
-var SimpleSpanProcessor = function() {
-  function SimpleSpanProcessor2(_exporter) {
-    this._exporter = _exporter;
-    this._shutdownOnce = new BindOnceFuture(this._shutdown, this);
-  }
-  __name(SimpleSpanProcessor2, "SimpleSpanProcessor");
-  SimpleSpanProcessor2.prototype.forceFlush = function() {
-    return Promise.resolve();
-  };
-  SimpleSpanProcessor2.prototype.onStart = function(_span, _parentContext) {
-  };
-  SimpleSpanProcessor2.prototype.onEnd = function(span) {
-    var _this = this;
-    if (this._shutdownOnce.isCalled) {
-      return;
-    }
-    if ((span.spanContext().traceFlags & TraceFlags.SAMPLED) === 0) {
-      return;
-    }
-    context2.with(suppressTracing(context2.active()), function() {
-      _this._exporter.export([span], function(result) {
-        var _a3;
-        if (result.code !== ExportResultCode.SUCCESS) {
-          globalErrorHandler((_a3 = result.error) !== null && _a3 !== void 0 ? _a3 : new Error("SimpleSpanProcessor: span export failed (status " + result + ")"));
-        }
-      });
-    });
-  };
-  SimpleSpanProcessor2.prototype.shutdown = function() {
-    return this._shutdownOnce.call();
-  };
-  SimpleSpanProcessor2.prototype._shutdown = function() {
-    return this._exporter.shutdown();
-  };
-  return SimpleSpanProcessor2;
-}();
-
 // ../engine-core/src/tracing/createSpan.ts
 async function createSpan(engineSpanEvent) {
   await new Promise((res) => setTimeout(res, 0));
   const tracer = trace.getTracer("prisma");
   engineSpanEvent.spans.forEach((engineSpan) => {
-    var _a3;
     const spanContext = {
       traceId: engineSpan.trace_id,
       spanId: engineSpan.span_id,
       traceFlags: TraceFlags.SAMPLED
     };
-    const links = (_a3 = engineSpan.links) == null ? void 0 : _a3.map((link) => {
+    const links = engineSpan.links?.map((link) => {
       return {
         context: {
           traceId: link.trace_id,
@@ -28176,11 +22518,11 @@ __name(createSpan, "createSpan");
 
 // ../engine-core/src/tracing/getTraceParent.ts
 function getTraceParent({
-  context: context3,
+  context: context2,
   tracingConfig
 }) {
-  const span = trace.getSpanContext(context3 != null ? context3 : context2.active());
-  if ((tracingConfig == null ? void 0 : tracingConfig.enabled) && span) {
+  const span = trace.getSpanContext(context2 ?? context.active());
+  if (tracingConfig?.enabled && span) {
     return `00-${span.traceId}-${span.spanId}-0${span.traceFlags}`;
   } else {
     return `00-10-10-00`;
@@ -28204,22 +22546,21 @@ __name(getTracingConfig, "getTracingConfig");
 
 // ../engine-core/src/tracing/runInChildSpan.ts
 async function runInChildSpan(options, cb) {
-  var _a3;
   if (options.enabled === false)
     return cb();
   const tracer = trace.getTracer("prisma");
-  const context3 = (_a3 = options.context) != null ? _a3 : context2.active();
+  const context2 = options.context ?? context.active();
   if (options.active === false) {
-    const span = tracer.startSpan(`prisma:client:${options.name}`, options, context3);
+    const span = tracer.startSpan(`prisma:client:${options.name}`, options, context2);
     try {
-      return await cb(span, context3);
+      return await cb(span, context2);
     } finally {
       span.end();
     }
   }
-  return tracer.startActiveSpan(`prisma:client:${options.name}`, options, context3, async (span) => {
+  return tracer.startActiveSpan(`prisma:client:${options.name}`, options, context2, async (span) => {
     try {
-      return await cb(span, context2.active());
+      return await cb(span, context.active());
     } finally {
       span.end();
     }
@@ -28292,8 +22633,8 @@ var Connection = class {
 __name(Connection, "Connection");
 
 // ../engine-core/src/binary/BinaryEngine.ts
-var debug4 = src_default("prisma:engine");
-var exists2 = (0, import_util4.promisify)(import_fs4.default.exists);
+var debug6 = src_default("prisma:engine");
+var exists3 = (0, import_util4.promisify)(import_fs5.default.exists);
 var logger = /* @__PURE__ */ __name((...args) => {
 }, "logger");
 var knownPlatforms = [...platforms, "native"];
@@ -28309,9 +22650,8 @@ var BinaryEngine = class extends Engine {
     generator,
     datasources,
     showColors,
-    logLevel,
     logQueries,
-    env: env2,
+    env,
     flags,
     clientVersion: clientVersion2,
     previewFeatures,
@@ -28320,71 +22660,76 @@ var BinaryEngine = class extends Engine {
     allowTriggerPanic,
     dirname: dirname2,
     activeProvider,
-    tracingConfig
+    tracingConfig,
+    logEmitter
   }) {
-    var _a3;
     super();
     this.startCount = 0;
     this.previewFeatures = [];
     this.stderrLogs = "";
-    this.handleRequestError = /* @__PURE__ */ __name(async (error2, graceful = false) => {
-      var _a3, _b2;
-      debug4({ error: error2 });
+    this.handleRequestError = /* @__PURE__ */ __name(async (error2) => {
+      debug6({ error: error2 });
       if (this.startPromise) {
         await this.startPromise;
       }
+      const isNetworkError = [
+        "ECONNRESET",
+        "ECONNREFUSED",
+        "UND_ERR_CLOSED",
+        "UND_ERR_SOCKET",
+        "UND_ERR_DESTROYED",
+        "UND_ERR_ABORTED"
+      ].includes(error2.code);
       if (error2 instanceof PrismaClientKnownRequestError) {
-        throw error2;
+        return { error: error2, shouldRetry: false };
       }
-      this.throwAsyncErrorIfExists();
-      if ((_a3 = this.currentRequestPromise) == null ? void 0 : _a3.isCanceled) {
+      try {
         this.throwAsyncErrorIfExists();
-      } else if (error2.code === "ECONNRESET" || error2.code === "ECONNREFUSED" || error2.code === "UND_ERR_CLOSED" || error2.code === "UND_ERR_SOCKET" || error2.code === "UND_ERR_DESTROYED" || error2.code === "UND_ERR_ABORTED" || error2.message.toLowerCase().includes("client is destroyed") || error2.message.toLowerCase().includes("other side closed") || error2.message.toLowerCase().includes("the client is closed")) {
-        if (this.globalKillSignalReceived && !((_b2 = this.child) == null ? void 0 : _b2.connected)) {
-          throw new PrismaClientUnknownRequestError(
-            `The Node.js process already received a ${this.globalKillSignalReceived} signal, therefore the Prisma query engine exited
-and your request can't be processed.
-You probably have some open handle that prevents your process from exiting.
-It could be an open http server or stream that didn't close yet.
-We recommend using the \`wtfnode\` package to debug open handles.`,
-            this.clientVersion
-          );
-        }
-        this.throwAsyncErrorIfExists();
-        if (this.startCount > MAX_STARTS) {
-          for (let i = 0; i < 5; i++) {
-            await new Promise((r) => setTimeout(r, 50));
-            this.throwAsyncErrorIfExists(true);
+        if (this.currentRequestPromise?.isCanceled) {
+          this.throwAsyncErrorIfExists();
+        } else if (isNetworkError) {
+          if (this.globalKillSignalReceived && !this.child?.connected) {
+            throw new PrismaClientUnknownRequestError(
+              `The Node.js process already received a ${this.globalKillSignalReceived} signal, therefore the Prisma query engine exited
+  and your request can't be processed.
+  You probably have some open handle that prevents your process from exiting.
+  It could be an open http server or stream that didn't close yet.
+  We recommend using the \`wtfnode\` package to debug open handles.`,
+              { clientVersion: this.clientVersion }
+            );
           }
-          throw new Error(`Query engine is trying to restart, but can't.
-Please look into the logs or turn on the env var DEBUG=* to debug the constantly restarting query engine.`);
+          this.throwAsyncErrorIfExists();
+          if (this.startCount > MAX_STARTS) {
+            for (let i = 0; i < 5; i++) {
+              await new Promise((r2) => setTimeout(r2, 50));
+              this.throwAsyncErrorIfExists(true);
+            }
+            throw new Error(`Query engine is trying to restart, but can't.
+  Please look into the logs or turn on the env var DEBUG=* to debug the constantly restarting query engine.`);
+          }
         }
-      }
-      if (!graceful) {
         this.throwAsyncErrorIfExists(true);
         throw error2;
+      } catch (e2) {
+        return { error: e2, shouldRetry: isNetworkError };
       }
-      return false;
     }, "handleRequestError");
     this.dirname = dirname2;
-    this.env = env2;
+    this.env = env;
     this.cwd = this.resolveCwd(cwd);
-    this.enableDebugLogs = enableDebugLogs != null ? enableDebugLogs : false;
-    this.allowTriggerPanic = allowTriggerPanic != null ? allowTriggerPanic : false;
+    this.enableDebugLogs = enableDebugLogs ?? false;
+    this.allowTriggerPanic = allowTriggerPanic ?? false;
     this.datamodelPath = datamodelPath;
-    this.prismaPath = (_a3 = process.env.PRISMA_QUERY_ENGINE_BINARY) != null ? _a3 : prismaPath;
+    this.prismaPath = process.env.PRISMA_QUERY_ENGINE_BINARY ?? prismaPath;
     this.generator = generator;
     this.datasources = datasources;
     this.tracingConfig = tracingConfig;
-    this.logEmitter = new import_events.default();
-    this.logEmitter.on("error", () => {
-    });
-    this.showColors = showColors != null ? showColors : false;
-    this.logLevel = logLevel;
-    this.logQueries = logQueries != null ? logQueries : false;
+    this.logEmitter = logEmitter;
+    this.showColors = showColors ?? false;
+    this.logQueries = logQueries ?? false;
     this.clientVersion = clientVersion2;
-    this.flags = flags != null ? flags : [];
-    this.previewFeatures = previewFeatures != null ? previewFeatures : [];
+    this.flags = flags ?? [];
+    this.previewFeatures = previewFeatures ?? [];
     this.activeProvider = activeProvider;
     this.connection = new Connection();
     initHooks();
@@ -28405,29 +22750,29 @@ Please look into the logs or turn on the env var DEBUG=* to debug the constantly
       "referentialActions",
       "microsoftSqlServer"
     ];
-    const removedFlagsUsed = this.previewFeatures.filter((e) => removedFlags.includes(e));
+    const removedFlagsUsed = this.previewFeatures.filter((e2) => removedFlags.includes(e2));
     if (removedFlagsUsed.length > 0 && !process.env.PRISMA_HIDE_PREVIEW_FLAG_WARNINGS) {
       console.log(
-        `${import_chalk3.default.blueBright("info")} The preview flags \`${removedFlagsUsed.join(
+        `${import_chalk4.default.blueBright("info")} The preview flags \`${removedFlagsUsed.join(
           "`, `"
         )}\` were removed, you can now safely remove them from your schema.prisma.`
       );
     }
-    this.previewFeatures = this.previewFeatures.filter((e) => !removedFlags.includes(e));
+    this.previewFeatures = this.previewFeatures.filter((e2) => !removedFlags.includes(e2));
     this.engineEndpoint = engineEndpoint;
     if (engineEndpoint) {
       const url = new import_url.URL(engineEndpoint);
       this.port = Number(url.port);
     }
     if (this.platform) {
-      if (!knownPlatforms.includes(this.platform) && !import_fs4.default.existsSync(this.platform)) {
+      if (!knownPlatforms.includes(this.platform) && !import_fs5.default.existsSync(this.platform)) {
         throw new PrismaClientInitializationError(
-          `Unknown ${import_chalk3.default.red("PRISMA_QUERY_ENGINE_BINARY")} ${import_chalk3.default.redBright.bold(
+          `Unknown ${import_chalk4.default.red("PRISMA_QUERY_ENGINE_BINARY")} ${import_chalk4.default.redBright.bold(
             this.platform
-          )}. Possible binaryTargets: ${import_chalk3.default.greenBright(
+          )}. Possible binaryTargets: ${import_chalk4.default.greenBright(
             knownPlatforms.join(", ")
           )} or a path to the query engine binary.
-You may have to run ${import_chalk3.default.greenBright("prisma generate")} for your changes to take effect.`,
+You may have to run ${import_chalk4.default.greenBright("prisma generate")} for your changes to take effect.`,
           this.clientVersion
         );
       }
@@ -28441,47 +22786,33 @@ You may have to run ${import_chalk3.default.greenBright("prisma generate")} for 
     this.checkForTooManyEngines();
   }
   setError(err) {
-    var _a3;
-    if (isRustError(err)) {
-      this.lastRustError = err;
-      this.logEmitter.emit(
-        "error",
-        new PrismaClientRustError({
-          clientVersion: this.clientVersion,
-          error: err
-        })
-      );
-      if (err.is_panic) {
-        this.handlePanic();
+    if (isRustErrorLog(err)) {
+      this.lastError = new PrismaClientRustError({
+        clientVersion: this.clientVersion,
+        error: err
+      });
+      if (this.lastError.isPanic()) {
+        if (this.child) {
+          this.stopPromise = killProcessAndWait(this.child);
+        }
+        if (this.currentRequestPromise?.cancel) {
+          this.currentRequestPromise.cancel();
+        }
       }
-    } else if (isRustErrorLog(err)) {
-      this.lastErrorLog = err;
-      this.logEmitter.emit(
-        "error",
-        new PrismaClientRustError({
-          clientVersion: this.clientVersion,
-          log: err
-        })
-      );
-      if (((_a3 = err.fields) == null ? void 0 : _a3.message) === "PANIC") {
-        this.handlePanic();
-      }
-    } else {
-      this.logEmitter.emit("error", err);
     }
   }
   checkForTooManyEngines() {
     if (engines.length >= 10) {
-      const runningEngines = engines.filter((e) => e.child);
+      const runningEngines = engines.filter((e2) => e2.child);
       if (runningEngines.length === 10) {
         console.warn(
-          `${import_chalk3.default.yellow("warn(prisma-client)")} There are already 10 instances of Prisma Client actively running.`
+          `${import_chalk4.default.yellow("warn(prisma-client)")} There are already 10 instances of Prisma Client actively running.`
         );
       }
     }
   }
   resolveCwd(cwd) {
-    if (cwd && import_fs4.default.existsSync(cwd) && import_fs4.default.lstatSync(cwd).isDirectory()) {
+    if (cwd && import_fs5.default.existsSync(cwd) && import_fs5.default.lstatSync(cwd).isDirectory()) {
       return cwd;
     }
     return process.cwd();
@@ -28497,8 +22828,8 @@ You may have to run ${import_chalk3.default.greenBright("prisma generate")} for 
     if (this.beforeExitListener) {
       try {
         await this.beforeExitListener();
-      } catch (e) {
-        console.error(e);
+      } catch (e2) {
+        console.error(e2);
       }
     }
   }
@@ -28509,24 +22840,14 @@ You may have to run ${import_chalk3.default.greenBright("prisma generate")} for 
     this.platformPromise = getPlatform();
     return this.platformPromise;
   }
-  getQueryEnginePath(platform3, prefix = __dirname) {
-    let queryEnginePath = import_path2.default.join(prefix, `query-engine-${platform3}`);
-    if (platform3 === "windows") {
+  getQueryEnginePath(platform2, prefix = __dirname) {
+    let queryEnginePath = import_path3.default.join(prefix, `query-engine-${platform2}`);
+    if (platform2 === "windows") {
       queryEnginePath = `${queryEnginePath}.exe`;
     }
     return queryEnginePath;
   }
-  handlePanic() {
-    var _a3;
-    if (this.child) {
-      this.stopPromise = killProcessAndWait(this.child);
-    }
-    if ((_a3 = this.currentRequestPromise) == null ? void 0 : _a3.cancel) {
-      this.currentRequestPromise.cancel();
-    }
-  }
   async resolvePrismaPath() {
-    var _a3, _b2, _c;
     const searchedLocations = [];
     let enginePath;
     if (this.prismaPath) {
@@ -28543,9 +22864,9 @@ You may have to run ${import_chalk3.default.greenBright("prisma generate")} for 
     }
     const searchLocations = [
       eval(`require('path').join(__dirname, '../../../.prisma/client')`),
-      (_c = (_b2 = (_a3 = this.generator) == null ? void 0 : _a3.output) == null ? void 0 : _b2.value) != null ? _c : eval("__dirname"),
-      import_path2.default.join(eval("__dirname"), ".."),
-      import_path2.default.dirname(this.datamodelPath),
+      this.generator?.output?.value ?? eval("__dirname"),
+      import_path3.default.join(eval("__dirname"), ".."),
+      import_path3.default.dirname(this.datamodelPath),
       this.cwd,
       "/tmp/prisma-engines"
     ];
@@ -28554,35 +22875,35 @@ You may have to run ${import_chalk3.default.greenBright("prisma generate")} for 
     }
     for (const location of searchLocations) {
       searchedLocations.push(location);
-      debug4(`Search for Query Engine in ${location}`);
+      debug6(`Search for Query Engine in ${location}`);
       enginePath = this.getQueryEnginePath(this.platform, location);
-      if (import_fs4.default.existsSync(enginePath)) {
+      if (import_fs5.default.existsSync(enginePath)) {
         return { prismaPath: enginePath, searchedLocations };
       }
     }
     enginePath = this.getQueryEnginePath(this.platform);
-    return { prismaPath: enginePath != null ? enginePath : "", searchedLocations };
+    return { prismaPath: enginePath ?? "", searchedLocations };
   }
   async getPrismaPath() {
     const { prismaPath, searchedLocations: searchedLocations2 } = await this.resolvePrismaPath();
-    const platform3 = await this.getPlatform();
-    if (!await exists2(prismaPath)) {
+    const platform2 = await this.getPlatform();
+    if (!await exists3(prismaPath)) {
       const pinnedStr = this.incorrectlyPinnedBinaryTarget ? `
-You incorrectly pinned it to ${import_chalk3.default.redBright.bold(`${this.incorrectlyPinnedBinaryTarget}`)}
+You incorrectly pinned it to ${import_chalk4.default.redBright.bold(`${this.incorrectlyPinnedBinaryTarget}`)}
 ` : "";
-      let errorText = `Query engine binary for current platform "${import_chalk3.default.bold(
-        platform3
+      let errorText = `Query engine binary for current platform "${import_chalk4.default.bold(
+        platform2
       )}" could not be found.${pinnedStr}
 This probably happens, because you built Prisma Client on a different platform.
-(Prisma Client looked in "${import_chalk3.default.underline(prismaPath)}")
+(Prisma Client looked in "${import_chalk4.default.underline(prismaPath)}")
 
 Searched Locations:
 
-${searchedLocations2.map((f) => {
-        let msg = `  ${f}`;
-        if (process.env.DEBUG === "node-engine-search-locations" && import_fs4.default.existsSync(f)) {
-          const dir = import_fs4.default.readdirSync(f);
-          msg += dir.map((d) => `    ${d}`).join("\n");
+${searchedLocations2.map((f2) => {
+        let msg = `  ${f2}`;
+        if (process.env.DEBUG === "node-engine-search-locations" && import_fs5.default.existsSync(f2)) {
+          const dir = import_fs5.default.readdirSync(f2);
+          msg += dir.map((d2) => `    ${d2}`).join("\n");
         }
         return msg;
       }).join("\n" + (process.env.DEBUG === "node-engine-search-locations" ? "\n" : ""))}
@@ -28590,7 +22911,7 @@ ${searchedLocations2.map((f) => {
       if (this.generator) {
         if (this.generator.binaryTargets.find((object) => object.value === this.platform) || this.generator.binaryTargets.find((object) => object.value === "native")) {
           errorText += `
-You already added the platform${this.generator.binaryTargets.length > 1 ? "s" : ""} ${this.generator.binaryTargets.map((t) => `"${import_chalk3.default.bold(t.value)}"`).join(", ")} to the "${import_chalk3.default.underline("generator")}" block
+You already added the platform${this.generator.binaryTargets.length > 1 ? "s" : ""} ${this.generator.binaryTargets.map((t2) => `"${import_chalk4.default.bold(t2.value)}"`).join(", ")} to the "${import_chalk4.default.underline("generator")}" block
 in the "schema.prisma" file as described in https://pris.ly/d/client-generator,
 but something went wrong. That's suboptimal.
 
@@ -28599,12 +22920,12 @@ Please create an issue at https://github.com/prisma/prisma/issues/new`;
         } else {
           errorText += `
 
-To solve this problem, add the platform "${this.platform}" to the "${import_chalk3.default.underline(
+To solve this problem, add the platform "${this.platform}" to the "${import_chalk4.default.underline(
             "binaryTargets"
-          )}" attribute in the "${import_chalk3.default.underline("generator")}" block in the "schema.prisma" file:
-${import_chalk3.default.greenBright(this.getFixedGenerator())}
+          )}" attribute in the "${import_chalk4.default.underline("generator")}" block in the "schema.prisma" file:
+${import_chalk4.default.greenBright(this.getFixedGenerator())}
 
-Then run "${import_chalk3.default.greenBright("prisma generate")}" for your changes to take effect.
+Then run "${import_chalk4.default.greenBright("prisma generate")}" for your changes to take effect.
 Read more about deploying Prisma Client: https://pris.ly/d/client-generator`;
         }
       } else {
@@ -28616,11 +22937,11 @@ Read more about deploying Prisma Client: https://pris.ly/d/client-generator
       throw new PrismaClientInitializationError(errorText, this.clientVersion);
     }
     if (this.incorrectlyPinnedBinaryTarget) {
-      console.error(`${import_chalk3.default.yellow("Warning:")} You pinned the platform ${import_chalk3.default.bold(
+      console.error(`${import_chalk4.default.yellow("Warning:")} You pinned the platform ${import_chalk4.default.bold(
         this.incorrectlyPinnedBinaryTarget
-      )}, but Prisma Client detects ${import_chalk3.default.bold(await this.getPlatform())}.
-This means you should very likely pin the platform ${import_chalk3.default.greenBright(await this.getPlatform())} instead.
-${import_chalk3.default.dim("In case we're mistaken, please report this to us \u{1F64F}.")}`);
+      )}, but Prisma Client detects ${import_chalk4.default.bold(await this.getPlatform())}.
+This means you should very likely pin the platform ${import_chalk4.default.greenBright(await this.getPlatform())} instead.
+${import_chalk4.default.dim("In case we're mistaken, please report this to us \u{1F64F}.")}`);
     }
     if (process.platform !== "win32") {
       plusX(prismaPath);
@@ -28651,10 +22972,9 @@ ${import_chalk3.default.dim("In case we're mistaken, please report this to us \u
       }
       await this.startPromise;
       if (!this.child && !this.engineEndpoint) {
-        throw new PrismaClientUnknownRequestError(
-          `Can't perform request, as the Engine has already been stopped`,
-          this.clientVersion
-        );
+        throw new PrismaClientUnknownRequestError(`Can't perform request, as the Engine has already been stopped`, {
+          clientVersion: this.clientVersion
+        });
       }
     }, "startFn");
     const spanOptions = {
@@ -28664,31 +22984,29 @@ ${import_chalk3.default.dim("In case we're mistaken, please report this to us \u
     return runInChildSpan(spanOptions, startFn);
   }
   getEngineEnvVars() {
-    var _a3, _b2;
-    const env2 = {
+    const env = {
       PRISMA_DML_PATH: this.datamodelPath
     };
     if (this.logQueries) {
-      env2.LOG_QUERIES = "true";
+      env.LOG_QUERIES = "true";
     }
     if (this.datasources) {
-      env2.OVERWRITE_DATASOURCES = this.printDatasources();
+      env.OVERWRITE_DATASOURCES = this.printDatasources();
     }
     if (!process.env.NO_COLOR && this.showColors) {
-      env2.CLICOLOR_FORCE = "1";
+      env.CLICOLOR_FORCE = "1";
     }
     return {
       ...this.env,
       ...process.env,
-      ...env2,
-      RUST_BACKTRACE: (_a3 = process.env.RUST_BACKTRACE) != null ? _a3 : "1",
-      RUST_LOG: (_b2 = process.env.RUST_LOG) != null ? _b2 : "info"
+      ...env,
+      RUST_BACKTRACE: process.env.RUST_BACKTRACE ?? "1",
+      RUST_LOG: process.env.RUST_LOG ?? "info"
     };
   }
   internalStart() {
     return new Promise(async (resolve, reject) => {
-      var _a3, _b2, _c;
-      await new Promise((r) => process.nextTick(r));
+      await new Promise((r2) => process.nextTick(r2));
       if (this.stopPromise) {
         await this.stopPromise;
       }
@@ -28698,21 +23016,19 @@ ${import_chalk3.default.dim("In case we're mistaken, please report this to us \u
           await (0, import_p_retry.default)(() => this.connection.get("/status"), {
             retries: 10
           });
-        } catch (e) {
-          return reject(e);
+        } catch (e2) {
+          return reject(e2);
         }
         return resolve();
       }
       try {
-        if (((_a3 = this.child) == null ? void 0 : _a3.connected) || this.child && !((_b2 = this.child) == null ? void 0 : _b2.killed)) {
-          debug4(`There is a child that still runs and we want to start again`);
+        if (this.child?.connected || this.child && !this.child?.killed) {
+          debug6(`There is a child that still runs and we want to start again`);
         }
-        this.lastRustError = void 0;
-        this.lastErrorLog = void 0;
-        this.lastPanic = void 0;
+        this.lastError = void 0;
         logger("startin & resettin");
         this.globalKillSignalReceived = void 0;
-        debug4({ cwd: this.cwd });
+        debug6({ cwd: this.cwd });
         const prismaPath = await this.getPrismaPath();
         const additionalFlag = this.allowTriggerPanic ? ["--debug"] : [];
         const flags = [
@@ -28724,40 +23040,39 @@ ${import_chalk3.default.dim("In case we're mistaken, please report this to us \u
         ];
         this.port = await this.getFreePort();
         flags.push("--port", String(this.port));
-        debug4({ flags });
-        const env2 = this.getEngineEnvVars();
+        debug6({ flags });
+        const env = this.getEngineEnvVars();
         this.child = (0, import_child_process2.spawn)(prismaPath, flags, {
-          env: env2,
+          env,
           cwd: this.cwd,
           windowsHide: true,
           stdio: ["ignore", "pipe", "pipe"]
         });
         byline(this.child.stderr).on("data", (msg) => {
           const data = String(msg);
-          debug4("stderr", data);
+          debug6("stderr", data);
           try {
             const json = JSON.parse(data);
             if (typeof json.is_panic !== "undefined") {
-              debug4(json);
+              debug6(json);
               this.setError(json);
               if (this.engineStartDeferred) {
                 const err = new PrismaClientInitializationError(json.message, this.clientVersion, json.error_code);
                 this.engineStartDeferred.reject(err);
               }
             }
-          } catch (e) {
+          } catch (e2) {
             if (!data.includes("Printing to stderr") && !data.includes("Listening on ")) {
               this.stderrLogs += "\n" + data;
             }
           }
         });
         byline(this.child.stdout).on("data", (msg) => {
-          var _a4, _b3;
           const data = String(msg);
           try {
             const json = JSON.parse(data);
-            debug4("stdout", getMessage(json));
-            if (this.engineStartDeferred && json.level === "INFO" && json.target === "query_engine::server" && ((_b3 = (_a4 = json.fields) == null ? void 0 : _a4.message) == null ? void 0 : _b3.startsWith("Started query engine http server"))) {
+            debug6("stdout", getMessage(json));
+            if (this.engineStartDeferred && json.level === "INFO" && json.target === "query_engine::server" && json.fields?.message?.startsWith("Started query engine http server")) {
               this.connection.open(`http://127.0.0.1:${this.port}`);
               this.engineStartDeferred.resolve();
               this.engineStartDeferred = void 0;
@@ -28769,22 +23084,21 @@ ${import_chalk3.default.dim("In case we're mistaken, please report this to us \u
                 }
                 return;
               }
-              const log4 = convertLog(json);
-              const logIsRustErrorLog = isRustErrorLog(log4);
+              const log3 = convertLog(json);
+              const logIsRustErrorLog = isRustErrorLog(log3);
               if (logIsRustErrorLog) {
-                this.setError(log4);
+                this.setError(log3);
               } else {
-                this.logEmitter.emit(log4.level, log4);
+                this.logEmitter.emit(log3.level, log3);
               }
             } else {
               this.setError(json);
             }
-          } catch (e) {
-            debug4(e, data);
+          } catch (e2) {
+            debug6(e2, data);
           }
         });
         this.child.on("exit", (code) => {
-          var _a4;
           logger("removing startPromise");
           this.startPromise = void 0;
           if (this.engineStopDeferred) {
@@ -28795,10 +23109,8 @@ ${import_chalk3.default.dim("In case we're mistaken, please report this to us \u
           if (code !== 0 && this.engineStartDeferred && this.startCount === 1) {
             let err;
             let msg = this.stderrLogs;
-            if (this.lastRustError) {
-              msg = getMessage(this.lastRustError);
-            } else if (this.lastErrorLog) {
-              msg = getMessage(this.lastErrorLog);
+            if (this.lastError) {
+              msg = getMessage(this.lastError);
             }
             if (code !== null) {
               err = new PrismaClientInitializationError(
@@ -28806,7 +23118,7 @@ ${import_chalk3.default.dim("In case we're mistaken, please report this to us \u
 ` + msg,
                 this.clientVersion
               );
-            } else if ((_a4 = this.child) == null ? void 0 : _a4.signalCode) {
+            } else if (this.child?.signalCode) {
               err = new PrismaClientInitializationError(
                 `Query engine process killed with signal ${this.child.signalCode} for unknown reason.
 Make sure that the engine binary at ${prismaPath} is not corrupt.
@@ -28821,13 +23133,13 @@ Make sure that the engine binary at ${prismaPath} is not corrupt.
           if (!this.child) {
             return;
           }
-          if (this.lastRustError) {
+          if (this.lastError) {
             return;
           }
           if (code === 126) {
             this.setError({
               timestamp: new Date(),
-              target: "exit",
+              target: "binary engine process exit",
               level: "error",
               fields: {
                 message: `Couldn't start query engine as it's not executable on this operating system.
@@ -28838,59 +23150,59 @@ You very likely have the wrong "binaryTarget" defined in the schema.prisma file.
         });
         this.child.on("error", (err) => {
           this.setError({
-            message: err.message,
-            backtrace: "Could not start query engine",
-            is_panic: false
+            timestamp: new Date(),
+            target: "binary engine process error",
+            level: "error",
+            fields: {
+              message: `Couldn't start query engine: ${err}`
+            }
           });
           reject(err);
         });
         this.child.on("close", (code, signal) => {
-          var _a4;
           this.connection.close();
+          let toEmit;
           if (code === null && signal === "SIGABRT" && this.child) {
-            const error2 = new PrismaClientRustPanicError(
+            toEmit = new PrismaClientRustPanicError(
               this.getErrorMessageWithLink("Panic in Query Engine with SIGABRT signal"),
               this.clientVersion
             );
-            this.logEmitter.emit("error", error2);
-          } else if (code === 255 && signal === null && ((_a4 = this.lastErrorLog) == null ? void 0 : _a4.fields.message) === "PANIC" && !this.lastPanic) {
-            const error2 = new PrismaClientRustPanicError(
-              this.getErrorMessageWithLink(
-                `${this.lastErrorLog.fields.message}: ${this.lastErrorLog.fields.reason} in ${this.lastErrorLog.fields.file}:${this.lastErrorLog.fields.line}:${this.lastErrorLog.fields.column}`
-              ),
-              this.clientVersion
-            );
-            this.setError(error2);
+          } else if (code === 255 && signal === null && this.lastError) {
+            toEmit = this.lastError;
+          }
+          if (toEmit) {
+            this.logEmitter.emit("error", {
+              message: toEmit.message,
+              timestamp: new Date(),
+              target: "binary engine process close"
+            });
           }
         });
-        if (this.lastRustError) {
-          return reject(new PrismaClientInitializationError(getMessage(this.lastRustError), this.clientVersion));
-        }
-        if (this.lastErrorLog) {
-          return reject(new PrismaClientInitializationError(getMessage(this.lastErrorLog), this.clientVersion));
+        if (this.lastError) {
+          return reject(new PrismaClientInitializationError(getMessage(this.lastError), this.clientVersion));
         }
         try {
           await new Promise((resolve2, reject2) => {
             this.engineStartDeferred = { resolve: resolve2, reject: reject2 };
           });
         } catch (err) {
-          (_c = this.child) == null ? void 0 : _c.kill();
+          this.child?.kill();
           throw err;
         }
         void (async () => {
           try {
             const engineVersion = await this.version(true);
-            debug4(`Client Version: ${this.clientVersion}`);
-            debug4(`Engine Version: ${engineVersion}`);
-            debug4(`Active provider: ${this.activeProvider}`);
-          } catch (e) {
-            debug4(e);
+            debug6(`Client Version: ${this.clientVersion}`);
+            debug6(`Engine Version: ${engineVersion}`);
+            debug6(`Active provider: ${this.activeProvider}`);
+          } catch (e2) {
+            debug6(e2);
           }
         })();
         this.stopPromise = void 0;
         resolve();
-      } catch (e) {
-        reject(e);
+      } catch (e2) {
+        reject(e2);
       }
     });
   }
@@ -28915,24 +23227,24 @@ You very likely have the wrong "binaryTarget" defined in the schema.prisma file.
     if (this.currentRequestPromise) {
       try {
         await this.currentRequestPromise;
-      } catch (e) {
+      } catch (e2) {
       }
     }
     this.getConfigPromise = void 0;
     let stopChildPromise;
     if (this.child) {
-      debug4(`Stopping Prisma engine`);
+      debug6(`Stopping Prisma engine`);
       if (this.startPromise) {
-        debug4(`Waiting for start promise`);
+        debug6(`Waiting for start promise`);
         await this.startPromise;
       }
-      debug4(`Done waiting for start promise`);
+      debug6(`Done waiting for start promise`);
       if (this.child.exitCode === null) {
         stopChildPromise = new Promise((resolve, reject) => {
           this.engineStopDeferred = { resolve, reject };
         });
       } else {
-        debug4("Child already exited with code", this.child.exitCode);
+        debug6("Child already exited with code", this.child.exitCode);
       }
       this.connection.close();
       this.child.kill();
@@ -28941,15 +23253,14 @@ You very likely have the wrong "binaryTarget" defined in the schema.prisma file.
     if (stopChildPromise) {
       await stopChildPromise;
     }
-    await new Promise((r) => process.nextTick(r));
+    await new Promise((r2) => process.nextTick(r2));
     this.startPromise = void 0;
     this.engineStopDeferred = void 0;
   }
   kill(signal) {
-    var _a3;
     this.getConfigPromise = void 0;
     this.globalKillSignalReceived = signal;
-    (_a3 = this.child) == null ? void 0 : _a3.kill();
+    this.child?.kill();
     this.connection.close();
   }
   getFreePort() {
@@ -28960,9 +23271,9 @@ You very likely have the wrong "binaryTarget" defined in the schema.prisma file.
       server.listen(0, () => {
         const address = server.address();
         const port = typeof address === "string" ? parseInt(address.split(":").slice(-1)[0], 10) : address.port;
-        server.close((e) => {
-          if (e) {
-            reject(e);
+        server.close((e2) => {
+          if (e2) {
+            reject(e2);
           }
           resolve(port);
         });
@@ -28977,9 +23288,9 @@ You very likely have the wrong "binaryTarget" defined in the schema.prisma file.
   }
   async _getConfig() {
     const prismaPath = await this.getPrismaPath();
-    const env2 = await this.getEngineEnvVars();
+    const env = await this.getEngineEnvVars();
     const result = await (0, import_execa.default)(prismaPath, ["cli", "get-config"], {
-      env: omit(env2, ["PORT"]),
+      env: omit(env, ["PORT"]),
       cwd: this.cwd
     });
     return JSON.parse(result.stdout);
@@ -28992,9 +23303,9 @@ You very likely have the wrong "binaryTarget" defined in the schema.prisma file.
   }
   async _getDmmf() {
     const prismaPath = await this.getPrismaPath();
-    const env2 = await this.getEngineEnvVars();
+    const env = await this.getEngineEnvVars();
     const result = await (0, import_execa.default)(prismaPath, ["--enable-raw-queries", "cli", "dmmf"], {
-      env: omit(env2, ["PORT"]),
+      env: omit(env, ["PORT"]),
       cwd: this.cwd
     });
     return JSON.parse(result.stdout);
@@ -29012,7 +23323,13 @@ You very likely have the wrong "binaryTarget" defined in the schema.prisma file.
     this.lastVersion = result.stdout;
     return this.lastVersion;
   }
-  async request(query2, headers = {}, _transaction, numTry = 1) {
+  async request({
+    query: query2,
+    headers = {},
+    numTry = 1,
+    isWrite,
+    transaction
+  }) {
     await this.start();
     this.currentRequestPromise = this.connection.post("/", stringifyQuery(query2), runtimeHeadersToHttpHeaders(headers));
     this.lastQuery = query2;
@@ -29022,7 +23339,7 @@ You very likely have the wrong "binaryTarget" defined in the schema.prisma file.
         if (data.errors.length === 1) {
           throw prismaGraphQLToJSError(data.errors[0], this.clientVersion);
         }
-        throw new PrismaClientUnknownRequestError(JSON.stringify(data.errors), this.clientVersion);
+        throw new PrismaClientUnknownRequestError(JSON.stringify(data.errors), { clientVersion: this.clientVersion });
       }
       const elapsed = parseInt(headers2["x-elapsed"]) / 1e3;
       if (this.startCount > 0) {
@@ -29030,22 +23347,28 @@ You very likely have the wrong "binaryTarget" defined in the schema.prisma file.
       }
       this.currentRequestPromise = void 0;
       return { data, elapsed };
-    } catch (e) {
-      logger("req - e", e);
-      await this.handleRequestError(e, numTry <= MAX_REQUEST_RETRIES);
-      if (numTry <= MAX_REQUEST_RETRIES) {
+    } catch (e2) {
+      logger("req - e", e2);
+      const { error: error2, shouldRetry } = await this.handleRequestError(e2);
+      if (numTry <= MAX_REQUEST_RETRIES && shouldRetry && !isWrite) {
         logger("trying a retry now");
-        return this.request(query2, headers, _transaction, numTry + 1);
+        return this.request({ query: query2, headers, numTry: numTry + 1, isWrite, transaction });
       }
+      throw error2;
     }
-    return null;
   }
-  async requestBatch(queries, headers = {}, transaction, numTry = 1) {
+  async requestBatch({
+    queries,
+    headers = {},
+    transaction,
+    numTry = 1,
+    containsWrite
+  }) {
     await this.start();
     const request2 = {
       batch: queries.map((query2) => ({ query: query2, variables: {} })),
       transaction: Boolean(transaction),
-      isolationLevel: transaction == null ? void 0 : transaction.isolationLevel
+      isolationLevel: transaction?.isolationLevel
     };
     this.lastQuery = JSON.stringify(request2);
     this.currentRequestPromise = this.connection.post("/", this.lastQuery, runtimeHeadersToHttpHeaders(headers));
@@ -29054,8 +23377,8 @@ You very likely have the wrong "binaryTarget" defined in the schema.prisma file.
       const { batchResult, errors } = data;
       if (Array.isArray(batchResult)) {
         return batchResult.map((result) => {
-          if (result.errors) {
-            throw prismaGraphQLToJSError(data.errors[0], this.clientVersion);
+          if (result.errors && result.errors.length > 0) {
+            return prismaGraphQLToJSError(result.errors[0], this.clientVersion);
           }
           return {
             data: result,
@@ -29065,24 +23388,29 @@ You very likely have the wrong "binaryTarget" defined in the schema.prisma file.
       } else {
         throw prismaGraphQLToJSError(data.errors[0], this.clientVersion);
       }
-    }).catch(async (e) => {
-      const isError2 = await this.handleRequestError(e, numTry < 3);
-      if (!isError2) {
+    }).catch(async (e2) => {
+      const { error: error2, shouldRetry } = await this.handleRequestError(e2);
+      if (shouldRetry && !containsWrite) {
         if (numTry <= MAX_REQUEST_RETRIES) {
-          return this.requestBatch(queries, headers, transaction, numTry + 1);
+          return this.requestBatch({
+            queries,
+            headers,
+            transaction,
+            numTry: numTry + 1,
+            containsWrite
+          });
         }
       }
-      throw isError2;
+      throw error2;
     });
   }
   async transaction(action, headers, arg2) {
-    var _a3, _b2;
     await this.start();
     if (action === "start") {
       const jsonOptions = JSON.stringify({
-        max_wait: (_a3 = arg2 == null ? void 0 : arg2.maxWait) != null ? _a3 : 2e3,
-        timeout: (_b2 = arg2 == null ? void 0 : arg2.timeout) != null ? _b2 : 5e3,
-        isolation_level: arg2 == null ? void 0 : arg2.isolationLevel
+        max_wait: arg2?.maxWait ?? 2e3,
+        timeout: arg2?.timeout ?? 5e3,
+        isolation_level: arg2?.isolationLevel
       });
       const result = await Connection.onHttpError(
         this.connection.post(
@@ -29110,30 +23438,16 @@ You very likely have the wrong "binaryTarget" defined in the schema.prisma file.
     return this.startCount >= MAX_STARTS;
   }
   throwAsyncErrorIfExists(forceThrow = false) {
-    var _a3, _b2;
     logger("throwAsyncErrorIfExists", this.startCount, this.hasMaxRestarts);
-    if (this.lastRustError) {
-      const err = new PrismaClientRustPanicError(
-        this.getErrorMessageWithLink(getMessage(this.lastRustError)),
-        this.clientVersion
-      );
-      if (this.lastRustError.is_panic) {
-        this.lastPanic = err;
-      }
-      if (this.hasMaxRestarts || forceThrow) {
-        throw err;
-      }
-    }
-    if (this.lastErrorLog && isRustErrorLog(this.lastErrorLog)) {
-      const err = new PrismaClientUnknownRequestError(
-        this.getErrorMessageWithLink(getMessage(this.lastErrorLog)),
-        this.clientVersion
-      );
-      if (((_b2 = (_a3 = this.lastErrorLog) == null ? void 0 : _a3.fields) == null ? void 0 : _b2.message) === "PANIC") {
-        this.lastPanic = err;
-      }
-      if (this.hasMaxRestarts || forceThrow) {
-        throw err;
+    if (this.lastError && (this.hasMaxRestarts || forceThrow)) {
+      const lastError = this.lastError;
+      this.lastError = void 0;
+      if (lastError.isPanic()) {
+        throw new PrismaClientRustPanicError(this.getErrorMessageWithLink(getMessage(lastError)), this.clientVersion);
+      } else {
+        throw new PrismaClientUnknownRequestError(this.getErrorMessageWithLink(getMessage(lastError)), {
+          clientVersion: this.clientVersion
+        });
       }
     }
   }
@@ -29160,12 +23474,11 @@ You very likely have the wrong "binaryTarget" defined in the schema.prisma file.
   }
   transactionHttpErrorHandler(result) {
     const response = result.data;
-    throw new PrismaClientKnownRequestError(
-      response.message,
-      response.error_code,
-      this.clientVersion,
-      response.meta
-    );
+    throw new PrismaClientKnownRequestError(response.message, {
+      code: response.error_code,
+      clientVersion: this.clientVersion,
+      meta: response.meta
+    });
   }
 };
 __name(BinaryEngine, "BinaryEngine");
@@ -29173,6 +23486,15 @@ function stringifyQuery(q) {
   return `{"variables":{},"query":${JSON.stringify(q)}}`;
 }
 __name(stringifyQuery, "stringifyQuery");
+function runtimeHeadersToHttpHeaders(headers) {
+  if (headers.transactionId) {
+    const { transactionId, ...httpHeaders } = headers;
+    httpHeaders["X-transaction-id"] = transactionId;
+    return httpHeaders;
+  }
+  return headers;
+}
+__name(runtimeHeadersToHttpHeaders, "runtimeHeadersToHttpHeaders");
 function hookProcess(handler, exit = false) {
   process.once(handler, async () => {
     for (const engine of engines) {
@@ -29183,8 +23505,8 @@ function hookProcess(handler, exit = false) {
     if (socketPaths.length > 0) {
       for (const socketPath of socketPaths) {
         try {
-          import_fs4.default.unlinkSync(socketPath);
-        } catch (e) {
+          import_fs5.default.unlinkSync(socketPath);
+        } catch (e2) {
         }
       }
     }
@@ -29214,8 +23536,11 @@ function killProcessAndWait(childProcess) {
 }
 __name(killProcessAndWait, "killProcessAndWait");
 
-// ../engine-core/src/data-proxy/DataProxyEngine.ts
-var import_events2 = __toESM(require("events"));
+// ../engine-core/src/common/errors/ErrorWithBatchIndex.ts
+function hasBatchIndex(value) {
+  return typeof value["batchRequestIdx"] === "number";
+}
+__name(hasBatchIndex, "hasBatchIndex");
 
 // ../engine-core/src/common/errors/PrismaClientError.ts
 var PrismaClientError = class extends Error {
@@ -29233,9 +23558,8 @@ __name(PrismaClientError, "PrismaClientError");
 // ../engine-core/src/data-proxy/errors/DataProxyError.ts
 var DataProxyError = class extends PrismaClientError {
   constructor(message, info2) {
-    var _a3;
     super(message, info2);
-    this.isRetryable = (_a3 = info2.isRetryable) != null ? _a3 : true;
+    this.isRetryable = info2.isRetryable ?? true;
   }
 };
 __name(DataProxyError, "DataProxyError");
@@ -29282,10 +23606,9 @@ __name(NotImplementedYetError, "NotImplementedYetError");
 // ../engine-core/src/data-proxy/errors/DataProxyAPIError.ts
 var DataProxyAPIError = class extends DataProxyError {
   constructor(message, info2) {
-    var _a3;
     super(message, info2);
     this.response = info2.response;
-    const requestId = (_a3 = this.response.headers) == null ? void 0 : _a3["Prisma-Request-Id"];
+    const requestId = this.response.headers?.["Prisma-Request-Id"];
     if (requestId) {
       const messageSuffix = `(The request id was: ${requestId})`;
       this.message = this.message + " " + messageSuffix;
@@ -29432,7 +23755,7 @@ async function getResponseErrorBody(response) {
   let text;
   try {
     text = await response.text();
-  } catch (e) {
+  } catch {
     return { type: "EmptyError" };
   }
   try {
@@ -29458,7 +23781,7 @@ async function getResponseErrorBody(response) {
       }
     }
     return { type: "UnknownJsonError", body: error2 };
-  } catch (e) {
+  } catch {
     return text === "" ? { type: "EmptyError" } : { type: "UnknownTextError", body: text };
   }
 }
@@ -29469,7 +23792,7 @@ async function responseToError(response, clientVersion2) {
   const info2 = { clientVersion: clientVersion2, response };
   const error2 = await getResponseErrorBody(response);
   if (error2.type === "QueryEngineError") {
-    throw new PrismaClientKnownRequestError(error2.body.message, error2.body.error_code, clientVersion2);
+    throw new PrismaClientKnownRequestError(error2.body.message, { code: error2.body.error_code, clientVersion: clientVersion2 });
   }
   if (error2.type === "DataProxyError") {
     if (error2.body === "InternalDataProxyError") {
@@ -29538,8 +23861,8 @@ __name(buildErrorMessage, "buildErrorMessage");
 
 // ../engine-core/src/data-proxy/utils/backOff.ts
 var BACKOFF_INTERVAL = 50;
-function backOff(n) {
-  const baseDelay = Math.pow(2, n) * BACKOFF_INTERVAL;
+function backOff(n2) {
+  const baseDelay = Math.pow(2, n2) * BACKOFF_INTERVAL;
   const jitter = Math.ceil(Math.random() * baseDelay) - Math.ceil(baseDelay / 2);
   const total = baseDelay + jitter;
   return new Promise((done) => setTimeout(() => done(total), total));
@@ -29548,16 +23871,16 @@ __name(backOff, "backOff");
 
 // ../engines/package.json
 var devDependencies = {
-  "@prisma/debug": "workspace:4.6.1",
-  "@prisma/engines-version": "4.6.1-3.694eea289a8462c80264df36757e4fdc129b1b32",
-  "@prisma/fetch-engine": "workspace:4.6.1",
-  "@prisma/get-platform": "workspace:4.6.1",
+  "@prisma/debug": "workspace:*",
+  "@prisma/engines-version": "4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5",
+  "@prisma/fetch-engine": "workspace:*",
+  "@prisma/get-platform": "workspace:*",
   "@swc/core": "1.3.14",
-  "@swc/jest": "0.2.23",
-  "@types/jest": "28.1.8",
-  "@types/node": "16.18.3",
+  "@swc/jest": "0.2.24",
+  "@types/jest": "29.2.4",
+  "@types/node": "16.18.11",
   execa: "5.1.1",
-  jest: "28.1.3",
+  jest: "29.3.1",
   typescript: "4.8.4"
 };
 
@@ -29583,7 +23906,6 @@ __name(getJSRuntimeName, "getJSRuntimeName");
 
 // ../engine-core/src/data-proxy/utils/request.ts
 async function request(url, options) {
-  var _a3;
   const clientVersion2 = options.clientVersion;
   const jsRuntimeName = getJSRuntimeName();
   try {
@@ -29592,8 +23914,8 @@ async function request(url, options) {
     } else {
       return await nodeFetch(url, options);
     }
-  } catch (e) {
-    const message = (_a3 = e.message) != null ? _a3 : "Unknown error";
+  } catch (e2) {
+    const message = e2.message ?? "Unknown error";
     throw new RequestError(message, { clientVersion: clientVersion2 });
   }
 }
@@ -29629,7 +23951,6 @@ async function nodeFetch(url, options = {}) {
   const incomingData = [];
   const { origin } = new URL(url);
   return new Promise((resolve, reject) => {
-    var _a3;
     const request2 = https.request(url, httpsOptions, (response) => {
       const { statusCode, headers: { location } } = response;
       if (statusCode >= 301 && statusCode <= 399 && location) {
@@ -29644,7 +23965,7 @@ async function nodeFetch(url, options = {}) {
       response.on("error", reject);
     });
     request2.on("error", reject);
-    request2.end((_a3 = options.body) != null ? _a3 : "");
+    request2.end(options.body ?? "");
   });
 }
 __name(nodeFetch, "nodeFetch");
@@ -29653,20 +23974,19 @@ var include = typeof require !== "undefined" ? require : () => {
 
 // ../engine-core/src/data-proxy/utils/getClientVersion.ts
 var semverRegex = /^[1-9][0-9]*\.[0-9]+\.[0-9]+$/;
-var debug5 = src_default("prisma:client:dataproxyEngine");
+var debug7 = src_default("prisma:client:dataproxyEngine");
 async function _getClientVersion(config2) {
-  var _a3, _b2, _c;
   const engineVersion = devDependencies["@prisma/engines-version"];
-  const clientVersion2 = (_a3 = config2.clientVersion) != null ? _a3 : "unknown";
+  const clientVersion2 = config2.clientVersion ?? "unknown";
   if (process.env.PRISMA_CLIENT_DATA_PROXY_CLIENT_VERSION) {
     return process.env.PRISMA_CLIENT_DATA_PROXY_CLIENT_VERSION;
   }
-  const [version, suffix] = (_b2 = clientVersion2 == null ? void 0 : clientVersion2.split("-")) != null ? _b2 : [];
+  const [version, suffix] = clientVersion2?.split("-") ?? [];
   if (suffix === void 0 && semverRegex.test(version)) {
     return version;
   }
   if (suffix !== void 0 || clientVersion2 === "0.0.0") {
-    const [version2] = (_c = engineVersion.split("-")) != null ? _c : [];
+    const [version2] = engineVersion.split("-") ?? [];
     const [major2, minor, patch] = version2.split(".");
     const pkgURL = prismaPkgURL(`<=${major2}.${minor}.${patch}`);
     const res = await request(pkgURL, { clientVersion: clientVersion2 });
@@ -29676,13 +23996,13 @@ async function _getClientVersion(config2) {
       );
     }
     const bodyAsText = await res.text();
-    debug5("length of body fetched from unpkg.com", bodyAsText.length);
+    debug7("length of body fetched from unpkg.com", bodyAsText.length);
     let bodyAsJson;
     try {
       bodyAsJson = JSON.parse(bodyAsText);
-    } catch (e) {
+    } catch (e2) {
       console.error("JSON.parse error: body fetched from unpkg.com: ", bodyAsText);
-      throw e;
+      throw e2;
     }
     return bodyAsJson["version"];
   }
@@ -29693,7 +24013,7 @@ async function _getClientVersion(config2) {
 __name(_getClientVersion, "_getClientVersion");
 async function getClientVersion(config2) {
   const version = await _getClientVersion(config2);
-  debug5("version", version);
+  debug7("version", version);
   return version;
 }
 __name(getClientVersion, "getClientVersion");
@@ -29704,26 +24024,23 @@ __name(prismaPkgURL, "prismaPkgURL");
 
 // ../engine-core/src/data-proxy/DataProxyEngine.ts
 var MAX_RETRIES = 10;
-var P2 = Promise.resolve();
-var debug6 = src_default("prisma:client:dataproxyEngine");
+var P = Promise.resolve();
+var debug8 = src_default("prisma:client:dataproxyEngine");
 var DataProxyEngine = class extends Engine {
   constructor(config2) {
-    var _a3, _b2, _c, _d;
     super();
     this.config = config2;
     this.env = { ...this.config.env, ...process.env };
-    this.inlineSchema = (_a3 = config2.inlineSchema) != null ? _a3 : "";
-    this.inlineDatasources = (_b2 = config2.inlineDatasources) != null ? _b2 : {};
-    this.inlineSchemaHash = (_c = config2.inlineSchemaHash) != null ? _c : "";
-    this.clientVersion = (_d = config2.clientVersion) != null ? _d : "unknown";
-    this.logEmitter = new import_events2.default();
-    this.logEmitter.on("error", () => {
-    });
+    this.inlineSchema = config2.inlineSchema ?? "";
+    this.inlineDatasources = config2.inlineDatasources ?? {};
+    this.inlineSchemaHash = config2.inlineSchemaHash ?? "";
+    this.clientVersion = config2.clientVersion ?? "unknown";
+    this.logEmitter = config2.logEmitter;
     const [host, apiKey] = this.extractHostAndApiKey();
-    this.remoteClientVersion = P2.then(() => getClientVersion(this.config));
+    this.remoteClientVersion = P.then(() => getClientVersion(this.config));
     this.headers = { Authorization: `Bearer ${apiKey}` };
     this.host = host;
-    debug6("host", this.host);
+    debug8("host", this.host);
   }
   version() {
     return "unknown";
@@ -29766,7 +24083,7 @@ var DataProxyEngine = class extends Engine {
       clientVersion: this.clientVersion
     });
     if (!response.ok) {
-      debug6("schema response status", response.status);
+      debug8("schema response status", response.status);
     }
     const err = await responseToError(response, this.clientVersion);
     if (err) {
@@ -29778,11 +24095,15 @@ var DataProxyEngine = class extends Engine {
       });
     }
   }
-  request(query2, headers = {}, transaction) {
+  request({ query: query2, headers = {}, transaction }) {
     this.logEmitter.emit("query", { query: query2 });
     return this.requestInternal({ query: query2, variables: {} }, headers, transaction);
   }
-  async requestBatch(queries, headers = {}, transaction) {
+  async requestBatch({
+    queries,
+    headers = {},
+    transaction
+  }) {
     const isTransaction = Boolean(transaction);
     this.logEmitter.emit("query", {
       query: `Batch${isTransaction ? " in transaction" : ""} (${queries.length}):
@@ -29791,10 +24112,18 @@ ${queries.join("\n")}`
     const body = {
       batch: queries.map((query2) => ({ query: query2, variables: {} })),
       transaction: isTransaction,
-      isolationLevel: transaction == null ? void 0 : transaction.isolationLevel
+      isolationLevel: transaction?.isolationLevel
     };
-    const { batchResult } = await this.requestInternal(body, headers);
-    return batchResult;
+    const { batchResult, elapsed } = await this.requestInternal(body, headers);
+    return batchResult.map((result) => {
+      if ("errors" in result && result.errors.length > 0) {
+        return prismaGraphQLToJSError(result.errors[0], this.clientVersion);
+      }
+      return {
+        data: result,
+        elapsed
+      };
+    });
   }
   requestInternal(body, headers, itx) {
     return this.withRetry({
@@ -29804,21 +24133,21 @@ ${queries.join("\n")}`
         logHttpCall(url);
         const response = await request(url, {
           method: "POST",
-          headers: { ...runtimeHeadersToHttpHeaders(headers), ...this.headers },
+          headers: { ...runtimeHeadersToHttpHeaders2(headers), ...this.headers },
           body: JSON.stringify(body),
           clientVersion: this.clientVersion
         });
         if (!response.ok) {
-          debug6("graphql response status", response.status);
+          debug8("graphql response status", response.status);
         }
-        const e = await responseToError(response, this.clientVersion);
-        await this.handleError(e);
+        const e2 = await responseToError(response, this.clientVersion);
+        await this.handleError(e2);
         const data = await response.json();
         if (data.errors) {
           if (data.errors.length === 1) {
             throw prismaGraphQLToJSError(data.errors[0], this.config.clientVersion);
           } else {
-            throw new PrismaClientUnknownRequestError(data.errors, this.config.clientVersion);
+            throw new PrismaClientUnknownRequestError(data.errors, { clientVersion: this.config.clientVersion });
           }
         }
         return data;
@@ -29834,18 +24163,17 @@ ${queries.join("\n")}`
     return this.withRetry({
       actionGerund: `${actionToGerund[action]} transaction`,
       callback: async ({ logHttpCall }) => {
-        var _a3, _b2;
         if (action === "start") {
           const body = JSON.stringify({
-            max_wait: (_a3 = arg2 == null ? void 0 : arg2.maxWait) != null ? _a3 : 2e3,
-            timeout: (_b2 = arg2 == null ? void 0 : arg2.timeout) != null ? _b2 : 5e3,
-            isolation_level: arg2 == null ? void 0 : arg2.isolationLevel
+            max_wait: arg2?.maxWait ?? 2e3,
+            timeout: arg2?.timeout ?? 5e3,
+            isolation_level: arg2?.isolationLevel
           });
           const url = await this.url("transaction/start");
           logHttpCall(url);
           const response = await request(url, {
             method: "POST",
-            headers: { ...runtimeHeadersToHttpHeaders(headers), ...this.headers },
+            headers: { ...runtimeHeadersToHttpHeaders2(headers), ...this.headers },
             body,
             clientVersion: this.clientVersion
           });
@@ -29860,7 +24188,7 @@ ${queries.join("\n")}`
           logHttpCall(url);
           const response = await request(url, {
             method: "POST",
-            headers: { ...runtimeHeadersToHttpHeaders(headers), ...this.headers },
+            headers: { ...runtimeHeadersToHttpHeaders2(headers), ...this.headers },
             clientVersion: this.clientVersion
           });
           const err = await responseToError(response, this.clientVersion);
@@ -29878,7 +24206,7 @@ ${queries.join("\n")}`
     let url;
     try {
       url = new URL(dataProxyURL);
-    } catch (e) {
+    } catch {
       throw new InvalidDatasourceError("Could not parse URL of the datasource", {
         clientVersion: this.clientVersion
       });
@@ -29945,7 +24273,6 @@ ${queries.join("\n")}`
     });
   }
   async withRetry(args) {
-    var _a3;
     for (let attempt = 0; ; attempt++) {
       const logHttpCall = /* @__PURE__ */ __name((url) => {
         this.logEmitter.emit("info", {
@@ -29954,22 +24281,21 @@ ${queries.join("\n")}`
       }, "logHttpCall");
       try {
         return await args.callback({ logHttpCall });
-      } catch (e) {
-        this.logEmitter.emit("error", {
-          message: `Error while ${args.actionGerund}: ${(_a3 = e.message) != null ? _a3 : "(unknown)"}`
-        });
-        if (!(e instanceof DataProxyError))
-          throw e;
-        if (!e.isRetryable)
-          throw e;
+      } catch (e2) {
+        if (!(e2 instanceof DataProxyError))
+          throw e2;
+        if (!e2.isRetryable)
+          throw e2;
         if (attempt >= MAX_RETRIES) {
-          if (e instanceof ForcedRetryError) {
-            throw e.cause;
+          if (e2 instanceof ForcedRetryError) {
+            throw e2.cause;
           } else {
-            throw e;
+            throw e2;
           }
         }
-        this.logEmitter.emit("warn", { message: "This request can be retried" });
+        this.logEmitter.emit("warn", {
+          message: `Attempt ${attempt + 1}/${MAX_RETRIES} failed for ${args.actionGerund}: ${e2.message ?? "(unknown)"}`
+        });
         const delay = await backOff(attempt);
         this.logEmitter.emit("warn", { message: `Retrying after ${delay}ms` });
       }
@@ -29988,17 +24314,25 @@ ${queries.join("\n")}`
   }
 };
 __name(DataProxyEngine, "DataProxyEngine");
+function runtimeHeadersToHttpHeaders2(headers) {
+  if (headers.transactionId) {
+    const httpHeaders = { ...headers };
+    delete httpHeaders.transactionId;
+    return httpHeaders;
+  }
+  return headers;
+}
+__name(runtimeHeadersToHttpHeaders2, "runtimeHeadersToHttpHeaders");
 
 // ../engine-core/src/library/LibraryEngine.ts
-var import_chalk5 = __toESM(require_source());
-var import_events3 = __toESM(require("events"));
-var import_fs6 = __toESM(require("fs"));
+var import_chalk6 = __toESM(require_source());
+var import_fs7 = __toESM(require("fs"));
 
 // ../engine-core/src/library/DefaultLibraryLoader.ts
-var import_chalk4 = __toESM(require_source());
-var import_fs5 = __toESM(require("fs"));
-var import_path3 = __toESM(require("path"));
-var debug7 = src_default("prisma:client:libraryEngine:loader");
+var import_chalk5 = __toESM(require_source());
+var import_fs6 = __toESM(require("fs"));
+var import_path4 = __toESM(require("path"));
+var debug9 = src_default("prisma:client:libraryEngine:loader");
 var DefaultLibraryLoader = class {
   constructor(config2) {
     this.libQueryEnginePath = null;
@@ -30009,64 +24343,63 @@ var DefaultLibraryLoader = class {
     if (!this.libQueryEnginePath) {
       this.libQueryEnginePath = await this.getLibQueryEnginePath();
     }
-    debug7(`loadEngine using ${this.libQueryEnginePath}`);
+    debug9(`loadEngine using ${this.libQueryEnginePath}`);
     try {
       return eval("require")(this.libQueryEnginePath);
-    } catch (e) {
-      if (import_fs5.default.existsSync(this.libQueryEnginePath)) {
+    } catch (e2) {
+      if (import_fs6.default.existsSync(this.libQueryEnginePath)) {
         if (this.libQueryEnginePath.endsWith(".node")) {
           throw new PrismaClientInitializationError(
-            `Unable to load Node-API Library from ${import_chalk4.default.dim(this.libQueryEnginePath)}, Library may be corrupt`,
+            `Unable to load Node-API Library from ${import_chalk5.default.dim(this.libQueryEnginePath)}, Library may be corrupt: ${e2.message}`,
             this.config.clientVersion
           );
         } else {
           throw new PrismaClientInitializationError(
-            `Expected an Node-API Library but received ${import_chalk4.default.dim(this.libQueryEnginePath)}`,
+            `Expected an Node-API Library but received ${import_chalk5.default.dim(this.libQueryEnginePath)}`,
             this.config.clientVersion
           );
         }
       } else {
         throw new PrismaClientInitializationError(
-          `Unable to load Node-API Library from ${import_chalk4.default.dim(this.libQueryEnginePath)}, It does not exist`,
+          `Unable to load Node-API Library from ${import_chalk5.default.dim(this.libQueryEnginePath)}, It does not exist`,
           this.config.clientVersion
         );
       }
     }
   }
   async getLibQueryEnginePath() {
-    var _a3, _b2, _c, _d;
-    const libPath = (_a3 = process.env.PRISMA_QUERY_ENGINE_LIBRARY) != null ? _a3 : this.config.prismaPath;
-    if (libPath && import_fs5.default.existsSync(libPath) && libPath.endsWith(".node")) {
+    const libPath = process.env.PRISMA_QUERY_ENGINE_LIBRARY ?? this.config.prismaPath;
+    if (libPath && import_fs6.default.existsSync(libPath) && libPath.endsWith(".node")) {
       return libPath;
     }
-    this.platform = (_b2 = this.platform) != null ? _b2 : await getPlatform();
+    this.platform = this.platform ?? await getPlatform();
     const { enginePath: enginePath2, searchedLocations: searchedLocations2 } = await this.resolveEnginePath();
-    if (!import_fs5.default.existsSync(enginePath2)) {
+    if (!import_fs6.default.existsSync(enginePath2)) {
       const incorrectPinnedPlatformErrorStr = this.platform ? `
-You incorrectly pinned it to ${import_chalk4.default.redBright.bold(`${this.platform}`)}
+You incorrectly pinned it to ${import_chalk5.default.redBright.bold(`${this.platform}`)}
 ` : "";
-      let errorText = `Query engine library for current platform "${import_chalk4.default.bold(
+      let errorText = `Query engine library for current platform "${import_chalk5.default.bold(
         this.platform
       )}" could not be found.${incorrectPinnedPlatformErrorStr}
 This probably happens, because you built Prisma Client on a different platform.
-(Prisma Client looked in "${import_chalk4.default.underline(enginePath2)}")
+(Prisma Client looked in "${import_chalk5.default.underline(enginePath2)}")
 
 Searched Locations:
 
-${searchedLocations2.map((f) => {
-        let msg = `  ${f}`;
-        if (process.env.DEBUG === "node-engine-search-locations" && import_fs5.default.existsSync(f)) {
-          const dir = import_fs5.default.readdirSync(f);
-          msg += dir.map((d) => `    ${d}`).join("\n");
+${searchedLocations2.map((f2) => {
+        let msg = `  ${f2}`;
+        if (process.env.DEBUG === "node-engine-search-locations" && import_fs6.default.existsSync(f2)) {
+          const dir = import_fs6.default.readdirSync(f2);
+          msg += dir.map((d2) => `    ${d2}`).join("\n");
         }
         return msg;
       }).join("\n" + (process.env.DEBUG === "node-engine-search-locations" ? "\n" : ""))}
 `;
       if (this.config.generator) {
-        this.platform = (_c = this.platform) != null ? _c : await getPlatform();
+        this.platform = this.platform ?? await getPlatform();
         if (this.config.generator.binaryTargets.find((object) => object.value === this.platform) || this.config.generator.binaryTargets.find((object) => object.value === "native")) {
           errorText += `
-You already added the platform${this.config.generator.binaryTargets.length > 1 ? "s" : ""} ${this.config.generator.binaryTargets.map((t) => `"${import_chalk4.default.bold(t.value)}"`).join(", ")} to the "${import_chalk4.default.underline("generator")}" block
+You already added the platform${this.config.generator.binaryTargets.length > 1 ? "s" : ""} ${this.config.generator.binaryTargets.map((t2) => `"${import_chalk5.default.bold(t2.value)}"`).join(", ")} to the "${import_chalk5.default.underline("generator")}" block
 in the "schema.prisma" file as described in https://pris.ly/d/client-generator,
 but something went wrong. That's suboptimal.
 
@@ -30075,12 +24408,12 @@ Please create an issue at https://github.com/prisma/prisma/issues/new`;
         } else {
           errorText += `
 
-To solve this problem, add the platform "${this.platform}" to the "${import_chalk4.default.underline(
+To solve this problem, add the platform "${this.platform}" to the "${import_chalk5.default.underline(
             "binaryTargets"
-          )}" attribute in the "${import_chalk4.default.underline("generator")}" block in the "schema.prisma" file:
-${import_chalk4.default.greenBright(this.getFixedGenerator())}
+          )}" attribute in the "${import_chalk5.default.underline("generator")}" block in the "schema.prisma" file:
+${import_chalk5.default.greenBright(this.getFixedGenerator())}
 
-Then run "${import_chalk4.default.greenBright("prisma generate")}" for your changes to take effect.
+Then run "${import_chalk5.default.greenBright("prisma generate")}" for your changes to take effect.
 Read more about deploying Prisma Client: https://pris.ly/d/client-generator`;
         }
       } else {
@@ -30091,27 +24424,26 @@ Read more about deploying Prisma Client: https://pris.ly/d/client-generator
       }
       throw new PrismaClientInitializationError(errorText, this.config.clientVersion);
     }
-    this.platform = (_d = this.platform) != null ? _d : await getPlatform();
+    this.platform = this.platform ?? await getPlatform();
     return enginePath2;
   }
   async resolveEnginePath() {
-    var _a3, _b2, _c, _d;
     const searchedLocations = [];
     let enginePath;
     if (this.libQueryEnginePath) {
       return { enginePath: this.libQueryEnginePath, searchedLocations };
     }
-    this.platform = (_a3 = this.platform) != null ? _a3 : await getPlatform();
+    this.platform = this.platform ?? await getPlatform();
     if (__filename.includes("DefaultLibraryLoader")) {
-      enginePath = import_path3.default.join(getEnginesPath(), getNodeAPIName(this.platform, "fs"));
+      enginePath = import_path4.default.join(getEnginesPath(), getNodeAPIName(this.platform, "fs"));
       return { enginePath, searchedLocations };
     }
     const dirname = eval("__dirname");
     const searchLocations = [
-      import_path3.default.resolve(dirname, "../../../.prisma/client"),
-      (_d = (_c = (_b2 = this.config.generator) == null ? void 0 : _b2.output) == null ? void 0 : _c.value) != null ? _d : dirname,
-      import_path3.default.resolve(dirname, ".."),
-      import_path3.default.dirname(this.config.datamodelPath),
+      import_path4.default.resolve(dirname, "../../../.prisma/client"),
+      this.config.generator?.output?.value ?? dirname,
+      import_path4.default.resolve(dirname, ".."),
+      import_path4.default.dirname(this.config.datamodelPath),
       this.config.cwd,
       "/tmp/prisma-engines"
     ];
@@ -30120,14 +24452,14 @@ Read more about deploying Prisma Client: https://pris.ly/d/client-generator
     }
     for (const location of searchLocations) {
       searchedLocations.push(location);
-      debug7(`Searching for Query Engine Library in ${location}`);
-      enginePath = import_path3.default.join(location, getNodeAPIName(this.platform, "fs"));
-      if (import_fs5.default.existsSync(enginePath)) {
+      debug9(`Searching for Query Engine Library in ${location}`);
+      enginePath = import_path4.default.join(location, getNodeAPIName(this.platform, "fs"));
+      if (import_fs6.default.existsSync(enginePath)) {
         return { enginePath, searchedLocations };
       }
     }
-    enginePath = import_path3.default.join(__dirname, getNodeAPIName(this.platform, "fs"));
-    return { enginePath: enginePath != null ? enginePath : "", searchedLocations };
+    enginePath = import_path4.default.join(__dirname, getNodeAPIName(this.platform, "fs"));
+    return { enginePath: enginePath ?? "", searchedLocations };
   }
   getFixedGenerator() {
     const fixedGenerator = {
@@ -30140,7 +24472,7 @@ Read more about deploying Prisma Client: https://pris.ly/d/client-generator
 __name(DefaultLibraryLoader, "DefaultLibraryLoader");
 
 // ../engine-core/src/library/ExitHooks.ts
-var debug8 = src_default("prisma:client:libraryEngine:exitHooks");
+var debug10 = src_default("prisma:client:libraryEngine:exitHooks");
 var ExitHooks = class {
   constructor() {
     this.nextOwnerId = 1;
@@ -30184,7 +24516,7 @@ var ExitHooks = class {
   }
   installHook(event, shouldExit = false) {
     process.once(event, async (code) => {
-      debug8(`exit event received: ${event}`);
+      debug10(`exit event received: ${event}`);
       for (const listener of this.idToListenerMap.values()) {
         await listener();
       }
@@ -30198,7 +24530,7 @@ var ExitHooks = class {
 __name(ExitHooks, "ExitHooks");
 
 // ../engine-core/src/library/LibraryEngine.ts
-var debug9 = src_default("prisma:client:libraryEngine");
+var debug11 = src_default("prisma:client:libraryEngine");
 function isQueryEvent(event) {
   return event["item_type"] === "query" && "query" in event;
 }
@@ -30216,17 +24548,14 @@ var engineInstanceCount = 0;
 var exitHooks = new ExitHooks();
 var LibraryEngine = class extends Engine {
   constructor(config2, loader = new DefaultLibraryLoader(config2)) {
-    var _a3, _b2;
     super();
-    this.datamodel = import_fs6.default.readFileSync(config2.datamodelPath, "utf-8");
+    this.datamodel = import_fs7.default.readFileSync(config2.datamodelPath, "utf-8");
     this.config = config2;
     this.libraryStarted = false;
-    this.logQueries = (_a3 = config2.logQueries) != null ? _a3 : false;
-    this.logLevel = (_b2 = config2.logLevel) != null ? _b2 : "error";
+    this.logQueries = config2.logQueries ?? false;
+    this.logLevel = config2.logLevel ?? "error";
     this.libraryLoader = loader;
-    this.logEmitter = new import_events3.default();
-    this.logEmitter.on("error", (e) => {
-    });
+    this.logEmitter = config2.logEmitter;
     this.datasourceOverrides = config2.datasources ? this.convertDatasources(config2.datasources) : {};
     if (config2.enableDebugLogs) {
       this.logLevel = "debug";
@@ -30244,40 +24573,38 @@ var LibraryEngine = class extends Engine {
   checkForTooManyEngines() {
     if (engineInstanceCount === 10) {
       console.warn(
-        `${import_chalk5.default.yellow("warn(prisma-client)")} There are already 10 instances of Prisma Client actively running.`
+        `${import_chalk6.default.yellow("warn(prisma-client)")} There are already 10 instances of Prisma Client actively running.`
       );
     }
   }
   async transaction(action, headers, arg2) {
-    var _a3, _b2, _c, _d, _e;
     await this.start();
     const headerStr = JSON.stringify(headers);
     let result;
     if (action === "start") {
       const jsonOptions = JSON.stringify({
-        max_wait: (_a3 = arg2 == null ? void 0 : arg2.maxWait) != null ? _a3 : 2e3,
-        timeout: (_b2 = arg2 == null ? void 0 : arg2.timeout) != null ? _b2 : 5e3,
-        isolation_level: arg2 == null ? void 0 : arg2.isolationLevel
+        max_wait: arg2?.maxWait ?? 2e3,
+        timeout: arg2?.timeout ?? 5e3,
+        isolation_level: arg2?.isolationLevel
       });
-      result = await ((_c = this.engine) == null ? void 0 : _c.startTransaction(jsonOptions, headerStr));
+      result = await this.engine?.startTransaction(jsonOptions, headerStr);
     } else if (action === "commit") {
-      result = await ((_d = this.engine) == null ? void 0 : _d.commitTransaction(arg2.id, headerStr));
+      result = await this.engine?.commitTransaction(arg2.id, headerStr);
     } else if (action === "rollback") {
-      result = await ((_e = this.engine) == null ? void 0 : _e.rollbackTransaction(arg2.id, headerStr));
+      result = await this.engine?.rollbackTransaction(arg2.id, headerStr);
     }
     const response = this.parseEngineResponse(result);
     if (response.error_code) {
-      throw new PrismaClientKnownRequestError(
-        response.message,
-        response.error_code,
-        this.config.clientVersion,
-        response.meta
-      );
+      throw new PrismaClientKnownRequestError(response.message, {
+        code: response.error_code,
+        clientVersion: this.config.clientVersion,
+        meta: response.meta
+      });
     }
     return response;
   }
   async instantiateLibrary() {
-    debug9("internalSetup");
+    debug11("internalSetup");
     if (this.libraryInstantiationPromise) {
       return this.libraryInstantiationPromise;
     }
@@ -30289,29 +24616,33 @@ var LibraryEngine = class extends Engine {
   async getPlatform() {
     if (this.platform)
       return this.platform;
-    const platform3 = await getPlatform();
-    if (!knownPlatforms2.includes(platform3)) {
+    const platform2 = await getPlatform();
+    if (!knownPlatforms2.includes(platform2)) {
       throw new PrismaClientInitializationError(
-        `Unknown ${import_chalk5.default.red("PRISMA_QUERY_ENGINE_LIBRARY")} ${import_chalk5.default.redBright.bold(
-          platform3
-        )}. Possible binaryTargets: ${import_chalk5.default.greenBright(
+        `Unknown ${import_chalk6.default.red("PRISMA_QUERY_ENGINE_LIBRARY")} ${import_chalk6.default.redBright.bold(
+          platform2
+        )}. Possible binaryTargets: ${import_chalk6.default.greenBright(
           knownPlatforms2.join(", ")
         )} or a path to the query engine library.
-You may have to run ${import_chalk5.default.greenBright("prisma generate")} for your changes to take effect.`,
+You may have to run ${import_chalk6.default.greenBright("prisma generate")} for your changes to take effect.`,
         this.config.clientVersion
       );
     }
-    return platform3;
+    return platform2;
   }
   parseEngineResponse(response) {
     if (!response) {
-      throw new PrismaClientUnknownRequestError(`Response from the Engine was empty`, this.config.clientVersion);
+      throw new PrismaClientUnknownRequestError(`Response from the Engine was empty`, {
+        clientVersion: this.config.clientVersion
+      });
     }
     try {
       const config2 = JSON.parse(response);
       return config2;
     } catch (err) {
-      throw new PrismaClientUnknownRequestError(`Unable to JSON.parse response from engine`, this.config.clientVersion);
+      throw new PrismaClientUnknownRequestError(`Unable to JSON.parse response from engine`, {
+        clientVersion: this.config.clientVersion
+      });
     }
   }
   convertDatasources(datasources) {
@@ -30322,7 +24653,6 @@ You may have to run ${import_chalk5.default.greenBright("prisma generate")} for 
     return obj;
   }
   async loadEngine() {
-    var _a3;
     if (!this.engine) {
       if (!this.QueryEngineConstructor) {
         this.library = await this.libraryLoader.loadLibrary();
@@ -30334,32 +24664,30 @@ You may have to run ${import_chalk5.default.greenBright("prisma generate")} for 
           {
             datamodel: this.datamodel,
             env: process.env,
-            logQueries: (_a3 = this.config.logQueries) != null ? _a3 : false,
+            logQueries: this.config.logQueries ?? false,
             ignoreEnvVarErrors: false,
             datasourceOverrides: this.datasourceOverrides,
             logLevel: this.logLevel,
             configDir: this.config.cwd
           },
-          (log4) => {
-            var _a4;
-            (_a4 = weakThis.deref()) == null ? void 0 : _a4.logger(log4);
+          (log3) => {
+            weakThis.deref()?.logger(log3);
           }
         );
         engineInstanceCount++;
       } catch (_e) {
-        const e = _e;
-        const error2 = this.parseInitError(e.message);
+        const e2 = _e;
+        const error2 = this.parseInitError(e2.message);
         if (typeof error2 === "string") {
-          throw e;
+          throw e2;
         } else {
           throw new PrismaClientInitializationError(error2.message, this.config.clientVersion, error2.error_code);
         }
       }
     }
   }
-  logger(log4) {
-    var _a3;
-    const event = this.parseEngineResponse(log4);
+  logger(log3) {
+    const event = this.parseEngineResponse(log3);
     if (!event)
       return;
     if ("span" in event) {
@@ -30368,7 +24696,7 @@ You may have to run ${import_chalk5.default.greenBright("prisma generate")} for 
       }
       return;
     }
-    event.level = (_a3 = event == null ? void 0 : event.level.toLowerCase()) != null ? _a3 : "unknown";
+    event.level = event?.level.toLowerCase() ?? "unknown";
     if (isQueryEvent(event)) {
       this.logEmitter.emit("query", {
         timestamp: new Date(),
@@ -30384,7 +24712,6 @@ You may have to run ${import_chalk5.default.greenBright("prisma generate")} for 
         ),
         this.config.clientVersion
       );
-      this.logEmitter.emit("error", this.loggerRustPanic);
     } else {
       this.logEmitter.emit(event.level, {
         timestamp: new Date(),
@@ -30394,12 +24721,11 @@ You may have to run ${import_chalk5.default.greenBright("prisma generate")} for 
     }
   }
   getErrorMessageWithLink(title) {
-    var _a3;
     return getErrorMessageWithLink({
       platform: this.platform,
       title,
       version: this.config.clientVersion,
-      engineVersion: (_a3 = this.versionInfo) == null ? void 0 : _a3.commit,
+      engineVersion: this.versionInfo?.commit,
       database: this.config.activeProvider,
       query: this.lastQuery
     });
@@ -30408,7 +24734,7 @@ You may have to run ${import_chalk5.default.greenBright("prisma generate")} for 
     try {
       const error2 = JSON.parse(str);
       return error2;
-    } catch (e) {
+    } catch (e2) {
     }
     return str;
   }
@@ -30416,7 +24742,7 @@ You may have to run ${import_chalk5.default.greenBright("prisma generate")} for 
     try {
       const error2 = JSON.parse(str);
       return error2;
-    } catch (e) {
+    } catch (e2) {
     }
     return str;
   }
@@ -30431,22 +24757,21 @@ You may have to run ${import_chalk5.default.greenBright("prisma generate")} for 
     await this.libraryInstantiationPromise;
     await this.libraryStoppingPromise;
     if (this.libraryStartingPromise) {
-      debug9(`library already starting, this.libraryStarted: ${this.libraryStarted}`);
+      debug11(`library already starting, this.libraryStarted: ${this.libraryStarted}`);
       return this.libraryStartingPromise;
     }
     if (this.libraryStarted) {
       return;
     }
     const startFn = /* @__PURE__ */ __name(async () => {
-      var _a3;
-      debug9("library starting");
+      debug11("library starting");
       try {
         const headers = {
           traceparent: getTraceParent({ tracingConfig: this.config.tracingConfig })
         };
-        await ((_a3 = this.engine) == null ? void 0 : _a3.connect(JSON.stringify(headers)));
+        await this.engine?.connect(JSON.stringify(headers));
         this.libraryStarted = true;
-        debug9("library started");
+        debug11("library started");
       } catch (err) {
         const error2 = this.parseInitError(err.message);
         if (typeof error2 === "string") {
@@ -30469,23 +24794,22 @@ You may have to run ${import_chalk5.default.greenBright("prisma generate")} for 
     await this.libraryStartingPromise;
     await this.executingQueryPromise;
     if (this.libraryStoppingPromise) {
-      debug9("library is already stopping");
+      debug11("library is already stopping");
       return this.libraryStoppingPromise;
     }
     if (!this.libraryStarted) {
       return;
     }
     const stopFn = /* @__PURE__ */ __name(async () => {
-      var _a3;
-      await new Promise((r) => setTimeout(r, 5));
-      debug9("library stopping");
+      await new Promise((r2) => setTimeout(r2, 5));
+      debug11("library stopping");
       const headers = {
         traceparent: getTraceParent({ tracingConfig: this.config.tracingConfig })
       };
-      await ((_a3 = this.engine) == null ? void 0 : _a3.disconnect(JSON.stringify(headers)));
+      await this.engine?.disconnect(JSON.stringify(headers));
       this.libraryStarted = false;
       this.libraryStoppingPromise = void 0;
-      debug9("library stopped");
+      debug11("library stopped");
     }, "stopFn");
     const spanConfig = {
       name: "disconnect",
@@ -30504,60 +24828,65 @@ You may have to run ${import_chalk5.default.greenBright("prisma generate")} for 
     });
   }
   async getDmmf() {
-    await this.libraryInstantiationPromise;
-    return JSON.parse(await this.library.dmmf(this.datamodel));
+    await this.start();
+    return JSON.parse(await this.engine.dmmf());
   }
   version() {
-    var _a3, _b2, _c;
-    this.versionInfo = (_a3 = this.library) == null ? void 0 : _a3.version();
-    return (_c = (_b2 = this.versionInfo) == null ? void 0 : _b2.version) != null ? _c : "unknown";
+    this.versionInfo = this.library?.version();
+    return this.versionInfo?.version ?? "unknown";
   }
   debugPanic(message) {
-    var _a3;
-    return (_a3 = this.library) == null ? void 0 : _a3.debugPanic(message);
+    return this.library?.debugPanic(message);
   }
-  async request(query2, headers = {}) {
-    var _a3, _b2;
-    debug9(`sending request, this.libraryStarted: ${this.libraryStarted}`);
+  async request({ query: query2, headers = {} }) {
+    debug11(`sending request, this.libraryStarted: ${this.libraryStarted}`);
     const request2 = { query: query2, variables: {} };
     const headerStr = JSON.stringify(headers);
     const queryStr = JSON.stringify(request2);
     try {
       await this.start();
-      this.executingQueryPromise = (_a3 = this.engine) == null ? void 0 : _a3.query(queryStr, headerStr, headers.transactionId);
+      this.executingQueryPromise = this.engine?.query(queryStr, headerStr, headers.transactionId);
       this.lastQuery = queryStr;
       const data = this.parseEngineResponse(await this.executingQueryPromise);
       if (data.errors) {
         if (data.errors.length === 1) {
           throw this.buildQueryError(data.errors[0]);
         }
-        throw new PrismaClientUnknownRequestError(JSON.stringify(data.errors), this.config.clientVersion);
+        throw new PrismaClientUnknownRequestError(JSON.stringify(data.errors), {
+          clientVersion: this.config.clientVersion
+        });
       } else if (this.loggerRustPanic) {
         throw this.loggerRustPanic;
       }
       return { data, elapsed: 0 };
-    } catch (e) {
-      if (e instanceof PrismaClientInitializationError) {
-        throw e;
+    } catch (e2) {
+      if (e2 instanceof PrismaClientInitializationError) {
+        throw e2;
       }
-      if (e.code === "GenericFailure" && ((_b2 = e.message) == null ? void 0 : _b2.startsWith("PANIC:"))) {
-        throw new PrismaClientRustPanicError(this.getErrorMessageWithLink(e.message), this.config.clientVersion);
+      if (e2.code === "GenericFailure" && e2.message?.startsWith("PANIC:")) {
+        throw new PrismaClientRustPanicError(this.getErrorMessageWithLink(e2.message), this.config.clientVersion);
       }
-      const error2 = this.parseRequestError(e.message);
+      const error2 = this.parseRequestError(e2.message);
       if (typeof error2 === "string") {
-        throw e;
+        throw e2;
       } else {
         throw new PrismaClientUnknownRequestError(`${error2.message}
-${error2.backtrace}`, this.config.clientVersion);
+${error2.backtrace}`, {
+          clientVersion: this.config.clientVersion
+        });
       }
     }
   }
-  async requestBatch(queries, headers = {}, transaction) {
-    debug9("requestBatch");
+  async requestBatch({
+    queries,
+    headers = {},
+    transaction
+  }) {
+    debug11("requestBatch");
     const request2 = {
       batch: queries.map((query2) => ({ query: query2, variables: {} })),
       transaction: Boolean(transaction),
-      isolationLevel: transaction == null ? void 0 : transaction.isolationLevel
+      isolationLevel: transaction?.isolationLevel
     };
     await this.start();
     this.lastQuery = JSON.stringify(request2);
@@ -30568,14 +24897,15 @@ ${error2.backtrace}`, this.config.clientVersion);
       if (data.errors.length === 1) {
         throw this.buildQueryError(data.errors[0]);
       }
-      throw new PrismaClientUnknownRequestError(JSON.stringify(data.errors), this.config.clientVersion);
+      throw new PrismaClientUnknownRequestError(JSON.stringify(data.errors), {
+        clientVersion: this.config.clientVersion
+      });
     }
     const { batchResult, errors } = data;
     if (Array.isArray(batchResult)) {
       return batchResult.map((result2) => {
-        var _a3;
-        if (result2.errors) {
-          return (_a3 = this.loggerRustPanic) != null ? _a3 : this.buildQueryError(data.errors[0]);
+        if (result2.errors && result2.errors.length > 0) {
+          return this.loggerRustPanic ?? this.buildQueryError(result2.errors[0]);
         }
         return {
           data: result2,
@@ -30609,255 +24939,3092 @@ ${error2.backtrace}`, this.config.clientVersion);
 };
 __name(LibraryEngine, "LibraryEngine");
 
-// ../internals/src/utils/tryLoadEnvs.ts
-var import_chalk6 = __toESM(require_source());
-var import_dotenv = __toESM(require_main2());
-var import_fs7 = __toESM(require("fs"));
-var import_path4 = __toESM(require("path"));
-
-// ../internals/src/dotenvExpand.ts
-function dotenvExpand(config2) {
-  const environment = config2.ignoreProcessEnv ? {} : process.env;
-  const interpolate = /* @__PURE__ */ __name((envValue) => {
-    const matches = envValue.match(/(.?\${(?:[a-zA-Z0-9_]+)?})/g) || [];
-    return matches.reduce(function(newEnv, match) {
-      const parts = /(.?)\${([a-zA-Z0-9_]+)?}/g.exec(match);
-      if (!parts) {
-        return newEnv;
-      }
-      const prefix = parts[1];
-      let value, replacePart;
-      if (prefix === "\\") {
-        replacePart = parts[0];
-        value = replacePart.replace("\\$", "$");
-      } else {
-        const key = parts[2];
-        replacePart = parts[0].substring(prefix.length);
-        value = Object.hasOwnProperty.call(environment, key) ? environment[key] : config2.parsed[key] || "";
-        value = interpolate(value);
-      }
-      return newEnv.replace(replacePart, value);
-    }, envValue);
-  }, "interpolate");
-  for (const configKey in config2.parsed) {
-    const value = Object.hasOwnProperty.call(environment, configKey) ? environment[configKey] : config2.parsed[configKey];
-    config2.parsed[configKey] = interpolate(value);
-  }
-  for (const processKey in config2.parsed) {
-    environment[processKey] = config2.parsed[processKey];
-  }
-  return config2;
-}
-__name(dotenvExpand, "dotenvExpand");
-
-// ../internals/src/utils/tryLoadEnvs.ts
-var debug10 = src_default("prisma:tryLoadEnv");
-function tryLoadEnvs({
-  rootEnvPath,
-  schemaEnvPath
-}, opts = {
-  conflictCheck: "none"
-}) {
-  var _a3, _b2;
-  const rootEnvInfo = loadEnv(rootEnvPath);
-  if (opts.conflictCheck !== "none") {
-    checkForConflicts(rootEnvInfo, schemaEnvPath, opts.conflictCheck);
-  }
-  let schemaEnvInfo = null;
-  if (!pathsEqual(rootEnvInfo == null ? void 0 : rootEnvInfo.path, schemaEnvPath)) {
-    schemaEnvInfo = loadEnv(schemaEnvPath);
-  }
-  if (!rootEnvInfo && !schemaEnvInfo) {
-    debug10("No Environment variables loaded");
-  }
-  if (schemaEnvInfo == null ? void 0 : schemaEnvInfo.dotenvResult.error) {
-    return console.error(import_chalk6.default.redBright.bold("Schema Env Error: ") + schemaEnvInfo.dotenvResult.error);
-  }
-  const messages = [rootEnvInfo == null ? void 0 : rootEnvInfo.message, schemaEnvInfo == null ? void 0 : schemaEnvInfo.message].filter(Boolean);
-  return {
-    message: messages.join("\n"),
-    parsed: {
-      ...(_a3 = rootEnvInfo == null ? void 0 : rootEnvInfo.dotenvResult) == null ? void 0 : _a3.parsed,
-      ...(_b2 = schemaEnvInfo == null ? void 0 : schemaEnvInfo.dotenvResult) == null ? void 0 : _b2.parsed
-    }
-  };
-}
-__name(tryLoadEnvs, "tryLoadEnvs");
-function checkForConflicts(rootEnvInfo, envPath, type) {
-  const parsedRootEnv = rootEnvInfo == null ? void 0 : rootEnvInfo.dotenvResult.parsed;
-  const areNotTheSame = !pathsEqual(rootEnvInfo == null ? void 0 : rootEnvInfo.path, envPath);
-  if (parsedRootEnv && envPath && areNotTheSame && import_fs7.default.existsSync(envPath)) {
-    const envConfig = import_dotenv.default.parse(import_fs7.default.readFileSync(envPath));
-    const conflicts = [];
-    for (const k in envConfig) {
-      if (parsedRootEnv[k] === envConfig[k]) {
-        conflicts.push(k);
-      }
-    }
-    if (conflicts.length > 0) {
-      const relativeRootEnvPath = import_path4.default.relative(process.cwd(), rootEnvInfo.path);
-      const relativeEnvPath = import_path4.default.relative(process.cwd(), envPath);
-      if (type === "error") {
-        const message = `There is a conflict between env var${conflicts.length > 1 ? "s" : ""} in ${import_chalk6.default.underline(
-          relativeRootEnvPath
-        )} and ${import_chalk6.default.underline(relativeEnvPath)}
-Conflicting env vars:
-${conflicts.map((conflict) => `  ${import_chalk6.default.bold(conflict)}`).join("\n")}
-
-We suggest to move the contents of ${import_chalk6.default.underline(relativeEnvPath)} to ${import_chalk6.default.underline(
-          relativeRootEnvPath
-        )} to consolidate your env vars.
-`;
-        throw new Error(message);
-      } else if (type === "warn") {
-        const message = `Conflict for env var${conflicts.length > 1 ? "s" : ""} ${conflicts.map((c) => import_chalk6.default.bold(c)).join(", ")} in ${import_chalk6.default.underline(relativeRootEnvPath)} and ${import_chalk6.default.underline(relativeEnvPath)}
-Env vars from ${import_chalk6.default.underline(relativeEnvPath)} overwrite the ones from ${import_chalk6.default.underline(relativeRootEnvPath)}
-      `;
-        console.warn(`${import_chalk6.default.yellow("warn(prisma)")} ${message}`);
-      }
-    }
-  }
-}
-__name(checkForConflicts, "checkForConflicts");
-function loadEnv(envPath) {
-  if (exists3(envPath)) {
-    debug10(`Environment variables loaded from ${envPath}`);
-    return {
-      dotenvResult: dotenvExpand(
-        import_dotenv.default.config({
-          path: envPath,
-          debug: process.env.DOTENV_CONFIG_DEBUG ? true : void 0
-        })
-      ),
-      message: import_chalk6.default.dim(`Environment variables loaded from ${import_path4.default.relative(process.cwd(), envPath)}`),
-      path: envPath
-    };
-  } else {
-    debug10(`Environment variables not found at ${envPath}`);
-  }
-  return null;
-}
-__name(loadEnv, "loadEnv");
-function pathsEqual(path1, path22) {
-  return path1 && path22 && import_path4.default.resolve(path1) === import_path4.default.resolve(path22);
-}
-__name(pathsEqual, "pathsEqual");
-function exists3(p) {
-  return Boolean(p && import_fs7.default.existsSync(p));
-}
-__name(exists3, "exists");
-
-// ../internals/src/client/getClientEngineType.ts
-var DEFAULT_CLIENT_ENGINE_TYPE = "library" /* Library */;
-function getClientEngineType(generatorConfig) {
-  const engineTypeFromEnvVar = getEngineTypeFromEnvVar();
-  if (engineTypeFromEnvVar)
-    return engineTypeFromEnvVar;
-  if ((generatorConfig == null ? void 0 : generatorConfig.config.engineType) === "library" /* Library */) {
-    return "library" /* Library */;
-  } else if ((generatorConfig == null ? void 0 : generatorConfig.config.engineType) === "binary" /* Binary */) {
-    return "binary" /* Binary */;
-  } else {
-    return DEFAULT_CLIENT_ENGINE_TYPE;
-  }
-}
-__name(getClientEngineType, "getClientEngineType");
-function getEngineTypeFromEnvVar() {
-  const engineType = process.env.PRISMA_CLIENT_ENGINE_TYPE;
-  if (engineType === "library" /* Library */) {
-    return "library" /* Library */;
-  } else if (engineType === "binary" /* Binary */) {
-    return "binary" /* Binary */;
-  } else {
-    return void 0;
-  }
-}
-__name(getEngineTypeFromEnvVar, "getEngineTypeFromEnvVar");
-
-// ../internals/src/cli/utils.ts
-var import_arg = __toESM(require_arg());
-var import_strip_indent = __toESM(require_strip_indent());
-function isError(result) {
-  return result instanceof Error;
-}
-__name(isError, "isError");
+// ../generator-helper/src/dmmf.ts
+var DMMF;
+((DMMF2) => {
+  let ModelAction;
+  ((ModelAction2) => {
+    ModelAction2["findUnique"] = "findUnique";
+    ModelAction2["findUniqueOrThrow"] = "findUniqueOrThrow";
+    ModelAction2["findFirst"] = "findFirst";
+    ModelAction2["findFirstOrThrow"] = "findFirstOrThrow";
+    ModelAction2["findMany"] = "findMany";
+    ModelAction2["create"] = "create";
+    ModelAction2["createMany"] = "createMany";
+    ModelAction2["update"] = "update";
+    ModelAction2["updateMany"] = "updateMany";
+    ModelAction2["upsert"] = "upsert";
+    ModelAction2["delete"] = "delete";
+    ModelAction2["deleteMany"] = "deleteMany";
+    ModelAction2["groupBy"] = "groupBy";
+    ModelAction2["count"] = "count";
+    ModelAction2["aggregate"] = "aggregate";
+    ModelAction2["findRaw"] = "findRaw";
+    ModelAction2["aggregateRaw"] = "aggregateRaw";
+  })(ModelAction = DMMF2.ModelAction || (DMMF2.ModelAction = {}));
+})(DMMF || (DMMF = {}));
 
 // ../internals/src/logger.ts
 var logger_exports = {};
 __export(logger_exports, {
   error: () => error,
   info: () => info,
-  log: () => log3,
+  log: () => log,
   query: () => query,
-  should: () => should,
-  tags: () => tags,
-  warn: () => warn
+  should: () => should2,
+  tags: () => tags2,
+  warn: () => warn2
 });
 var import_chalk7 = __toESM(require_source());
-var tags = {
+var tags2 = {
   error: import_chalk7.default.red("prisma:error"),
   warn: import_chalk7.default.yellow("prisma:warn"),
   info: import_chalk7.default.cyan("prisma:info"),
   query: import_chalk7.default.blue("prisma:query")
 };
-var should = {
-  warn: !process.env.PRISMA_DISABLE_WARNINGS
+var should2 = {
+  warn: () => !process.env.PRISMA_DISABLE_WARNINGS
 };
-function log3(...data) {
+function log(...data) {
   console.log(...data);
 }
-__name(log3, "log");
-function warn(message, ...optionalParams) {
-  if (should.warn) {
-    console.warn(`${tags.warn} ${message}`, ...optionalParams);
+__name(log, "log");
+function warn2(message, ...optionalParams) {
+  if (should2.warn()) {
+    console.warn(`${tags2.warn} ${message}`, ...optionalParams);
   }
 }
-__name(warn, "warn");
+__name(warn2, "warn");
 function info(message, ...optionalParams) {
-  console.info(`${tags.info} ${message}`, ...optionalParams);
+  console.info(`${tags2.info} ${message}`, ...optionalParams);
 }
 __name(info, "info");
 function error(message, ...optionalParams) {
-  console.error(`${tags.error} ${message}`, ...optionalParams);
+  console.error(`${tags2.error} ${message}`, ...optionalParams);
 }
 __name(error, "error");
 function query(message, ...optionalParams) {
-  console.log(`${tags.query} ${message}`, ...optionalParams);
+  console.log(`${tags2.query} ${message}`, ...optionalParams);
 }
 __name(query, "query");
-
-// ../internals/src/utils/assertNever.ts
-function assertNever(arg2, errorMessage) {
-  throw new Error(errorMessage);
-}
-__name(assertNever, "assertNever");
 
 // ../internals/src/utils/callOnce.ts
 function callOnce(fn) {
   let result;
-  return (...args) => result != null ? result : result = fn(...args);
+  return (...args) => result ?? (result = fn(...args));
 }
 __name(callOnce, "callOnce");
 
+// ../internals/src/utils/hasOwnProperty.ts
+function hasOwnProperty(object, key) {
+  return Object.prototype.hasOwnProperty.call(object, key);
+}
+__name(hasOwnProperty, "hasOwnProperty");
+
+// ../internals/src/utils/isPromiseLike.ts
+function isPromiseLike(value) {
+  return value != null && typeof value["then"] === "function";
+}
+__name(isPromiseLike, "isPromiseLike");
+
 // ../internals/src/utils/keyBy.ts
-var keyBy2 = /* @__PURE__ */ __name((collection, iteratee) => {
+var keyBy = /* @__PURE__ */ __name((collection, iteratee) => {
   return collection.reduce((acc, curr) => {
     acc[iteratee(curr)] = curr;
     return acc;
   }, {});
 }, "keyBy");
 
+// ../internals/src/utils/mapObjectValues.ts
+function mapObjectValues(object, mapper) {
+  return Object.fromEntries(
+    Object.entries(object).map(([key, value]) => [key, mapper(value, key)])
+  );
+}
+__name(mapObjectValues, "mapObjectValues");
+
 // ../internals/src/warnOnce.ts
-var alreadyWarned = /* @__PURE__ */ new Set();
-var warnOnce = /* @__PURE__ */ __name((key, message, ...args) => {
-  if (!alreadyWarned.has(key)) {
-    alreadyWarned.add(key);
-    warn(message, ...args);
+var alreadyWarned2 = /* @__PURE__ */ new Set();
+var warnOnce2 = /* @__PURE__ */ __name((key, message, ...args) => {
+  if (!alreadyWarned2.has(key)) {
+    alreadyWarned2.add(key);
+    warn2(message, ...args);
   }
 }, "warnOnce");
 
+// src/runtime/core/extensions/wrapExtensionCallback.ts
+var PrismaClientExtensionError = class extends Error {
+  constructor(extensionName, cause) {
+    super(`${getTitleFromExtensionName(extensionName)}: ${getMessageFromCause(cause)}`, { cause });
+    this.extensionName = extensionName;
+    this.name = "PrismaClientExtensionError";
+    if (!this.cause) {
+      this.cause = cause;
+    }
+    if (typeof Error.captureStackTrace === "function") {
+      Error.captureStackTrace(this, PrismaClientExtensionError);
+    }
+  }
+  get [Symbol.toStringTag]() {
+    return "PrismaClientExtensionError";
+  }
+};
+__name(PrismaClientExtensionError, "PrismaClientExtensionError");
+function getTitleFromExtensionName(extensionName) {
+  if (extensionName) {
+    return `Error caused by extension "${extensionName}"`;
+  }
+  return "Error caused by an extension";
+}
+__name(getTitleFromExtensionName, "getTitleFromExtensionName");
+function getMessageFromCause(cause) {
+  if (cause instanceof Error) {
+    return cause.message;
+  }
+  return `${cause}`;
+}
+__name(getMessageFromCause, "getMessageFromCause");
+function wrapExtensionCallback(name, fn) {
+  return function(...args) {
+    try {
+      const result = fn.apply(this, args);
+      if (isPromiseLike(result)) {
+        return result.then(void 0, (error2) => Promise.reject(new PrismaClientExtensionError(name, error2)));
+      }
+      return result;
+    } catch (error2) {
+      throw new PrismaClientExtensionError(name, error2);
+    }
+  };
+}
+__name(wrapExtensionCallback, "wrapExtensionCallback");
+function wrapAllExtensionCallbacks(name, object) {
+  if (!object) {
+    return object;
+  }
+  return mapObjectValues(
+    object,
+    (prop) => typeof prop === "function" ? wrapExtensionCallback(name, prop) : prop
+  );
+}
+__name(wrapAllExtensionCallbacks, "wrapAllExtensionCallbacks");
+
+// src/runtime/core/metrics/MetricsClient.ts
+var MetricsClient = class {
+  constructor(engine) {
+    this._engine = engine;
+  }
+  prometheus(options) {
+    return this._engine.metrics({ format: "prometheus", ...options });
+  }
+  json(options) {
+    return this._engine.metrics({ format: "json", ...options });
+  }
+};
+__name(MetricsClient, "MetricsClient");
+
+// src/runtime/utils/applyMixins.ts
+function applyMixins(derivedCtor, constructors) {
+  for (const baseCtor of constructors) {
+    for (const name of Object.getOwnPropertyNames(baseCtor.prototype)) {
+      Object.defineProperty(
+        derivedCtor.prototype,
+        name,
+        Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ?? /* @__PURE__ */ Object.create(null)
+      );
+    }
+  }
+}
+__name(applyMixins, "applyMixins");
+
+// src/runtime/utils/common.ts
+var import_chalk8 = __toESM(require_source());
+
+// ../../node_modules/.pnpm/decimal.js@10.4.2/node_modules/decimal.js/decimal.mjs
+var EXP_LIMIT = 9e15;
+var MAX_DIGITS = 1e9;
+var NUMERALS = "0123456789abcdef";
+var LN10 = "2.3025850929940456840179914546843642076011014886287729760333279009675726096773524802359972050895982983419677840422862486334095254650828067566662873690987816894829072083255546808437998948262331985283935053089653777326288461633662222876982198867465436674744042432743651550489343149393914796194044002221051017141748003688084012647080685567743216228355220114804663715659121373450747856947683463616792101806445070648000277502684916746550586856935673420670581136429224554405758925724208241314695689016758940256776311356919292033376587141660230105703089634572075440370847469940168269282808481184289314848524948644871927809676271275775397027668605952496716674183485704422507197965004714951050492214776567636938662976979522110718264549734772662425709429322582798502585509785265383207606726317164309505995087807523710333101197857547331541421808427543863591778117054309827482385045648019095610299291824318237525357709750539565187697510374970888692180205189339507238539205144634197265287286965110862571492198849978748873771345686209167058";
+var PI = "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288109756659334461284756482337867831652712019091456485669234603486104543266482133936072602491412737245870066063155881748815209209628292540917153643678925903600113305305488204665213841469519415116094330572703657595919530921861173819326117931051185480744623799627495673518857527248912279381830119491298336733624406566430860213949463952247371907021798609437027705392171762931767523846748184676694051320005681271452635608277857713427577896091736371787214684409012249534301465495853710507922796892589235420199561121290219608640344181598136297747713099605187072113499999983729780499510597317328160963185950244594553469083026425223082533446850352619311881710100031378387528865875332083814206171776691473035982534904287554687311595628638823537875937519577818577805321712268066130019278766111959092164201989380952572010654858632789";
+var DEFAULTS = {
+  precision: 20,
+  rounding: 4,
+  modulo: 1,
+  toExpNeg: -7,
+  toExpPos: 21,
+  minE: -EXP_LIMIT,
+  maxE: EXP_LIMIT,
+  crypto: false
+};
+var inexact;
+var quadrant;
+var external = true;
+var decimalError = "[DecimalError] ";
+var invalidArgument = decimalError + "Invalid argument: ";
+var precisionLimitExceeded = decimalError + "Precision limit exceeded";
+var cryptoUnavailable = decimalError + "crypto unavailable";
+var tag = "[object Decimal]";
+var mathfloor = Math.floor;
+var mathpow = Math.pow;
+var isBinary = /^0b([01]+(\.[01]*)?|\.[01]+)(p[+-]?\d+)?$/i;
+var isHex = /^0x([0-9a-f]+(\.[0-9a-f]*)?|\.[0-9a-f]+)(p[+-]?\d+)?$/i;
+var isOctal = /^0o([0-7]+(\.[0-7]*)?|\.[0-7]+)(p[+-]?\d+)?$/i;
+var isDecimal = /^(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?$/i;
+var BASE = 1e7;
+var LOG_BASE = 7;
+var MAX_SAFE_INTEGER = 9007199254740991;
+var LN10_PRECISION = LN10.length - 1;
+var PI_PRECISION = PI.length - 1;
+var P2 = { toStringTag: tag };
+P2.absoluteValue = P2.abs = function() {
+  var x = new this.constructor(this);
+  if (x.s < 0)
+    x.s = 1;
+  return finalise(x);
+};
+P2.ceil = function() {
+  return finalise(new this.constructor(this), this.e + 1, 2);
+};
+P2.clampedTo = P2.clamp = function(min2, max2) {
+  var k, x = this, Ctor = x.constructor;
+  min2 = new Ctor(min2);
+  max2 = new Ctor(max2);
+  if (!min2.s || !max2.s)
+    return new Ctor(NaN);
+  if (min2.gt(max2))
+    throw Error(invalidArgument + max2);
+  k = x.cmp(min2);
+  return k < 0 ? min2 : x.cmp(max2) > 0 ? max2 : new Ctor(x);
+};
+P2.comparedTo = P2.cmp = function(y) {
+  var i, j, xdL, ydL, x = this, xd = x.d, yd = (y = new x.constructor(y)).d, xs = x.s, ys = y.s;
+  if (!xd || !yd) {
+    return !xs || !ys ? NaN : xs !== ys ? xs : xd === yd ? 0 : !xd ^ xs < 0 ? 1 : -1;
+  }
+  if (!xd[0] || !yd[0])
+    return xd[0] ? xs : yd[0] ? -ys : 0;
+  if (xs !== ys)
+    return xs;
+  if (x.e !== y.e)
+    return x.e > y.e ^ xs < 0 ? 1 : -1;
+  xdL = xd.length;
+  ydL = yd.length;
+  for (i = 0, j = xdL < ydL ? xdL : ydL; i < j; ++i) {
+    if (xd[i] !== yd[i])
+      return xd[i] > yd[i] ^ xs < 0 ? 1 : -1;
+  }
+  return xdL === ydL ? 0 : xdL > ydL ^ xs < 0 ? 1 : -1;
+};
+P2.cosine = P2.cos = function() {
+  var pr, rm, x = this, Ctor = x.constructor;
+  if (!x.d)
+    return new Ctor(NaN);
+  if (!x.d[0])
+    return new Ctor(1);
+  pr = Ctor.precision;
+  rm = Ctor.rounding;
+  Ctor.precision = pr + Math.max(x.e, x.sd()) + LOG_BASE;
+  Ctor.rounding = 1;
+  x = cosine(Ctor, toLessThanHalfPi(Ctor, x));
+  Ctor.precision = pr;
+  Ctor.rounding = rm;
+  return finalise(quadrant == 2 || quadrant == 3 ? x.neg() : x, pr, rm, true);
+};
+P2.cubeRoot = P2.cbrt = function() {
+  var e2, m2, n2, r2, rep, s, sd, t2, t3, t3plusx, x = this, Ctor = x.constructor;
+  if (!x.isFinite() || x.isZero())
+    return new Ctor(x);
+  external = false;
+  s = x.s * mathpow(x.s * x, 1 / 3);
+  if (!s || Math.abs(s) == 1 / 0) {
+    n2 = digitsToString(x.d);
+    e2 = x.e;
+    if (s = (e2 - n2.length + 1) % 3)
+      n2 += s == 1 || s == -2 ? "0" : "00";
+    s = mathpow(n2, 1 / 3);
+    e2 = mathfloor((e2 + 1) / 3) - (e2 % 3 == (e2 < 0 ? -1 : 2));
+    if (s == 1 / 0) {
+      n2 = "5e" + e2;
+    } else {
+      n2 = s.toExponential();
+      n2 = n2.slice(0, n2.indexOf("e") + 1) + e2;
+    }
+    r2 = new Ctor(n2);
+    r2.s = x.s;
+  } else {
+    r2 = new Ctor(s.toString());
+  }
+  sd = (e2 = Ctor.precision) + 3;
+  for (; ; ) {
+    t2 = r2;
+    t3 = t2.times(t2).times(t2);
+    t3plusx = t3.plus(x);
+    r2 = divide(t3plusx.plus(x).times(t2), t3plusx.plus(t3), sd + 2, 1);
+    if (digitsToString(t2.d).slice(0, sd) === (n2 = digitsToString(r2.d)).slice(0, sd)) {
+      n2 = n2.slice(sd - 3, sd + 1);
+      if (n2 == "9999" || !rep && n2 == "4999") {
+        if (!rep) {
+          finalise(t2, e2 + 1, 0);
+          if (t2.times(t2).times(t2).eq(x)) {
+            r2 = t2;
+            break;
+          }
+        }
+        sd += 4;
+        rep = 1;
+      } else {
+        if (!+n2 || !+n2.slice(1) && n2.charAt(0) == "5") {
+          finalise(r2, e2 + 1, 1);
+          m2 = !r2.times(r2).times(r2).eq(x);
+        }
+        break;
+      }
+    }
+  }
+  external = true;
+  return finalise(r2, e2, Ctor.rounding, m2);
+};
+P2.decimalPlaces = P2.dp = function() {
+  var w2, d2 = this.d, n2 = NaN;
+  if (d2) {
+    w2 = d2.length - 1;
+    n2 = (w2 - mathfloor(this.e / LOG_BASE)) * LOG_BASE;
+    w2 = d2[w2];
+    if (w2)
+      for (; w2 % 10 == 0; w2 /= 10)
+        n2--;
+    if (n2 < 0)
+      n2 = 0;
+  }
+  return n2;
+};
+P2.dividedBy = P2.div = function(y) {
+  return divide(this, new this.constructor(y));
+};
+P2.dividedToIntegerBy = P2.divToInt = function(y) {
+  var x = this, Ctor = x.constructor;
+  return finalise(divide(x, new Ctor(y), 0, 1, 1), Ctor.precision, Ctor.rounding);
+};
+P2.equals = P2.eq = function(y) {
+  return this.cmp(y) === 0;
+};
+P2.floor = function() {
+  return finalise(new this.constructor(this), this.e + 1, 3);
+};
+P2.greaterThan = P2.gt = function(y) {
+  return this.cmp(y) > 0;
+};
+P2.greaterThanOrEqualTo = P2.gte = function(y) {
+  var k = this.cmp(y);
+  return k == 1 || k === 0;
+};
+P2.hyperbolicCosine = P2.cosh = function() {
+  var k, n2, pr, rm, len, x = this, Ctor = x.constructor, one = new Ctor(1);
+  if (!x.isFinite())
+    return new Ctor(x.s ? 1 / 0 : NaN);
+  if (x.isZero())
+    return one;
+  pr = Ctor.precision;
+  rm = Ctor.rounding;
+  Ctor.precision = pr + Math.max(x.e, x.sd()) + 4;
+  Ctor.rounding = 1;
+  len = x.d.length;
+  if (len < 32) {
+    k = Math.ceil(len / 3);
+    n2 = (1 / tinyPow(4, k)).toString();
+  } else {
+    k = 16;
+    n2 = "2.3283064365386962890625e-10";
+  }
+  x = taylorSeries(Ctor, 1, x.times(n2), new Ctor(1), true);
+  var cosh2_x, i = k, d8 = new Ctor(8);
+  for (; i--; ) {
+    cosh2_x = x.times(x);
+    x = one.minus(cosh2_x.times(d8.minus(cosh2_x.times(d8))));
+  }
+  return finalise(x, Ctor.precision = pr, Ctor.rounding = rm, true);
+};
+P2.hyperbolicSine = P2.sinh = function() {
+  var k, pr, rm, len, x = this, Ctor = x.constructor;
+  if (!x.isFinite() || x.isZero())
+    return new Ctor(x);
+  pr = Ctor.precision;
+  rm = Ctor.rounding;
+  Ctor.precision = pr + Math.max(x.e, x.sd()) + 4;
+  Ctor.rounding = 1;
+  len = x.d.length;
+  if (len < 3) {
+    x = taylorSeries(Ctor, 2, x, x, true);
+  } else {
+    k = 1.4 * Math.sqrt(len);
+    k = k > 16 ? 16 : k | 0;
+    x = x.times(1 / tinyPow(5, k));
+    x = taylorSeries(Ctor, 2, x, x, true);
+    var sinh2_x, d5 = new Ctor(5), d16 = new Ctor(16), d20 = new Ctor(20);
+    for (; k--; ) {
+      sinh2_x = x.times(x);
+      x = x.times(d5.plus(sinh2_x.times(d16.times(sinh2_x).plus(d20))));
+    }
+  }
+  Ctor.precision = pr;
+  Ctor.rounding = rm;
+  return finalise(x, pr, rm, true);
+};
+P2.hyperbolicTangent = P2.tanh = function() {
+  var pr, rm, x = this, Ctor = x.constructor;
+  if (!x.isFinite())
+    return new Ctor(x.s);
+  if (x.isZero())
+    return new Ctor(x);
+  pr = Ctor.precision;
+  rm = Ctor.rounding;
+  Ctor.precision = pr + 7;
+  Ctor.rounding = 1;
+  return divide(x.sinh(), x.cosh(), Ctor.precision = pr, Ctor.rounding = rm);
+};
+P2.inverseCosine = P2.acos = function() {
+  var halfPi, x = this, Ctor = x.constructor, k = x.abs().cmp(1), pr = Ctor.precision, rm = Ctor.rounding;
+  if (k !== -1) {
+    return k === 0 ? x.isNeg() ? getPi(Ctor, pr, rm) : new Ctor(0) : new Ctor(NaN);
+  }
+  if (x.isZero())
+    return getPi(Ctor, pr + 4, rm).times(0.5);
+  Ctor.precision = pr + 6;
+  Ctor.rounding = 1;
+  x = x.asin();
+  halfPi = getPi(Ctor, pr + 4, rm).times(0.5);
+  Ctor.precision = pr;
+  Ctor.rounding = rm;
+  return halfPi.minus(x);
+};
+P2.inverseHyperbolicCosine = P2.acosh = function() {
+  var pr, rm, x = this, Ctor = x.constructor;
+  if (x.lte(1))
+    return new Ctor(x.eq(1) ? 0 : NaN);
+  if (!x.isFinite())
+    return new Ctor(x);
+  pr = Ctor.precision;
+  rm = Ctor.rounding;
+  Ctor.precision = pr + Math.max(Math.abs(x.e), x.sd()) + 4;
+  Ctor.rounding = 1;
+  external = false;
+  x = x.times(x).minus(1).sqrt().plus(x);
+  external = true;
+  Ctor.precision = pr;
+  Ctor.rounding = rm;
+  return x.ln();
+};
+P2.inverseHyperbolicSine = P2.asinh = function() {
+  var pr, rm, x = this, Ctor = x.constructor;
+  if (!x.isFinite() || x.isZero())
+    return new Ctor(x);
+  pr = Ctor.precision;
+  rm = Ctor.rounding;
+  Ctor.precision = pr + 2 * Math.max(Math.abs(x.e), x.sd()) + 6;
+  Ctor.rounding = 1;
+  external = false;
+  x = x.times(x).plus(1).sqrt().plus(x);
+  external = true;
+  Ctor.precision = pr;
+  Ctor.rounding = rm;
+  return x.ln();
+};
+P2.inverseHyperbolicTangent = P2.atanh = function() {
+  var pr, rm, wpr, xsd, x = this, Ctor = x.constructor;
+  if (!x.isFinite())
+    return new Ctor(NaN);
+  if (x.e >= 0)
+    return new Ctor(x.abs().eq(1) ? x.s / 0 : x.isZero() ? x : NaN);
+  pr = Ctor.precision;
+  rm = Ctor.rounding;
+  xsd = x.sd();
+  if (Math.max(xsd, pr) < 2 * -x.e - 1)
+    return finalise(new Ctor(x), pr, rm, true);
+  Ctor.precision = wpr = xsd - x.e;
+  x = divide(x.plus(1), new Ctor(1).minus(x), wpr + pr, 1);
+  Ctor.precision = pr + 4;
+  Ctor.rounding = 1;
+  x = x.ln();
+  Ctor.precision = pr;
+  Ctor.rounding = rm;
+  return x.times(0.5);
+};
+P2.inverseSine = P2.asin = function() {
+  var halfPi, k, pr, rm, x = this, Ctor = x.constructor;
+  if (x.isZero())
+    return new Ctor(x);
+  k = x.abs().cmp(1);
+  pr = Ctor.precision;
+  rm = Ctor.rounding;
+  if (k !== -1) {
+    if (k === 0) {
+      halfPi = getPi(Ctor, pr + 4, rm).times(0.5);
+      halfPi.s = x.s;
+      return halfPi;
+    }
+    return new Ctor(NaN);
+  }
+  Ctor.precision = pr + 6;
+  Ctor.rounding = 1;
+  x = x.div(new Ctor(1).minus(x.times(x)).sqrt().plus(1)).atan();
+  Ctor.precision = pr;
+  Ctor.rounding = rm;
+  return x.times(2);
+};
+P2.inverseTangent = P2.atan = function() {
+  var i, j, k, n2, px, t2, r2, wpr, x2, x = this, Ctor = x.constructor, pr = Ctor.precision, rm = Ctor.rounding;
+  if (!x.isFinite()) {
+    if (!x.s)
+      return new Ctor(NaN);
+    if (pr + 4 <= PI_PRECISION) {
+      r2 = getPi(Ctor, pr + 4, rm).times(0.5);
+      r2.s = x.s;
+      return r2;
+    }
+  } else if (x.isZero()) {
+    return new Ctor(x);
+  } else if (x.abs().eq(1) && pr + 4 <= PI_PRECISION) {
+    r2 = getPi(Ctor, pr + 4, rm).times(0.25);
+    r2.s = x.s;
+    return r2;
+  }
+  Ctor.precision = wpr = pr + 10;
+  Ctor.rounding = 1;
+  k = Math.min(28, wpr / LOG_BASE + 2 | 0);
+  for (i = k; i; --i)
+    x = x.div(x.times(x).plus(1).sqrt().plus(1));
+  external = false;
+  j = Math.ceil(wpr / LOG_BASE);
+  n2 = 1;
+  x2 = x.times(x);
+  r2 = new Ctor(x);
+  px = x;
+  for (; i !== -1; ) {
+    px = px.times(x2);
+    t2 = r2.minus(px.div(n2 += 2));
+    px = px.times(x2);
+    r2 = t2.plus(px.div(n2 += 2));
+    if (r2.d[j] !== void 0)
+      for (i = j; r2.d[i] === t2.d[i] && i--; )
+        ;
+  }
+  if (k)
+    r2 = r2.times(2 << k - 1);
+  external = true;
+  return finalise(r2, Ctor.precision = pr, Ctor.rounding = rm, true);
+};
+P2.isFinite = function() {
+  return !!this.d;
+};
+P2.isInteger = P2.isInt = function() {
+  return !!this.d && mathfloor(this.e / LOG_BASE) > this.d.length - 2;
+};
+P2.isNaN = function() {
+  return !this.s;
+};
+P2.isNegative = P2.isNeg = function() {
+  return this.s < 0;
+};
+P2.isPositive = P2.isPos = function() {
+  return this.s > 0;
+};
+P2.isZero = function() {
+  return !!this.d && this.d[0] === 0;
+};
+P2.lessThan = P2.lt = function(y) {
+  return this.cmp(y) < 0;
+};
+P2.lessThanOrEqualTo = P2.lte = function(y) {
+  return this.cmp(y) < 1;
+};
+P2.logarithm = P2.log = function(base) {
+  var isBase10, d2, denominator, k, inf, num, sd, r2, arg2 = this, Ctor = arg2.constructor, pr = Ctor.precision, rm = Ctor.rounding, guard = 5;
+  if (base == null) {
+    base = new Ctor(10);
+    isBase10 = true;
+  } else {
+    base = new Ctor(base);
+    d2 = base.d;
+    if (base.s < 0 || !d2 || !d2[0] || base.eq(1))
+      return new Ctor(NaN);
+    isBase10 = base.eq(10);
+  }
+  d2 = arg2.d;
+  if (arg2.s < 0 || !d2 || !d2[0] || arg2.eq(1)) {
+    return new Ctor(d2 && !d2[0] ? -1 / 0 : arg2.s != 1 ? NaN : d2 ? 0 : 1 / 0);
+  }
+  if (isBase10) {
+    if (d2.length > 1) {
+      inf = true;
+    } else {
+      for (k = d2[0]; k % 10 === 0; )
+        k /= 10;
+      inf = k !== 1;
+    }
+  }
+  external = false;
+  sd = pr + guard;
+  num = naturalLogarithm(arg2, sd);
+  denominator = isBase10 ? getLn10(Ctor, sd + 10) : naturalLogarithm(base, sd);
+  r2 = divide(num, denominator, sd, 1);
+  if (checkRoundingDigits(r2.d, k = pr, rm)) {
+    do {
+      sd += 10;
+      num = naturalLogarithm(arg2, sd);
+      denominator = isBase10 ? getLn10(Ctor, sd + 10) : naturalLogarithm(base, sd);
+      r2 = divide(num, denominator, sd, 1);
+      if (!inf) {
+        if (+digitsToString(r2.d).slice(k + 1, k + 15) + 1 == 1e14) {
+          r2 = finalise(r2, pr + 1, 0);
+        }
+        break;
+      }
+    } while (checkRoundingDigits(r2.d, k += 10, rm));
+  }
+  external = true;
+  return finalise(r2, pr, rm);
+};
+P2.minus = P2.sub = function(y) {
+  var d2, e2, i, j, k, len, pr, rm, xd, xe, xLTy, yd, x = this, Ctor = x.constructor;
+  y = new Ctor(y);
+  if (!x.d || !y.d) {
+    if (!x.s || !y.s)
+      y = new Ctor(NaN);
+    else if (x.d)
+      y.s = -y.s;
+    else
+      y = new Ctor(y.d || x.s !== y.s ? x : NaN);
+    return y;
+  }
+  if (x.s != y.s) {
+    y.s = -y.s;
+    return x.plus(y);
+  }
+  xd = x.d;
+  yd = y.d;
+  pr = Ctor.precision;
+  rm = Ctor.rounding;
+  if (!xd[0] || !yd[0]) {
+    if (yd[0])
+      y.s = -y.s;
+    else if (xd[0])
+      y = new Ctor(x);
+    else
+      return new Ctor(rm === 3 ? -0 : 0);
+    return external ? finalise(y, pr, rm) : y;
+  }
+  e2 = mathfloor(y.e / LOG_BASE);
+  xe = mathfloor(x.e / LOG_BASE);
+  xd = xd.slice();
+  k = xe - e2;
+  if (k) {
+    xLTy = k < 0;
+    if (xLTy) {
+      d2 = xd;
+      k = -k;
+      len = yd.length;
+    } else {
+      d2 = yd;
+      e2 = xe;
+      len = xd.length;
+    }
+    i = Math.max(Math.ceil(pr / LOG_BASE), len) + 2;
+    if (k > i) {
+      k = i;
+      d2.length = 1;
+    }
+    d2.reverse();
+    for (i = k; i--; )
+      d2.push(0);
+    d2.reverse();
+  } else {
+    i = xd.length;
+    len = yd.length;
+    xLTy = i < len;
+    if (xLTy)
+      len = i;
+    for (i = 0; i < len; i++) {
+      if (xd[i] != yd[i]) {
+        xLTy = xd[i] < yd[i];
+        break;
+      }
+    }
+    k = 0;
+  }
+  if (xLTy) {
+    d2 = xd;
+    xd = yd;
+    yd = d2;
+    y.s = -y.s;
+  }
+  len = xd.length;
+  for (i = yd.length - len; i > 0; --i)
+    xd[len++] = 0;
+  for (i = yd.length; i > k; ) {
+    if (xd[--i] < yd[i]) {
+      for (j = i; j && xd[--j] === 0; )
+        xd[j] = BASE - 1;
+      --xd[j];
+      xd[i] += BASE;
+    }
+    xd[i] -= yd[i];
+  }
+  for (; xd[--len] === 0; )
+    xd.pop();
+  for (; xd[0] === 0; xd.shift())
+    --e2;
+  if (!xd[0])
+    return new Ctor(rm === 3 ? -0 : 0);
+  y.d = xd;
+  y.e = getBase10Exponent(xd, e2);
+  return external ? finalise(y, pr, rm) : y;
+};
+P2.modulo = P2.mod = function(y) {
+  var q, x = this, Ctor = x.constructor;
+  y = new Ctor(y);
+  if (!x.d || !y.s || y.d && !y.d[0])
+    return new Ctor(NaN);
+  if (!y.d || x.d && !x.d[0]) {
+    return finalise(new Ctor(x), Ctor.precision, Ctor.rounding);
+  }
+  external = false;
+  if (Ctor.modulo == 9) {
+    q = divide(x, y.abs(), 0, 3, 1);
+    q.s *= y.s;
+  } else {
+    q = divide(x, y, 0, Ctor.modulo, 1);
+  }
+  q = q.times(y);
+  external = true;
+  return x.minus(q);
+};
+P2.naturalExponential = P2.exp = function() {
+  return naturalExponential(this);
+};
+P2.naturalLogarithm = P2.ln = function() {
+  return naturalLogarithm(this);
+};
+P2.negated = P2.neg = function() {
+  var x = new this.constructor(this);
+  x.s = -x.s;
+  return finalise(x);
+};
+P2.plus = P2.add = function(y) {
+  var carry, d2, e2, i, k, len, pr, rm, xd, yd, x = this, Ctor = x.constructor;
+  y = new Ctor(y);
+  if (!x.d || !y.d) {
+    if (!x.s || !y.s)
+      y = new Ctor(NaN);
+    else if (!x.d)
+      y = new Ctor(y.d || x.s === y.s ? x : NaN);
+    return y;
+  }
+  if (x.s != y.s) {
+    y.s = -y.s;
+    return x.minus(y);
+  }
+  xd = x.d;
+  yd = y.d;
+  pr = Ctor.precision;
+  rm = Ctor.rounding;
+  if (!xd[0] || !yd[0]) {
+    if (!yd[0])
+      y = new Ctor(x);
+    return external ? finalise(y, pr, rm) : y;
+  }
+  k = mathfloor(x.e / LOG_BASE);
+  e2 = mathfloor(y.e / LOG_BASE);
+  xd = xd.slice();
+  i = k - e2;
+  if (i) {
+    if (i < 0) {
+      d2 = xd;
+      i = -i;
+      len = yd.length;
+    } else {
+      d2 = yd;
+      e2 = k;
+      len = xd.length;
+    }
+    k = Math.ceil(pr / LOG_BASE);
+    len = k > len ? k + 1 : len + 1;
+    if (i > len) {
+      i = len;
+      d2.length = 1;
+    }
+    d2.reverse();
+    for (; i--; )
+      d2.push(0);
+    d2.reverse();
+  }
+  len = xd.length;
+  i = yd.length;
+  if (len - i < 0) {
+    i = len;
+    d2 = yd;
+    yd = xd;
+    xd = d2;
+  }
+  for (carry = 0; i; ) {
+    carry = (xd[--i] = xd[i] + yd[i] + carry) / BASE | 0;
+    xd[i] %= BASE;
+  }
+  if (carry) {
+    xd.unshift(carry);
+    ++e2;
+  }
+  for (len = xd.length; xd[--len] == 0; )
+    xd.pop();
+  y.d = xd;
+  y.e = getBase10Exponent(xd, e2);
+  return external ? finalise(y, pr, rm) : y;
+};
+P2.precision = P2.sd = function(z) {
+  var k, x = this;
+  if (z !== void 0 && z !== !!z && z !== 1 && z !== 0)
+    throw Error(invalidArgument + z);
+  if (x.d) {
+    k = getPrecision(x.d);
+    if (z && x.e + 1 > k)
+      k = x.e + 1;
+  } else {
+    k = NaN;
+  }
+  return k;
+};
+P2.round = function() {
+  var x = this, Ctor = x.constructor;
+  return finalise(new Ctor(x), x.e + 1, Ctor.rounding);
+};
+P2.sine = P2.sin = function() {
+  var pr, rm, x = this, Ctor = x.constructor;
+  if (!x.isFinite())
+    return new Ctor(NaN);
+  if (x.isZero())
+    return new Ctor(x);
+  pr = Ctor.precision;
+  rm = Ctor.rounding;
+  Ctor.precision = pr + Math.max(x.e, x.sd()) + LOG_BASE;
+  Ctor.rounding = 1;
+  x = sine(Ctor, toLessThanHalfPi(Ctor, x));
+  Ctor.precision = pr;
+  Ctor.rounding = rm;
+  return finalise(quadrant > 2 ? x.neg() : x, pr, rm, true);
+};
+P2.squareRoot = P2.sqrt = function() {
+  var m2, n2, sd, r2, rep, t2, x = this, d2 = x.d, e2 = x.e, s = x.s, Ctor = x.constructor;
+  if (s !== 1 || !d2 || !d2[0]) {
+    return new Ctor(!s || s < 0 && (!d2 || d2[0]) ? NaN : d2 ? x : 1 / 0);
+  }
+  external = false;
+  s = Math.sqrt(+x);
+  if (s == 0 || s == 1 / 0) {
+    n2 = digitsToString(d2);
+    if ((n2.length + e2) % 2 == 0)
+      n2 += "0";
+    s = Math.sqrt(n2);
+    e2 = mathfloor((e2 + 1) / 2) - (e2 < 0 || e2 % 2);
+    if (s == 1 / 0) {
+      n2 = "5e" + e2;
+    } else {
+      n2 = s.toExponential();
+      n2 = n2.slice(0, n2.indexOf("e") + 1) + e2;
+    }
+    r2 = new Ctor(n2);
+  } else {
+    r2 = new Ctor(s.toString());
+  }
+  sd = (e2 = Ctor.precision) + 3;
+  for (; ; ) {
+    t2 = r2;
+    r2 = t2.plus(divide(x, t2, sd + 2, 1)).times(0.5);
+    if (digitsToString(t2.d).slice(0, sd) === (n2 = digitsToString(r2.d)).slice(0, sd)) {
+      n2 = n2.slice(sd - 3, sd + 1);
+      if (n2 == "9999" || !rep && n2 == "4999") {
+        if (!rep) {
+          finalise(t2, e2 + 1, 0);
+          if (t2.times(t2).eq(x)) {
+            r2 = t2;
+            break;
+          }
+        }
+        sd += 4;
+        rep = 1;
+      } else {
+        if (!+n2 || !+n2.slice(1) && n2.charAt(0) == "5") {
+          finalise(r2, e2 + 1, 1);
+          m2 = !r2.times(r2).eq(x);
+        }
+        break;
+      }
+    }
+  }
+  external = true;
+  return finalise(r2, e2, Ctor.rounding, m2);
+};
+P2.tangent = P2.tan = function() {
+  var pr, rm, x = this, Ctor = x.constructor;
+  if (!x.isFinite())
+    return new Ctor(NaN);
+  if (x.isZero())
+    return new Ctor(x);
+  pr = Ctor.precision;
+  rm = Ctor.rounding;
+  Ctor.precision = pr + 10;
+  Ctor.rounding = 1;
+  x = x.sin();
+  x.s = 1;
+  x = divide(x, new Ctor(1).minus(x.times(x)).sqrt(), pr + 10, 0);
+  Ctor.precision = pr;
+  Ctor.rounding = rm;
+  return finalise(quadrant == 2 || quadrant == 4 ? x.neg() : x, pr, rm, true);
+};
+P2.times = P2.mul = function(y) {
+  var carry, e2, i, k, r2, rL, t2, xdL, ydL, x = this, Ctor = x.constructor, xd = x.d, yd = (y = new Ctor(y)).d;
+  y.s *= x.s;
+  if (!xd || !xd[0] || !yd || !yd[0]) {
+    return new Ctor(!y.s || xd && !xd[0] && !yd || yd && !yd[0] && !xd ? NaN : !xd || !yd ? y.s / 0 : y.s * 0);
+  }
+  e2 = mathfloor(x.e / LOG_BASE) + mathfloor(y.e / LOG_BASE);
+  xdL = xd.length;
+  ydL = yd.length;
+  if (xdL < ydL) {
+    r2 = xd;
+    xd = yd;
+    yd = r2;
+    rL = xdL;
+    xdL = ydL;
+    ydL = rL;
+  }
+  r2 = [];
+  rL = xdL + ydL;
+  for (i = rL; i--; )
+    r2.push(0);
+  for (i = ydL; --i >= 0; ) {
+    carry = 0;
+    for (k = xdL + i; k > i; ) {
+      t2 = r2[k] + yd[i] * xd[k - i - 1] + carry;
+      r2[k--] = t2 % BASE | 0;
+      carry = t2 / BASE | 0;
+    }
+    r2[k] = (r2[k] + carry) % BASE | 0;
+  }
+  for (; !r2[--rL]; )
+    r2.pop();
+  if (carry)
+    ++e2;
+  else
+    r2.shift();
+  y.d = r2;
+  y.e = getBase10Exponent(r2, e2);
+  return external ? finalise(y, Ctor.precision, Ctor.rounding) : y;
+};
+P2.toBinary = function(sd, rm) {
+  return toStringBinary(this, 2, sd, rm);
+};
+P2.toDecimalPlaces = P2.toDP = function(dp, rm) {
+  var x = this, Ctor = x.constructor;
+  x = new Ctor(x);
+  if (dp === void 0)
+    return x;
+  checkInt32(dp, 0, MAX_DIGITS);
+  if (rm === void 0)
+    rm = Ctor.rounding;
+  else
+    checkInt32(rm, 0, 8);
+  return finalise(x, dp + x.e + 1, rm);
+};
+P2.toExponential = function(dp, rm) {
+  var str, x = this, Ctor = x.constructor;
+  if (dp === void 0) {
+    str = finiteToString(x, true);
+  } else {
+    checkInt32(dp, 0, MAX_DIGITS);
+    if (rm === void 0)
+      rm = Ctor.rounding;
+    else
+      checkInt32(rm, 0, 8);
+    x = finalise(new Ctor(x), dp + 1, rm);
+    str = finiteToString(x, true, dp + 1);
+  }
+  return x.isNeg() && !x.isZero() ? "-" + str : str;
+};
+P2.toFixed = function(dp, rm) {
+  var str, y, x = this, Ctor = x.constructor;
+  if (dp === void 0) {
+    str = finiteToString(x);
+  } else {
+    checkInt32(dp, 0, MAX_DIGITS);
+    if (rm === void 0)
+      rm = Ctor.rounding;
+    else
+      checkInt32(rm, 0, 8);
+    y = finalise(new Ctor(x), dp + x.e + 1, rm);
+    str = finiteToString(y, false, dp + y.e + 1);
+  }
+  return x.isNeg() && !x.isZero() ? "-" + str : str;
+};
+P2.toFraction = function(maxD) {
+  var d2, d0, d1, d22, e2, k, n2, n0, n1, pr, q, r2, x = this, xd = x.d, Ctor = x.constructor;
+  if (!xd)
+    return new Ctor(x);
+  n1 = d0 = new Ctor(1);
+  d1 = n0 = new Ctor(0);
+  d2 = new Ctor(d1);
+  e2 = d2.e = getPrecision(xd) - x.e - 1;
+  k = e2 % LOG_BASE;
+  d2.d[0] = mathpow(10, k < 0 ? LOG_BASE + k : k);
+  if (maxD == null) {
+    maxD = e2 > 0 ? d2 : n1;
+  } else {
+    n2 = new Ctor(maxD);
+    if (!n2.isInt() || n2.lt(n1))
+      throw Error(invalidArgument + n2);
+    maxD = n2.gt(d2) ? e2 > 0 ? d2 : n1 : n2;
+  }
+  external = false;
+  n2 = new Ctor(digitsToString(xd));
+  pr = Ctor.precision;
+  Ctor.precision = e2 = xd.length * LOG_BASE * 2;
+  for (; ; ) {
+    q = divide(n2, d2, 0, 1, 1);
+    d22 = d0.plus(q.times(d1));
+    if (d22.cmp(maxD) == 1)
+      break;
+    d0 = d1;
+    d1 = d22;
+    d22 = n1;
+    n1 = n0.plus(q.times(d22));
+    n0 = d22;
+    d22 = d2;
+    d2 = n2.minus(q.times(d22));
+    n2 = d22;
+  }
+  d22 = divide(maxD.minus(d0), d1, 0, 1, 1);
+  n0 = n0.plus(d22.times(n1));
+  d0 = d0.plus(d22.times(d1));
+  n0.s = n1.s = x.s;
+  r2 = divide(n1, d1, e2, 1).minus(x).abs().cmp(divide(n0, d0, e2, 1).minus(x).abs()) < 1 ? [n1, d1] : [n0, d0];
+  Ctor.precision = pr;
+  external = true;
+  return r2;
+};
+P2.toHexadecimal = P2.toHex = function(sd, rm) {
+  return toStringBinary(this, 16, sd, rm);
+};
+P2.toNearest = function(y, rm) {
+  var x = this, Ctor = x.constructor;
+  x = new Ctor(x);
+  if (y == null) {
+    if (!x.d)
+      return x;
+    y = new Ctor(1);
+    rm = Ctor.rounding;
+  } else {
+    y = new Ctor(y);
+    if (rm === void 0) {
+      rm = Ctor.rounding;
+    } else {
+      checkInt32(rm, 0, 8);
+    }
+    if (!x.d)
+      return y.s ? x : y;
+    if (!y.d) {
+      if (y.s)
+        y.s = x.s;
+      return y;
+    }
+  }
+  if (y.d[0]) {
+    external = false;
+    x = divide(x, y, 0, rm, 1).times(y);
+    external = true;
+    finalise(x);
+  } else {
+    y.s = x.s;
+    x = y;
+  }
+  return x;
+};
+P2.toNumber = function() {
+  return +this;
+};
+P2.toOctal = function(sd, rm) {
+  return toStringBinary(this, 8, sd, rm);
+};
+P2.toPower = P2.pow = function(y) {
+  var e2, k, pr, r2, rm, s, x = this, Ctor = x.constructor, yn = +(y = new Ctor(y));
+  if (!x.d || !y.d || !x.d[0] || !y.d[0])
+    return new Ctor(mathpow(+x, yn));
+  x = new Ctor(x);
+  if (x.eq(1))
+    return x;
+  pr = Ctor.precision;
+  rm = Ctor.rounding;
+  if (y.eq(1))
+    return finalise(x, pr, rm);
+  e2 = mathfloor(y.e / LOG_BASE);
+  if (e2 >= y.d.length - 1 && (k = yn < 0 ? -yn : yn) <= MAX_SAFE_INTEGER) {
+    r2 = intPow(Ctor, x, k, pr);
+    return y.s < 0 ? new Ctor(1).div(r2) : finalise(r2, pr, rm);
+  }
+  s = x.s;
+  if (s < 0) {
+    if (e2 < y.d.length - 1)
+      return new Ctor(NaN);
+    if ((y.d[e2] & 1) == 0)
+      s = 1;
+    if (x.e == 0 && x.d[0] == 1 && x.d.length == 1) {
+      x.s = s;
+      return x;
+    }
+  }
+  k = mathpow(+x, yn);
+  e2 = k == 0 || !isFinite(k) ? mathfloor(yn * (Math.log("0." + digitsToString(x.d)) / Math.LN10 + x.e + 1)) : new Ctor(k + "").e;
+  if (e2 > Ctor.maxE + 1 || e2 < Ctor.minE - 1)
+    return new Ctor(e2 > 0 ? s / 0 : 0);
+  external = false;
+  Ctor.rounding = x.s = 1;
+  k = Math.min(12, (e2 + "").length);
+  r2 = naturalExponential(y.times(naturalLogarithm(x, pr + k)), pr);
+  if (r2.d) {
+    r2 = finalise(r2, pr + 5, 1);
+    if (checkRoundingDigits(r2.d, pr, rm)) {
+      e2 = pr + 10;
+      r2 = finalise(naturalExponential(y.times(naturalLogarithm(x, e2 + k)), e2), e2 + 5, 1);
+      if (+digitsToString(r2.d).slice(pr + 1, pr + 15) + 1 == 1e14) {
+        r2 = finalise(r2, pr + 1, 0);
+      }
+    }
+  }
+  r2.s = s;
+  external = true;
+  Ctor.rounding = rm;
+  return finalise(r2, pr, rm);
+};
+P2.toPrecision = function(sd, rm) {
+  var str, x = this, Ctor = x.constructor;
+  if (sd === void 0) {
+    str = finiteToString(x, x.e <= Ctor.toExpNeg || x.e >= Ctor.toExpPos);
+  } else {
+    checkInt32(sd, 1, MAX_DIGITS);
+    if (rm === void 0)
+      rm = Ctor.rounding;
+    else
+      checkInt32(rm, 0, 8);
+    x = finalise(new Ctor(x), sd, rm);
+    str = finiteToString(x, sd <= x.e || x.e <= Ctor.toExpNeg, sd);
+  }
+  return x.isNeg() && !x.isZero() ? "-" + str : str;
+};
+P2.toSignificantDigits = P2.toSD = function(sd, rm) {
+  var x = this, Ctor = x.constructor;
+  if (sd === void 0) {
+    sd = Ctor.precision;
+    rm = Ctor.rounding;
+  } else {
+    checkInt32(sd, 1, MAX_DIGITS);
+    if (rm === void 0)
+      rm = Ctor.rounding;
+    else
+      checkInt32(rm, 0, 8);
+  }
+  return finalise(new Ctor(x), sd, rm);
+};
+P2.toString = function() {
+  var x = this, Ctor = x.constructor, str = finiteToString(x, x.e <= Ctor.toExpNeg || x.e >= Ctor.toExpPos);
+  return x.isNeg() && !x.isZero() ? "-" + str : str;
+};
+P2.truncated = P2.trunc = function() {
+  return finalise(new this.constructor(this), this.e + 1, 1);
+};
+P2.valueOf = P2.toJSON = function() {
+  var x = this, Ctor = x.constructor, str = finiteToString(x, x.e <= Ctor.toExpNeg || x.e >= Ctor.toExpPos);
+  return x.isNeg() ? "-" + str : str;
+};
+function digitsToString(d2) {
+  var i, k, ws, indexOfLastWord = d2.length - 1, str = "", w2 = d2[0];
+  if (indexOfLastWord > 0) {
+    str += w2;
+    for (i = 1; i < indexOfLastWord; i++) {
+      ws = d2[i] + "";
+      k = LOG_BASE - ws.length;
+      if (k)
+        str += getZeroString(k);
+      str += ws;
+    }
+    w2 = d2[i];
+    ws = w2 + "";
+    k = LOG_BASE - ws.length;
+    if (k)
+      str += getZeroString(k);
+  } else if (w2 === 0) {
+    return "0";
+  }
+  for (; w2 % 10 === 0; )
+    w2 /= 10;
+  return str + w2;
+}
+__name(digitsToString, "digitsToString");
+function checkInt32(i, min2, max2) {
+  if (i !== ~~i || i < min2 || i > max2) {
+    throw Error(invalidArgument + i);
+  }
+}
+__name(checkInt32, "checkInt32");
+function checkRoundingDigits(d2, i, rm, repeating) {
+  var di, k, r2, rd;
+  for (k = d2[0]; k >= 10; k /= 10)
+    --i;
+  if (--i < 0) {
+    i += LOG_BASE;
+    di = 0;
+  } else {
+    di = Math.ceil((i + 1) / LOG_BASE);
+    i %= LOG_BASE;
+  }
+  k = mathpow(10, LOG_BASE - i);
+  rd = d2[di] % k | 0;
+  if (repeating == null) {
+    if (i < 3) {
+      if (i == 0)
+        rd = rd / 100 | 0;
+      else if (i == 1)
+        rd = rd / 10 | 0;
+      r2 = rm < 4 && rd == 99999 || rm > 3 && rd == 49999 || rd == 5e4 || rd == 0;
+    } else {
+      r2 = (rm < 4 && rd + 1 == k || rm > 3 && rd + 1 == k / 2) && (d2[di + 1] / k / 100 | 0) == mathpow(10, i - 2) - 1 || (rd == k / 2 || rd == 0) && (d2[di + 1] / k / 100 | 0) == 0;
+    }
+  } else {
+    if (i < 4) {
+      if (i == 0)
+        rd = rd / 1e3 | 0;
+      else if (i == 1)
+        rd = rd / 100 | 0;
+      else if (i == 2)
+        rd = rd / 10 | 0;
+      r2 = (repeating || rm < 4) && rd == 9999 || !repeating && rm > 3 && rd == 4999;
+    } else {
+      r2 = ((repeating || rm < 4) && rd + 1 == k || !repeating && rm > 3 && rd + 1 == k / 2) && (d2[di + 1] / k / 1e3 | 0) == mathpow(10, i - 3) - 1;
+    }
+  }
+  return r2;
+}
+__name(checkRoundingDigits, "checkRoundingDigits");
+function convertBase(str, baseIn, baseOut) {
+  var j, arr = [0], arrL, i = 0, strL = str.length;
+  for (; i < strL; ) {
+    for (arrL = arr.length; arrL--; )
+      arr[arrL] *= baseIn;
+    arr[0] += NUMERALS.indexOf(str.charAt(i++));
+    for (j = 0; j < arr.length; j++) {
+      if (arr[j] > baseOut - 1) {
+        if (arr[j + 1] === void 0)
+          arr[j + 1] = 0;
+        arr[j + 1] += arr[j] / baseOut | 0;
+        arr[j] %= baseOut;
+      }
+    }
+  }
+  return arr.reverse();
+}
+__name(convertBase, "convertBase");
+function cosine(Ctor, x) {
+  var k, len, y;
+  if (x.isZero())
+    return x;
+  len = x.d.length;
+  if (len < 32) {
+    k = Math.ceil(len / 3);
+    y = (1 / tinyPow(4, k)).toString();
+  } else {
+    k = 16;
+    y = "2.3283064365386962890625e-10";
+  }
+  Ctor.precision += k;
+  x = taylorSeries(Ctor, 1, x.times(y), new Ctor(1));
+  for (var i = k; i--; ) {
+    var cos2x = x.times(x);
+    x = cos2x.times(cos2x).minus(cos2x).times(8).plus(1);
+  }
+  Ctor.precision -= k;
+  return x;
+}
+__name(cosine, "cosine");
+var divide = function() {
+  function multiplyInteger(x, k, base) {
+    var temp, carry = 0, i = x.length;
+    for (x = x.slice(); i--; ) {
+      temp = x[i] * k + carry;
+      x[i] = temp % base | 0;
+      carry = temp / base | 0;
+    }
+    if (carry)
+      x.unshift(carry);
+    return x;
+  }
+  __name(multiplyInteger, "multiplyInteger");
+  function compare(a, b2, aL, bL) {
+    var i, r2;
+    if (aL != bL) {
+      r2 = aL > bL ? 1 : -1;
+    } else {
+      for (i = r2 = 0; i < aL; i++) {
+        if (a[i] != b2[i]) {
+          r2 = a[i] > b2[i] ? 1 : -1;
+          break;
+        }
+      }
+    }
+    return r2;
+  }
+  __name(compare, "compare");
+  function subtract(a, b2, aL, base) {
+    var i = 0;
+    for (; aL--; ) {
+      a[aL] -= i;
+      i = a[aL] < b2[aL] ? 1 : 0;
+      a[aL] = i * base + a[aL] - b2[aL];
+    }
+    for (; !a[0] && a.length > 1; )
+      a.shift();
+  }
+  __name(subtract, "subtract");
+  return function(x, y, pr, rm, dp, base) {
+    var cmp, e2, i, k, logBase, more, prod, prodL, q, qd, rem, remL, rem0, sd, t2, xi, xL, yd0, yL, yz, Ctor = x.constructor, sign2 = x.s == y.s ? 1 : -1, xd = x.d, yd = y.d;
+    if (!xd || !xd[0] || !yd || !yd[0]) {
+      return new Ctor(
+        !x.s || !y.s || (xd ? yd && xd[0] == yd[0] : !yd) ? NaN : xd && xd[0] == 0 || !yd ? sign2 * 0 : sign2 / 0
+      );
+    }
+    if (base) {
+      logBase = 1;
+      e2 = x.e - y.e;
+    } else {
+      base = BASE;
+      logBase = LOG_BASE;
+      e2 = mathfloor(x.e / logBase) - mathfloor(y.e / logBase);
+    }
+    yL = yd.length;
+    xL = xd.length;
+    q = new Ctor(sign2);
+    qd = q.d = [];
+    for (i = 0; yd[i] == (xd[i] || 0); i++)
+      ;
+    if (yd[i] > (xd[i] || 0))
+      e2--;
+    if (pr == null) {
+      sd = pr = Ctor.precision;
+      rm = Ctor.rounding;
+    } else if (dp) {
+      sd = pr + (x.e - y.e) + 1;
+    } else {
+      sd = pr;
+    }
+    if (sd < 0) {
+      qd.push(1);
+      more = true;
+    } else {
+      sd = sd / logBase + 2 | 0;
+      i = 0;
+      if (yL == 1) {
+        k = 0;
+        yd = yd[0];
+        sd++;
+        for (; (i < xL || k) && sd--; i++) {
+          t2 = k * base + (xd[i] || 0);
+          qd[i] = t2 / yd | 0;
+          k = t2 % yd | 0;
+        }
+        more = k || i < xL;
+      } else {
+        k = base / (yd[0] + 1) | 0;
+        if (k > 1) {
+          yd = multiplyInteger(yd, k, base);
+          xd = multiplyInteger(xd, k, base);
+          yL = yd.length;
+          xL = xd.length;
+        }
+        xi = yL;
+        rem = xd.slice(0, yL);
+        remL = rem.length;
+        for (; remL < yL; )
+          rem[remL++] = 0;
+        yz = yd.slice();
+        yz.unshift(0);
+        yd0 = yd[0];
+        if (yd[1] >= base / 2)
+          ++yd0;
+        do {
+          k = 0;
+          cmp = compare(yd, rem, yL, remL);
+          if (cmp < 0) {
+            rem0 = rem[0];
+            if (yL != remL)
+              rem0 = rem0 * base + (rem[1] || 0);
+            k = rem0 / yd0 | 0;
+            if (k > 1) {
+              if (k >= base)
+                k = base - 1;
+              prod = multiplyInteger(yd, k, base);
+              prodL = prod.length;
+              remL = rem.length;
+              cmp = compare(prod, rem, prodL, remL);
+              if (cmp == 1) {
+                k--;
+                subtract(prod, yL < prodL ? yz : yd, prodL, base);
+              }
+            } else {
+              if (k == 0)
+                cmp = k = 1;
+              prod = yd.slice();
+            }
+            prodL = prod.length;
+            if (prodL < remL)
+              prod.unshift(0);
+            subtract(rem, prod, remL, base);
+            if (cmp == -1) {
+              remL = rem.length;
+              cmp = compare(yd, rem, yL, remL);
+              if (cmp < 1) {
+                k++;
+                subtract(rem, yL < remL ? yz : yd, remL, base);
+              }
+            }
+            remL = rem.length;
+          } else if (cmp === 0) {
+            k++;
+            rem = [0];
+          }
+          qd[i++] = k;
+          if (cmp && rem[0]) {
+            rem[remL++] = xd[xi] || 0;
+          } else {
+            rem = [xd[xi]];
+            remL = 1;
+          }
+        } while ((xi++ < xL || rem[0] !== void 0) && sd--);
+        more = rem[0] !== void 0;
+      }
+      if (!qd[0])
+        qd.shift();
+    }
+    if (logBase == 1) {
+      q.e = e2;
+      inexact = more;
+    } else {
+      for (i = 1, k = qd[0]; k >= 10; k /= 10)
+        i++;
+      q.e = i + e2 * logBase - 1;
+      finalise(q, dp ? pr + q.e + 1 : pr, rm, more);
+    }
+    return q;
+  };
+}();
+function finalise(x, sd, rm, isTruncated) {
+  var digits, i, j, k, rd, roundUp, w2, xd, xdi, Ctor = x.constructor;
+  out:
+    if (sd != null) {
+      xd = x.d;
+      if (!xd)
+        return x;
+      for (digits = 1, k = xd[0]; k >= 10; k /= 10)
+        digits++;
+      i = sd - digits;
+      if (i < 0) {
+        i += LOG_BASE;
+        j = sd;
+        w2 = xd[xdi = 0];
+        rd = w2 / mathpow(10, digits - j - 1) % 10 | 0;
+      } else {
+        xdi = Math.ceil((i + 1) / LOG_BASE);
+        k = xd.length;
+        if (xdi >= k) {
+          if (isTruncated) {
+            for (; k++ <= xdi; )
+              xd.push(0);
+            w2 = rd = 0;
+            digits = 1;
+            i %= LOG_BASE;
+            j = i - LOG_BASE + 1;
+          } else {
+            break out;
+          }
+        } else {
+          w2 = k = xd[xdi];
+          for (digits = 1; k >= 10; k /= 10)
+            digits++;
+          i %= LOG_BASE;
+          j = i - LOG_BASE + digits;
+          rd = j < 0 ? 0 : w2 / mathpow(10, digits - j - 1) % 10 | 0;
+        }
+      }
+      isTruncated = isTruncated || sd < 0 || xd[xdi + 1] !== void 0 || (j < 0 ? w2 : w2 % mathpow(10, digits - j - 1));
+      roundUp = rm < 4 ? (rd || isTruncated) && (rm == 0 || rm == (x.s < 0 ? 3 : 2)) : rd > 5 || rd == 5 && (rm == 4 || isTruncated || rm == 6 && (i > 0 ? j > 0 ? w2 / mathpow(10, digits - j) : 0 : xd[xdi - 1]) % 10 & 1 || rm == (x.s < 0 ? 8 : 7));
+      if (sd < 1 || !xd[0]) {
+        xd.length = 0;
+        if (roundUp) {
+          sd -= x.e + 1;
+          xd[0] = mathpow(10, (LOG_BASE - sd % LOG_BASE) % LOG_BASE);
+          x.e = -sd || 0;
+        } else {
+          xd[0] = x.e = 0;
+        }
+        return x;
+      }
+      if (i == 0) {
+        xd.length = xdi;
+        k = 1;
+        xdi--;
+      } else {
+        xd.length = xdi + 1;
+        k = mathpow(10, LOG_BASE - i);
+        xd[xdi] = j > 0 ? (w2 / mathpow(10, digits - j) % mathpow(10, j) | 0) * k : 0;
+      }
+      if (roundUp) {
+        for (; ; ) {
+          if (xdi == 0) {
+            for (i = 1, j = xd[0]; j >= 10; j /= 10)
+              i++;
+            j = xd[0] += k;
+            for (k = 1; j >= 10; j /= 10)
+              k++;
+            if (i != k) {
+              x.e++;
+              if (xd[0] == BASE)
+                xd[0] = 1;
+            }
+            break;
+          } else {
+            xd[xdi] += k;
+            if (xd[xdi] != BASE)
+              break;
+            xd[xdi--] = 0;
+            k = 1;
+          }
+        }
+      }
+      for (i = xd.length; xd[--i] === 0; )
+        xd.pop();
+    }
+  if (external) {
+    if (x.e > Ctor.maxE) {
+      x.d = null;
+      x.e = NaN;
+    } else if (x.e < Ctor.minE) {
+      x.e = 0;
+      x.d = [0];
+    }
+  }
+  return x;
+}
+__name(finalise, "finalise");
+function finiteToString(x, isExp, sd) {
+  if (!x.isFinite())
+    return nonFiniteToString(x);
+  var k, e2 = x.e, str = digitsToString(x.d), len = str.length;
+  if (isExp) {
+    if (sd && (k = sd - len) > 0) {
+      str = str.charAt(0) + "." + str.slice(1) + getZeroString(k);
+    } else if (len > 1) {
+      str = str.charAt(0) + "." + str.slice(1);
+    }
+    str = str + (x.e < 0 ? "e" : "e+") + x.e;
+  } else if (e2 < 0) {
+    str = "0." + getZeroString(-e2 - 1) + str;
+    if (sd && (k = sd - len) > 0)
+      str += getZeroString(k);
+  } else if (e2 >= len) {
+    str += getZeroString(e2 + 1 - len);
+    if (sd && (k = sd - e2 - 1) > 0)
+      str = str + "." + getZeroString(k);
+  } else {
+    if ((k = e2 + 1) < len)
+      str = str.slice(0, k) + "." + str.slice(k);
+    if (sd && (k = sd - len) > 0) {
+      if (e2 + 1 === len)
+        str += ".";
+      str += getZeroString(k);
+    }
+  }
+  return str;
+}
+__name(finiteToString, "finiteToString");
+function getBase10Exponent(digits, e2) {
+  var w2 = digits[0];
+  for (e2 *= LOG_BASE; w2 >= 10; w2 /= 10)
+    e2++;
+  return e2;
+}
+__name(getBase10Exponent, "getBase10Exponent");
+function getLn10(Ctor, sd, pr) {
+  if (sd > LN10_PRECISION) {
+    external = true;
+    if (pr)
+      Ctor.precision = pr;
+    throw Error(precisionLimitExceeded);
+  }
+  return finalise(new Ctor(LN10), sd, 1, true);
+}
+__name(getLn10, "getLn10");
+function getPi(Ctor, sd, rm) {
+  if (sd > PI_PRECISION)
+    throw Error(precisionLimitExceeded);
+  return finalise(new Ctor(PI), sd, rm, true);
+}
+__name(getPi, "getPi");
+function getPrecision(digits) {
+  var w2 = digits.length - 1, len = w2 * LOG_BASE + 1;
+  w2 = digits[w2];
+  if (w2) {
+    for (; w2 % 10 == 0; w2 /= 10)
+      len--;
+    for (w2 = digits[0]; w2 >= 10; w2 /= 10)
+      len++;
+  }
+  return len;
+}
+__name(getPrecision, "getPrecision");
+function getZeroString(k) {
+  var zs = "";
+  for (; k--; )
+    zs += "0";
+  return zs;
+}
+__name(getZeroString, "getZeroString");
+function intPow(Ctor, x, n2, pr) {
+  var isTruncated, r2 = new Ctor(1), k = Math.ceil(pr / LOG_BASE + 4);
+  external = false;
+  for (; ; ) {
+    if (n2 % 2) {
+      r2 = r2.times(x);
+      if (truncate(r2.d, k))
+        isTruncated = true;
+    }
+    n2 = mathfloor(n2 / 2);
+    if (n2 === 0) {
+      n2 = r2.d.length - 1;
+      if (isTruncated && r2.d[n2] === 0)
+        ++r2.d[n2];
+      break;
+    }
+    x = x.times(x);
+    truncate(x.d, k);
+  }
+  external = true;
+  return r2;
+}
+__name(intPow, "intPow");
+function isOdd(n2) {
+  return n2.d[n2.d.length - 1] & 1;
+}
+__name(isOdd, "isOdd");
+function maxOrMin(Ctor, args, ltgt) {
+  var y, x = new Ctor(args[0]), i = 0;
+  for (; ++i < args.length; ) {
+    y = new Ctor(args[i]);
+    if (!y.s) {
+      x = y;
+      break;
+    } else if (x[ltgt](y)) {
+      x = y;
+    }
+  }
+  return x;
+}
+__name(maxOrMin, "maxOrMin");
+function naturalExponential(x, sd) {
+  var denominator, guard, j, pow2, sum3, t2, wpr, rep = 0, i = 0, k = 0, Ctor = x.constructor, rm = Ctor.rounding, pr = Ctor.precision;
+  if (!x.d || !x.d[0] || x.e > 17) {
+    return new Ctor(x.d ? !x.d[0] ? 1 : x.s < 0 ? 0 : 1 / 0 : x.s ? x.s < 0 ? 0 : x : 0 / 0);
+  }
+  if (sd == null) {
+    external = false;
+    wpr = pr;
+  } else {
+    wpr = sd;
+  }
+  t2 = new Ctor(0.03125);
+  while (x.e > -2) {
+    x = x.times(t2);
+    k += 5;
+  }
+  guard = Math.log(mathpow(2, k)) / Math.LN10 * 2 + 5 | 0;
+  wpr += guard;
+  denominator = pow2 = sum3 = new Ctor(1);
+  Ctor.precision = wpr;
+  for (; ; ) {
+    pow2 = finalise(pow2.times(x), wpr, 1);
+    denominator = denominator.times(++i);
+    t2 = sum3.plus(divide(pow2, denominator, wpr, 1));
+    if (digitsToString(t2.d).slice(0, wpr) === digitsToString(sum3.d).slice(0, wpr)) {
+      j = k;
+      while (j--)
+        sum3 = finalise(sum3.times(sum3), wpr, 1);
+      if (sd == null) {
+        if (rep < 3 && checkRoundingDigits(sum3.d, wpr - guard, rm, rep)) {
+          Ctor.precision = wpr += 10;
+          denominator = pow2 = t2 = new Ctor(1);
+          i = 0;
+          rep++;
+        } else {
+          return finalise(sum3, Ctor.precision = pr, rm, external = true);
+        }
+      } else {
+        Ctor.precision = pr;
+        return sum3;
+      }
+    }
+    sum3 = t2;
+  }
+}
+__name(naturalExponential, "naturalExponential");
+function naturalLogarithm(y, sd) {
+  var c, c0, denominator, e2, numerator, rep, sum3, t2, wpr, x1, x2, n2 = 1, guard = 10, x = y, xd = x.d, Ctor = x.constructor, rm = Ctor.rounding, pr = Ctor.precision;
+  if (x.s < 0 || !xd || !xd[0] || !x.e && xd[0] == 1 && xd.length == 1) {
+    return new Ctor(xd && !xd[0] ? -1 / 0 : x.s != 1 ? NaN : xd ? 0 : x);
+  }
+  if (sd == null) {
+    external = false;
+    wpr = pr;
+  } else {
+    wpr = sd;
+  }
+  Ctor.precision = wpr += guard;
+  c = digitsToString(xd);
+  c0 = c.charAt(0);
+  if (Math.abs(e2 = x.e) < 15e14) {
+    while (c0 < 7 && c0 != 1 || c0 == 1 && c.charAt(1) > 3) {
+      x = x.times(y);
+      c = digitsToString(x.d);
+      c0 = c.charAt(0);
+      n2++;
+    }
+    e2 = x.e;
+    if (c0 > 1) {
+      x = new Ctor("0." + c);
+      e2++;
+    } else {
+      x = new Ctor(c0 + "." + c.slice(1));
+    }
+  } else {
+    t2 = getLn10(Ctor, wpr + 2, pr).times(e2 + "");
+    x = naturalLogarithm(new Ctor(c0 + "." + c.slice(1)), wpr - guard).plus(t2);
+    Ctor.precision = pr;
+    return sd == null ? finalise(x, pr, rm, external = true) : x;
+  }
+  x1 = x;
+  sum3 = numerator = x = divide(x.minus(1), x.plus(1), wpr, 1);
+  x2 = finalise(x.times(x), wpr, 1);
+  denominator = 3;
+  for (; ; ) {
+    numerator = finalise(numerator.times(x2), wpr, 1);
+    t2 = sum3.plus(divide(numerator, new Ctor(denominator), wpr, 1));
+    if (digitsToString(t2.d).slice(0, wpr) === digitsToString(sum3.d).slice(0, wpr)) {
+      sum3 = sum3.times(2);
+      if (e2 !== 0)
+        sum3 = sum3.plus(getLn10(Ctor, wpr + 2, pr).times(e2 + ""));
+      sum3 = divide(sum3, new Ctor(n2), wpr, 1);
+      if (sd == null) {
+        if (checkRoundingDigits(sum3.d, wpr - guard, rm, rep)) {
+          Ctor.precision = wpr += guard;
+          t2 = numerator = x = divide(x1.minus(1), x1.plus(1), wpr, 1);
+          x2 = finalise(x.times(x), wpr, 1);
+          denominator = rep = 1;
+        } else {
+          return finalise(sum3, Ctor.precision = pr, rm, external = true);
+        }
+      } else {
+        Ctor.precision = pr;
+        return sum3;
+      }
+    }
+    sum3 = t2;
+    denominator += 2;
+  }
+}
+__name(naturalLogarithm, "naturalLogarithm");
+function nonFiniteToString(x) {
+  return String(x.s * x.s / 0);
+}
+__name(nonFiniteToString, "nonFiniteToString");
+function parseDecimal(x, str) {
+  var e2, i, len;
+  if ((e2 = str.indexOf(".")) > -1)
+    str = str.replace(".", "");
+  if ((i = str.search(/e/i)) > 0) {
+    if (e2 < 0)
+      e2 = i;
+    e2 += +str.slice(i + 1);
+    str = str.substring(0, i);
+  } else if (e2 < 0) {
+    e2 = str.length;
+  }
+  for (i = 0; str.charCodeAt(i) === 48; i++)
+    ;
+  for (len = str.length; str.charCodeAt(len - 1) === 48; --len)
+    ;
+  str = str.slice(i, len);
+  if (str) {
+    len -= i;
+    x.e = e2 = e2 - i - 1;
+    x.d = [];
+    i = (e2 + 1) % LOG_BASE;
+    if (e2 < 0)
+      i += LOG_BASE;
+    if (i < len) {
+      if (i)
+        x.d.push(+str.slice(0, i));
+      for (len -= LOG_BASE; i < len; )
+        x.d.push(+str.slice(i, i += LOG_BASE));
+      str = str.slice(i);
+      i = LOG_BASE - str.length;
+    } else {
+      i -= len;
+    }
+    for (; i--; )
+      str += "0";
+    x.d.push(+str);
+    if (external) {
+      if (x.e > x.constructor.maxE) {
+        x.d = null;
+        x.e = NaN;
+      } else if (x.e < x.constructor.minE) {
+        x.e = 0;
+        x.d = [0];
+      }
+    }
+  } else {
+    x.e = 0;
+    x.d = [0];
+  }
+  return x;
+}
+__name(parseDecimal, "parseDecimal");
+function parseOther(x, str) {
+  var base, Ctor, divisor, i, isFloat, len, p2, xd, xe;
+  if (str.indexOf("_") > -1) {
+    str = str.replace(/(\d)_(?=\d)/g, "$1");
+    if (isDecimal.test(str))
+      return parseDecimal(x, str);
+  } else if (str === "Infinity" || str === "NaN") {
+    if (!+str)
+      x.s = NaN;
+    x.e = NaN;
+    x.d = null;
+    return x;
+  }
+  if (isHex.test(str)) {
+    base = 16;
+    str = str.toLowerCase();
+  } else if (isBinary.test(str)) {
+    base = 2;
+  } else if (isOctal.test(str)) {
+    base = 8;
+  } else {
+    throw Error(invalidArgument + str);
+  }
+  i = str.search(/p/i);
+  if (i > 0) {
+    p2 = +str.slice(i + 1);
+    str = str.substring(2, i);
+  } else {
+    str = str.slice(2);
+  }
+  i = str.indexOf(".");
+  isFloat = i >= 0;
+  Ctor = x.constructor;
+  if (isFloat) {
+    str = str.replace(".", "");
+    len = str.length;
+    i = len - i;
+    divisor = intPow(Ctor, new Ctor(base), i, i * 2);
+  }
+  xd = convertBase(str, base, BASE);
+  xe = xd.length - 1;
+  for (i = xe; xd[i] === 0; --i)
+    xd.pop();
+  if (i < 0)
+    return new Ctor(x.s * 0);
+  x.e = getBase10Exponent(xd, xe);
+  x.d = xd;
+  external = false;
+  if (isFloat)
+    x = divide(x, divisor, len * 4);
+  if (p2)
+    x = x.times(Math.abs(p2) < 54 ? mathpow(2, p2) : Decimal.pow(2, p2));
+  external = true;
+  return x;
+}
+__name(parseOther, "parseOther");
+function sine(Ctor, x) {
+  var k, len = x.d.length;
+  if (len < 3) {
+    return x.isZero() ? x : taylorSeries(Ctor, 2, x, x);
+  }
+  k = 1.4 * Math.sqrt(len);
+  k = k > 16 ? 16 : k | 0;
+  x = x.times(1 / tinyPow(5, k));
+  x = taylorSeries(Ctor, 2, x, x);
+  var sin2_x, d5 = new Ctor(5), d16 = new Ctor(16), d20 = new Ctor(20);
+  for (; k--; ) {
+    sin2_x = x.times(x);
+    x = x.times(d5.plus(sin2_x.times(d16.times(sin2_x).minus(d20))));
+  }
+  return x;
+}
+__name(sine, "sine");
+function taylorSeries(Ctor, n2, x, y, isHyperbolic) {
+  var j, t2, u, x2, i = 1, pr = Ctor.precision, k = Math.ceil(pr / LOG_BASE);
+  external = false;
+  x2 = x.times(x);
+  u = new Ctor(y);
+  for (; ; ) {
+    t2 = divide(u.times(x2), new Ctor(n2++ * n2++), pr, 1);
+    u = isHyperbolic ? y.plus(t2) : y.minus(t2);
+    y = divide(t2.times(x2), new Ctor(n2++ * n2++), pr, 1);
+    t2 = u.plus(y);
+    if (t2.d[k] !== void 0) {
+      for (j = k; t2.d[j] === u.d[j] && j--; )
+        ;
+      if (j == -1)
+        break;
+    }
+    j = u;
+    u = y;
+    y = t2;
+    t2 = j;
+    i++;
+  }
+  external = true;
+  t2.d.length = k + 1;
+  return t2;
+}
+__name(taylorSeries, "taylorSeries");
+function tinyPow(b2, e2) {
+  var n2 = b2;
+  while (--e2)
+    n2 *= b2;
+  return n2;
+}
+__name(tinyPow, "tinyPow");
+function toLessThanHalfPi(Ctor, x) {
+  var t2, isNeg = x.s < 0, pi = getPi(Ctor, Ctor.precision, 1), halfPi = pi.times(0.5);
+  x = x.abs();
+  if (x.lte(halfPi)) {
+    quadrant = isNeg ? 4 : 1;
+    return x;
+  }
+  t2 = x.divToInt(pi);
+  if (t2.isZero()) {
+    quadrant = isNeg ? 3 : 2;
+  } else {
+    x = x.minus(t2.times(pi));
+    if (x.lte(halfPi)) {
+      quadrant = isOdd(t2) ? isNeg ? 2 : 3 : isNeg ? 4 : 1;
+      return x;
+    }
+    quadrant = isOdd(t2) ? isNeg ? 1 : 4 : isNeg ? 3 : 2;
+  }
+  return x.minus(pi).abs();
+}
+__name(toLessThanHalfPi, "toLessThanHalfPi");
+function toStringBinary(x, baseOut, sd, rm) {
+  var base, e2, i, k, len, roundUp, str, xd, y, Ctor = x.constructor, isExp = sd !== void 0;
+  if (isExp) {
+    checkInt32(sd, 1, MAX_DIGITS);
+    if (rm === void 0)
+      rm = Ctor.rounding;
+    else
+      checkInt32(rm, 0, 8);
+  } else {
+    sd = Ctor.precision;
+    rm = Ctor.rounding;
+  }
+  if (!x.isFinite()) {
+    str = nonFiniteToString(x);
+  } else {
+    str = finiteToString(x);
+    i = str.indexOf(".");
+    if (isExp) {
+      base = 2;
+      if (baseOut == 16) {
+        sd = sd * 4 - 3;
+      } else if (baseOut == 8) {
+        sd = sd * 3 - 2;
+      }
+    } else {
+      base = baseOut;
+    }
+    if (i >= 0) {
+      str = str.replace(".", "");
+      y = new Ctor(1);
+      y.e = str.length - i;
+      y.d = convertBase(finiteToString(y), 10, base);
+      y.e = y.d.length;
+    }
+    xd = convertBase(str, 10, base);
+    e2 = len = xd.length;
+    for (; xd[--len] == 0; )
+      xd.pop();
+    if (!xd[0]) {
+      str = isExp ? "0p+0" : "0";
+    } else {
+      if (i < 0) {
+        e2--;
+      } else {
+        x = new Ctor(x);
+        x.d = xd;
+        x.e = e2;
+        x = divide(x, y, sd, rm, 0, base);
+        xd = x.d;
+        e2 = x.e;
+        roundUp = inexact;
+      }
+      i = xd[sd];
+      k = base / 2;
+      roundUp = roundUp || xd[sd + 1] !== void 0;
+      roundUp = rm < 4 ? (i !== void 0 || roundUp) && (rm === 0 || rm === (x.s < 0 ? 3 : 2)) : i > k || i === k && (rm === 4 || roundUp || rm === 6 && xd[sd - 1] & 1 || rm === (x.s < 0 ? 8 : 7));
+      xd.length = sd;
+      if (roundUp) {
+        for (; ++xd[--sd] > base - 1; ) {
+          xd[sd] = 0;
+          if (!sd) {
+            ++e2;
+            xd.unshift(1);
+          }
+        }
+      }
+      for (len = xd.length; !xd[len - 1]; --len)
+        ;
+      for (i = 0, str = ""; i < len; i++)
+        str += NUMERALS.charAt(xd[i]);
+      if (isExp) {
+        if (len > 1) {
+          if (baseOut == 16 || baseOut == 8) {
+            i = baseOut == 16 ? 4 : 3;
+            for (--len; len % i; len++)
+              str += "0";
+            xd = convertBase(str, base, baseOut);
+            for (len = xd.length; !xd[len - 1]; --len)
+              ;
+            for (i = 1, str = "1."; i < len; i++)
+              str += NUMERALS.charAt(xd[i]);
+          } else {
+            str = str.charAt(0) + "." + str.slice(1);
+          }
+        }
+        str = str + (e2 < 0 ? "p" : "p+") + e2;
+      } else if (e2 < 0) {
+        for (; ++e2; )
+          str = "0" + str;
+        str = "0." + str;
+      } else {
+        if (++e2 > len)
+          for (e2 -= len; e2--; )
+            str += "0";
+        else if (e2 < len)
+          str = str.slice(0, e2) + "." + str.slice(e2);
+      }
+    }
+    str = (baseOut == 16 ? "0x" : baseOut == 2 ? "0b" : baseOut == 8 ? "0o" : "") + str;
+  }
+  return x.s < 0 ? "-" + str : str;
+}
+__name(toStringBinary, "toStringBinary");
+function truncate(arr, len) {
+  if (arr.length > len) {
+    arr.length = len;
+    return true;
+  }
+}
+__name(truncate, "truncate");
+function abs(x) {
+  return new this(x).abs();
+}
+__name(abs, "abs");
+function acos(x) {
+  return new this(x).acos();
+}
+__name(acos, "acos");
+function acosh(x) {
+  return new this(x).acosh();
+}
+__name(acosh, "acosh");
+function add(x, y) {
+  return new this(x).plus(y);
+}
+__name(add, "add");
+function asin(x) {
+  return new this(x).asin();
+}
+__name(asin, "asin");
+function asinh(x) {
+  return new this(x).asinh();
+}
+__name(asinh, "asinh");
+function atan(x) {
+  return new this(x).atan();
+}
+__name(atan, "atan");
+function atanh(x) {
+  return new this(x).atanh();
+}
+__name(atanh, "atanh");
+function atan2(y, x) {
+  y = new this(y);
+  x = new this(x);
+  var r2, pr = this.precision, rm = this.rounding, wpr = pr + 4;
+  if (!y.s || !x.s) {
+    r2 = new this(NaN);
+  } else if (!y.d && !x.d) {
+    r2 = getPi(this, wpr, 1).times(x.s > 0 ? 0.25 : 0.75);
+    r2.s = y.s;
+  } else if (!x.d || y.isZero()) {
+    r2 = x.s < 0 ? getPi(this, pr, rm) : new this(0);
+    r2.s = y.s;
+  } else if (!y.d || x.isZero()) {
+    r2 = getPi(this, wpr, 1).times(0.5);
+    r2.s = y.s;
+  } else if (x.s < 0) {
+    this.precision = wpr;
+    this.rounding = 1;
+    r2 = this.atan(divide(y, x, wpr, 1));
+    x = getPi(this, wpr, 1);
+    this.precision = pr;
+    this.rounding = rm;
+    r2 = y.s < 0 ? r2.minus(x) : r2.plus(x);
+  } else {
+    r2 = this.atan(divide(y, x, wpr, 1));
+  }
+  return r2;
+}
+__name(atan2, "atan2");
+function cbrt(x) {
+  return new this(x).cbrt();
+}
+__name(cbrt, "cbrt");
+function ceil(x) {
+  return finalise(x = new this(x), x.e + 1, 2);
+}
+__name(ceil, "ceil");
+function clamp(x, min2, max2) {
+  return new this(x).clamp(min2, max2);
+}
+__name(clamp, "clamp");
+function config(obj) {
+  if (!obj || typeof obj !== "object")
+    throw Error(decimalError + "Object expected");
+  var i, p2, v, useDefaults = obj.defaults === true, ps = [
+    "precision",
+    1,
+    MAX_DIGITS,
+    "rounding",
+    0,
+    8,
+    "toExpNeg",
+    -EXP_LIMIT,
+    0,
+    "toExpPos",
+    0,
+    EXP_LIMIT,
+    "maxE",
+    0,
+    EXP_LIMIT,
+    "minE",
+    -EXP_LIMIT,
+    0,
+    "modulo",
+    0,
+    9
+  ];
+  for (i = 0; i < ps.length; i += 3) {
+    if (p2 = ps[i], useDefaults)
+      this[p2] = DEFAULTS[p2];
+    if ((v = obj[p2]) !== void 0) {
+      if (mathfloor(v) === v && v >= ps[i + 1] && v <= ps[i + 2])
+        this[p2] = v;
+      else
+        throw Error(invalidArgument + p2 + ": " + v);
+    }
+  }
+  if (p2 = "crypto", useDefaults)
+    this[p2] = DEFAULTS[p2];
+  if ((v = obj[p2]) !== void 0) {
+    if (v === true || v === false || v === 0 || v === 1) {
+      if (v) {
+        if (typeof crypto != "undefined" && crypto && (crypto.getRandomValues || crypto.randomBytes)) {
+          this[p2] = true;
+        } else {
+          throw Error(cryptoUnavailable);
+        }
+      } else {
+        this[p2] = false;
+      }
+    } else {
+      throw Error(invalidArgument + p2 + ": " + v);
+    }
+  }
+  return this;
+}
+__name(config, "config");
+function cos(x) {
+  return new this(x).cos();
+}
+__name(cos, "cos");
+function cosh(x) {
+  return new this(x).cosh();
+}
+__name(cosh, "cosh");
+function clone(obj) {
+  var i, p2, ps;
+  function Decimal2(v) {
+    var e2, i2, t2, x = this;
+    if (!(x instanceof Decimal2))
+      return new Decimal2(v);
+    x.constructor = Decimal2;
+    if (isDecimalInstance(v)) {
+      x.s = v.s;
+      if (external) {
+        if (!v.d || v.e > Decimal2.maxE) {
+          x.e = NaN;
+          x.d = null;
+        } else if (v.e < Decimal2.minE) {
+          x.e = 0;
+          x.d = [0];
+        } else {
+          x.e = v.e;
+          x.d = v.d.slice();
+        }
+      } else {
+        x.e = v.e;
+        x.d = v.d ? v.d.slice() : v.d;
+      }
+      return;
+    }
+    t2 = typeof v;
+    if (t2 === "number") {
+      if (v === 0) {
+        x.s = 1 / v < 0 ? -1 : 1;
+        x.e = 0;
+        x.d = [0];
+        return;
+      }
+      if (v < 0) {
+        v = -v;
+        x.s = -1;
+      } else {
+        x.s = 1;
+      }
+      if (v === ~~v && v < 1e7) {
+        for (e2 = 0, i2 = v; i2 >= 10; i2 /= 10)
+          e2++;
+        if (external) {
+          if (e2 > Decimal2.maxE) {
+            x.e = NaN;
+            x.d = null;
+          } else if (e2 < Decimal2.minE) {
+            x.e = 0;
+            x.d = [0];
+          } else {
+            x.e = e2;
+            x.d = [v];
+          }
+        } else {
+          x.e = e2;
+          x.d = [v];
+        }
+        return;
+      } else if (v * 0 !== 0) {
+        if (!v)
+          x.s = NaN;
+        x.e = NaN;
+        x.d = null;
+        return;
+      }
+      return parseDecimal(x, v.toString());
+    } else if (t2 !== "string") {
+      throw Error(invalidArgument + v);
+    }
+    if ((i2 = v.charCodeAt(0)) === 45) {
+      v = v.slice(1);
+      x.s = -1;
+    } else {
+      if (i2 === 43)
+        v = v.slice(1);
+      x.s = 1;
+    }
+    return isDecimal.test(v) ? parseDecimal(x, v) : parseOther(x, v);
+  }
+  __name(Decimal2, "Decimal");
+  Decimal2.prototype = P2;
+  Decimal2.ROUND_UP = 0;
+  Decimal2.ROUND_DOWN = 1;
+  Decimal2.ROUND_CEIL = 2;
+  Decimal2.ROUND_FLOOR = 3;
+  Decimal2.ROUND_HALF_UP = 4;
+  Decimal2.ROUND_HALF_DOWN = 5;
+  Decimal2.ROUND_HALF_EVEN = 6;
+  Decimal2.ROUND_HALF_CEIL = 7;
+  Decimal2.ROUND_HALF_FLOOR = 8;
+  Decimal2.EUCLID = 9;
+  Decimal2.config = Decimal2.set = config;
+  Decimal2.clone = clone;
+  Decimal2.isDecimal = isDecimalInstance;
+  Decimal2.abs = abs;
+  Decimal2.acos = acos;
+  Decimal2.acosh = acosh;
+  Decimal2.add = add;
+  Decimal2.asin = asin;
+  Decimal2.asinh = asinh;
+  Decimal2.atan = atan;
+  Decimal2.atanh = atanh;
+  Decimal2.atan2 = atan2;
+  Decimal2.cbrt = cbrt;
+  Decimal2.ceil = ceil;
+  Decimal2.clamp = clamp;
+  Decimal2.cos = cos;
+  Decimal2.cosh = cosh;
+  Decimal2.div = div;
+  Decimal2.exp = exp;
+  Decimal2.floor = floor;
+  Decimal2.hypot = hypot;
+  Decimal2.ln = ln;
+  Decimal2.log = log2;
+  Decimal2.log10 = log10;
+  Decimal2.log2 = log22;
+  Decimal2.max = max;
+  Decimal2.min = min;
+  Decimal2.mod = mod;
+  Decimal2.mul = mul;
+  Decimal2.pow = pow;
+  Decimal2.random = random;
+  Decimal2.round = round;
+  Decimal2.sign = sign;
+  Decimal2.sin = sin;
+  Decimal2.sinh = sinh;
+  Decimal2.sqrt = sqrt;
+  Decimal2.sub = sub;
+  Decimal2.sum = sum;
+  Decimal2.tan = tan;
+  Decimal2.tanh = tanh;
+  Decimal2.trunc = trunc;
+  if (obj === void 0)
+    obj = {};
+  if (obj) {
+    if (obj.defaults !== true) {
+      ps = ["precision", "rounding", "toExpNeg", "toExpPos", "maxE", "minE", "modulo", "crypto"];
+      for (i = 0; i < ps.length; )
+        if (!obj.hasOwnProperty(p2 = ps[i++]))
+          obj[p2] = this[p2];
+    }
+  }
+  Decimal2.config(obj);
+  return Decimal2;
+}
+__name(clone, "clone");
+function div(x, y) {
+  return new this(x).div(y);
+}
+__name(div, "div");
+function exp(x) {
+  return new this(x).exp();
+}
+__name(exp, "exp");
+function floor(x) {
+  return finalise(x = new this(x), x.e + 1, 3);
+}
+__name(floor, "floor");
+function hypot() {
+  var i, n2, t2 = new this(0);
+  external = false;
+  for (i = 0; i < arguments.length; ) {
+    n2 = new this(arguments[i++]);
+    if (!n2.d) {
+      if (n2.s) {
+        external = true;
+        return new this(1 / 0);
+      }
+      t2 = n2;
+    } else if (t2.d) {
+      t2 = t2.plus(n2.times(n2));
+    }
+  }
+  external = true;
+  return t2.sqrt();
+}
+__name(hypot, "hypot");
+function isDecimalInstance(obj) {
+  return obj instanceof Decimal || obj && obj.toStringTag === tag || false;
+}
+__name(isDecimalInstance, "isDecimalInstance");
+function ln(x) {
+  return new this(x).ln();
+}
+__name(ln, "ln");
+function log2(x, y) {
+  return new this(x).log(y);
+}
+__name(log2, "log");
+function log22(x) {
+  return new this(x).log(2);
+}
+__name(log22, "log2");
+function log10(x) {
+  return new this(x).log(10);
+}
+__name(log10, "log10");
+function max() {
+  return maxOrMin(this, arguments, "lt");
+}
+__name(max, "max");
+function min() {
+  return maxOrMin(this, arguments, "gt");
+}
+__name(min, "min");
+function mod(x, y) {
+  return new this(x).mod(y);
+}
+__name(mod, "mod");
+function mul(x, y) {
+  return new this(x).mul(y);
+}
+__name(mul, "mul");
+function pow(x, y) {
+  return new this(x).pow(y);
+}
+__name(pow, "pow");
+function random(sd) {
+  var d2, e2, k, n2, i = 0, r2 = new this(1), rd = [];
+  if (sd === void 0)
+    sd = this.precision;
+  else
+    checkInt32(sd, 1, MAX_DIGITS);
+  k = Math.ceil(sd / LOG_BASE);
+  if (!this.crypto) {
+    for (; i < k; )
+      rd[i++] = Math.random() * 1e7 | 0;
+  } else if (crypto.getRandomValues) {
+    d2 = crypto.getRandomValues(new Uint32Array(k));
+    for (; i < k; ) {
+      n2 = d2[i];
+      if (n2 >= 429e7) {
+        d2[i] = crypto.getRandomValues(new Uint32Array(1))[0];
+      } else {
+        rd[i++] = n2 % 1e7;
+      }
+    }
+  } else if (crypto.randomBytes) {
+    d2 = crypto.randomBytes(k *= 4);
+    for (; i < k; ) {
+      n2 = d2[i] + (d2[i + 1] << 8) + (d2[i + 2] << 16) + ((d2[i + 3] & 127) << 24);
+      if (n2 >= 214e7) {
+        crypto.randomBytes(4).copy(d2, i);
+      } else {
+        rd.push(n2 % 1e7);
+        i += 4;
+      }
+    }
+    i = k / 4;
+  } else {
+    throw Error(cryptoUnavailable);
+  }
+  k = rd[--i];
+  sd %= LOG_BASE;
+  if (k && sd) {
+    n2 = mathpow(10, LOG_BASE - sd);
+    rd[i] = (k / n2 | 0) * n2;
+  }
+  for (; rd[i] === 0; i--)
+    rd.pop();
+  if (i < 0) {
+    e2 = 0;
+    rd = [0];
+  } else {
+    e2 = -1;
+    for (; rd[0] === 0; e2 -= LOG_BASE)
+      rd.shift();
+    for (k = 1, n2 = rd[0]; n2 >= 10; n2 /= 10)
+      k++;
+    if (k < LOG_BASE)
+      e2 -= LOG_BASE - k;
+  }
+  r2.e = e2;
+  r2.d = rd;
+  return r2;
+}
+__name(random, "random");
+function round(x) {
+  return finalise(x = new this(x), x.e + 1, this.rounding);
+}
+__name(round, "round");
+function sign(x) {
+  x = new this(x);
+  return x.d ? x.d[0] ? x.s : 0 * x.s : x.s || NaN;
+}
+__name(sign, "sign");
+function sin(x) {
+  return new this(x).sin();
+}
+__name(sin, "sin");
+function sinh(x) {
+  return new this(x).sinh();
+}
+__name(sinh, "sinh");
+function sqrt(x) {
+  return new this(x).sqrt();
+}
+__name(sqrt, "sqrt");
+function sub(x, y) {
+  return new this(x).sub(y);
+}
+__name(sub, "sub");
+function sum() {
+  var i = 0, args = arguments, x = new this(args[i]);
+  external = false;
+  for (; x.s && ++i < args.length; )
+    x = x.plus(args[i]);
+  external = true;
+  return finalise(x, this.precision, this.rounding);
+}
+__name(sum, "sum");
+function tan(x) {
+  return new this(x).tan();
+}
+__name(tan, "tan");
+function tanh(x) {
+  return new this(x).tanh();
+}
+__name(tanh, "tanh");
+function trunc(x) {
+  return finalise(x = new this(x), x.e + 1, 1);
+}
+__name(trunc, "trunc");
+P2[Symbol.for("nodejs.util.inspect.custom")] = P2.toString;
+P2[Symbol.toStringTag] = "Decimal";
+var Decimal = P2.constructor = clone(DEFAULTS);
+LN10 = new Decimal(LN10);
+PI = new Decimal(PI);
+var decimal_default = Decimal;
+
+// src/runtime/utils/common.ts
+var import_indent_string2 = __toESM(require_indent_string());
+var import_js_levenshtein = __toESM(require_js_levenshtein());
+
+// src/runtime/core/model/FieldRef.ts
+var FieldRefImpl = class {
+  constructor(modelName, name, fieldType, isList) {
+    this.modelName = modelName;
+    this.name = name;
+    this.typeName = fieldType;
+    this.isList = isList;
+  }
+  _toGraphQLInputType() {
+    const prefix = this.isList ? `List${this.typeName}` : this.typeName;
+    return `${prefix}FieldRefInput<${this.modelName}>`;
+  }
+};
+__name(FieldRefImpl, "FieldRefImpl");
+
+// src/runtime/object-enums.ts
+var objectEnumNames = ["JsonNullValueInput", "NullableJsonNullValueInput", "JsonNullValueFilter"];
+var secret = Symbol();
+var representations = /* @__PURE__ */ new WeakMap();
+var ObjectEnumValue = class {
+  constructor(arg2) {
+    if (arg2 === secret) {
+      representations.set(this, `Prisma.${this._getName()}`);
+    } else {
+      representations.set(this, `new Prisma.${this._getNamespace()}.${this._getName()}()`);
+    }
+  }
+  _getName() {
+    return this.constructor.name;
+  }
+  toString() {
+    return representations.get(this);
+  }
+};
+__name(ObjectEnumValue, "ObjectEnumValue");
+var NullTypesEnumValue = class extends ObjectEnumValue {
+  _getNamespace() {
+    return "NullTypes";
+  }
+};
+__name(NullTypesEnumValue, "NullTypesEnumValue");
+var DbNull = class extends NullTypesEnumValue {
+};
+__name(DbNull, "DbNull");
+var JsonNull = class extends NullTypesEnumValue {
+};
+__name(JsonNull, "JsonNull");
+var AnyNull = class extends NullTypesEnumValue {
+};
+__name(AnyNull, "AnyNull");
+var objectEnumValues = {
+  classes: {
+    DbNull,
+    JsonNull,
+    AnyNull
+  },
+  instances: {
+    DbNull: new DbNull(secret),
+    JsonNull: new JsonNull(secret),
+    AnyNull: new AnyNull(secret)
+  }
+};
+
+// src/runtime/utils/decimalJsLike.ts
+function isDecimalJsLike(value) {
+  if (Decimal.isDecimal(value)) {
+    return true;
+  }
+  return value !== null && typeof value === "object" && typeof value.s === "number" && typeof value.e === "number" && Array.isArray(value.d);
+}
+__name(isDecimalJsLike, "isDecimalJsLike");
+function stringifyDecimalJsLike(value) {
+  if (Decimal.isDecimal(value)) {
+    return JSON.stringify(String(value));
+  }
+  const tmpDecimal = new Decimal(0);
+  tmpDecimal.d = value.d;
+  tmpDecimal.e = value.e;
+  tmpDecimal.s = value.s;
+  return JSON.stringify(String(tmpDecimal));
+}
+__name(stringifyDecimalJsLike, "stringifyDecimalJsLike");
+
+// src/runtime/utils/common.ts
+var keyBy2 = /* @__PURE__ */ __name((collection, prop) => {
+  const acc = {};
+  for (const obj of collection) {
+    const key = obj[prop];
+    acc[key] = obj;
+  }
+  return acc;
+}, "keyBy");
+var ScalarTypeTable = {
+  String: true,
+  Int: true,
+  Float: true,
+  Boolean: true,
+  Long: true,
+  DateTime: true,
+  ID: true,
+  UUID: true,
+  Json: true,
+  Bytes: true,
+  Decimal: true,
+  BigInt: true
+};
+var JSTypeToGraphQLType = {
+  string: "String",
+  boolean: "Boolean",
+  object: "Json",
+  symbol: "Symbol"
+};
+function stringifyGraphQLType(type) {
+  if (typeof type === "string") {
+    return type;
+  }
+  return type.name;
+}
+__name(stringifyGraphQLType, "stringifyGraphQLType");
+function wrapWithList(str, isList) {
+  if (isList) {
+    return `List<${str}>`;
+  }
+  return str;
+}
+__name(wrapWithList, "wrapWithList");
+var RFC_3339_REGEX = /^(\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60))(\.\d{1,})?(([Z])|([+|-]([01][0-9]|2[0-3]):[0-5][0-9]))$/;
+var UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+function getGraphQLType(value, inputType) {
+  const potentialType = inputType?.type;
+  if (value === null) {
+    return "null";
+  }
+  if (Object.prototype.toString.call(value) === "[object BigInt]") {
+    return "BigInt";
+  }
+  if (decimal_default.isDecimal(value)) {
+    return "Decimal";
+  }
+  if (potentialType === "Decimal" && isDecimalJsLike(value)) {
+    return "Decimal";
+  }
+  if (Buffer.isBuffer(value)) {
+    return "Bytes";
+  }
+  if (isValidEnumValue(value, inputType)) {
+    return potentialType.name;
+  }
+  if (value instanceof ObjectEnumValue) {
+    return value._getName();
+  }
+  if (value instanceof FieldRefImpl) {
+    return value._toGraphQLInputType();
+  }
+  if (Array.isArray(value)) {
+    let scalarTypes = value.reduce((acc, val) => {
+      const type = getGraphQLType(val, inputType);
+      if (!acc.includes(type)) {
+        acc.push(type);
+      }
+      return acc;
+    }, []);
+    if (scalarTypes.includes("Float") && scalarTypes.includes("Int")) {
+      scalarTypes = ["Float"];
+    }
+    return `List<${scalarTypes.join(" | ")}>`;
+  }
+  const jsType = typeof value;
+  if (jsType === "number") {
+    if (Math.trunc(value) === value) {
+      return "Int";
+    } else {
+      return "Float";
+    }
+  }
+  if (Object.prototype.toString.call(value) === "[object Date]") {
+    return "DateTime";
+  }
+  if (jsType === "string") {
+    if (UUID_REGEX.test(value)) {
+      return "UUID";
+    }
+    const date = new Date(value);
+    if (date.toString() === "Invalid Date") {
+      return "String";
+    }
+    if (RFC_3339_REGEX.test(value)) {
+      return "DateTime";
+    }
+  }
+  return JSTypeToGraphQLType[jsType];
+}
+__name(getGraphQLType, "getGraphQLType");
+function isValidEnumValue(value, inputType) {
+  const enumType = inputType?.type;
+  if (!isSchemaEnum(enumType)) {
+    return false;
+  }
+  if (inputType?.namespace === "prisma" && objectEnumNames.includes(enumType.name)) {
+    const name = value?.constructor?.name;
+    return typeof name === "string" && objectEnumValues.instances[name] === value && enumType.values.includes(name);
+  }
+  return typeof value === "string" && enumType.values.includes(value);
+}
+__name(isValidEnumValue, "isValidEnumValue");
+function getSuggestion(str, possibilities) {
+  const bestMatch = possibilities.reduce(
+    (acc, curr) => {
+      const distance = (0, import_js_levenshtein.default)(str, curr);
+      if (distance < acc.distance) {
+        return {
+          distance,
+          str: curr
+        };
+      }
+      return acc;
+    },
+    {
+      distance: Math.min(Math.floor(str.length) * 1.1, ...possibilities.map((p2) => p2.length * 3)),
+      str: null
+    }
+  );
+  return bestMatch.str;
+}
+__name(getSuggestion, "getSuggestion");
+function stringifyInputType(input, greenKeys = false) {
+  if (typeof input === "string") {
+    return input;
+  }
+  if (input.values) {
+    return `enum ${input.name} {
+${(0, import_indent_string2.default)(input.values.join(", "), 2)}
+}`;
+  } else {
+    const body = (0, import_indent_string2.default)(
+      input.fields.map((arg2) => {
+        const key = `${arg2.name}`;
+        const str = `${greenKeys ? import_chalk8.default.green(key) : key}${arg2.isRequired ? "" : "?"}: ${import_chalk8.default.white(
+          arg2.inputTypes.map((argType) => {
+            return wrapWithList(
+              argIsInputType(argType.type) ? argType.type.name : stringifyGraphQLType(argType.type),
+              argType.isList
+            );
+          }).join(" | ")
+        )}`;
+        if (!arg2.isRequired) {
+          return import_chalk8.default.dim(str);
+        }
+        return str;
+      }).join("\n"),
+      2
+    );
+    return `${import_chalk8.default.dim("type")} ${import_chalk8.default.bold.dim(input.name)} ${import_chalk8.default.dim("{")}
+${body}
+${import_chalk8.default.dim("}")}`;
+  }
+}
+__name(stringifyInputType, "stringifyInputType");
+function argIsInputType(arg2) {
+  if (typeof arg2 === "string") {
+    return false;
+  }
+  return true;
+}
+__name(argIsInputType, "argIsInputType");
+function getInputTypeName(input) {
+  if (typeof input === "string") {
+    if (input === "Null") {
+      return "null";
+    }
+    return input;
+  }
+  return input.name;
+}
+__name(getInputTypeName, "getInputTypeName");
+function getOutputTypeName(input) {
+  if (typeof input === "string") {
+    return input;
+  }
+  return input.name;
+}
+__name(getOutputTypeName, "getOutputTypeName");
+function inputTypeToJson(input, isRequired, nameOnly = false) {
+  if (typeof input === "string") {
+    if (input === "Null") {
+      return "null";
+    }
+    return input;
+  }
+  if (input.values) {
+    return input.values.join(" | ");
+  }
+  const inputType = input;
+  const showDeepType = isRequired && inputType.fields.every(
+    (arg2) => arg2.inputTypes[0].location === "inputObjectTypes" || arg2.inputTypes[1]?.location === "inputObjectTypes"
+  );
+  if (nameOnly) {
+    return getInputTypeName(input);
+  }
+  return inputType.fields.reduce((acc, curr) => {
+    let str = "";
+    if (!showDeepType && !curr.isRequired) {
+      str = curr.inputTypes.map((argType) => getInputTypeName(argType.type)).join(" | ");
+    } else {
+      str = curr.inputTypes.map((argInputType) => inputTypeToJson(argInputType.type, curr.isRequired, true)).join(" | ");
+    }
+    acc[curr.name + (curr.isRequired ? "" : "?")] = str;
+    return acc;
+  }, {});
+}
+__name(inputTypeToJson, "inputTypeToJson");
+function unionBy(arr1, arr2, iteratee) {
+  const map = {};
+  for (const element of arr1) {
+    map[iteratee(element)] = element;
+  }
+  for (const element of arr2) {
+    const key = iteratee(element);
+    if (!map[key]) {
+      map[key] = element;
+    }
+  }
+  return Object.values(map);
+}
+__name(unionBy, "unionBy");
+function lowerCase(name) {
+  return name.substring(0, 1).toLowerCase() + name.substring(1);
+}
+__name(lowerCase, "lowerCase");
+function isGroupByOutputName(type) {
+  return type.endsWith("GroupByOutputType");
+}
+__name(isGroupByOutputName, "isGroupByOutputName");
+function isSchemaEnum(type) {
+  return typeof type === "object" && type !== null && typeof type.name === "string" && Array.isArray(type.values);
+}
+__name(isSchemaEnum, "isSchemaEnum");
+
+// src/runtime/dmmf.ts
+var DMMFDatamodelHelper = class {
+  constructor({ datamodel }) {
+    this.datamodel = datamodel;
+    this.datamodelEnumMap = this.getDatamodelEnumMap();
+    this.modelMap = this.getModelMap();
+    this.typeMap = this.getTypeMap();
+    this.typeAndModelMap = this.getTypeModelMap();
+  }
+  getDatamodelEnumMap() {
+    return keyBy2(this.datamodel.enums, "name");
+  }
+  getModelMap() {
+    return { ...keyBy2(this.datamodel.models, "name") };
+  }
+  getTypeMap() {
+    return { ...keyBy2(this.datamodel.types, "name") };
+  }
+  getTypeModelMap() {
+    return { ...this.getTypeMap(), ...this.getModelMap() };
+  }
+};
+__name(DMMFDatamodelHelper, "DMMFDatamodelHelper");
+var DMMFMappingsHelper = class {
+  constructor({ mappings }) {
+    this.mappings = mappings;
+    this.mappingsMap = this.getMappingsMap();
+  }
+  getMappingsMap() {
+    return keyBy2(this.mappings.modelOperations, "model");
+  }
+};
+__name(DMMFMappingsHelper, "DMMFMappingsHelper");
+var DMMFSchemaHelper = class {
+  constructor({ schema }) {
+    this.outputTypeToMergedOutputType = /* @__PURE__ */ __name((outputType) => {
+      return {
+        ...outputType,
+        fields: outputType.fields
+      };
+    }, "outputTypeToMergedOutputType");
+    this.schema = schema;
+    this.enumMap = this.getEnumMap();
+    this.queryType = this.getQueryType();
+    this.mutationType = this.getMutationType();
+    this.outputTypes = this.getOutputTypes();
+    this.outputTypeMap = this.getMergedOutputTypeMap();
+    this.resolveOutputTypes();
+    this.inputObjectTypes = this.schema.inputObjectTypes;
+    this.inputTypeMap = this.getInputTypeMap();
+    this.resolveInputTypes();
+    this.resolveFieldArgumentTypes();
+    this.queryType = this.outputTypeMap.Query;
+    this.mutationType = this.outputTypeMap.Mutation;
+    this.rootFieldMap = this.getRootFieldMap();
+  }
+  get [Symbol.toStringTag]() {
+    return "DMMFClass";
+  }
+  resolveOutputTypes() {
+    for (const type of this.outputTypes.model) {
+      for (const field of type.fields) {
+        if (typeof field.outputType.type === "string" && !ScalarTypeTable[field.outputType.type]) {
+          field.outputType.type = this.outputTypeMap[field.outputType.type] || this.outputTypeMap[field.outputType.type] || this.enumMap[field.outputType.type] || field.outputType.type;
+        }
+      }
+      type.fieldMap = keyBy2(type.fields, "name");
+    }
+    for (const type of this.outputTypes.prisma) {
+      for (const field of type.fields) {
+        if (typeof field.outputType.type === "string" && !ScalarTypeTable[field.outputType.type]) {
+          field.outputType.type = this.outputTypeMap[field.outputType.type] || this.outputTypeMap[field.outputType.type] || this.enumMap[field.outputType.type] || field.outputType.type;
+        }
+      }
+      type.fieldMap = keyBy2(type.fields, "name");
+    }
+  }
+  resolveInputTypes() {
+    const inputTypes = this.inputObjectTypes.prisma;
+    if (this.inputObjectTypes.model) {
+      inputTypes.push(...this.inputObjectTypes.model);
+    }
+    for (const type of inputTypes) {
+      for (const field of type.fields) {
+        for (const fieldInputType of field.inputTypes) {
+          const fieldType = fieldInputType.type;
+          if (typeof fieldType === "string" && !ScalarTypeTable[fieldType] && (this.inputTypeMap[fieldType] || this.enumMap[fieldType])) {
+            fieldInputType.type = this.inputTypeMap[fieldType] || this.enumMap[fieldType] || fieldType;
+          }
+        }
+      }
+      type.fieldMap = keyBy2(type.fields, "name");
+    }
+  }
+  resolveFieldArgumentTypes() {
+    for (const type of this.outputTypes.prisma) {
+      for (const field of type.fields) {
+        for (const arg2 of field.args) {
+          for (const argInputType of arg2.inputTypes) {
+            const argType = argInputType.type;
+            if (typeof argType === "string" && !ScalarTypeTable[argType]) {
+              argInputType.type = this.inputTypeMap[argType] || this.enumMap[argType] || argType;
+            }
+          }
+        }
+      }
+    }
+    for (const type of this.outputTypes.model) {
+      for (const field of type.fields) {
+        for (const arg2 of field.args) {
+          for (const argInputType of arg2.inputTypes) {
+            const argType = argInputType.type;
+            if (typeof argType === "string" && !ScalarTypeTable[argType]) {
+              argInputType.type = this.inputTypeMap[argType] || this.enumMap[argType] || argInputType.type;
+            }
+          }
+        }
+      }
+    }
+  }
+  getQueryType() {
+    return this.schema.outputObjectTypes.prisma.find((t2) => t2.name === "Query");
+  }
+  getMutationType() {
+    return this.schema.outputObjectTypes.prisma.find((t2) => t2.name === "Mutation");
+  }
+  getOutputTypes() {
+    return {
+      model: this.schema.outputObjectTypes.model.map(this.outputTypeToMergedOutputType),
+      prisma: this.schema.outputObjectTypes.prisma.map(this.outputTypeToMergedOutputType)
+    };
+  }
+  getEnumMap() {
+    return {
+      ...keyBy2(this.schema.enumTypes.prisma, "name"),
+      ...this.schema.enumTypes.model ? keyBy2(this.schema.enumTypes.model, "name") : void 0
+    };
+  }
+  hasEnumInNamespace(enumName, namespace) {
+    return this.schema.enumTypes[namespace]?.find((schemaEnum) => schemaEnum.name === enumName) !== void 0;
+  }
+  getMergedOutputTypeMap() {
+    return {
+      ...keyBy2(this.outputTypes.model, "name"),
+      ...keyBy2(this.outputTypes.prisma, "name")
+    };
+  }
+  getInputTypeMap() {
+    return {
+      ...this.schema.inputObjectTypes.model ? keyBy2(this.schema.inputObjectTypes.model, "name") : void 0,
+      ...keyBy2(this.schema.inputObjectTypes.prisma, "name")
+    };
+  }
+  getRootFieldMap() {
+    return { ...keyBy2(this.queryType.fields, "name"), ...keyBy2(this.mutationType.fields, "name") };
+  }
+};
+__name(DMMFSchemaHelper, "DMMFSchemaHelper");
+var BaseDMMFHelper = class {
+  constructor(dmmf) {
+    return Object.assign(this, new DMMFDatamodelHelper(dmmf), new DMMFMappingsHelper(dmmf));
+  }
+};
+__name(BaseDMMFHelper, "BaseDMMFHelper");
+applyMixins(BaseDMMFHelper, [DMMFDatamodelHelper, DMMFMappingsHelper]);
+var DMMFHelper = class {
+  constructor(dmmf) {
+    return Object.assign(this, new BaseDMMFHelper(dmmf), new DMMFSchemaHelper(dmmf));
+  }
+};
+__name(DMMFHelper, "DMMFHelper");
+applyMixins(DMMFHelper, [BaseDMMFHelper, DMMFSchemaHelper]);
+
 // src/runtime/getPrismaClient.ts
 var import_async_hooks = require("async_hooks");
+var import_events = require("events");
 var import_fs9 = __toESM(require("fs"));
 var import_path5 = __toESM(require("path"));
 
@@ -30941,16 +28108,18 @@ function externalToInternalDmmf(document2) {
 __name(externalToInternalDmmf, "externalToInternalDmmf");
 function getMappings(mappings, datamodel) {
   const modelOperations = mappings.modelOperations.filter((mapping) => {
-    const model = datamodel.models.find((m) => m.name === mapping.model);
+    const model = datamodel.models.find((m2) => m2.name === mapping.model);
     if (!model) {
       throw new Error(`Mapping without model ${mapping.model}`);
     }
-    return model.fields.some((f) => f.kind !== "object");
+    return model.fields.some((f2) => f2.kind !== "object");
   }).map((mapping) => ({
     model: mapping.model,
     plural: (0, import_pluralize.default)(lowerCase(mapping.model)),
     findUnique: mapping.findUnique || mapping.findSingle,
+    findUniqueOrThrow: mapping.findUniqueOrThrow,
     findFirst: mapping.findFirst,
+    findFirstOrThrow: mapping.findFirstOrThrow,
     findMany: mapping.findMany,
     create: mapping.createOne || mapping.createSingle || mapping.create,
     createMany: mapping.createMany,
@@ -30978,47 +28147,125 @@ function getPrismaClientDMMF(dmmf) {
 __name(getPrismaClientDMMF, "getPrismaClientDMMF");
 
 // src/runtime/query.ts
-var import_chalk11 = __toESM(require_source());
+var import_chalk12 = __toESM(require_source());
 var import_indent_string4 = __toESM(require_indent_string());
 var import_strip_ansi3 = __toESM(require_strip_ansi());
 
-// src/runtime/utils/createErrorMessageWithContext.ts
-var import_chalk9 = __toESM(require_source());
-var import_indent_string3 = __toESM(require_indent_string());
-
-// src/runtime/clientActions.ts
-var clientOnlyActions = {
-  findUniqueOrThrow: {
-    wrappedAction: DMMF.ModelAction.findUnique
-  },
-  findFirstOrThrow: {
-    wrappedAction: DMMF.ModelAction.findFirst
+// src/generation/Cache.ts
+var Cache = class {
+  constructor() {
+    this._map = /* @__PURE__ */ new Map();
+  }
+  get(key) {
+    return this._map.get(key)?.value;
+  }
+  set(key, value) {
+    this._map.set(key, { value });
+  }
+  getOrCreate(key, create) {
+    const cached = this._map.get(key);
+    if (cached) {
+      return cached.value;
+    }
+    const value = create();
+    this.set(key, value);
+    return value;
   }
 };
-function getDmmfActionName(name) {
-  if (isClientOnlyAction(name)) {
-    return clientOnlyActions[name].wrappedAction;
+__name(Cache, "Cache");
+
+// src/runtime/core/model/utils/dmmfToJSModelName.ts
+function dmmfToJSModelName(name) {
+  return name.replace(/^./, (str) => str.toLowerCase());
+}
+__name(dmmfToJSModelName, "dmmfToJSModelName");
+
+// src/runtime/core/extensions/resultUtils.ts
+function getComputedFields(previousComputedFields, extension, dmmfModelName) {
+  const jsName = dmmfToJSModelName(dmmfModelName);
+  if (!extension.result || !(extension.result.$allModels || extension.result[jsName])) {
+    return previousComputedFields;
   }
-  return name;
+  return resolveDependencies({
+    ...previousComputedFields,
+    ...getComputedFieldsFromModel(extension.name, previousComputedFields, extension.result.$allModels),
+    ...getComputedFieldsFromModel(extension.name, previousComputedFields, extension.result[jsName])
+  });
 }
-__name(getDmmfActionName, "getDmmfActionName");
-function isClientOnlyAction(action) {
-  return Object.prototype.hasOwnProperty.call(clientOnlyActions, action);
+__name(getComputedFields, "getComputedFields");
+function resolveDependencies(computedFields) {
+  const cache = new Cache();
+  const resolveNeeds = /* @__PURE__ */ __name((fieldName, visitedFields) => {
+    return cache.getOrCreate(fieldName, () => {
+      if (visitedFields.has(fieldName)) {
+        return [fieldName];
+      }
+      visitedFields.add(fieldName);
+      if (!computedFields[fieldName]) {
+        return [fieldName];
+      }
+      return computedFields[fieldName].needs.flatMap((fieldDep) => resolveNeeds(fieldDep, visitedFields));
+    });
+  }, "resolveNeeds");
+  return mapObjectValues(computedFields, (field) => {
+    return {
+      ...field,
+      needs: resolveNeeds(field.name, /* @__PURE__ */ new Set())
+    };
+  });
 }
-__name(isClientOnlyAction, "isClientOnlyAction");
-var allClientModelActions = Object.keys(DMMF.ModelAction).concat(
-  Object.keys(clientOnlyActions)
-);
+__name(resolveDependencies, "resolveDependencies");
+function getComputedFieldsFromModel(name, previousComputedFields, modelResult) {
+  if (!modelResult) {
+    return {};
+  }
+  return mapObjectValues(modelResult, ({ needs, compute }, fieldName) => ({
+    name: fieldName,
+    needs: needs ? Object.keys(needs).filter((key) => needs[key]) : [],
+    compute: wrapExtensionCallback(name, composeCompute(previousComputedFields, fieldName, compute))
+  }));
+}
+__name(getComputedFieldsFromModel, "getComputedFieldsFromModel");
+function composeCompute(previousComputedFields, fieldName, nextCompute) {
+  const previousCompute = previousComputedFields?.[fieldName]?.compute;
+  if (!previousCompute) {
+    return nextCompute;
+  }
+  return (model) => {
+    return nextCompute({ ...model, [fieldName]: previousCompute(model) });
+  };
+}
+__name(composeCompute, "composeCompute");
+function applyComputedFieldsToSelection(selection, computedFields) {
+  if (!computedFields) {
+    return selection;
+  }
+  const result = { ...selection };
+  for (const field of Object.values(computedFields)) {
+    if (!selection[field.name]) {
+      continue;
+    }
+    for (const dependency of field.needs) {
+      result[dependency] = true;
+    }
+  }
+  return result;
+}
+__name(applyComputedFieldsToSelection, "applyComputedFieldsToSelection");
+
+// src/runtime/utils/createErrorMessageWithContext.ts
+var import_chalk10 = __toESM(require_source());
+var import_indent_string3 = __toESM(require_indent_string());
 
 // src/runtime/utils/SourceFileSlice.ts
 var import_fs8 = __toESM(require("fs"));
 
 // src/runtime/highlight/theme.ts
-var import_chalk8 = __toESM(require_source());
-var orange = import_chalk8.default.rgb(246, 145, 95);
-var darkBrightBlue = import_chalk8.default.rgb(107, 139, 140);
-var blue = import_chalk8.default.cyan;
-var brightBlue = import_chalk8.default.rgb(127, 155, 155);
+var import_chalk9 = __toESM(require_source());
+var orange = import_chalk9.default.rgb(246, 145, 95);
+var darkBrightBlue = import_chalk9.default.rgb(107, 139, 140);
+var blue = import_chalk9.default.cyan;
+var brightBlue = import_chalk9.default.rgb(127, 155, 155);
 var identity = /* @__PURE__ */ __name((str) => str, "identity");
 var theme = {
   keyword: blue,
@@ -31028,10 +28275,10 @@ var theme = {
   directive: blue,
   function: blue,
   variable: brightBlue,
-  string: import_chalk8.default.greenBright,
+  string: import_chalk9.default.greenBright,
   boolean: orange,
-  number: import_chalk8.default.cyan,
-  comment: import_chalk8.default.grey
+  number: import_chalk9.default.cyan,
+  comment: import_chalk9.default.grey
 };
 
 // src/runtime/highlight/prism.ts
@@ -31051,8 +28298,8 @@ var Prism = {
         return tokens.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\u00a0/g, " ");
       }
     },
-    type: function(o) {
-      return Object.prototype.toString.call(o).slice(8, -1);
+    type: function(o2) {
+      return Object.prototype.toString.call(o2).slice(8, -1);
     },
     objId: function(obj) {
       if (!obj["__id"]) {
@@ -31060,36 +28307,36 @@ var Prism = {
       }
       return obj["__id"];
     },
-    clone: /* @__PURE__ */ __name(function deepClone(o, visited) {
-      let clone2, id, type = Prism.util.type(o);
+    clone: /* @__PURE__ */ __name(function deepClone(o2, visited) {
+      let clone2, id, type = Prism.util.type(o2);
       visited = visited || {};
       switch (type) {
         case "Object":
-          id = Prism.util.objId(o);
+          id = Prism.util.objId(o2);
           if (visited[id]) {
             return visited[id];
           }
           clone2 = {};
           visited[id] = clone2;
-          for (const key in o) {
-            if (o.hasOwnProperty(key)) {
-              clone2[key] = deepClone(o[key], visited);
+          for (const key in o2) {
+            if (o2.hasOwnProperty(key)) {
+              clone2[key] = deepClone(o2[key], visited);
             }
           }
           return clone2;
         case "Array":
-          id = Prism.util.objId(o);
+          id = Prism.util.objId(o2);
           if (visited[id]) {
             return visited[id];
           }
           clone2 = [];
           visited[id] = clone2;
-          o.forEach(function(v, i) {
+          o2.forEach(function(v, i) {
             clone2[i] = deepClone(v, visited);
           });
           return clone2;
         default:
-          return o;
+          return o2;
       }
     }, "deepClone")
   },
@@ -31128,13 +28375,13 @@ var Prism = {
       });
       return ret;
     },
-    DFS: /* @__PURE__ */ __name(function DFS(o, callback, type, visited) {
+    DFS: /* @__PURE__ */ __name(function DFS(o2, callback, type, visited) {
       visited = visited || {};
       const objId = Prism.util.objId;
-      for (const i in o) {
-        if (o.hasOwnProperty(i)) {
-          callback.call(o, i, o[i], type || i);
-          const property = o[i], propertyType = Prism.util.type(property);
+      for (const i in o2) {
+        if (o2.hasOwnProperty(i)) {
+          callback.call(o2, i, o2[i], type || i);
+          const property = o2[i], propertyType = Prism.util.type(property);
           if (propertyType === "Object" && !visited[objId(property)]) {
             visited[objId(property)] = true;
             DFS(property, callback, null, visited);
@@ -31148,15 +28395,15 @@ var Prism = {
   },
   plugins: {},
   highlight: function(text, grammar, language) {
-    const env2 = {
+    const env = {
       code: text,
       grammar,
       language
     };
-    Prism.hooks.run("before-tokenize", env2);
-    env2.tokens = Prism.tokenize(env2.code, env2.grammar);
-    Prism.hooks.run("after-tokenize", env2);
-    return Token.stringify(Prism.util.encode(env2.tokens), env2.language);
+    Prism.hooks.run("before-tokenize", env);
+    env.tokens = Prism.tokenize(env.code, env.grammar);
+    Prism.hooks.run("after-tokenize", env);
+    return Token.stringify(Prism.util.encode(env.tokens), env.language);
   },
   matchGrammar: function(text, strarr, grammar, index, startPos, oneshot, target) {
     for (const token in grammar) {
@@ -31189,19 +28436,19 @@ var Prism = {
             if (!match) {
               break;
             }
-            var from = match.index + (lookbehind ? match[1].length : 0), to = match.index + match[0].length, k = i, p = pos;
-            for (let len = strarr.length; k < len && (p < to || !strarr[k].type && !strarr[k - 1].greedy); ++k) {
-              p += strarr[k].length;
-              if (from >= p) {
+            var from = match.index + (lookbehind ? match[1].length : 0), to = match.index + match[0].length, k = i, p2 = pos;
+            for (let len = strarr.length; k < len && (p2 < to || !strarr[k].type && !strarr[k - 1].greedy); ++k) {
+              p2 += strarr[k].length;
+              if (from >= p2) {
                 ++i;
-                pos = p;
+                pos = p2;
               }
             }
             if (strarr[i] instanceof Token) {
               continue;
             }
             delNum = k - i;
-            str = text.slice(pos, p);
+            str = text.slice(pos, p2);
             match.index -= pos;
           } else {
             pattern.lastIndex = 0;
@@ -31256,13 +28503,13 @@ var Prism = {
       hooks[name] = hooks[name] || [];
       hooks[name].push(callback);
     },
-    run: function(name, env2) {
+    run: function(name, env) {
       const callbacks = Prism.hooks.all[name];
       if (!callbacks || !callbacks.length) {
         return;
       }
       for (var i = 0, callback; callback = callbacks[i++]; ) {
-        callback(env2);
+        callback(env);
       }
     }
   },
@@ -31371,16 +28618,16 @@ function Token(type, content, alias, matchedStr, greedy) {
   this.greedy = !!greedy;
 }
 __name(Token, "Token");
-Token.stringify = function(o, language) {
-  if (typeof o == "string") {
-    return o;
+Token.stringify = function(o2, language) {
+  if (typeof o2 == "string") {
+    return o2;
   }
-  if (Array.isArray(o)) {
-    return o.map(function(element) {
+  if (Array.isArray(o2)) {
+    return o2.map(function(element) {
       return Token.stringify(element, language);
     }).join("");
   }
-  return getColorForSyntaxKind(o.type)(o.content);
+  return getColorForSyntaxKind(o2.type)(o2.content);
 };
 function getColorForSyntaxKind(syntaxKind) {
   return theme[syntaxKind] || identity;
@@ -31394,7 +28641,7 @@ function highlightTS(str) {
 __name(highlightTS, "highlightTS");
 function highlight(str, grammar) {
   const tokens = Prism.tokenize(str, grammar);
-  return tokens.map((t) => Token.stringify(t)).join("");
+  return tokens.map((t2) => Token.stringify(t2)).join("");
 }
 __name(highlight, "highlight");
 
@@ -31411,7 +28658,7 @@ var SourceFileSlice = class {
     let content;
     try {
       content = import_fs8.default.readFileSync(filePath, "utf-8");
-    } catch (e) {
+    } catch (e2) {
       return null;
     }
     return SourceFileSlice.fromContent(content);
@@ -31469,11 +28716,11 @@ __name(SourceFileSlice, "SourceFileSlice");
 
 // src/runtime/utils/createErrorMessageWithContext.ts
 var colorsEnabled = {
-  red: (str) => import_chalk9.default.red(str),
-  gray: (str) => import_chalk9.default.gray(str),
-  dim: (str) => import_chalk9.default.dim(str),
-  bold: (str) => import_chalk9.default.bold(str),
-  underline: (str) => import_chalk9.default.underline(str),
+  red: (str) => import_chalk10.default.red(str),
+  gray: (str) => import_chalk10.default.gray(str),
+  dim: (str) => import_chalk10.default.dim(str),
+  bold: (str) => import_chalk10.default.bold(str),
+  underline: (str) => import_chalk10.default.underline(str),
   highlightSource: (source) => source.highlight()
 };
 var colorsDisabled = {
@@ -31484,12 +28731,11 @@ var colorsDisabled = {
   underline: (str) => str,
   highlightSource: (source) => source
 };
-function getTemplateParameters({ callsite, message, originalMethod, isPanic, callArguments }, colors) {
-  var _a3;
+function getTemplateParameters({ callsite, message, originalMethod, isPanic: isPanic2, callArguments }, colors) {
   const templateParameters = {
     functionName: `prisma.${originalMethod}()`,
     message,
-    isPanic: isPanic != null ? isPanic : false,
+    isPanic: isPanic2 ?? false,
     callArguments
   };
   if (!callsite || typeof window !== "undefined") {
@@ -31503,8 +28749,8 @@ function getTemplateParameters({ callsite, message, originalMethod, isPanic, cal
     return templateParameters;
   }
   const contextFirstLine = Math.max(1, callLocation.lineNumber - 3);
-  let source = (_a3 = SourceFileSlice.read(callLocation.fileName)) == null ? void 0 : _a3.slice(contextFirstLine, callLocation.lineNumber);
-  const invocationLine = source == null ? void 0 : source.lineAt(callLocation.lineNumber);
+  let source = SourceFileSlice.read(callLocation.fileName)?.slice(contextFirstLine, callLocation.lineNumber);
+  const invocationLine = source?.lineAt(callLocation.lineNumber);
   if (source && invocationLine) {
     const invocationLineIndent = getIndent(invocationLine);
     const invocationCallCode = findPrismaActionCall(invocationLine);
@@ -31513,7 +28759,7 @@ function getTemplateParameters({ callsite, message, originalMethod, isPanic, cal
     }
     templateParameters.functionName = `${invocationCallCode.code})`;
     templateParameters.location = callLocation;
-    if (!isPanic) {
+    if (!isPanic2) {
       source = source.mapLineAt(callLocation.lineNumber, (line) => line.slice(0, invocationCallCode.openingBraceIndex));
     }
     source = colors.highlightSource(source);
@@ -31529,7 +28775,7 @@ function getTemplateParameters({ callsite, message, originalMethod, isPanic, cal
 }
 __name(getTemplateParameters, "getTemplateParameters");
 function findPrismaActionCall(str) {
-  const allActions = allClientModelActions.join("|");
+  const allActions = Object.keys(DMMF.ModelAction).join("|");
   const regexp = new RegExp(String.raw`\S+(${allActions})\(`);
   const match = regexp.exec(str);
   if (match) {
@@ -31552,10 +28798,10 @@ function getIndent(line) {
   return spaceCount;
 }
 __name(getIndent, "getIndent");
-function stringifyErrorMessage({ functionName, location, message, isPanic, contextLines, callArguments }, colors) {
+function stringifyErrorMessage({ functionName, location, message, isPanic: isPanic2, contextLines, callArguments }, colors) {
   const lines = [""];
   const introSuffix = location ? " in" : ":";
-  if (isPanic) {
+  if (isPanic2) {
     lines.push(colors.red(`Oops, an unknown error occurred! This is ${colors.bold("on us")}, you did nothing wrong.`));
     lines.push(colors.red(`It occurred in the ${colors.bold(`\`${functionName}\``)} invocation${introSuffix}`));
   } else {
@@ -31685,8 +28931,8 @@ var deepExtend = /* @__PURE__ */ __name(function(target, ...args) {
 
 // src/runtime/utils/deep-set.ts
 var keys = /* @__PURE__ */ __name((ks) => Array.isArray(ks) ? ks : ks.split("."), "keys");
-var deepGet = /* @__PURE__ */ __name((o, kp) => keys(kp).reduce((o2, k) => o2 && o2[k], o), "deepGet");
-var deepSet = /* @__PURE__ */ __name((o, kp, v) => keys(kp).reduceRight((v2, k, i, ks) => Object.assign({}, deepGet(o, ks.slice(0, i)), { [k]: v2 }), v), "deepSet");
+var deepGet = /* @__PURE__ */ __name((o2, kp) => keys(kp).reduce((o3, k) => o3 && o3[k], o2), "deepGet");
+var deepSet = /* @__PURE__ */ __name((o2, kp, v) => keys(kp).reduceRight((v2, k, i, ks) => Object.assign({}, deepGet(o2, ks.slice(0, i)), { [k]: v2 }), v), "deepSet");
 
 // src/runtime/utils/filterObject.ts
 function filterObject(obj, cb) {
@@ -31710,13 +28956,13 @@ var notReallyObjects = {
   "[object Uint8Array]": true,
   "[object Decimal]": true
 };
-function isObject2(value) {
+function isObject(value) {
   if (!value) {
     return false;
   }
   return typeof value === "object" && !notReallyObjects[Object.prototype.toString.call(value)];
 }
-__name(isObject2, "isObject");
+__name(isObject, "isObject");
 
 // src/runtime/utils/omit.ts
 function omit2(object, path7) {
@@ -31732,7 +28978,7 @@ function omit2(object, path7) {
 __name(omit2, "omit");
 
 // src/runtime/utils/printJsonErrors.ts
-var import_chalk10 = __toESM(require_source());
+var import_chalk11 = __toESM(require_source());
 var import_strip_ansi2 = __toESM(require_strip_ansi());
 
 // src/runtime/utils/stringifyObject.ts
@@ -31868,10 +29114,10 @@ function printJsonWithErrors({ ast, keyPaths, valuePaths, missingItems }) {
         }
         const isRequiredStr = missingItem.isRequired ? "" : "?";
         const prefix = missingItem.isRequired ? "+" : "?";
-        const color = missingItem.isRequired ? import_chalk10.default.greenBright : import_chalk10.default.green;
+        const color = missingItem.isRequired ? import_chalk11.default.greenBright : import_chalk11.default.green;
         let output = color(prefixLines(key + isRequiredStr + ": " + valueStr + eol, indent4, prefix));
         if (!missingItem.isRequired) {
-          output = import_chalk10.default.dim(output);
+          output = import_chalk11.default.dim(output);
         }
         return output;
       } else {
@@ -31886,22 +29132,22 @@ function printJsonWithErrors({ ast, keyPaths, valuePaths, missingItems }) {
         if (isOnMissingItemPath && typeof value === "string") {
           valueStr = valueStr.slice(1, valueStr.length - 1);
           if (!isOptional) {
-            valueStr = import_chalk10.default.bold(valueStr);
+            valueStr = import_chalk11.default.bold(valueStr);
           }
         }
         if ((typeof value !== "object" || value === null) && !valueError && !isOnMissingItemPath) {
-          valueStr = import_chalk10.default.dim(valueStr);
+          valueStr = import_chalk11.default.dim(valueStr);
         }
-        const keyStr = keyError ? import_chalk10.default.redBright(key) : key;
-        valueStr = valueError ? import_chalk10.default.redBright(valueStr) : valueStr;
-        let output = indent4 + keyStr + ": " + valueStr + (isOnMissingItemPath ? eol : import_chalk10.default.dim(eol));
+        const keyStr = keyError ? import_chalk11.default.redBright(key) : key;
+        valueStr = valueError ? import_chalk11.default.redBright(valueStr) : valueStr;
+        let output = indent4 + keyStr + ": " + valueStr + (isOnMissingItemPath ? eol : import_chalk11.default.dim(eol));
         if (keyError || valueError) {
           const lines = output.split("\n");
           const keyLength = String(key).length;
-          const keyScribbles = keyError ? import_chalk10.default.redBright("~".repeat(keyLength)) : " ".repeat(keyLength);
+          const keyScribbles = keyError ? import_chalk11.default.redBright("~".repeat(keyLength)) : " ".repeat(keyLength);
           const valueLength = valueError ? getValueLength(indent4, key, value, stringifiedValue) : 0;
           const hideValueScribbles = valueError && isRenderedAsObject(value);
-          const valueScribbles = valueError ? "  " + import_chalk10.default.redBright("~".repeat(valueLength)) : "";
+          const valueScribbles = valueError ? "  " + import_chalk11.default.redBright("~".repeat(valueLength)) : "";
           if (keyScribbles && keyScribbles.length > 0 && !hideValueScribbles) {
             lines.splice(1, 0, indent4 + keyScribbles + valueScribbles);
           }
@@ -31941,7 +29187,7 @@ function prefixLines(str, indent4, prefix) {
   return str.split("\n").map(
     (line, index, arr) => index === 0 ? prefix + indent4.slice(1) + line : index < arr.length - 1 ? prefix + line.slice(1) : line
   ).map((line) => {
-    return (0, import_strip_ansi2.default)(line).includes(DIM_TOKEN) ? import_chalk10.default.dim(line.replace(DIM_TOKEN, "")) : line.includes("?") ? import_chalk10.default.dim(line) : line;
+    return (0, import_strip_ansi2.default)(line).includes(DIM_TOKEN) ? import_chalk11.default.dim(line.replace(DIM_TOKEN, "")) : line.includes("?") ? import_chalk11.default.dim(line) : line;
   }).join("\n");
 }
 __name(prefixLines, "prefixLines");
@@ -31954,80 +29200,80 @@ var Document = class {
     this.children = children;
     this.printFieldError = /* @__PURE__ */ __name(({ error: error2 }, missingItems, minimal) => {
       if (error2.type === "emptySelect") {
-        const additional = minimal ? "" : ` Available options are listed in ${import_chalk11.default.greenBright.dim("green")}.`;
-        return `The ${import_chalk11.default.redBright("`select`")} statement for type ${import_chalk11.default.bold(
+        const additional = minimal ? "" : ` Available options are listed in ${import_chalk12.default.greenBright.dim("green")}.`;
+        return `The ${import_chalk12.default.redBright("`select`")} statement for type ${import_chalk12.default.bold(
           getOutputTypeName(error2.field.outputType.type)
         )} must not be empty.${additional}`;
       }
       if (error2.type === "emptyInclude") {
         if (missingItems.length === 0) {
-          return `${import_chalk11.default.bold(
+          return `${import_chalk12.default.bold(
             getOutputTypeName(error2.field.outputType.type)
-          )} does not have any relation and therefore can't have an ${import_chalk11.default.redBright("`include`")} statement.`;
+          )} does not have any relation and therefore can't have an ${import_chalk12.default.redBright("`include`")} statement.`;
         }
-        const additional = minimal ? "" : ` Available options are listed in ${import_chalk11.default.greenBright.dim("green")}.`;
-        return `The ${import_chalk11.default.redBright("`include`")} statement for type ${import_chalk11.default.bold(
+        const additional = minimal ? "" : ` Available options are listed in ${import_chalk12.default.greenBright.dim("green")}.`;
+        return `The ${import_chalk12.default.redBright("`include`")} statement for type ${import_chalk12.default.bold(
           getOutputTypeName(error2.field.outputType.type)
         )} must not be empty.${additional}`;
       }
       if (error2.type === "noTrueSelect") {
-        return `The ${import_chalk11.default.redBright("`select`")} statement for type ${import_chalk11.default.bold(
+        return `The ${import_chalk12.default.redBright("`select`")} statement for type ${import_chalk12.default.bold(
           getOutputTypeName(error2.field.outputType.type)
-        )} needs ${import_chalk11.default.bold("at least one truthy value")}.`;
+        )} needs ${import_chalk12.default.bold("at least one truthy value")}.`;
       }
       if (error2.type === "includeAndSelect") {
-        return `Please ${import_chalk11.default.bold("either")} use ${import_chalk11.default.greenBright("`include`")} or ${import_chalk11.default.greenBright(
+        return `Please ${import_chalk12.default.bold("either")} use ${import_chalk12.default.greenBright("`include`")} or ${import_chalk12.default.greenBright(
           "`select`"
-        )}, but ${import_chalk11.default.redBright("not both")} at the same time.`;
+        )}, but ${import_chalk12.default.redBright("not both")} at the same time.`;
       }
       if (error2.type === "invalidFieldName") {
         const statement = error2.isInclude ? "include" : "select";
         const wording = error2.isIncludeScalar ? "Invalid scalar" : "Unknown";
         const additional = minimal ? "" : error2.isInclude && missingItems.length === 0 ? `
-This model has no relations, so you can't use ${import_chalk11.default.redBright("include")} with it.` : ` Available options are listed in ${import_chalk11.default.greenBright.dim("green")}.`;
-        let str = `${wording} field ${import_chalk11.default.redBright(`\`${error2.providedName}\``)} for ${import_chalk11.default.bold(
+This model has no relations, so you can't use ${import_chalk12.default.redBright("include")} with it.` : ` Available options are listed in ${import_chalk12.default.greenBright.dim("green")}.`;
+        let str = `${wording} field ${import_chalk12.default.redBright(`\`${error2.providedName}\``)} for ${import_chalk12.default.bold(
           statement
-        )} statement on model ${import_chalk11.default.bold.white(error2.modelName)}.${additional}`;
+        )} statement on model ${import_chalk12.default.bold.white(error2.modelName)}.${additional}`;
         if (error2.didYouMean) {
-          str += ` Did you mean ${import_chalk11.default.greenBright(`\`${error2.didYouMean}\``)}?`;
+          str += ` Did you mean ${import_chalk12.default.greenBright(`\`${error2.didYouMean}\``)}?`;
         }
         if (error2.isIncludeScalar) {
           str += `
-Note, that ${import_chalk11.default.bold("include")} statements only accept relation fields.`;
+Note, that ${import_chalk12.default.bold("include")} statements only accept relation fields.`;
         }
         return str;
       }
       if (error2.type === "invalidFieldType") {
-        const str = `Invalid value ${import_chalk11.default.redBright(
+        const str = `Invalid value ${import_chalk12.default.redBright(
           `${stringifyObject_default(error2.providedValue)}`
-        )} of type ${import_chalk11.default.redBright(getGraphQLType(error2.providedValue, void 0))} for field ${import_chalk11.default.bold(
+        )} of type ${import_chalk12.default.redBright(getGraphQLType(error2.providedValue, void 0))} for field ${import_chalk12.default.bold(
           `${error2.fieldName}`
-        )} on model ${import_chalk11.default.bold.white(error2.modelName)}. Expected either ${import_chalk11.default.greenBright(
+        )} on model ${import_chalk12.default.bold.white(error2.modelName)}. Expected either ${import_chalk12.default.greenBright(
           "true"
-        )} or ${import_chalk11.default.greenBright("false")}.`;
+        )} or ${import_chalk12.default.greenBright("false")}.`;
         return str;
       }
       return void 0;
     }, "printFieldError");
     this.printArgError = /* @__PURE__ */ __name(({ error: error2, path: path7, id }, hasMissingItems, minimal) => {
       if (error2.type === "invalidName") {
-        let str = `Unknown arg ${import_chalk11.default.redBright(`\`${error2.providedName}\``)} in ${import_chalk11.default.bold(
+        let str = `Unknown arg ${import_chalk12.default.redBright(`\`${error2.providedName}\``)} in ${import_chalk12.default.bold(
           path7.join(".")
-        )} for type ${import_chalk11.default.bold(error2.outputType ? error2.outputType.name : getInputTypeName(error2.originalType))}.`;
+        )} for type ${import_chalk12.default.bold(error2.outputType ? error2.outputType.name : getInputTypeName(error2.originalType))}.`;
         if (error2.didYouMeanField) {
           str += `
-\u2192 Did you forget to wrap it with \`${import_chalk11.default.greenBright("select")}\`? ${import_chalk11.default.dim(
-            "e.g. " + import_chalk11.default.greenBright(`{ select: { ${error2.providedName}: ${error2.providedValue} } }`)
+\u2192 Did you forget to wrap it with \`${import_chalk12.default.greenBright("select")}\`? ${import_chalk12.default.dim(
+            "e.g. " + import_chalk12.default.greenBright(`{ select: { ${error2.providedName}: ${error2.providedValue} } }`)
           )}`;
         } else if (error2.didYouMeanArg) {
-          str += ` Did you mean \`${import_chalk11.default.greenBright(error2.didYouMeanArg)}\`?`;
+          str += ` Did you mean \`${import_chalk12.default.greenBright(error2.didYouMeanArg)}\`?`;
           if (!hasMissingItems && !minimal) {
-            str += ` ${import_chalk11.default.dim("Available args:")}
+            str += ` ${import_chalk12.default.dim("Available args:")}
 ` + stringifyInputType(error2.originalType, true);
           }
         } else {
           if (error2.originalType.fields.length === 0) {
-            str += ` The field ${import_chalk11.default.bold(error2.originalType.name)} has no arguments.`;
+            str += ` The field ${import_chalk12.default.bold(error2.originalType.name)} has no arguments.`;
           } else if (!hasMissingItems && !minimal) {
             str += ` Available args:
 
@@ -32045,54 +29291,54 @@ ${valueStr}
 `;
         }
         if (error2.requiredType.bestFittingType.location === "enumTypes") {
-          return `Argument ${import_chalk11.default.bold(error2.argName)}: Provided value ${import_chalk11.default.redBright(valueStr)}${multilineValue ? "" : " "}of type ${import_chalk11.default.redBright(getGraphQLType(error2.providedValue))} on ${import_chalk11.default.bold(
+          return `Argument ${import_chalk12.default.bold(error2.argName)}: Provided value ${import_chalk12.default.redBright(valueStr)}${multilineValue ? "" : " "}of type ${import_chalk12.default.redBright(getGraphQLType(error2.providedValue))} on ${import_chalk12.default.bold(
             `prisma.${this.children[0].name}`
-          )} is not a ${import_chalk11.default.greenBright(
+          )} is not a ${import_chalk12.default.greenBright(
             wrapWithList(
               stringifyGraphQLType(error2.requiredType.bestFittingType.type),
               error2.requiredType.bestFittingType.isList
             )
           )}.
-\u2192 Possible values: ${error2.requiredType.bestFittingType.type.values.map((v) => import_chalk11.default.greenBright(`${stringifyGraphQLType(error2.requiredType.bestFittingType.type)}.${v}`)).join(", ")}`;
+\u2192 Possible values: ${error2.requiredType.bestFittingType.type.values.map((v) => import_chalk12.default.greenBright(`${stringifyGraphQLType(error2.requiredType.bestFittingType.type)}.${v}`)).join(", ")}`;
         }
         let typeStr = ".";
         if (isInputArgType(error2.requiredType.bestFittingType.type)) {
           typeStr = ":\n" + stringifyInputType(error2.requiredType.bestFittingType.type);
         }
         let expected = `${error2.requiredType.inputType.map(
-          (t) => import_chalk11.default.greenBright(wrapWithList(stringifyGraphQLType(t.type), error2.requiredType.bestFittingType.isList))
+          (t2) => import_chalk12.default.greenBright(wrapWithList(stringifyGraphQLType(t2.type), error2.requiredType.bestFittingType.isList))
         ).join(" or ")}${typeStr}`;
-        const inputType = error2.requiredType.inputType.length === 2 && error2.requiredType.inputType.find((t) => isInputArgType(t.type)) || null;
+        const inputType = error2.requiredType.inputType.length === 2 && error2.requiredType.inputType.find((t2) => isInputArgType(t2.type)) || null;
         if (inputType) {
           expected += `
 ` + stringifyInputType(inputType.type, true);
         }
-        return `Argument ${import_chalk11.default.bold(error2.argName)}: Got invalid value ${import_chalk11.default.redBright(valueStr)}${multilineValue ? "" : " "}on ${import_chalk11.default.bold(`prisma.${this.children[0].name}`)}. Provided ${import_chalk11.default.redBright(
+        return `Argument ${import_chalk12.default.bold(error2.argName)}: Got invalid value ${import_chalk12.default.redBright(valueStr)}${multilineValue ? "" : " "}on ${import_chalk12.default.bold(`prisma.${this.children[0].name}`)}. Provided ${import_chalk12.default.redBright(
           getGraphQLType(error2.providedValue)
         )}, expected ${expected}`;
       }
       if (error2.type === "invalidNullArg") {
-        const forStr = path7.length === 1 && path7[0] === error2.name ? "" : ` for ${import_chalk11.default.bold(`${path7.join(".")}`)}`;
-        const undefinedTip = ` Please use ${import_chalk11.default.bold.greenBright("undefined")} instead.`;
-        return `Argument ${import_chalk11.default.greenBright(error2.name)}${forStr} must not be ${import_chalk11.default.bold("null")}.${undefinedTip}`;
+        const forStr = path7.length === 1 && path7[0] === error2.name ? "" : ` for ${import_chalk12.default.bold(`${path7.join(".")}`)}`;
+        const undefinedTip = ` Please use ${import_chalk12.default.bold.greenBright("undefined")} instead.`;
+        return `Argument ${import_chalk12.default.greenBright(error2.name)}${forStr} must not be ${import_chalk12.default.bold("null")}.${undefinedTip}`;
       }
       if (error2.type === "missingArg") {
-        const forStr = path7.length === 1 && path7[0] === error2.missingName ? "" : ` for ${import_chalk11.default.bold(`${path7.join(".")}`)}`;
-        return `Argument ${import_chalk11.default.greenBright(error2.missingName)}${forStr} is missing.`;
+        const forStr = path7.length === 1 && path7[0] === error2.missingName ? "" : ` for ${import_chalk12.default.bold(`${path7.join(".")}`)}`;
+        return `Argument ${import_chalk12.default.greenBright(error2.missingName)}${forStr} is missing.`;
       }
       if (error2.type === "atLeastOne") {
-        const additional = minimal ? "" : ` Available args are listed in ${import_chalk11.default.dim.green("green")}.`;
-        const atLeastFieldsError = error2.atLeastFields ? ` and at least one argument for ${error2.atLeastFields.map((field) => import_chalk11.default.bold(field)).join(", or ")}` : "";
-        return `Argument ${import_chalk11.default.bold(path7.join("."))} of type ${import_chalk11.default.bold(
+        const additional = minimal ? "" : ` Available args are listed in ${import_chalk12.default.dim.green("green")}.`;
+        const atLeastFieldsError = error2.atLeastFields ? ` and at least one argument for ${error2.atLeastFields.map((field) => import_chalk12.default.bold(field)).join(", or ")}` : "";
+        return `Argument ${import_chalk12.default.bold(path7.join("."))} of type ${import_chalk12.default.bold(
           error2.inputType.name
-        )} needs ${import_chalk11.default.greenBright("at least one")} argument${import_chalk11.default.bold(atLeastFieldsError)}.${additional}`;
+        )} needs ${import_chalk12.default.greenBright("at least one")} argument${import_chalk12.default.bold(atLeastFieldsError)}.${additional}`;
       }
       if (error2.type === "atMostOne") {
-        const additional = minimal ? "" : ` Please choose one. ${import_chalk11.default.dim("Available args:")} 
+        const additional = minimal ? "" : ` Please choose one. ${import_chalk12.default.dim("Available args:")} 
 ${stringifyInputType(error2.inputType, true)}`;
-        return `Argument ${import_chalk11.default.bold(path7.join("."))} of type ${import_chalk11.default.bold(
+        return `Argument ${import_chalk12.default.bold(path7.join("."))} of type ${import_chalk12.default.bold(
           error2.inputType.name
-        )} needs ${import_chalk11.default.greenBright("exactly one")} argument, but you provided ${error2.providedKeys.map((key) => import_chalk11.default.redBright(key)).join(" and ")}.${additional}`;
+        )} needs ${import_chalk12.default.greenBright("exactly one")} argument, but you provided ${error2.providedKeys.map((key) => import_chalk12.default.redBright(key)).join(" and ")}.${additional}`;
       }
       return void 0;
     }, "printArgError");
@@ -32108,7 +29354,6 @@ ${(0, import_indent_string4.default)(this.children.map(String).join("\n"), tab)}
 }`;
   }
   validate(select, isTopLevelQuery = false, originalMethod, errorFormat, validationCallsite) {
-    var _a3;
     if (!select) {
       select = {};
     }
@@ -32122,15 +29367,15 @@ ${(0, import_indent_string4.default)(this.children.map(String).join("\n"), tab)}
     for (const child of invalidChildren) {
       const errors = child.collectErrors(prefix);
       fieldErrors.push(
-        ...errors.fieldErrors.map((e) => ({
-          ...e,
-          path: isTopLevelQuery ? e.path : e.path.slice(1)
+        ...errors.fieldErrors.map((e2) => ({
+          ...e2,
+          path: isTopLevelQuery ? e2.path : e2.path.slice(1)
         }))
       );
       argErrors.push(
-        ...errors.argErrors.map((e) => ({
-          ...e,
-          path: isTopLevelQuery ? e.path : e.path.slice(1)
+        ...errors.argErrors.map((e2) => ({
+          ...e2,
+          path: isTopLevelQuery ? e2.path : e2.path.slice(1)
         }))
       );
     }
@@ -32163,7 +29408,7 @@ ${(0, import_indent_string4.default)(this.children.map(String).join("\n"), tab)}
         const selectPathArray = this.normalizePath(fieldError.path, select);
         const selectPath = selectPathArray.slice(0, selectPathArray.length - 1).join(".");
         const fieldType = fieldError.error.field.outputType.type;
-        (_a3 = fieldType.fields) == null ? void 0 : _a3.filter(
+        fieldType.fields?.filter(
           (field) => fieldError.error.type === "emptyInclude" ? field.outputType.location === "outputObjectTypes" : true
         ).forEach((field) => {
           missingItems.push({
@@ -32181,12 +29426,12 @@ ${(0, import_indent_string4.default)(this.children.map(String).join("\n"), tab)}
       } else if (argError.error.type !== "missingArg" && argError.error.type !== "atLeastOne") {
         valuePaths.push(path7);
       } else if (argError.error.type === "missingArg") {
-        const type = argError.error.missingArg.inputTypes.length === 1 ? argError.error.missingArg.inputTypes[0].type : argError.error.missingArg.inputTypes.map((t) => {
-          const inputTypeName = getInputTypeName(t.type);
+        const type = argError.error.missingArg.inputTypes.length === 1 ? argError.error.missingArg.inputTypes[0].type : argError.error.missingArg.inputTypes.map((t2) => {
+          const inputTypeName = getInputTypeName(t2.type);
           if (inputTypeName === "Null") {
             return "null";
           }
-          if (t.isList) {
+          if (t2.isList) {
             return inputTypeName + "[]";
           }
           return inputTypeName;
@@ -32200,16 +29445,16 @@ ${(0, import_indent_string4.default)(this.children.map(String).join("\n"), tab)}
     }
     const renderErrorStr = /* @__PURE__ */ __name((callsite) => {
       const hasRequiredMissingArgsErrors = argErrors.some(
-        (e) => e.error.type === "missingArg" && e.error.missingArg.isRequired
+        (e2) => e2.error.type === "missingArg" && e2.error.missingArg.isRequired
       );
       const hasOptionalMissingArgsErrors = Boolean(
-        argErrors.find((e) => e.error.type === "missingArg" && !e.error.missingArg.isRequired)
+        argErrors.find((e2) => e2.error.type === "missingArg" && !e2.error.missingArg.isRequired)
       );
       const hasMissingArgsErrors = hasOptionalMissingArgsErrors || hasRequiredMissingArgsErrors;
       let missingArgsLegend = "";
       if (hasRequiredMissingArgsErrors) {
         missingArgsLegend += `
-${import_chalk11.default.dim("Note: Lines with ")}${import_chalk11.default.reset.greenBright("+")} ${import_chalk11.default.dim(
+${import_chalk12.default.dim("Note: Lines with ")}${import_chalk12.default.reset.greenBright("+")} ${import_chalk12.default.dim(
           "are required"
         )}`;
       }
@@ -32218,16 +29463,16 @@ ${import_chalk11.default.dim("Note: Lines with ")}${import_chalk11.default.reset
           missingArgsLegend = "\n";
         }
         if (hasRequiredMissingArgsErrors) {
-          missingArgsLegend += import_chalk11.default.dim(`, lines with ${import_chalk11.default.green("?")} are optional`);
+          missingArgsLegend += import_chalk12.default.dim(`, lines with ${import_chalk12.default.green("?")} are optional`);
         } else {
-          missingArgsLegend += import_chalk11.default.dim(`Note: Lines with ${import_chalk11.default.green("?")} are optional`);
+          missingArgsLegend += import_chalk12.default.dim(`Note: Lines with ${import_chalk12.default.green("?")} are optional`);
         }
-        missingArgsLegend += import_chalk11.default.dim(".");
+        missingArgsLegend += import_chalk12.default.dim(".");
       }
-      const relevantArgErrors = argErrors.filter((e) => e.error.type !== "missingArg" || e.error.missingArg.isRequired);
-      let errorMessages = relevantArgErrors.map((e) => this.printArgError(e, hasMissingArgsErrors, errorFormat === "minimal")).join("\n");
+      const relevantArgErrors = argErrors.filter((e2) => e2.error.type !== "missingArg" || e2.error.missingArg.isRequired);
+      let errorMessages = relevantArgErrors.map((e2) => this.printArgError(e2, hasMissingArgsErrors, errorFormat === "minimal")).join("\n");
       errorMessages += `
-${fieldErrors.map((e) => this.printFieldError(e, missingItems, errorFormat === "minimal")).join("\n")}`;
+${fieldErrors.map((e2) => this.printFieldError(e2, missingItems, errorFormat === "minimal")).join("\n")}`;
       if (errorFormat === "minimal") {
         return (0, import_strip_ansi3.default)(errorMessages);
       }
@@ -32237,7 +29482,7 @@ ${fieldErrors.map((e) => this.printFieldError(e, missingItems, errorFormat === "
         valuePaths,
         missingItems
       };
-      if (originalMethod == null ? void 0 : originalMethod.endsWith("aggregate")) {
+      if (originalMethod?.endsWith("aggregate")) {
         printJsonArgs = transformAggregatePrintJsonArgs(printJsonArgs);
       }
       const errorStr = createErrorMessageWithContext({
@@ -32349,21 +29594,21 @@ ${(0, import_indent_string4.default)(this.children.map(String).join("\n"), tab)}
       for (const child of this.children) {
         const errors = child.collectErrors(prefix);
         fieldErrors.push(
-          ...errors.fieldErrors.map((e) => ({
-            ...e,
-            path: [this.name, prefix, ...e.path]
+          ...errors.fieldErrors.map((e2) => ({
+            ...e2,
+            path: [this.name, prefix, ...e2.path]
           }))
         );
         argErrors.push(
-          ...errors.argErrors.map((e) => ({
-            ...e,
-            path: [this.name, prefix, ...e.path]
+          ...errors.argErrors.map((e2) => ({
+            ...e2,
+            path: [this.name, prefix, ...e2.path]
           }))
         );
       }
     }
     if (this.args) {
-      argErrors.push(...this.args.collectErrors().map((e) => ({ ...e, path: [this.name, ...e.path] })));
+      argErrors.push(...this.args.collectErrors().map((e2) => ({ ...e2, path: [this.name, ...e2.path] })));
     }
     return {
       fieldErrors,
@@ -32404,15 +29649,15 @@ function stringify(value, inputType) {
   if (Object.prototype.toString.call(value) === "[object BigInt]") {
     return value.toString();
   }
-  if (typeof (inputType == null ? void 0 : inputType.type) === "string" && inputType.type === "Json") {
+  if (typeof inputType?.type === "string" && inputType.type === "Json") {
     if (value === null) {
       return "null";
     }
     if (value && value.values && value.__prismaRawParameters__) {
       return JSON.stringify(value.values);
     }
-    if ((inputType == null ? void 0 : inputType.isList) && Array.isArray(value)) {
-      return JSON.stringify(value.map((o) => JSON.stringify(o)));
+    if (inputType?.isList && Array.isArray(value)) {
+      return JSON.stringify(value.map((o2) => JSON.stringify(o2)));
     }
     return JSON.stringify(JSON.stringify(value));
   }
@@ -32422,16 +29667,16 @@ function stringify(value, inputType) {
   if (value === null) {
     return "null";
   }
-  if (decimal_default.isDecimal(value) || (inputType == null ? void 0 : inputType.type) === "Decimal" && isDecimalJsLike(value)) {
+  if (decimal_default.isDecimal(value) || inputType?.type === "Decimal" && isDecimalJsLike(value)) {
     return stringifyDecimalJsLike(value);
   }
-  if ((inputType == null ? void 0 : inputType.location) === "enumTypes" && typeof value === "string") {
+  if (inputType?.location === "enumTypes" && typeof value === "string") {
     if (Array.isArray(value)) {
       return `[${value.join(", ")}]`;
     }
     return value;
   }
-  if (typeof value === "number" && (inputType == null ? void 0 : inputType.type) === "Float") {
+  if (typeof value === "number" && inputType?.type === "Float") {
     return value.toExponential();
   }
   return JSON.stringify(value, null, 2);
@@ -32445,14 +29690,13 @@ var Arg2 = class {
     this.isEnum = isEnum;
     this.error = error2;
     this.schemaArg = schemaArg;
-    this.isNullable = (schemaArg == null ? void 0 : schemaArg.inputTypes.reduce((isNullable) => isNullable && schemaArg.isNullable, true)) || false;
+    this.isNullable = schemaArg?.inputTypes.reduce((isNullable) => isNullable && schemaArg.isNullable, true) || false;
     this.hasError = Boolean(error2) || (value instanceof Args ? value.hasInvalidArg : false) || Array.isArray(value) && value.some((v) => v instanceof Args ? v.hasInvalidArg : false);
   }
   get [Symbol.toStringTag]() {
     return "Arg";
   }
   _toString(value, key) {
-    var _a3;
     if (typeof value === "undefined") {
       return void 0;
     }
@@ -32462,7 +29706,7 @@ ${(0, import_indent_string4.default)(value.toString(), 2)}
 }`;
     }
     if (Array.isArray(value)) {
-      if (((_a3 = this.inputType) == null ? void 0 : _a3.type) === "Json") {
+      if (this.inputType?.type === "Json") {
         return `${key}: ${stringify(value, this.inputType)}`;
       }
       const isScalar = !value.some((v) => typeof v === "object");
@@ -32484,13 +29728,12 @@ ${(0, import_indent_string4.default)(nestedValue.toString(), tab)}
     return this._toString(this.value, this.key);
   }
   collectErrors() {
-    var _a3;
     if (!this.hasError) {
       return [];
     }
     const errors = [];
     if (this.error) {
-      const id = typeof ((_a3 = this.inputType) == null ? void 0 : _a3.type) === "object" ? `${this.inputType.type.name}${this.inputType.isList ? "[]" : ""}` : void 0;
+      const id = typeof this.inputType?.type === "object" ? `${this.inputType.type.name}${this.inputType.isList ? "[]" : ""}` : void 0;
       errors.push({
         error: this.error,
         path: [this.key],
@@ -32500,23 +29743,30 @@ ${(0, import_indent_string4.default)(nestedValue.toString(), tab)}
     if (Array.isArray(this.value)) {
       return errors.concat(
         this.value.flatMap((val, index) => {
-          if (!(val == null ? void 0 : val.collectErrors)) {
+          if (!val?.collectErrors) {
             return [];
           }
-          return val.collectErrors().map((e) => {
-            return { ...e, path: [this.key, index, ...e.path] };
+          return val.collectErrors().map((e2) => {
+            return { ...e2, path: [this.key, index, ...e2.path] };
           });
         })
       );
     }
     if (this.value instanceof Args) {
-      return errors.concat(this.value.collectErrors().map((e) => ({ ...e, path: [this.key, ...e.path] })));
+      return errors.concat(this.value.collectErrors().map((e2) => ({ ...e2, path: [this.key, ...e2.path] })));
     }
     return errors;
   }
 };
 __name(Arg2, "Arg");
-function makeDocument({ dmmf, rootTypeName, rootField, select, modelName }) {
+function makeDocument({
+  dmmf,
+  rootTypeName,
+  rootField,
+  select,
+  modelName,
+  extensions
+}) {
   if (!select) {
     select = {};
   }
@@ -32530,10 +29780,17 @@ function makeDocument({ dmmf, rootTypeName, rootField, select, modelName }) {
     },
     name: rootTypeName
   };
-  const context3 = {
+  const context2 = {
     modelName
   };
-  const children = selectionToFields(dmmf, { [rootField]: select }, fakeRootField, [rootTypeName], context3);
+  const children = selectionToFields({
+    dmmf,
+    selection: { [rootField]: select },
+    schemaField: fakeRootField,
+    path: [rootTypeName],
+    context: context2,
+    extensions
+  });
   return new Document(rootTypeName, children);
 }
 __name(makeDocument, "makeDocument");
@@ -32541,11 +29798,23 @@ function transformDocument(document2) {
   return document2;
 }
 __name(transformDocument, "transformDocument");
-function selectionToFields(dmmf, selection, schemaField, path7, context3) {
+function selectionToFields({
+  dmmf,
+  selection,
+  schemaField,
+  path: path7,
+  context: context2,
+  extensions
+}) {
   const outputType = schemaField.outputType.type;
+  const computedFields = context2.modelName ? extensions.getAllComputedFields(context2.modelName) : {};
+  selection = applyComputedFieldsToSelection(selection, computedFields);
   return Object.entries(selection).reduce((acc, [name, value]) => {
-    const field = outputType.fieldMap ? outputType.fieldMap[name] : outputType.fields.find((f) => f.name === name);
+    const field = outputType.fieldMap ? outputType.fieldMap[name] : outputType.fields.find((f2) => f2.name === name);
     if (!field) {
+      if (computedFields?.[name]) {
+        return acc;
+      }
       acc.push(
         new Field({
           name,
@@ -32556,7 +29825,7 @@ function selectionToFields(dmmf, selection, schemaField, path7, context3) {
             providedName: name,
             didYouMean: getSuggestion(
               name,
-              outputType.fields.map((f) => f.name)
+              outputType.fields.map((f2) => f2.name).concat(Object.keys(computedFields ?? {}))
             ),
             outputType
           }
@@ -32594,7 +29863,7 @@ function selectionToFields(dmmf, selection, schemaField, path7, context3) {
     const args = argsWithoutIncludeAndSelect ? objectToArgs(
       argsWithoutIncludeAndSelect,
       transformedField,
-      context3,
+      context2,
       [],
       typeof field === "string" ? void 0 : field.outputType.type
     ) : void 0;
@@ -32638,7 +29907,7 @@ function selectionToFields(dmmf, selection, schemaField, path7, context3) {
         }
         if (field.outputType.location === "outputObjectTypes") {
           const fieldOutputType = field.outputType.type;
-          const allowedKeys = fieldOutputType.fields.filter((f) => f.outputType.location === "outputObjectTypes").map((f) => f.name);
+          const allowedKeys = fieldOutputType.fields.filter((f2) => f2.outputType.location === "outputObjectTypes").map((f2) => f2.name);
           const invalidKeys = keys2.filter((key) => !allowedKeys.includes(key));
           if (invalidKeys.length > 0) {
             acc.push(
@@ -32656,7 +29925,7 @@ function selectionToFields(dmmf, selection, schemaField, path7, context3) {
                         providedName: invalidKey,
                         didYouMean: getSuggestion(invalidKey, allowedKeys) || void 0,
                         isInclude: true,
-                        isIncludeScalar: fieldOutputType.fields.some((f) => f.name === invalidKey)
+                        isIncludeScalar: fieldOutputType.fields.some((f2) => f2.name === invalidKey)
                       }
                     })
                   ]
@@ -32718,7 +29987,21 @@ function selectionToFields(dmmf, selection, schemaField, path7, context3) {
         select = byToSelect(value.by);
       }
     }
-    const children = select !== false && isRelation ? selectionToFields(dmmf, select, field, [...path7, name], context3) : void 0;
+    let children;
+    if (select !== false && isRelation) {
+      let modelName = context2.modelName;
+      if (typeof field.outputType.type === "object" && field.outputType.namespace === "model" && field.outputType.location === "outputObjectTypes") {
+        modelName = field.outputType.type.name;
+      }
+      children = selectionToFields({
+        dmmf,
+        selection: select,
+        schemaField: field,
+        path: [...path7, name],
+        context: { modelName },
+        extensions
+      });
+    }
     acc.push(new Field({ name, args, children, schemaField: field }));
     return acc;
   }, []);
@@ -32726,20 +30009,20 @@ function selectionToFields(dmmf, selection, schemaField, path7, context3) {
 __name(selectionToFields, "selectionToFields");
 function byToSelect(by) {
   const obj = /* @__PURE__ */ Object.create(null);
-  for (const b of by) {
-    obj[b] = true;
+  for (const b2 of by) {
+    obj[b2] = true;
   }
   return obj;
 }
 __name(byToSelect, "byToSelect");
 function getDefaultSelection(dmmf, outputType) {
   const acc = /* @__PURE__ */ Object.create(null);
-  for (const f of outputType.fields) {
-    if (dmmf.typeMap[f.outputType.type.name] !== void 0) {
-      acc[f.name] = true;
+  for (const f2 of outputType.fields) {
+    if (dmmf.typeMap[f2.outputType.type.name] !== void 0) {
+      acc[f2.name] = true;
     }
-    if (f.outputType.location === "scalar" || f.outputType.location === "enumTypes") {
-      acc[f.name] = true;
+    if (f2.outputType.location === "scalar" || f2.outputType.location === "enumTypes") {
+      acc[f2.name] = true;
     }
   }
   return acc;
@@ -32764,9 +30047,9 @@ function getInvalidTypeArg(key, value, arg2, bestFittingType) {
   return arrg;
 }
 __name(getInvalidTypeArg, "getInvalidTypeArg");
-function hasCorrectScalarType(value, inputType, context3) {
+function hasCorrectScalarType(value, inputType, context2) {
   const { isList } = inputType;
-  const expectedType = getExpectedType(inputType, context3);
+  const expectedType = getExpectedType(inputType, context2);
   const graphQLType = getGraphQLType(value, inputType);
   if (graphQLType === expectedType) {
     return true;
@@ -32805,15 +30088,15 @@ function hasCorrectScalarType(value, inputType, context3) {
     return true;
   }
   if (inputType.isList && Array.isArray(value)) {
-    return value.every((v) => hasCorrectScalarType(v, { ...inputType, isList: false }, context3));
+    return value.every((v) => hasCorrectScalarType(v, { ...inputType, isList: false }, context2));
   }
   return false;
 }
 __name(hasCorrectScalarType, "hasCorrectScalarType");
-function getExpectedType(inputType, context3, isList = inputType.isList) {
+function getExpectedType(inputType, context2, isList = inputType.isList) {
   let type = stringifyGraphQLType(inputType.type);
-  if (inputType.location === "fieldRefTypes" && context3.modelName) {
-    type += `<${context3.modelName}>`;
+  if (inputType.location === "fieldRefTypes" && context2.modelName) {
+    type += `<${context2.modelName}>`;
   }
   return wrapWithList(type, isList);
 }
@@ -32823,37 +30106,37 @@ function isDecimalString(value) {
   return /^\-?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?$/i.test(value);
 }
 __name(isDecimalString, "isDecimalString");
-function valueToArg(key, value, arg2, context3) {
+function valueToArg(key, value, arg2, context2) {
   let maybeArg = null;
   const argsWithErrors = [];
   for (const inputType of arg2.inputTypes) {
-    maybeArg = tryInferArgs(key, value, arg2, inputType, context3);
-    if ((maybeArg == null ? void 0 : maybeArg.collectErrors().length) === 0) {
+    maybeArg = tryInferArgs(key, value, arg2, inputType, context2);
+    if (maybeArg?.collectErrors().length === 0) {
       return maybeArg;
     }
-    if (maybeArg && (maybeArg == null ? void 0 : maybeArg.collectErrors())) {
-      const argErrors = maybeArg == null ? void 0 : maybeArg.collectErrors();
+    if (maybeArg && maybeArg?.collectErrors()) {
+      const argErrors = maybeArg?.collectErrors();
       if (argErrors && argErrors.length > 0) {
         argsWithErrors.push({ arg: maybeArg, errors: argErrors });
       }
     }
   }
-  if ((maybeArg == null ? void 0 : maybeArg.hasError) && argsWithErrors.length > 0) {
+  if (maybeArg?.hasError && argsWithErrors.length > 0) {
     const argsWithScores = argsWithErrors.map(({ arg: arg3, errors }) => {
-      const errorScores = errors.map((e) => {
+      const errorScores = errors.map((e2) => {
         let score = 1;
-        if (e.error.type === "invalidType") {
-          score = 2 * Math.exp(getDepth(e.error.providedValue)) + 1;
+        if (e2.error.type === "invalidType") {
+          score = 2 * Math.exp(getDepth(e2.error.providedValue)) + 1;
         }
-        score += Math.log(e.path.length);
-        if (e.error.type === "missingArg") {
+        score += Math.log(e2.path.length);
+        if (e2.error.type === "missingArg") {
           if (arg3.inputType && isInputArgType(arg3.inputType.type) && arg3.inputType.type.name.includes("Unchecked")) {
             score *= 2;
           }
         }
-        if (e.error.type === "invalidName") {
-          if (isInputArgType(e.error.originalType)) {
-            if (e.error.originalType.name.includes("Unchecked")) {
+        if (e2.error.type === "invalidName") {
+          if (isInputArgType(e2.error.originalType)) {
+            if (e2.error.originalType.name.includes("Unchecked")) {
               score *= 2;
             }
           }
@@ -32866,7 +30149,7 @@ function valueToArg(key, value, arg2, context3) {
         errors
       };
     });
-    argsWithScores.sort((a, b) => a.score < b.score ? -1 : 1);
+    argsWithScores.sort((a, b2) => a.score < b2.score ? -1 : 1);
     return argsWithScores[0].arg;
   }
   return maybeArg;
@@ -32889,12 +30172,11 @@ function getDepth(object) {
   return level;
 }
 __name(getDepth, "getDepth");
-function sum2(n) {
-  return n.reduce((acc, curr) => acc + curr, 0);
+function sum2(n2) {
+  return n2.reduce((acc, curr) => acc + curr, 0);
 }
 __name(sum2, "sum");
-function tryInferArgs(key, value, arg2, inputType, context3) {
-  var _a3, _b2, _c, _d, _e;
+function tryInferArgs(key, value, arg2, inputType, context2) {
   if (typeof value === "undefined") {
     if (!arg2.isRequired) {
       return null;
@@ -32934,14 +30216,14 @@ function tryInferArgs(key, value, arg2, inputType, context3) {
   }
   if (!inputType.isList) {
     if (isInputArgType(inputType.type)) {
-      if (typeof value !== "object" || Array.isArray(value) || inputType.location === "inputObjectTypes" && !isObject2(value)) {
+      if (typeof value !== "object" || Array.isArray(value) || inputType.location === "inputObjectTypes" && !isObject(value)) {
         return getInvalidTypeArg(key, value, arg2, inputType);
       } else {
         const val = cleanObject(value);
         let error2;
         const keys2 = Object.keys(val || {});
         const numKeys = keys2.length;
-        if (numKeys === 0 && typeof inputType.type.constraints.minNumFields === "number" && inputType.type.constraints.minNumFields > 0 || ((_a3 = inputType.type.constraints.fields) == null ? void 0 : _a3.some((field) => keys2.includes(field))) === false) {
+        if (numKeys === 0 && typeof inputType.type.constraints.minNumFields === "number" && inputType.type.constraints.minNumFields > 0 || inputType.type.constraints.fields?.some((field) => keys2.includes(field)) === false) {
           error2 = {
             type: "atLeastOne",
             key,
@@ -32958,7 +30240,7 @@ function tryInferArgs(key, value, arg2, inputType, context3) {
         }
         return new Arg2({
           key,
-          value: val === null ? null : objectToArgs(val, inputType.type, context3, arg2.inputTypes),
+          value: val === null ? null : objectToArgs(val, inputType.type, context2, arg2.inputTypes),
           isEnum: inputType.location === "enumTypes",
           error: error2,
           inputType,
@@ -32966,7 +30248,7 @@ function tryInferArgs(key, value, arg2, inputType, context3) {
         });
       }
     } else {
-      return scalarToArg(key, value, arg2, inputType, context3);
+      return scalarToArg(key, value, arg2, inputType, context2);
     }
   }
   if (!Array.isArray(value) && inputType.isList) {
@@ -32975,17 +30257,17 @@ function tryInferArgs(key, value, arg2, inputType, context3) {
     }
   }
   if (inputType.location === "enumTypes" || inputType.location === "scalar") {
-    return scalarToArg(key, value, arg2, inputType, context3);
+    return scalarToArg(key, value, arg2, inputType, context2);
   }
   const argInputType = inputType.type;
-  const hasAtLeastOneError = typeof ((_b2 = argInputType.constraints) == null ? void 0 : _b2.minNumFields) === "number" && ((_c = argInputType.constraints) == null ? void 0 : _c.minNumFields) > 0 ? Array.isArray(value) && value.some((v) => !v || Object.keys(cleanObject(v)).length === 0) : false;
+  const hasAtLeastOneError = typeof argInputType.constraints?.minNumFields === "number" && argInputType.constraints?.minNumFields > 0 ? Array.isArray(value) && value.some((v) => !v || Object.keys(cleanObject(v)).length === 0) : false;
   let err = hasAtLeastOneError ? {
     inputType: argInputType,
     key,
     type: "atLeastOne"
   } : void 0;
   if (!err) {
-    const hasOneOfError = typeof ((_d = argInputType.constraints) == null ? void 0 : _d.maxNumFields) === "number" && ((_e = argInputType.constraints) == null ? void 0 : _e.maxNumFields) < 2 ? Array.isArray(value) && value.find((v) => !v || Object.keys(cleanObject(v)).length !== 1) : false;
+    const hasOneOfError = typeof argInputType.constraints?.maxNumFields === "number" && argInputType.constraints?.maxNumFields < 2 ? Array.isArray(value) && value.find((v) => !v || Object.keys(cleanObject(v)).length !== 1) : false;
     if (hasOneOfError) {
       err = {
         inputType: argInputType,
@@ -32997,7 +30279,7 @@ function tryInferArgs(key, value, arg2, inputType, context3) {
   }
   if (!Array.isArray(value)) {
     for (const nestedArgInputType of arg2.inputTypes) {
-      const args = objectToArgs(value, nestedArgInputType.type, context3);
+      const args = objectToArgs(value, nestedArgInputType.type, context2);
       if (args.collectErrors().length === 0) {
         return new Arg2({
           key,
@@ -33018,7 +30300,7 @@ function tryInferArgs(key, value, arg2, inputType, context3) {
       if (typeof v !== "object" || !value) {
         return getInvalidTypeArg(key, v, arg2, inputType);
       }
-      return objectToArgs(v, argInputType, context3);
+      return objectToArgs(v, argInputType, context2);
     }),
     isEnum: false,
     inputType,
@@ -33037,8 +30319,8 @@ function isInputArgType(argType) {
   return true;
 }
 __name(isInputArgType, "isInputArgType");
-function scalarToArg(key, value, arg2, inputType, context3) {
-  if (hasCorrectScalarType(value, inputType, context3)) {
+function scalarToArg(key, value, arg2, inputType, context2) {
+  if (hasCorrectScalarType(value, inputType, context2)) {
     return new Arg2({
       key,
       value,
@@ -33050,10 +30332,9 @@ function scalarToArg(key, value, arg2, inputType, context3) {
   return getInvalidTypeArg(key, value, arg2, inputType);
 }
 __name(scalarToArg, "scalarToArg");
-function objectToArgs(initialObj, inputType, context3, possibilities, outputType) {
-  var _a3;
-  if ((_a3 = inputType.meta) == null ? void 0 : _a3.source) {
-    context3 = { modelName: inputType.meta.source };
+function objectToArgs(initialObj, inputType, context2, possibilities, outputType) {
+  if (inputType.meta?.source) {
+    context2 = { modelName: inputType.meta.source };
   }
   const obj = cleanObject(initialObj);
   const { fields: args, fieldMap } = inputType;
@@ -33063,7 +30344,7 @@ function objectToArgs(initialObj, inputType, context3, possibilities, outputType
   const argsList = entries.reduce((acc, [argName, value]) => {
     const schemaArg = fieldMap ? fieldMap[argName] : args.find((a) => a.name === argName);
     if (!schemaArg) {
-      const didYouMeanField = typeof value === "boolean" && outputType && outputType.fields.some((f) => f.name === argName) ? argName : null;
+      const didYouMeanField = typeof value === "boolean" && outputType && outputType.fields.some((f2) => f2.name === argName) ? argName : null;
       acc.push(
         new Arg2({
           key: argName,
@@ -33082,16 +30363,13 @@ function objectToArgs(initialObj, inputType, context3, possibilities, outputType
       );
       return acc;
     }
-    const arg2 = valueToArg(argName, value, schemaArg, context3);
+    const arg2 = valueToArg(argName, value, schemaArg, context2);
     if (arg2) {
       acc.push(arg2);
     }
     return acc;
   }, []);
-  if (typeof inputType.constraints.minNumFields === "number" && objEntries.length < inputType.constraints.minNumFields || argsList.find((arg2) => {
-    var _a4, _b2;
-    return ((_a4 = arg2.error) == null ? void 0 : _a4.type) === "missingArg" || ((_b2 = arg2.error) == null ? void 0 : _b2.type) === "atLeastOne";
-  })) {
+  if (typeof inputType.constraints.minNumFields === "number" && objEntries.length < inputType.constraints.minNumFields || argsList.find((arg2) => arg2.error?.type === "missingArg" || arg2.error?.type === "atLeastOne")) {
     const optionalMissingArgs = inputType.fields.filter(
       (field) => !field.isRequired && obj && (typeof obj[field.name] === "undefined" || obj[field.name] === null)
     );
@@ -33130,7 +30408,6 @@ function unpack({ document: document2, path: path7, data }) {
 }
 __name(unpack, "unpack");
 function mapScalars({ field, data }) {
-  var _a3;
   if (!data || typeof data !== "object" || !field.children || !field.schemaField) {
     return data;
   }
@@ -33144,7 +30421,7 @@ function mapScalars({ field, data }) {
     BigInt: (value) => BigInt(value)
   };
   for (const child of field.children) {
-    const outputType = (_a3 = child.schemaField) == null ? void 0 : _a3.outputType.type;
+    const outputType = child.schemaField?.outputType.type;
     if (outputType && typeof outputType === "string") {
       const deserializer = deserializers[outputType];
       if (deserializer) {
@@ -33204,7 +30481,7 @@ function getField(document2, path7) {
 }
 __name(getField, "getField");
 function removeSelectFromPath(path7) {
-  return path7.split(".").filter((p) => p !== "select").join(".");
+  return path7.split(".").filter((p2) => p2 !== "select").join(".");
 }
 __name(removeSelectFromPath, "removeSelectFromPath");
 function removeSelectFromObject(obj) {
@@ -33274,30 +30551,6 @@ function addProperty(key, factory) {
 }
 __name(addProperty, "addProperty");
 
-// src/generation/Cache.ts
-var Cache = class {
-  constructor() {
-    this._map = /* @__PURE__ */ new Map();
-  }
-  get(key) {
-    var _a3;
-    return (_a3 = this._map.get(key)) == null ? void 0 : _a3.value;
-  }
-  set(key, value) {
-    this._map.set(key, { value });
-  }
-  getOrCreate(key, create) {
-    const cached = this._map.get(key);
-    if (cached) {
-      return cached.value;
-    }
-    const value = create();
-    this.set(key, value);
-    return value;
-  }
-};
-__name(Cache, "Cache");
-
 // src/runtime/core/compositeProxy/cacheProperties.ts
 function cacheProperties(baseLayer) {
   const cache = new Cache();
@@ -33309,12 +30562,14 @@ function cacheProperties(baseLayer) {
       return cache.getOrCreate(key, () => baseLayer.getPropertyValue(key));
     },
     getPropertyDescriptor(key) {
-      var _a3;
-      return (_a3 = baseLayer.getPropertyDescriptor) == null ? void 0 : _a3.call(baseLayer, key);
+      return baseLayer.getPropertyDescriptor?.(key);
     }
   };
 }
 __name(cacheProperties, "cacheProperties");
+
+// src/runtime/core/compositeProxy/createCompositeProxy.ts
+var import_util7 = require("util");
 
 // src/runtime/core/model/utils/defaultProxyHandlers.ts
 var defaultPropertyDescriptor = {
@@ -33336,13 +30591,11 @@ function defaultProxyHandlers(ownKeys) {
 __name(defaultProxyHandlers, "defaultProxyHandlers");
 
 // src/runtime/core/compositeProxy/createCompositeProxy.ts
+var customInspect = Symbol.for("nodejs.util.inspect.custom");
 function createCompositeProxy(target, layers) {
   const keysToLayerMap = mapKeysToLayers(layers);
-  const ownKeys = getOwnKeys(target, Array.from(keysToLayerMap.keys()));
   const overwrittenKeys = /* @__PURE__ */ new Set();
-  const defaultHandlers = defaultProxyHandlers(ownKeys);
-  return new Proxy(target, {
-    ...defaultHandlers,
+  const proxy = new Proxy(target, {
     get(target2, prop) {
       if (overwrittenKeys.has(prop)) {
         return target2[prop];
@@ -33353,14 +30606,28 @@ function createCompositeProxy(target, layers) {
       }
       return target2[prop];
     },
-    set(target2, prop, value) {
-      var _a3, _b2;
+    has(target2, prop) {
+      if (overwrittenKeys.has(prop)) {
+        return true;
+      }
       const layer = keysToLayerMap.get(prop);
-      if (((_b2 = (_a3 = layer == null ? void 0 : layer.getPropertyDescriptor) == null ? void 0 : _a3.call(layer, prop)) == null ? void 0 : _b2.writable) === false) {
+      if (layer) {
+        return layer.has?.(prop) ?? true;
+      }
+      return Reflect.has(target2, prop);
+    },
+    ownKeys(target2) {
+      const targetKeys = getExistingKeys(Reflect.ownKeys(target2), keysToLayerMap);
+      const layerKeys = getExistingKeys(Array.from(keysToLayerMap.keys()), keysToLayerMap);
+      return [.../* @__PURE__ */ new Set([...targetKeys, ...layerKeys, ...overwrittenKeys])];
+    },
+    set(target2, prop, value) {
+      const layer = keysToLayerMap.get(prop);
+      if (layer?.getPropertyDescriptor?.(prop)?.writable === false) {
         return false;
       }
       overwrittenKeys.add(prop);
-      return defaultHandlers.set(target2, prop, value);
+      return Reflect.set(target2, prop, value);
     },
     getOwnPropertyDescriptor(target2, prop) {
       const layer = keysToLayerMap.get(prop);
@@ -33371,8 +30638,18 @@ function createCompositeProxy(target, layers) {
         };
       }
       return defaultPropertyDescriptor;
+    },
+    defineProperty(target2, property, attributes) {
+      overwrittenKeys.add(property);
+      return Reflect.defineProperty(target2, property, attributes);
     }
   });
+  proxy[customInspect] = function(depth, options, defaultInspect = import_util7.inspect) {
+    const toLog = { ...this };
+    delete toLog[customInspect];
+    return defaultInspect(toLog, options);
+  };
+  return proxy;
 }
 __name(createCompositeProxy, "createCompositeProxy");
 function mapKeysToLayers(layers) {
@@ -33386,10 +30663,29 @@ function mapKeysToLayers(layers) {
   return keysToLayerMap;
 }
 __name(mapKeysToLayers, "mapKeysToLayers");
-function getOwnKeys(target, layerKeys) {
-  return [.../* @__PURE__ */ new Set([...Object.keys(target), ...layerKeys])];
+function getExistingKeys(keys2, keysToLayerMap) {
+  return keys2.filter((key) => {
+    const layer = keysToLayerMap.get(key);
+    return layer?.has?.(key) ?? true;
+  });
 }
-__name(getOwnKeys, "getOwnKeys");
+__name(getExistingKeys, "getExistingKeys");
+
+// src/runtime/core/compositeProxy/removeProperties.ts
+function removeProperties(keys2) {
+  return {
+    getKeys() {
+      return keys2;
+    },
+    has() {
+      return false;
+    },
+    getPropertyValue() {
+      return void 0;
+    }
+  };
+}
+__name(removeProperties, "removeProperties");
 
 // ../../node_modules/.pnpm/stacktrace-parser@0.1.10/node_modules/stacktrace-parser/dist/stack-trace-parser.esm.js
 var UNKNOWN_FUNCTION = "<unknown>";
@@ -33514,8 +30810,8 @@ var EnabledCallSite = class {
       return null;
     }
     const stackFrames = parse(stack);
-    const frame = stackFrames.find((t) => {
-      return t.file && t.file !== "<anonymous>" && !t.file.includes("@prisma") && !t.file.includes("getPrismaClient") && !t.file.startsWith("internal/") && !t.methodName.includes("new ") && !t.methodName.includes("getCallSite") && !t.methodName.includes("Proxy.") && t.methodName.split(".").length < 4;
+    const frame = stackFrames.find((t2) => {
+      return t2.file && t2.file !== "<anonymous>" && !t2.file.includes("@prisma") && !t2.file.includes("getPrismaClient") && !t2.file.startsWith("internal/") && !t2.methodName.includes("new ") && !t2.methodName.includes("getCallSite") && !t2.methodName.includes("Proxy.") && t2.methodName.split(".").length < 4;
     });
     if (!frame || !frame.file) {
       return null;
@@ -33542,9 +30838,9 @@ function createPrismaPromise(callback) {
   const _callback = /* @__PURE__ */ __name((transaction, lock, cached = true) => {
     try {
       if (cached === true) {
-        return promise != null ? promise : promise = callback(transaction, lock);
+        return promise ?? (promise = valueToPromise(callback(transaction, lock)));
       }
-      return callback(transaction, lock);
+      return valueToPromise(callback(transaction, lock));
     } catch (error2) {
       return Promise.reject(error2);
     }
@@ -33578,6 +30874,13 @@ function createItx(transaction) {
   return void 0;
 }
 __name(createItx, "createItx");
+function valueToPromise(thing) {
+  if (typeof thing["then"] === "function") {
+    return thing;
+  }
+  return Promise.resolve(thing);
+}
+__name(valueToPromise, "valueToPromise");
 
 // src/runtime/core/model/aggregates/utils/aggregateMap.ts
 var aggregateMap = {
@@ -33589,9 +30892,9 @@ var aggregateMap = {
 };
 
 // src/runtime/core/model/aggregates/aggregate.ts
-function desugarUserArgs(userArgs) {
-  const _userArgs = desugarCountInUserArgs(userArgs);
-  const userArgsEntries = Object.entries(_userArgs);
+function desugarUserArgs(args = {}) {
+  const _args = desugarCountInUserArgs(args);
+  const userArgsEntries = Object.entries(_args);
   return userArgsEntries.reduce(
     (aggregateArgs, [key, value]) => {
       if (aggregateMap[key] !== void 0) {
@@ -33605,73 +30908,75 @@ function desugarUserArgs(userArgs) {
   );
 }
 __name(desugarUserArgs, "desugarUserArgs");
-function desugarCountInUserArgs(userArgs) {
-  if (typeof userArgs["_count"] === "boolean") {
-    return { ...userArgs, _count: { _all: userArgs["_count"] } };
+function desugarCountInUserArgs(args = {}) {
+  if (typeof args["_count"] === "boolean") {
+    return { ...args, _count: { _all: args["_count"] } };
   }
-  return userArgs;
+  return args;
 }
 __name(desugarCountInUserArgs, "desugarCountInUserArgs");
-function createUnpacker(userArgs) {
+function createUnpacker(args = {}) {
   return (data) => {
-    if (typeof userArgs["_count"] === "boolean") {
+    if (typeof args["_count"] === "boolean") {
       data["_count"] = data["_count"]["_all"];
     }
     return data;
   };
 }
 __name(createUnpacker, "createUnpacker");
-function aggregate(client, userArgs, modelAction) {
-  const aggregateArgs = desugarUserArgs(userArgs != null ? userArgs : {});
-  const aggregateUnpacker = createUnpacker(userArgs != null ? userArgs : {});
+function aggregate(args, modelAction) {
+  const aggregateUnpacker = createUnpacker(args);
   return modelAction({
     action: "aggregate",
-    unpacker: aggregateUnpacker
-  })(aggregateArgs);
+    unpacker: aggregateUnpacker,
+    argsMapper: desugarUserArgs
+  })(args);
 }
 __name(aggregate, "aggregate");
 
 // src/runtime/core/model/aggregates/count.ts
-function count(client, userArgs, modelAction) {
-  const { select, ..._userArgs } = userArgs != null ? userArgs : {};
+function desugarUserArgs2(args = {}) {
+  const { select, ..._args } = args;
   if (typeof select === "object") {
-    return aggregate(
-      client,
-      { ..._userArgs, _count: select },
-      (p) => modelAction({ ...p, action: "count", unpacker: (data) => {
-        var _a3;
-        return (_a3 = p.unpacker) == null ? void 0 : _a3.call(p, data)["_count"];
-      } })
-    );
+    return desugarUserArgs({ ..._args, _count: select });
   } else {
-    return aggregate(
-      client,
-      { ..._userArgs, _count: { _all: true } },
-      (p) => modelAction({ ...p, action: "count", unpacker: (data) => {
-        var _a3;
-        return (_a3 = p.unpacker) == null ? void 0 : _a3.call(p, data)["_count"]["_all"];
-      } })
-    );
+    return desugarUserArgs({ ..._args, _count: { _all: true } });
   }
+}
+__name(desugarUserArgs2, "desugarUserArgs");
+function createUnpacker2(args = {}) {
+  if (typeof args["select"] === "object") {
+    return (data) => createUnpacker(args)(data)["_count"];
+  } else {
+    return (data) => createUnpacker(args)(data)["_count"]["_all"];
+  }
+}
+__name(createUnpacker2, "createUnpacker");
+function count(args, modelAction) {
+  return modelAction({
+    action: "count",
+    unpacker: createUnpacker2(args),
+    argsMapper: desugarUserArgs2
+  })(args);
 }
 __name(count, "count");
 
 // src/runtime/core/model/aggregates/groupBy.ts
-function desugarUserArgs2(userArgs) {
-  const _userArgs = desugarUserArgs(userArgs);
-  if (Array.isArray(userArgs["by"])) {
-    for (const key of userArgs["by"]) {
+function desugarUserArgs3(args = {}) {
+  const _args = desugarUserArgs(args);
+  if (Array.isArray(_args["by"])) {
+    for (const key of _args["by"]) {
       if (typeof key === "string") {
-        _userArgs["select"][key] = true;
+        _args["select"][key] = true;
       }
     }
   }
-  return _userArgs;
+  return _args;
 }
-__name(desugarUserArgs2, "desugarUserArgs");
-function createUnpacker2(userArgs) {
+__name(desugarUserArgs3, "desugarUserArgs");
+function createUnpacker3(args = {}) {
   return (data) => {
-    if (typeof userArgs["_count"] === "boolean") {
+    if (typeof args?.["_count"] === "boolean") {
       data.forEach((row) => {
         row["_count"] = row["_count"]["_all"];
       });
@@ -33679,33 +30984,102 @@ function createUnpacker2(userArgs) {
     return data;
   };
 }
-__name(createUnpacker2, "createUnpacker");
-function groupBy(client, userArgs, modelAction) {
-  const groupByArgs = desugarUserArgs2(userArgs != null ? userArgs : {});
-  const groupByUnpacker = createUnpacker2(userArgs != null ? userArgs : {});
+__name(createUnpacker3, "createUnpacker");
+function groupBy(args, modelAction) {
   return modelAction({
     action: "groupBy",
-    unpacker: groupByUnpacker
-  })(groupByArgs);
+    unpacker: createUnpacker3(args),
+    argsMapper: desugarUserArgs3
+  })(args);
 }
 __name(groupBy, "groupBy");
 
 // src/runtime/core/model/applyAggregates.ts
 function applyAggregates(client, action, modelAction) {
   if (action === "aggregate")
-    return (userArgs) => aggregate(client, userArgs, modelAction);
+    return (userArgs) => aggregate(userArgs, modelAction);
   if (action === "count")
-    return (userArgs) => count(client, userArgs, modelAction);
+    return (userArgs) => count(userArgs, modelAction);
   if (action === "groupBy")
-    return (userArgs) => groupBy(client, userArgs, modelAction);
+    return (userArgs) => groupBy(userArgs, modelAction);
   return void 0;
 }
 __name(applyAggregates, "applyAggregates");
 
+// src/runtime/core/model/applyFieldsProxy.ts
+function applyFieldsProxy(model) {
+  const scalarFieldsList = model.fields.filter((field) => !field.relationName);
+  const scalarFields = keyBy(scalarFieldsList, (field) => field.name);
+  return new Proxy(
+    {},
+    {
+      get(target, prop) {
+        if (prop in target || typeof prop === "symbol") {
+          return target[prop];
+        }
+        const dmmfField = scalarFields[prop];
+        if (dmmfField) {
+          return new FieldRefImpl(model.name, prop, dmmfField.type, dmmfField.isList);
+        }
+        return void 0;
+      },
+      ...defaultProxyHandlers(Object.keys(scalarFields))
+    }
+  );
+}
+__name(applyFieldsProxy, "applyFieldsProxy");
+
+// src/runtime/core/model/applyFluent.ts
+function getNextDataPath(fluentPropName, prevDataPath) {
+  if (fluentPropName === void 0 || prevDataPath === void 0)
+    return [];
+  return [...prevDataPath, "select", fluentPropName];
+}
+__name(getNextDataPath, "getNextDataPath");
+function getNextUserArgs(callArgs, prevArgs, nextDataPath) {
+  if (prevArgs === void 0)
+    return callArgs ?? {};
+  return deepSet(prevArgs, nextDataPath, callArgs || true);
+}
+__name(getNextUserArgs, "getNextUserArgs");
+function applyFluent(client, dmmfModelName, modelAction, fluentPropName, prevDataPath, prevUserArgs) {
+  const dmmfModel = client._baseDmmf.modelMap[dmmfModelName];
+  const dmmfModelFieldMap = dmmfModel.fields.reduce(
+    (acc, field) => ({ ...acc, [field.name]: field }),
+    {}
+  );
+  return (userArgs) => {
+    const callsite = getCallSite(client._errorFormat);
+    const nextDataPath = getNextDataPath(fluentPropName, prevDataPath);
+    const nextUserArgs = getNextUserArgs(userArgs, prevUserArgs, nextDataPath);
+    const prismaPromise = modelAction({ dataPath: nextDataPath, callsite })(nextUserArgs);
+    const ownKeys = getOwnKeys(client, dmmfModelName);
+    return new Proxy(prismaPromise, {
+      get(target, prop) {
+        if (!ownKeys.includes(prop))
+          return target[prop];
+        const dmmfModelName2 = dmmfModelFieldMap[prop].type;
+        const modelArgs = [dmmfModelName2, modelAction, prop];
+        const dataArgs = [nextDataPath, nextUserArgs];
+        return applyFluent(client, ...modelArgs, ...dataArgs);
+      },
+      ...defaultProxyHandlers([...ownKeys, ...Object.getOwnPropertyNames(prismaPromise)])
+    });
+  };
+}
+__name(applyFluent, "applyFluent");
+function getOwnKeys(client, dmmfModelName) {
+  return client._baseDmmf.modelMap[dmmfModelName].fields.filter((field) => field.kind === "object").map((field) => field.name);
+}
+__name(getOwnKeys, "getOwnKeys");
+
+// src/runtime/utils/clientVersion.ts
+var clientVersion = require_package3().version;
+
 // src/runtime/utils/rejectOnNotFound.ts
-var NotFoundError2 = class extends Error {
+var NotFoundError2 = class extends PrismaClientKnownRequestError {
   constructor(message) {
-    super(message);
+    super(message, { code: "P2025", clientVersion });
     this.name = "NotFoundError";
   }
 };
@@ -33749,14 +31123,14 @@ function throwIfNotFound(data, clientMethod, typeName, rejectOnNotFound) {
 }
 __name(throwIfNotFound, "throwIfNotFound");
 
-// src/runtime/core/model/applyClientOnlyWrapper.ts
-function wrapRequest(prop, dmmfModelName, requestCallback) {
-  if (prop === "findFirstOrThrow" || prop === "findUniqueOrThrow") {
+// src/runtime/core/model/applyOrThrowErrorAdapter.ts
+function adaptErrors(action, dmmfModelName, requestCallback) {
+  if (action === DMMF.ModelAction.findFirstOrThrow || action === DMMF.ModelAction.findUniqueOrThrow) {
     return applyOrThrowWrapper(dmmfModelName, requestCallback);
   }
-  assertNever(prop, "Unknown wrapper name");
+  return requestCallback;
 }
-__name(wrapRequest, "wrapRequest");
+__name(adaptErrors, "adaptErrors");
 function applyOrThrowWrapper(dmmfModelName, requestCallback) {
   return async (requestParams) => {
     if ("rejectOnNotFound" in requestParams.args) {
@@ -33767,125 +31141,57 @@ function applyOrThrowWrapper(dmmfModelName, requestCallback) {
       });
       throw new PrismaClientValidationError(message);
     }
-    const result = await requestCallback(requestParams);
-    if (result === null || result === void 0) {
-      throw new NotFoundError2(`No ${dmmfModelName} found`);
-    }
+    const result = await requestCallback(requestParams).catch((e2) => {
+      if (e2 instanceof PrismaClientKnownRequestError && e2.code === "P2025") {
+        throw new NotFoundError2(`No ${dmmfModelName} found`);
+      } else {
+        throw e2;
+      }
+    });
     return result;
   };
 }
 __name(applyOrThrowWrapper, "applyOrThrowWrapper");
 
-// src/runtime/core/model/applyFieldsProxy.ts
-function applyFieldsProxy(model) {
-  const scalarFieldsList = model.fields.filter((field) => !field.relationName);
-  const scalarFields = keyBy2(scalarFieldsList, (field) => field.name);
-  return new Proxy(
-    {},
-    {
-      get(target, prop) {
-        if (prop in target || typeof prop === "symbol") {
-          return target[prop];
-        }
-        const dmmfField = scalarFields[prop];
-        if (dmmfField) {
-          return new FieldRefImpl(model.name, prop, dmmfField.type, dmmfField.isList);
-        }
-        return void 0;
-      },
-      ...defaultProxyHandlers(Object.keys(scalarFields))
-    }
-  );
-}
-__name(applyFieldsProxy, "applyFieldsProxy");
-
-// src/runtime/core/model/applyFluent.ts
-function getNextDataPath(fluentPropName, prevDataPath) {
-  if (fluentPropName === void 0 || prevDataPath === void 0)
-    return [];
-  return [...prevDataPath, "select", fluentPropName];
-}
-__name(getNextDataPath, "getNextDataPath");
-function getNextUserArgs(callArgs, prevArgs, nextDataPath) {
-  if (prevArgs === void 0)
-    return callArgs != null ? callArgs : {};
-  return deepSet(prevArgs, nextDataPath, callArgs || true);
-}
-__name(getNextUserArgs, "getNextUserArgs");
-function applyFluent(client, dmmfModelName, modelAction, fluentPropName, prevDataPath, prevUserArgs) {
-  const dmmfModel = client._baseDmmf.modelMap[dmmfModelName];
-  const dmmfModelFieldMap = dmmfModel.fields.reduce(
-    (acc, field) => ({ ...acc, [field.name]: field }),
-    {}
-  );
-  return (userArgs) => {
-    const callsite = getCallSite(client._errorFormat);
-    const nextDataPath = getNextDataPath(fluentPropName, prevDataPath);
-    const nextUserArgs = getNextUserArgs(userArgs, prevUserArgs, nextDataPath);
-    const prismaPromise = modelAction({ dataPath: nextDataPath, callsite })(nextUserArgs);
-    const ownKeys = getOwnKeys2(client, dmmfModelName);
-    return new Proxy(prismaPromise, {
-      get(target, prop) {
-        if (!ownKeys.includes(prop))
-          return target[prop];
-        const dmmfModelName2 = dmmfModelFieldMap[prop].type;
-        const modelArgs = [dmmfModelName2, modelAction, prop];
-        const dataArgs = [nextDataPath, nextUserArgs];
-        return applyFluent(client, ...modelArgs, ...dataArgs);
-      },
-      ...defaultProxyHandlers([...ownKeys, ...Object.getOwnPropertyNames(prismaPromise)])
-    });
-  };
-}
-__name(applyFluent, "applyFluent");
-function getOwnKeys2(client, dmmfModelName) {
-  return client._baseDmmf.modelMap[dmmfModelName].fields.filter((field) => field.kind === "object").map((field) => field.name);
-}
-__name(getOwnKeys2, "getOwnKeys");
-
-// src/runtime/core/model/utils/dmmfToJSModelName.ts
-function dmmfToJSModelName(name) {
-  return name.replace(/^./, (str) => str.toLowerCase());
-}
-__name(dmmfToJSModelName, "dmmfToJSModelName");
-
 // src/runtime/core/model/applyModel.ts
-var fluentProps = ["findUnique", "findFirst", "create", "update", "upsert", "delete"];
+var fluentProps = [
+  "findUnique",
+  "findUniqueOrThrow",
+  "findFirst",
+  "findFirstOrThrow",
+  "create",
+  "update",
+  "upsert",
+  "delete"
+];
 var aggregateProps = ["aggregate", "count", "groupBy"];
 function applyModel(client, dmmfModelName) {
-  var _a3;
-  const layers = [modelActionsLayer(client, dmmfModelName)];
-  if ((_a3 = client._engineConfig.previewFeatures) == null ? void 0 : _a3.includes("fieldReference")) {
+  const layers = [modelActionsLayer(client, dmmfModelName), modelMetaLayer(dmmfModelName)];
+  if (client._engineConfig.previewFeatures?.includes("fieldReference")) {
     layers.push(fieldsPropertyLayer(client, dmmfModelName));
   }
-  const jsModelName = dmmfToJSModelName(dmmfModelName);
-  for (const { model } of client._extensions) {
-    if (!model) {
-      continue;
-    }
-    if (model.$allModels) {
-      layers.push(addObjectProperties(model.$allModels));
-    }
-    if (model[jsModelName]) {
-      layers.push(addObjectProperties(model[jsModelName]));
-    }
+  const modelExtensions = client._extensions.getAllModelExtensions(dmmfModelName);
+  if (modelExtensions) {
+    layers.push(addObjectProperties(modelExtensions));
   }
   return createCompositeProxy({}, layers);
 }
 __name(applyModel, "applyModel");
+function modelMetaLayer(dmmfModelName) {
+  return addProperty("name", () => dmmfModelName);
+}
+__name(modelMetaLayer, "modelMetaLayer");
 function modelActionsLayer(client, dmmfModelName) {
   const jsModelName = dmmfToJSModelName(dmmfModelName);
-  const ownKeys = getOwnKeys3(client, dmmfModelName);
+  const ownKeys = getOwnKeys2(client, dmmfModelName);
   return {
     getKeys() {
       return ownKeys;
     },
     getPropertyValue(key) {
-      const dmmfActionName = getDmmfActionName(key);
+      const dmmfActionName = key;
       let requestFn = /* @__PURE__ */ __name((params) => client._request(params), "requestFn");
-      if (isClientOnlyAction(key)) {
-        requestFn = wrapRequest(key, dmmfModelName, requestFn);
-      }
+      requestFn = adaptErrors(dmmfActionName, dmmfModelName, requestFn);
       const action = /* @__PURE__ */ __name((paramOverrides) => (userArgs) => {
         const callSite = getCallSite(client._errorFormat);
         return createPrismaPromise((transaction, lock) => {
@@ -33914,17 +31220,14 @@ function modelActionsLayer(client, dmmfModelName) {
   };
 }
 __name(modelActionsLayer, "modelActionsLayer");
-function getOwnKeys3(client, dmmfModelName) {
+function getOwnKeys2(client, dmmfModelName) {
   const actionKeys = Object.keys(client._baseDmmf.mappingsMap[dmmfModelName]).filter(
     (key) => key !== "model" && key !== "plural"
   );
   actionKeys.push("count");
-  const clientOnlyActionKeys = Object.keys(clientOnlyActions).filter(
-    (actionKey) => actionKeys.includes(clientOnlyActions[actionKey].wrappedAction)
-  );
-  return actionKeys.concat(clientOnlyActionKeys);
+  return actionKeys;
 }
-__name(getOwnKeys3, "getOwnKeys");
+__name(getOwnKeys2, "getOwnKeys");
 function isValidAggregateName(action) {
   return aggregateProps.includes(action);
 }
@@ -33949,10 +31252,9 @@ __name(jsToDMMFModelName, "jsToDMMFModelName");
 var rawClient = Symbol();
 function applyModelsAndClientExtensions(client) {
   const layers = [modelsLayer(client), addProperty(rawClient, () => client)];
-  for (const extension of client._extensions) {
-    if (extension.client) {
-      layers.push(addObjectProperties(extension.client));
-    }
+  const clientExtensions = client._extensions.getAllClientExtensions();
+  if (clientExtensions) {
+    layers.push(addObjectProperties(clientExtensions));
   }
   return createCompositeProxy(client, layers);
 }
@@ -33995,22 +31297,241 @@ __name(unapplyModelsAndClientExtensions, "unapplyModelsAndClientExtensions");
 // src/runtime/core/extensions/$extends.ts
 function $extends(extension) {
   if (!this._hasPreviewFlag("clientExtensions")) {
-    throw new PrismaClientValidationError("Extensions are not yet available");
+    throw new PrismaClientValidationError(
+      "Extensions are not yet generally available, please add `clientExtensions` to the `previewFeatures` field in the `generator` block in the `schema.prisma` file."
+    );
+  }
+  if (typeof extension === "function") {
+    return extension(this);
   }
   const oldClient = unapplyModelsAndClientExtensions(this);
   const newClient = Object.create(oldClient, {
     _extensions: {
-      get: () => {
-        if (typeof extension === "function") {
-          return this._extensions.concat(extension());
-        }
-        return this._extensions.concat(extension);
-      }
+      value: this._extensions.append(extension)
     }
   });
   return applyModelsAndClientExtensions(newClient);
 }
 __name($extends, "$extends");
+
+// ../../node_modules/.pnpm/klona@2.0.5/node_modules/klona/dist/index.mjs
+function klona(x) {
+  if (typeof x !== "object")
+    return x;
+  var k, tmp, str = Object.prototype.toString.call(x);
+  if (str === "[object Object]") {
+    if (x.constructor !== Object && typeof x.constructor === "function") {
+      tmp = new x.constructor();
+      for (k in x) {
+        if (x.hasOwnProperty(k) && tmp[k] !== x[k]) {
+          tmp[k] = klona(x[k]);
+        }
+      }
+    } else {
+      tmp = {};
+      for (k in x) {
+        if (k === "__proto__") {
+          Object.defineProperty(tmp, k, {
+            value: klona(x[k]),
+            configurable: true,
+            enumerable: true,
+            writable: true
+          });
+        } else {
+          tmp[k] = klona(x[k]);
+        }
+      }
+    }
+    return tmp;
+  }
+  if (str === "[object Array]") {
+    k = x.length;
+    for (tmp = Array(k); k--; ) {
+      tmp[k] = klona(x[k]);
+    }
+    return tmp;
+  }
+  if (str === "[object Set]") {
+    tmp = /* @__PURE__ */ new Set();
+    x.forEach(function(val) {
+      tmp.add(klona(val));
+    });
+    return tmp;
+  }
+  if (str === "[object Map]") {
+    tmp = /* @__PURE__ */ new Map();
+    x.forEach(function(val, key) {
+      tmp.set(klona(key), klona(val));
+    });
+    return tmp;
+  }
+  if (str === "[object Date]") {
+    return new Date(+x);
+  }
+  if (str === "[object RegExp]") {
+    tmp = new RegExp(x.source, x.flags);
+    tmp.lastIndex = x.lastIndex;
+    return tmp;
+  }
+  if (str === "[object DataView]") {
+    return new x.constructor(klona(x.buffer));
+  }
+  if (str === "[object ArrayBuffer]") {
+    return x.slice(0);
+  }
+  if (str.slice(-6) === "Array]") {
+    return new x.constructor(x);
+  }
+  return x;
+}
+__name(klona, "klona");
+
+// src/runtime/core/extensions/applyQueryExtensions.ts
+function iterateAndCallQueryCallbacks(client, params, queryCbs, i = 0) {
+  return createPrismaPromise((transaction, lock) => {
+    if (transaction !== void 0) {
+      void params.lock?.then();
+      params.transaction = transaction;
+      params.lock = lock;
+    }
+    if (i === queryCbs.length) {
+      return client._executeRequest(params);
+    }
+    return queryCbs[i]({
+      model: params.model,
+      operation: params.action,
+      args: klona(params.args ?? {}),
+      __internalParams: params,
+      query: (args, __internalParams = params) => {
+        __internalParams.args = args;
+        return iterateAndCallQueryCallbacks(client, __internalParams, queryCbs, i + 1);
+      }
+    });
+  });
+}
+__name(iterateAndCallQueryCallbacks, "iterateAndCallQueryCallbacks");
+function applyQueryExtensions(client, params) {
+  const { jsModelName, action } = params;
+  if (jsModelName === void 0 || client._extensions.isEmpty()) {
+    return client._executeRequest(params);
+  }
+  return iterateAndCallQueryCallbacks(client, params, client._extensions.getAllQueryCallbacks(jsModelName, action));
+}
+__name(applyQueryExtensions, "applyQueryExtensions");
+
+// src/generation/lazyProperty.ts
+function lazyProperty(compute) {
+  let resultContainer;
+  return {
+    get() {
+      if (resultContainer) {
+        return resultContainer.value;
+      }
+      resultContainer = { value: compute() };
+      return resultContainer.value;
+    }
+  };
+}
+__name(lazyProperty, "lazyProperty");
+
+// src/runtime/core/extensions/MergedExtensionsList.ts
+var MergedExtensionsListNode = class {
+  constructor(extension, previous) {
+    this.extension = extension;
+    this.previous = previous;
+    this.computedFieldsCache = new Cache();
+    this.modelExtensionsCache = new Cache();
+    this.queryCallbacksCache = new Cache();
+    this.clientExtensions = lazyProperty(() => {
+      if (!this.extension.client) {
+        return this.previous?.getAllClientExtensions();
+      }
+      return {
+        ...this.previous?.getAllClientExtensions(),
+        ...wrapAllExtensionCallbacks(this.extension.name, this.extension.client)
+      };
+    });
+  }
+  getAllComputedFields(dmmfModelName) {
+    return this.computedFieldsCache.getOrCreate(dmmfModelName, () => {
+      return getComputedFields(this.previous?.getAllComputedFields(dmmfModelName), this.extension, dmmfModelName);
+    });
+  }
+  getAllClientExtensions() {
+    return this.clientExtensions.get();
+  }
+  getAllModelExtensions(dmmfModelName) {
+    return this.modelExtensionsCache.getOrCreate(dmmfModelName, () => {
+      const jsModelName = dmmfToJSModelName(dmmfModelName);
+      if (!this.extension.model || !(this.extension.model[jsModelName] || this.extension.model.$allModels)) {
+        return this.previous?.getAllModelExtensions(dmmfModelName);
+      }
+      return {
+        ...this.previous?.getAllModelExtensions(dmmfModelName),
+        ...wrapAllExtensionCallbacks(this.extension.name, this.extension.model.$allModels),
+        ...wrapAllExtensionCallbacks(this.extension.name, this.extension.model[jsModelName])
+      };
+    });
+  }
+  getAllQueryCallbacks(jsModelName, action) {
+    return this.queryCallbacksCache.getOrCreate(`${jsModelName}:${action}`, () => {
+      const previous = this.previous?.getAllQueryCallbacks(jsModelName, action) ?? [];
+      const query2 = this.extension.query;
+      if (!query2 || !(query2[jsModelName] || query2.$allModels)) {
+        return previous;
+      }
+      const newCallbacks = [];
+      if (query2[jsModelName] !== void 0) {
+        if (query2[jsModelName][action] !== void 0) {
+          newCallbacks.push(query2[jsModelName][action]);
+        }
+        if (query2[jsModelName]["$allOperations"] !== void 0) {
+          newCallbacks.push(query2[jsModelName]["$allOperations"]);
+        }
+      }
+      if (query2["$allModels"] !== void 0) {
+        if (query2["$allModels"][action] !== void 0) {
+          newCallbacks.push(query2["$allModels"][action]);
+        }
+        if (query2["$allModels"]["$allOperations"] !== void 0) {
+          newCallbacks.push(query2["$allModels"]["$allOperations"]);
+        }
+      }
+      return previous.concat(newCallbacks.map((callback) => wrapExtensionCallback(this.extension.name, callback)));
+    });
+  }
+};
+__name(MergedExtensionsListNode, "MergedExtensionsListNode");
+var MergedExtensionsList = class {
+  constructor(head) {
+    this.head = head;
+  }
+  static empty() {
+    return new MergedExtensionsList();
+  }
+  static single(extension) {
+    return new MergedExtensionsList(new MergedExtensionsListNode(extension));
+  }
+  isEmpty() {
+    return this.head === void 0;
+  }
+  append(extension) {
+    return new MergedExtensionsList(new MergedExtensionsListNode(extension, this.head));
+  }
+  getAllComputedFields(dmmfModelName) {
+    return this.head?.getAllComputedFields(dmmfModelName);
+  }
+  getAllClientExtensions() {
+    return this.head?.getAllClientExtensions();
+  }
+  getAllModelExtensions(dmmfModelName) {
+    return this.head?.getAllModelExtensions(dmmfModelName);
+  }
+  getAllQueryCallbacks(jsModelName, action) {
+    return this.head?.getAllQueryCallbacks(jsModelName, action) ?? [];
+  }
+};
+__name(MergedExtensionsList, "MergedExtensionsList");
 
 // src/runtime/core/transaction/utils/createLockCountPromise.ts
 function getLockCountPromise(knock, cb = () => {
@@ -34021,18 +31542,18 @@ function getLockCountPromise(knock, cb = () => {
     then(onFulfilled) {
       if (--knock === 0)
         resolve(cb());
-      return onFulfilled == null ? void 0 : onFulfilled(lock);
+      return onFulfilled?.(lock);
     }
   };
 }
 __name(getLockCountPromise, "getLockCountPromise");
 
 // src/runtime/getLogLevel.ts
-function getLogLevel(log4) {
-  if (typeof log4 === "string") {
-    return log4;
+function getLogLevel(log3) {
+  if (typeof log3 === "string") {
+    return log3;
   }
-  return log4.reduce((acc, curr) => {
+  return log3.reduce((acc, curr) => {
     const currentLevel = typeof curr === "string" ? curr : curr.level;
     if (currentLevel === "query") {
       return acc;
@@ -34103,6 +31624,90 @@ __name(Middlewares, "Middlewares");
 // src/runtime/RequestHandler.ts
 var import_strip_ansi4 = __toESM(require_strip_ansi());
 
+// src/runtime/core/extensions/applyResultExtensions.ts
+function applyResultExtensions({ result, modelName, select, extensions }) {
+  const computedFields = extensions.getAllComputedFields(modelName);
+  if (!computedFields) {
+    return result;
+  }
+  const computedPropertiesLayers = [];
+  const maskingLayers = [];
+  for (const field of Object.values(computedFields)) {
+    if (select) {
+      if (!select[field.name]) {
+        continue;
+      }
+      const toMask = field.needs.filter((prop) => !select[prop]);
+      if (toMask.length > 0) {
+        maskingLayers.push(removeProperties(toMask));
+      }
+    }
+    if (areNeedsMet(result, field.needs)) {
+      computedPropertiesLayers.push(
+        computedPropertyLayer(field, createCompositeProxy(result, computedPropertiesLayers))
+      );
+    }
+  }
+  if (computedPropertiesLayers.length > 0 || maskingLayers.length > 0) {
+    return createCompositeProxy(result, [...computedPropertiesLayers, ...maskingLayers]);
+  }
+  return result;
+}
+__name(applyResultExtensions, "applyResultExtensions");
+function areNeedsMet(result, neededProperties) {
+  return neededProperties.every((property) => hasOwnProperty(result, property));
+}
+__name(areNeedsMet, "areNeedsMet");
+function computedPropertyLayer(field, result) {
+  return cacheProperties(addProperty(field.name, () => field.compute(result)));
+}
+__name(computedPropertyLayer, "computedPropertyLayer");
+
+// src/runtime/core/extensions/visitQueryResult.ts
+function visitQueryResult({ visitor, result, args, dmmf, model }) {
+  if (Array.isArray(result)) {
+    for (let i = 0; i < result.length; i++) {
+      result[i] = visitQueryResult({
+        result: result[i],
+        args,
+        model,
+        dmmf,
+        visitor
+      });
+    }
+    return result;
+  }
+  const visitResult = visitor(result, model, args) ?? result;
+  if (args.include) {
+    visitNested({ includeOrSelect: args.include, result: visitResult, parentModel: model, dmmf, visitor });
+  }
+  if (args.select) {
+    visitNested({ includeOrSelect: args.select, result: visitResult, parentModel: model, dmmf, visitor });
+  }
+  return visitResult;
+}
+__name(visitQueryResult, "visitQueryResult");
+function visitNested({ includeOrSelect, result, parentModel, dmmf, visitor }) {
+  for (const [fieldName, subConfig] of Object.entries(includeOrSelect)) {
+    if (!subConfig || result[fieldName] == null) {
+      continue;
+    }
+    const field = parentModel.fields.find((field2) => field2.name === fieldName);
+    if (!field || field.kind !== "object" || !field.relationName) {
+      continue;
+    }
+    const args = typeof subConfig === "object" ? subConfig : {};
+    result[fieldName] = visitQueryResult({
+      visitor,
+      result: result[fieldName],
+      args,
+      model: dmmf.getModelMap()[field.type],
+      dmmf
+    });
+  }
+}
+__name(visitNested, "visitNested");
+
 // src/runtime/DataLoader.ts
 var DataLoader = class {
   constructor(options) {
@@ -34144,8 +31749,8 @@ var DataLoader = class {
           } else {
             batch[0].resolve(result);
           }
-        }).catch((e) => {
-          batch[0].reject(e);
+        }).catch((e2) => {
+          batch[0].reject(e2);
         });
       } else {
         this.options.batchLoader(batch.map((j) => j.request)).then((results) => {
@@ -34163,9 +31768,9 @@ var DataLoader = class {
               }
             }
           }
-        }).catch((e) => {
+        }).catch((e2) => {
           for (let i = 0; i < batch.length; i++) {
-            batch[i].reject(e);
+            batch[i].reject(e2);
           }
         });
       }
@@ -34178,13 +31783,12 @@ var DataLoader = class {
 __name(DataLoader, "DataLoader");
 
 // src/runtime/RequestHandler.ts
-var debug11 = src_default("prisma:client:request_handler");
+var debug12 = src_default("prisma:client:request_handler");
 function getRequestInfo(request2) {
-  var _a3;
   const transaction = request2.transaction;
-  const headers = (_a3 = request2.headers) != null ? _a3 : {};
+  const headers = request2.headers ?? {};
   const traceparent = getTraceParent({ tracingConfig: request2.tracingConfig });
-  if ((transaction == null ? void 0 : transaction.kind) === "itx") {
+  if (transaction?.kind === "itx") {
     headers.transactionId = transaction.id;
   }
   if (traceparent !== void 0) {
@@ -34197,30 +31801,39 @@ function getRequestInfo(request2) {
 }
 __name(getRequestInfo, "getRequestInfo");
 var RequestHandler = class {
-  constructor(client, hooks) {
+  constructor(client, hooks, logEmitter) {
+    this.logEmmitter = logEmitter;
     this.client = client;
     this.hooks = hooks;
     this.dataloader = new DataLoader({
       batchLoader: (requests) => {
-        var _a3;
         const info2 = getRequestInfo(requests[0]);
-        const queries = requests.map((r) => String(r.document));
+        const queries = requests.map((r2) => String(r2.document));
         const traceparent = getTraceParent({ context: requests[0].otelParentCtx, tracingConfig: client._tracingConfig });
         if (traceparent)
           info2.headers.traceparent = traceparent;
-        const batchTransaction = ((_a3 = info2.transaction) == null ? void 0 : _a3.kind) === "batch" ? info2.transaction : void 0;
-        return this.client._engine.requestBatch(queries, info2.headers, batchTransaction);
+        const containsWrite = requests.some((r2) => r2.document.type === "mutation");
+        const batchTransaction = info2.transaction?.kind === "batch" ? info2.transaction : void 0;
+        return this.client._engine.requestBatch({
+          queries,
+          headers: info2.headers,
+          transaction: batchTransaction,
+          containsWrite
+        });
       },
       singleLoader: (request2) => {
-        var _a3;
         const info2 = getRequestInfo(request2);
         const query2 = String(request2.document);
-        const interactiveTransaction = ((_a3 = info2.transaction) == null ? void 0 : _a3.kind) === "itx" ? info2.transaction : void 0;
-        return this.client._engine.request(query2, info2.headers, interactiveTransaction);
+        const interactiveTransaction = info2.transaction?.kind === "itx" ? info2.transaction : void 0;
+        return this.client._engine.request({
+          query: query2,
+          headers: info2.headers,
+          transaction: interactiveTransaction,
+          isWrite: request2.document.type === "mutation"
+        });
       },
       batchBy: (request2) => {
-        var _a3;
-        if ((_a3 = request2.transaction) == null ? void 0 : _a3.id) {
+        if (request2.transaction?.id) {
           return `transaction-${request2.transaction.id}`;
         }
         return batchFindUniqueBy(request2);
@@ -34241,6 +31854,7 @@ var RequestHandler = class {
     headers,
     transaction,
     unpacker,
+    extensions,
     otelParentCtx,
     otelChildCtx
   }) {
@@ -34280,21 +31894,38 @@ var RequestHandler = class {
           otelChildCtx,
           tracingConfig: this.client._tracingConfig
         });
-        data = result == null ? void 0 : result.data;
-        elapsed = result == null ? void 0 : result.elapsed;
+        data = result?.data;
+        elapsed = result?.elapsed;
       }
       const unpackResult = this.unpack(document2, data, dataPath, rootField, unpacker);
       throwIfNotFound(unpackResult, clientMethod, typeName, rejectOnNotFound);
+      const extendedResult = this.applyResultExtensions({ result: unpackResult, modelName: typeName, args, extensions });
       if (process.env.PRISMA_CLIENT_GET_TIME) {
-        return { data: unpackResult, elapsed };
+        return { data: extendedResult, elapsed };
       }
-      return unpackResult;
+      return extendedResult;
     } catch (error2) {
-      this.handleRequestError({ error: error2, clientMethod, callsite });
+      this.handleAndLogRequestError({ error: error2, clientMethod, callsite, transaction });
     }
   }
-  handleRequestError({ error: error2, clientMethod, callsite }) {
-    debug11(error2);
+  handleAndLogRequestError({ error: error2, clientMethod, callsite, transaction }) {
+    try {
+      this.handleRequestError({ error: error2, clientMethod, callsite, transaction });
+    } catch (err) {
+      if (this.logEmmitter) {
+        this.logEmmitter.emit("error", { message: err.message, target: clientMethod, timestamp: new Date() });
+      }
+      throw err;
+    }
+  }
+  handleRequestError({ error: error2, clientMethod, callsite, transaction }) {
+    debug12(error2);
+    if (isMismatchingBatchIndex(error2, transaction)) {
+      throw error2;
+    }
+    if (error2 instanceof NotFoundError2) {
+      throw error2;
+    }
     let message = error2.message;
     if (callsite) {
       message = createErrorMessageWithContext({
@@ -34307,11 +31938,19 @@ var RequestHandler = class {
     }
     message = this.sanitizeMessage(message);
     if (error2.code) {
-      throw new PrismaClientKnownRequestError(message, error2.code, this.client._clientVersion, error2.meta);
+      throw new PrismaClientKnownRequestError(message, {
+        code: error2.code,
+        clientVersion: this.client._clientVersion,
+        meta: error2.meta,
+        batchRequestIdx: error2.batchRequestIdx
+      });
     } else if (error2.isPanic) {
       throw new PrismaClientRustPanicError(message, this.client._clientVersion);
     } else if (error2 instanceof PrismaClientUnknownRequestError) {
-      throw new PrismaClientUnknownRequestError(message, this.client._clientVersion);
+      throw new PrismaClientUnknownRequestError(message, {
+        clientVersion: this.client._clientVersion,
+        batchRequestIdx: error2.batchRequestIdx
+      });
     } else if (error2 instanceof PrismaClientInitializationError) {
       throw new PrismaClientInitializationError(message, this.client._clientVersion);
     } else if (error2 instanceof PrismaClientRustPanicError) {
@@ -34327,7 +31966,7 @@ var RequestHandler = class {
     return message;
   }
   unpack(document2, data, path7, rootField, unpacker) {
-    if (data == null ? void 0 : data.data) {
+    if (data?.data) {
       data = data.data;
     }
     if (unpacker) {
@@ -34337,20 +31976,42 @@ var RequestHandler = class {
     if (rootField) {
       getPath.push(rootField);
     }
-    getPath.push(...path7.filter((p) => p !== "select" && p !== "include"));
+    getPath.push(...path7.filter((p2) => p2 !== "select" && p2 !== "include"));
     return unpack({ document: document2, data, path: getPath });
+  }
+  applyResultExtensions({ result, modelName, args, extensions }) {
+    if (extensions.isEmpty() || result == null) {
+      return result;
+    }
+    const model = this.client._baseDmmf.getModelMap()[modelName];
+    if (!model) {
+      return result;
+    }
+    return visitQueryResult({
+      result,
+      args: args ?? {},
+      model,
+      dmmf: this.client._baseDmmf,
+      visitor(value, model2, args2) {
+        const modelName2 = dmmfToJSModelName(model2.name);
+        return applyResultExtensions({ result: value, modelName: modelName2, select: args2.select, extensions });
+      }
+    });
   }
   get [Symbol.toStringTag]() {
     return "RequestHandler";
   }
 };
 __name(RequestHandler, "RequestHandler");
+function isMismatchingBatchIndex(error2, transaction) {
+  return hasBatchIndex(error2) && transaction?.kind === "batch" && error2.batchRequestIdx !== transaction.index;
+}
+__name(isMismatchingBatchIndex, "isMismatchingBatchIndex");
 function batchFindUniqueBy(request2) {
-  var _a3;
   if (!request2.document.children[0].name.startsWith("findUnique")) {
     return void 0;
   }
-  const args = (_a3 = request2.document.children[0].args) == null ? void 0 : _a3.args.map((a) => {
+  const args = request2.document.children[0].args?.args.map((a) => {
     if (a.value instanceof Args) {
       return `${a.key}-${a.value.args.map((a2) => a2.key).join(",")}`;
     }
@@ -34360,9 +32021,6 @@ function batchFindUniqueBy(request2) {
   return `${request2.document.children[0].name}|${args}|${selectionSet}`;
 }
 __name(batchFindUniqueBy, "batchFindUniqueBy");
-
-// src/runtime/utils/clientVersion.ts
-var clientVersion = require_package3().version;
 
 // src/runtime/utils/deserializeRawResults.ts
 function deserializeRawResults(rows) {
@@ -34671,8 +32329,8 @@ function getAlternative(str, options) {
     value,
     distance: (0, import_js_levenshtein2.default)(str, value)
   }));
-  optionsWithDistances.sort((a, b) => {
-    return a.distance < b.distance ? -1 : 1;
+  optionsWithDistances.sort((a, b2) => {
+    return a.distance < b2.distance ? -1 : 1;
   });
   const bestAlternative = optionsWithDistances[0];
   if (bestAlternative.distance < 3) {
@@ -34682,8 +32340,64 @@ function getAlternative(str, options) {
 }
 __name(getAlternative, "getAlternative");
 
+// src/runtime/utils/waitForBatch.ts
+function waitForBatch(promises) {
+  if (promises.length === 0) {
+    return Promise.resolve([]);
+  }
+  return new Promise((resolve, reject) => {
+    const successfulResults = new Array(promises.length);
+    let bestError = null;
+    let done = false;
+    let settledPromisesCount = 0;
+    const settleOnePromise = /* @__PURE__ */ __name(() => {
+      if (done) {
+        return;
+      }
+      settledPromisesCount++;
+      if (settledPromisesCount === promises.length) {
+        done = true;
+        if (bestError) {
+          reject(bestError);
+        } else {
+          resolve(successfulResults);
+        }
+      }
+    }, "settleOnePromise");
+    const immediatelyReject = /* @__PURE__ */ __name((error2) => {
+      if (!done) {
+        done = true;
+        reject(error2);
+      }
+    }, "immediatelyReject");
+    for (let i = 0; i < promises.length; i++) {
+      promises[i].then(
+        (result) => {
+          successfulResults[i] = result;
+          settleOnePromise();
+        },
+        (error2) => {
+          if (!hasBatchIndex(error2)) {
+            immediatelyReject(error2);
+            return;
+          }
+          if (error2.batchRequestIdx === i) {
+            immediatelyReject(error2);
+          } else {
+            if (!bestError) {
+              bestError = error2;
+            }
+            settleOnePromise();
+          }
+        }
+      );
+    }
+  });
+}
+__name(waitForBatch, "waitForBatch");
+
 // src/runtime/getPrismaClient.ts
-var debug12 = src_default("prisma:client");
+var debug13 = src_default("prisma:client");
 var ALTER_RE = /^(\s*alter\s)/i;
 typeof globalThis === "object" ? globalThis.NODE_CLIENT = true : 0;
 function isReadonlyArray(arg2) {
@@ -34705,7 +32419,9 @@ More Information: https://pris.ly/d/execute-raw
 __name(checkAlter, "checkAlter");
 var actionOperationMap = {
   findUnique: "query",
+  findUniqueOrThrow: "query",
   findFirst: "query",
+  findFirstOrThrow: "query",
   findMany: "query",
   count: "query",
   create: "mutation",
@@ -34724,28 +32440,34 @@ var actionOperationMap = {
   aggregateRaw: "query"
 };
 var TX_ID = Symbol.for("prisma.client.transaction.id");
+var BatchTxIdCounter = {
+  id: 0,
+  nextId() {
+    return ++this.id;
+  }
+};
 function getPrismaClient(config2) {
   class PrismaClient {
     constructor(optionsArg) {
       this._middlewares = new Middlewares();
-      this._transactionId = 1;
       this._getDmmf = callOnce(async (params) => {
         try {
           const dmmf = await this._engine.getDmmf();
           return new DMMFHelper(getPrismaClientDMMF(dmmf));
         } catch (error2) {
-          this._fetcher.handleRequestError({ ...params, error: error2 });
+          this._fetcher.handleAndLogRequestError({ ...params, error: error2 });
         }
       });
       this.$extends = $extends;
-      var _a3, _b2, _c, _d, _e, _f, _g, _h, _i;
       if (optionsArg) {
         validatePrismaClientOptions(optionsArg, config2.datasourceNames);
       }
-      this._extensions = [];
-      this._previewFeatures = (_b2 = (_a3 = config2.generator) == null ? void 0 : _a3.previewFeatures) != null ? _b2 : [];
-      this._rejectOnNotFound = optionsArg == null ? void 0 : optionsArg.rejectOnNotFound;
-      this._clientVersion = (_c = config2.clientVersion) != null ? _c : clientVersion;
+      const logEmitter = new import_events.EventEmitter().on("error", (e2) => {
+      });
+      this._extensions = MergedExtensionsList.empty();
+      this._previewFeatures = config2.generator?.previewFeatures ?? [];
+      this._rejectOnNotFound = optionsArg?.rejectOnNotFound;
+      this._clientVersion = config2.clientVersion ?? clientVersion;
       this._activeProvider = config2.activeProvider;
       this._dataProxy = config2.dataProxy;
       this._tracingConfig = getTracingConfig(this._previewFeatures);
@@ -34756,8 +32478,8 @@ function getPrismaClient(config2) {
       };
       const loadedEnv = tryLoadEnvs(envPaths, { conflictCheck: "none" });
       try {
-        const options = optionsArg != null ? optionsArg : {};
-        const internal = (_d = options.__internal) != null ? _d : {};
+        const options = optionsArg ?? {};
+        const internal = options.__internal ?? {};
         const useDebug = internal.debug === true;
         if (useDebug) {
           src_default.enable("prisma:client");
@@ -34769,9 +32491,9 @@ function getPrismaClient(config2) {
         if (!import_fs9.default.existsSync(cwd)) {
           cwd = config2.dirname;
         }
-        debug12("dirname", config2.dirname);
-        debug12("relativePath", config2.relativePath);
-        debug12("cwd", cwd);
+        debug13("dirname", config2.dirname);
+        debug13("relativePath", config2.relativePath);
+        debug13("cwd", cwd);
         const thedatasources = options.datasources || {};
         const inputDatasources = Object.entries(thedatasources).filter(([_, source]) => {
           return source && source.url;
@@ -34800,17 +32522,17 @@ function getPrismaClient(config2) {
           dirname: config2.dirname,
           enableDebugLogs: useDebug,
           allowTriggerPanic: engineConfig.allowTriggerPanic,
-          datamodelPath: import_path5.default.join(config2.dirname, (_e = config2.filename) != null ? _e : "schema.prisma"),
-          prismaPath: (_f = engineConfig.binaryPath) != null ? _f : void 0,
+          datamodelPath: import_path5.default.join(config2.dirname, config2.filename ?? "schema.prisma"),
+          prismaPath: engineConfig.binaryPath ?? void 0,
           engineEndpoint: engineConfig.endpoint,
           datasources,
           generator: config2.generator,
           showColors: this._errorFormat === "pretty",
           logLevel: options.log && getLogLevel(options.log),
           logQueries: options.log && Boolean(
-            typeof options.log === "string" ? options.log === "query" : options.log.find((o) => typeof o === "string" ? o === "query" : o.level === "query")
+            typeof options.log === "string" ? options.log === "query" : options.log.find((o2) => typeof o2 === "string" ? o2 === "query" : o2.level === "query")
           ),
-          env: (_i = (_h = loadedEnv == null ? void 0 : loadedEnv.parsed) != null ? _h : (_g = config2.injectableEdgeEnv) == null ? void 0 : _g.parsed) != null ? _i : {},
+          env: loadedEnv?.parsed ?? config2.injectableEdgeEnv?.parsed ?? {},
           flags: [],
           clientVersion: config2.clientVersion,
           previewFeatures: this._previewFeatures,
@@ -34818,32 +32540,32 @@ function getPrismaClient(config2) {
           inlineSchema: config2.inlineSchema,
           inlineDatasources: config2.inlineDatasources,
           inlineSchemaHash: config2.inlineSchemaHash,
-          tracingConfig: this._tracingConfig
+          tracingConfig: this._tracingConfig,
+          logEmitter
         };
-        debug12("clientVersion", config2.clientVersion);
-        debug12("clientEngineType", this._dataProxy ? "dataproxy" : this._clientEngineType);
+        debug13("clientVersion", config2.clientVersion);
+        debug13("clientEngineType", this._dataProxy ? "dataproxy" : this._clientEngineType);
         if (this._dataProxy) {
           const runtime = true ? "Node.js" : "edge";
-          debug12(`using Data Proxy with ${runtime} runtime`);
+          debug13(`using Data Proxy with ${runtime} runtime`);
         }
         this._engine = this.getEngine();
         void this._getActiveProvider();
-        this._fetcher = new RequestHandler(this, this._hooks);
+        this._fetcher = new RequestHandler(this, this._hooks, logEmitter);
         if (options.log) {
-          for (const log4 of options.log) {
-            const level = typeof log4 === "string" ? log4 : log4.emit === "stdout" ? log4.level : null;
+          for (const log3 of options.log) {
+            const level = typeof log3 === "string" ? log3 : log3.emit === "stdout" ? log3.level : null;
             if (level) {
               this.$on(level, (event) => {
-                var _a4;
-                logger_exports.log(`${(_a4 = logger_exports.tags[level]) != null ? _a4 : ""}`, event.message || event.query);
+                logger_exports.log(`${logger_exports.tags[level] ?? ""}`, event.message || event.query);
               });
             }
           }
         }
         this._metrics = new MetricsClient(this._engine);
-      } catch (e) {
-        e.clientVersion = this._clientVersion;
-        throw e;
+      } catch (e2) {
+        e2.clientVersion = this._clientVersion;
+        throw e2;
       }
       return applyModelsAndClientExtensions(this);
     }
@@ -34876,20 +32598,19 @@ function getPrismaClient(config2) {
         this._engine.on("beforeExit", callback);
       } else {
         this._engine.on(eventType, (event) => {
-          var _a3, _b2, _c, _d;
           const fields = event.fields;
           if (eventType === "query") {
             return callback({
               timestamp: event.timestamp,
-              query: (_a3 = fields == null ? void 0 : fields.query) != null ? _a3 : event.query,
-              params: (_b2 = fields == null ? void 0 : fields.params) != null ? _b2 : event.params,
-              duration: (_c = fields == null ? void 0 : fields.duration_ms) != null ? _c : event.duration,
+              query: fields?.query ?? event.query,
+              params: fields?.params ?? event.params,
+              duration: fields?.duration_ms ?? event.duration,
               target: event.target
             });
           } else {
             return callback({
               timestamp: event.timestamp,
-              message: (_d = fields == null ? void 0 : fields.message) != null ? _d : event.message,
+              message: fields?.message ?? event.message,
               target: event.target
             });
           }
@@ -34899,9 +32620,9 @@ function getPrismaClient(config2) {
     $connect() {
       try {
         return this._engine.start();
-      } catch (e) {
-        e.clientVersion = this._clientVersion;
-        throw e;
+      } catch (e2) {
+        e2.clientVersion = this._clientVersion;
+        throw e2;
       }
     }
     async _runDisconnect() {
@@ -34914,10 +32635,11 @@ function getPrismaClient(config2) {
     async $disconnect() {
       try {
         await this._engine.stop();
-      } catch (e) {
-        e.clientVersion = this._clientVersion;
-        throw e;
+      } catch (e2) {
+        e2.clientVersion = this._clientVersion;
+        throw e2;
       } finally {
+        clearLogs();
         if (!this._dataProxy) {
           this._dmmf = void 0;
         }
@@ -34927,7 +32649,7 @@ function getPrismaClient(config2) {
       try {
         const configResult = await this._engine.getConfig();
         this._activeProvider = configResult.datasources[0].activeProvider;
-      } catch (e) {
+      } catch (e2) {
       }
     }
     $executeRawInternal(transaction, lock, query2, ...values) {
@@ -34997,13 +32719,13 @@ function getPrismaClient(config2) {
           __prismaRawParameters__: true
         };
       }
-      if (parameters == null ? void 0 : parameters.values) {
-        debug12(`prisma.$executeRaw(${queryString}, ${parameters.values})`);
+      if (parameters?.values) {
+        debug13(`prisma.$executeRaw(${queryString}, ${parameters.values})`);
       } else {
-        debug12(`prisma.$executeRaw(${queryString})`);
+        debug13(`prisma.$executeRaw(${queryString})`);
       }
       const args = { query: queryString, parameters };
-      debug12(`Prisma Client call:`);
+      debug13(`Prisma Client call:`);
       return this._request({
         args,
         clientMethod: "$executeRaw",
@@ -35117,13 +32839,13 @@ Or read our docs at https://www.prisma.io/docs/concepts/components/prisma-client
           __prismaRawParameters__: true
         };
       }
-      if (parameters == null ? void 0 : parameters.values) {
-        debug12(`prisma.queryRaw(${queryString}, ${parameters.values})`);
+      if (parameters?.values) {
+        debug13(`prisma.queryRaw(${queryString}, ${parameters.values})`);
       } else {
-        debug12(`prisma.queryRaw(${queryString})`);
+        debug13(`prisma.queryRaw(${queryString})`);
       }
       const args = { query: queryString, parameters };
-      debug12(`Prisma Client call:`);
+      debug13(`Prisma Client call:`);
       return this._request({
         args,
         clientMethod: "$queryRaw",
@@ -35181,18 +32903,17 @@ new PrismaClient({
       promises,
       options
     }) {
-      const txId = this._transactionId++;
+      const id = BatchTxIdCounter.nextId();
       const lock = getLockCountPromise(promises.length);
-      const requests = promises.map((request2) => {
-        var _a3;
-        if ((request2 == null ? void 0 : request2[Symbol.toStringTag]) !== "PrismaPromise") {
+      const requests = promises.map((request2, index) => {
+        if (request2?.[Symbol.toStringTag] !== "PrismaPromise") {
           throw new Error(
             `All elements of the array need to be Prisma Client promises. Hint: Please make sure you are not awaiting the Prisma client calls you intended to pass in the $transaction function.`
           );
         }
-        return (_a3 = request2.requestTransaction) == null ? void 0 : _a3.call(request2, { id: txId, isolationLevel: options == null ? void 0 : options.isolationLevel }, lock);
+        return request2.requestTransaction?.({ id, index, isolationLevel: options?.isolationLevel }, lock) ?? request2;
       });
-      return Promise.all(requests);
+      return waitForBatch(requests);
     }
     async _transactionWithCallback({
       callback,
@@ -35204,16 +32925,16 @@ new PrismaClient({
       try {
         result = await callback(transactionProxy(this, { id: info2.id, payload: info2.payload }));
         await this._engine.transaction("commit", headers, info2);
-      } catch (e) {
+      } catch (e2) {
         await this._engine.transaction("rollback", headers, info2).catch(() => {
         });
-        throw e;
+        throw e2;
       }
       return result;
     }
     $transaction(input, options) {
       let callback;
-      if (typeof input === "function" && this._hasPreviewFlag("interactiveTransactions")) {
+      if (typeof input === "function") {
         callback = /* @__PURE__ */ __name(() => this._transactionWithCallback({ callback: input, options }), "callback");
       } else {
         callback = /* @__PURE__ */ __name(() => this._transactionWithArray({ promises: input, options }), "callback");
@@ -35226,7 +32947,7 @@ new PrismaClient({
       return runInChildSpan(spanOptions, callback);
     }
     async _request(internalParams) {
-      internalParams.otelParentCtx = context2.active();
+      internalParams.otelParentCtx = context.active();
       try {
         const params = {
           args: internalParams.args,
@@ -35257,7 +32978,7 @@ new PrismaClient({
           const nextMiddleware = this._middlewares.query.get(++index);
           if (nextMiddleware) {
             return runInChildSpan(spanOptions.middleware, async (span) => {
-              return nextMiddleware(changedMiddlewareParams, (p) => (span == null ? void 0 : span.end(), consumer(p)));
+              return nextMiddleware(changedMiddlewareParams, (p2) => (span?.end(), consumer(p2)));
             });
           }
           const { runInTransaction, ...changedRequestParams } = changedMiddlewareParams;
@@ -35268,7 +32989,7 @@ new PrismaClient({
           if (!runInTransaction) {
             requestParams.transaction = void 0;
           }
-          return this._executeRequest(requestParams);
+          return applyQueryExtensions(this, requestParams);
         }, "consumer");
         return await runInChildSpan(spanOptions.operation, () => {
           if (true) {
@@ -35277,9 +32998,9 @@ new PrismaClient({
           }
           return consumer(params);
         });
-      } catch (e) {
-        e.clientVersion = this._clientVersion;
-        throw e;
+      } catch (e2) {
+        e2.clientVersion = this._clientVersion;
+        throw e2;
       }
     }
     async _executeRequest({
@@ -35291,15 +33012,16 @@ new PrismaClient({
       action,
       model,
       headers,
+      argsMapper,
       transaction,
       lock,
       unpacker,
       otelParentCtx
     }) {
-      var _a3, _b2;
       if (this._dmmf === void 0) {
         this._dmmf = await this._getDmmf({ clientMethod, callsite });
       }
+      args = argsMapper ? argsMapper(args) : args;
       let rootField;
       const operation = actionOperationMap[action];
       if (action === "executeRaw" || action === "queryRaw" || action === "runCommandRaw") {
@@ -35307,7 +33029,7 @@ new PrismaClient({
       }
       let mapping;
       if (model !== void 0) {
-        mapping = (_a3 = this._dmmf) == null ? void 0 : _a3.mappingsMap[model];
+        mapping = this._dmmf?.mappingsMap[model];
         if (mapping === void 0) {
           throw new Error(`Could not find mapping for model ${model}`);
         }
@@ -35316,7 +33038,7 @@ new PrismaClient({
       if (operation !== "query" && operation !== "mutation") {
         throw new Error(`Invalid operation ${operation} for action ${action}`);
       }
-      const field = (_b2 = this._dmmf) == null ? void 0 : _b2.rootFieldMap[rootField];
+      const field = this._dmmf?.rootFieldMap[rootField];
       if (field === void 0) {
         throw new Error(
           `Could not find rootField ${rootField} for action ${action} for model ${model} on rootType ${operation}`
@@ -35332,7 +33054,8 @@ new PrismaClient({
           rootField,
           rootTypeName: operation,
           select: args,
-          modelName: model
+          modelName: model,
+          extensions: this._extensions
         });
         document3.validate(args, false, clientMethod, this._errorFormat, callsite);
         return transformDocument(document3);
@@ -35344,8 +33067,8 @@ new PrismaClient({
       const document2 = await runInChildSpan(spanOptions, serializationFn);
       if (src_default.enabled("prisma:client")) {
         const query2 = String(document2);
-        debug12(`Prisma Client call:`);
-        debug12(
+        debug13(`Prisma Client call:`);
+        debug13(
           `prisma.${clientMethod}(${printJsonWithErrors({
             ast: args,
             keyPaths: [],
@@ -35353,8 +33076,8 @@ new PrismaClient({
             missingItems: []
           })})`
         );
-        debug12(`Generated request:`);
-        debug12(query2 + "\n");
+        debug13(`Generated request:`);
+        debug13(query2 + "\n");
       }
       await lock;
       return this._fetcher.request({
@@ -35368,11 +33091,12 @@ new PrismaClient({
         callsite,
         args,
         engineHook: this._middlewares.engine.get(0),
+        extensions: this._extensions,
         headers,
         transaction,
         unpacker,
         otelParentCtx,
-        otelChildCtx: context2.active()
+        otelChildCtx: context.active()
       });
     }
     get $metrics() {
@@ -35384,8 +33108,7 @@ new PrismaClient({
       return this._metrics;
     }
     _hasPreviewFlag(feature) {
-      var _a3;
-      return !!((_a3 = this._engineConfig.previewFeatures) == null ? void 0 : _a3.includes(feature));
+      return !!this._engineConfig.previewFeatures?.includes(feature);
     }
   }
   __name(PrismaClient, "PrismaClient");
@@ -35401,7 +33124,7 @@ function transactionProxy(thing, transaction) {
       if (forbidden.includes(prop))
         return void 0;
       if (prop === TX_ID)
-        return transaction == null ? void 0 : transaction.id;
+        return transaction?.id;
       if (typeof target[prop] === "function") {
         return (...args) => {
           if (prop === "then")
@@ -35414,6 +33137,12 @@ function transactionProxy(thing, transaction) {
         };
       }
       return transactionProxy(target[prop], transaction);
+    },
+    has(target, prop) {
+      if (forbidden.includes(prop)) {
+        return false;
+      }
+      return Reflect.has(target, prop);
     }
   });
 }
@@ -35426,8 +33155,8 @@ function warnAboutRejectOnNotFound(rejectOnNotFound, model, action) {
   if (rejectOnNotFound) {
     const replacementAction = rejectOnNotFoundReplacements[action];
     const replacementCall = model ? `prisma.${model}.${replacementAction}` : `prisma.${replacementAction}`;
-    const key = `rejectOnNotFound.${model != null ? model : ""}.${action}`;
-    warnOnce(
+    const key = `rejectOnNotFound.${model ?? ""}.${action}`;
+    warnOnce2(
       key,
       `\`rejectOnNotFound\` option is deprecated and will be removed in Prisma 5. Please use \`${replacementCall}\` method instead`
     );
@@ -35462,10 +33191,10 @@ __name(makeStrictEnum, "makeStrictEnum");
 // src/runtime/utils/find.ts
 var import_fs10 = __toESM(require("fs"));
 var import_path6 = __toESM(require("path"));
-var import_util7 = require("util");
-var readdirAsync = (0, import_util7.promisify)(import_fs10.default.readdir);
-var realpathAsync = (0, import_util7.promisify)(import_fs10.default.realpath);
-var statAsync = (0, import_util7.promisify)(import_fs10.default.stat);
+var import_util8 = require("util");
+var readdirAsync = (0, import_util8.promisify)(import_fs10.default.readdir);
+var realpathAsync = (0, import_util8.promisify)(import_fs10.default.realpath);
+var statAsync = (0, import_util8.promisify)(import_fs10.default.stat);
 var readdirSync = import_fs10.default.readdirSync;
 var realpathSync = import_fs10.default.realpathSync;
 var statSync = import_fs10.default.statSync;
@@ -35518,7 +33247,7 @@ function findSync(root, match, types = ["f", "d", "l"], deep = [], limit = Infin
         findSync(itemPath, match, types, deep, limit, handler, found, seen);
       }
     }
-  } catch (e) {
+  } catch {
   }
   return found;
 }
@@ -35542,6 +33271,7 @@ var decompressFromBase642 = lzString.decompressFromBase64;
   Extensions,
   MetricsClient,
   NotFoundError,
+  PrismaClientExtensionError,
   PrismaClientInitializationError,
   PrismaClientKnownRequestError,
   PrismaClientRustPanicError,

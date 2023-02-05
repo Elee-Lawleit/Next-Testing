@@ -29,6 +29,10 @@ const Dashboard = ({ session }) => {
     session?.user?.role
   );
 
+  // console.log("COUNT: ", data)
+  // console.log("USER: ", session)
+
+
   const months = [
     "January",
     "February",

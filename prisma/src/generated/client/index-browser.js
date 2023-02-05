@@ -13,12 +13,12 @@ const Prisma = {}
 exports.Prisma = Prisma
 
 /**
- * Prisma Client JS version: 4.6.1
- * Query Engine version: 694eea289a8462c80264df36757e4fdc129b1b32
+ * Prisma Client JS version: 4.9.0
+ * Query Engine version: ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5
  */
 Prisma.prismaVersion = {
-  client: "4.6.1",
-  engine: "694eea289a8462c80264df36757e4fdc129b1b32"
+  client: "4.9.0",
+  engine: "ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -128,6 +128,14 @@ exports.Prisma.FailedsubjectScalarFieldEnum = makeEnum({
   regNo: 'regNo'
 });
 
+exports.Prisma.FeedbackScalarFieldEnum = makeEnum({
+  attentive: 'attentive',
+  polite: 'polite',
+  rude: 'rude',
+  suggestion: 'suggestion',
+  hid: 'hid'
+});
+
 exports.Prisma.HistoryScalarFieldEnum = makeEnum({
   hid: 'hid',
   date: 'date',
@@ -136,11 +144,11 @@ exports.Prisma.HistoryScalarFieldEnum = makeEnum({
   reason: 'reason',
   status: 'status',
   referedTo: 'referedTo',
-  feedback: 'feedback',
-  rating: 'rating',
   regNo: 'regNo',
   adminId: 'adminId',
-  parentId: 'parentId'
+  parentId: 'parentId',
+  adminFeedback: 'adminFeedback',
+  suggestion: 'suggestion'
 });
 
 exports.Prisma.MeetingScalarFieldEnum = makeEnum({
@@ -151,7 +159,8 @@ exports.Prisma.MeetingScalarFieldEnum = makeEnum({
   tsid: 'tsid',
   regNo: 'regNo',
   adminId: 'adminId',
-  parentId: 'parentId'
+  parentId: 'parentId',
+  date: 'date'
 });
 
 exports.Prisma.ParentScalarFieldEnum = makeEnum({
@@ -187,11 +196,11 @@ exports.Prisma.StudentScalarFieldEnum = makeEnum({
 
 exports.Prisma.TimeslotScalarFieldEnum = makeEnum({
   tsid: 'tsid',
-  date: 'date',
   startTime: 'startTime',
   endTime: 'endTime',
   availibility: 'availibility',
-  adminId: 'adminId'
+  adminId: 'adminId',
+  day: 'day'
 });
 
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
@@ -219,7 +228,8 @@ exports.Prisma.WaitinglistScalarFieldEnum = makeEnum({
   tsid: 'tsid',
   regNo: 'regNo',
   adminId: 'adminId',
-  parentId: 'parentId'
+  parentId: 'parentId',
+  status: 'status'
 });
 exports.Role = makeEnum({
   Admin: 'Admin',
@@ -246,7 +256,8 @@ exports.Prisma.ModelName = makeEnum({
   meeting: 'meeting',
   waitinglist: 'waitinglist',
   history: 'history',
-  userlogin: 'userlogin'
+  userlogin: 'userlogin',
+  feedback: 'feedback'
 });
 
 /**

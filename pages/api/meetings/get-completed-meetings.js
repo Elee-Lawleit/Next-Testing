@@ -14,11 +14,24 @@ const handler = async (req, res) => {
 
     // console.log("daystring: ", new Date(dayString))
 
-    const meetings = await prisma.$queryRaw`SELECT *
-                                         FROM history
-                                         WHERE ("regNo" = ${userId} 
-                                                OR "parentId" = ${userId} 
-                                                OR "adminId" = ${userId})`;
+    // const meetings = await prisma.$queryRaw`SELECT *
+    //                                      FROM history h, feedback f
+    //                                      WHERE (h."regNo" = ${userId} 
+    //                                             OR h."parentId" = ${userId} 
+    //                                             OR h."adminId" = ${userId})`;
+
+    const meetings = await prisma.history.findMany({
+        where:{
+            OR:[
+                {adminId: userId},
+                {regNo: userId},
+                {parentId: userId}
+            ]
+        }, 
+        include:{
+            feedback: true
+        }
+    })
 
     // if(!meetings.Meeting.length) return res.status(204).json();
 

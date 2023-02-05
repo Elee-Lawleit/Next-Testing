@@ -52,7 +52,7 @@ export const authOptions = {
 
           return {
             id: uniqueIdentifier,
-            role: user.regNo ? "Student" : null || user.parentId? "Parent":null || user.adminId? "Admin":null,
+            role: user.regNo ? "Student" : null || user.parentId? "Parent":null || user.adminId? user.role :null,
             name: name
           };
         }

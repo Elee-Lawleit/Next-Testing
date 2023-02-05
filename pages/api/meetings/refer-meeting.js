@@ -15,7 +15,7 @@ export default async function handler(req, res) {
 
     const { meetingId, referal } = req.body;
 
-    console.log("at back: ", meetingId, referal);
+    // console.log("at back: ", meetingId, referal);
 
     if(!meetingId || !referal){
       return res.status(403).json({error: "Please fill in all the fields"})

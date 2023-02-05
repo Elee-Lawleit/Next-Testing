@@ -1,5 +1,4 @@
 import { PrismaClient } from "prisma/src/generated/client";
-import dayjs from "dayjs";
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
@@ -14,27 +13,34 @@ export default async function handler(req, res) {
 
         // console.log(req.body);
 
-        const { meetingId, feedback, rating } = req.body;
+        const { meetingId, suggesstion, rude, polite, attentive } = req.body;
+
+        console.log("iD: ", meetingId)
+        console.log("suggesstion: ", suggesstion)
+        console.log("rude: ", rude)
+        console.log("polite: ", polite)
+        console.log("attentive: ", attentive)
 
         // console.log("at back: ", meetingId, referal);
 
-        if (!meetingId || !feedback || !rating) {
+        if (meetingId < 1 || suggesstion.length < 1 || rude < 1 || polite < 1 || attentive < 1) {
             return res.status(403).json({ error: "Please fill in all the fields" })
         }
 
-        await prisma.history.update({
-            where: {
+        
+        await prisma.feedback.create({
+            data: {
+                attentive: Number(attentive),
+                polite: Number(polite),
+                rude: Number(rude),
+                suggestion: suggesstion,
                 hid: meetingId
-            },
-            data:{
-                feedback: feedback,
-                rating: Number(rating)
             }
         })
- 
+
 
         res.status(200).json({
-            msg: "Meeting status update successful",
+            msg: "Meeting feedback updated successfully",
         });
 
         await prisma.$disconnect();

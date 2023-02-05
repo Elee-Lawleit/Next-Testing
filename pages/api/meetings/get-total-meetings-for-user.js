@@ -13,15 +13,28 @@ const handler = async (req, res) => {
 
     const { userId } = req.query;
 
-    const meetings = await prisma.$queryRaw`SELECT count(m.mid)::int
-                                         FROM meeting m, timeslot t
-                                         WHERE (m."regNo" = ${userId} 
-                                                OR m."parentId" = ${userId} 
-                                                OR m."adminId" = ${userId}) 
-                                         AND t.date = ${new Date()}::DATE
-                                         AND m.tsid = t.tsid`;
+    console.log("PARENTID: ", userId)
 
-    // console.log("Meeting count is: ", meetings)
+    const meetings = await prisma.$queryRaw`SELECT count(mid)::int
+                                         FROM meeting
+                                         WHERE ("regNo" = ${userId} 
+                                                OR "parentId" = ${userId} 
+                                                OR "adminId" = ${userId}) 
+                                         AND date = ${new Date()}::DATE`;
+
+    // const meetings = await prisma.meeting.count({
+    //     where: {
+    //         OR: [
+    //             {regNo: userId},
+    //             {parentId: userId},
+    //             {adminId: userId}
+    //         ],
+    //         date: new Date()
+    //     }
+    // })
+
+
+    console.log("Meeting count is: ", meetings)
 
     const count = meetings[0].count;
 

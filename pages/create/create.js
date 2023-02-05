@@ -25,11 +25,11 @@ import useSelectStudentsAtt from "hooks/students/use-select-students-att";
 import useCreateMeetingMutation from "hooks/meetings/use-create-meeting";
 import useFetchTimeSlots from "hooks/admin/use-fetch-timeslots";
 import toast from "react-hot-toast";
-import duration from "dayjs/plugin/duration";
 import dayjs from "dayjs";
 import clsx from "clsx";
 import useFetchAdmins from "hooks/admin/use-fetch-admins";
 import useSelectAssocStudents from "hooks/students/use-select-assoc-students";
+import { useQueryClient } from "react-query";
 
 const Create = ({ session }) => {
   const theme = useMantineTheme();
@@ -93,17 +93,20 @@ const Create = ({ session }) => {
 
   const { mutate: createMeeting, isLoading: isSettingMeeting } =
     useCreateMeetingMutation();
-
-  const [adminName, setAdminName] = useState("Ihsan");
-
+    
+    
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const [date, setDate] = useState(new Date());
   const {
     data: assocStuds,
     isLoading: assocStudsLoading,
     isError: assocStudsError,
   } = useSelectAssocStudents(session?.user.id);
 
-  const nativeSelectData = assocStuds?.students.map((stud) => stud.regNo);
+  const queryClient = useQueryClient();
 
+  const nativeSelectData = assocStuds?.students.map((stud) => stud.regNo);
+  const [dateError, setDateError] = useState(false);
   const onCreate = async (data) => {
     if (meetingCriteria === "Bulk Meeting") {
       bulkReason === "Attendance"
@@ -113,7 +116,12 @@ const Create = ({ session }) => {
     data.userId = session?.user.id;
     data.userRole = session?.user.role;
 
-    session?.user.role === "Parent" ? (data.adminId = admin?.admin.cnic) : null;
+    if(date){
+      data.date = date;
+    }
+    else{
+      setDateError(true); return;
+    }
 
     console.log(data);
     createMeeting(
@@ -123,6 +131,7 @@ const Create = ({ session }) => {
       {
         onSuccess: () => {
           toast.success("Meeting created.");
+          queryClient.refetchQueries("all-admin-timeslots");
         },
         onError: () => {
           toast.error("Could not create meeting");
@@ -139,24 +148,53 @@ const Create = ({ session }) => {
     isLoading: adminLoading,
     isError: adminError,
   } = useFetchAdmins();
+
+  // console.log("ADMINS: ", admins);
+
+
+  const ts = admins?.admin.map((admin)=>admin.timeslot);
+  // console.log("timeslots: ", JSON.stringify(ts));
+
+
+  // function written by chat gpt btw, not me
+  // the easiet and simplest solution I've seen so far
+  function removeDuplicateTimeSlots(dataSet) {
+
+    let uniqueTimeSlots = {};
+    let distinctTimeSlots = [];
+    dataSet?.forEach(innerArr => {
+      innerArr.forEach(timeSlot => {
+
+        // creating a unique key by concatinating date and startTime
+        // if this already exists then, we don't wanna add it to the unique array
+        let key = timeSlot.startTime + timeSlot.day;
+        if (!uniqueTimeSlots[key]) {
+          uniqueTimeSlots[key] = true;
+          distinctTimeSlots.push(timeSlot);
+        }
+      });
+    });
+    return distinctTimeSlots;
+  }
+
+  // had to slightly edit this one to get the correct result
+  // or just change 2 characters in total, I should say while not taking away any credit from chap gpt
+  function extractTimeSlotsForDay(dataSet, day) {
+    let distinctTimeSlots = removeDuplicateTimeSlots(dataSet);
+    //filter the time slots based on the day
+    let filteredTimeSlots = distinctTimeSlots.filter(timeSlot => {
+      if (timeSlot) {
+        return timeSlot.day === day;
+      }
+    });
+    if (filteredTimeSlots.length === 0) {
+      return [];
+    } else {
+      return filteredTimeSlots;
+    }
+  }
   
-  // const [adminIndex, setAdminIndex] = useState("admin1");
-  // const [admin, setAdmin] = useState(null);
-
-  // useEffect(() => {
-  //   // console.log("Admin index: ", adminIndex)
-  //   if (adminIndex === "admin1") {
-  //     setVal(1);
-  //     setAdmin(admins?.admin[0]);
-  //   } else if (adminIndex === "admin2") {
-  //     setVal(2);
-  //     setAdmin(admins?.admin[1]);
-  //   } else if (adminIndex === "admin3") {
-  //     setVal(3);
-  //     setAdmin(admins?.admin[2]);
-  //   }
-  // }, [admins, adminIndex]);
-
+  // console.log("DATE: ", date)
   return (
     <AppSkeloton session={session}>
       <div className="flex flex-col min-h-full gap-3">
@@ -174,45 +212,71 @@ const Create = ({ session }) => {
           >
             <LoadingOverlay visible={isSettingMeeting} />
             <div className="mt-2">
+              <div>
+                <Controller
+                  control={control}
+                  name="date"
+                  render={({ field: { onChange } }) => (
+                    <DatePicker
+                    value={date}
+                    placeholder="Pick meeting day"
+                    label="Meeting day"
+                    initialMonth={new Date()}
+                    excludeDate={(date) =>
+                      date.getDay() === 0 || date.getDay() === 6
+                    }
+                    onChange={setDate}
+                      allowLevelChange={false}
+                      minDate={new Date()}
+                      error={dateError ? "Please fill this field properly" : false}
+                      withAsterisk
+                    />
+                  )}
+                />
+              </div>
               <div className="flex flex-col gap-3">
                 <p className="text-sm font-regular mt-4 font-semibold">
                   Select meeting time
                 </p>
                 {session?.user.role === "Parent" && (
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                    {/* {admin?.timeslot.map((ts) => (
-                      <div className="flex flex-col items-center justify-center col-span-1 gap-0">
-                        <Radio
-                          value={[ts.startTime, ts.endTime, ts.date]}
-                          label={
-                            dayjs(ts.startTime).subtract(5, "hours").hour() +
-                            ":" +
-                            dayjs(ts.startTime).subtract(5, "hours").minute() +
-                            " - " +
-                            dayjs(ts.endTime).subtract(5, "hours").hour() +
-                            ":" +
-                            dayjs(ts.endTime).subtract(5, "hours").minute()
-                          }
-                          {...register("time")}
-                        />
-                        <p className="ml-10 text-xs">
-                          {new Date(ts.date).toDateString()}
-                        </p>
-                      </div>
-                    ))} */}
-                    {/* {!adminLoading && admin?.timeslot.length === 0 && (
+                    {admins &&
+                      extractTimeSlotsForDay(ts, days[new Date(date).getDay() -1]).map((ts) => (
+                        <div
+                          key={ts.tsid}
+                          className="flex flex-col items-center justify-center col-span-1 gap-0"
+                        >
+                          <Radio
+                            value={[ts.startTime, ts.endTime, ts.adminId, ts.day]}
+                            onClick={()=>console.log("Timeslot: ", ts)}
+                            label={
+                              dayjs(ts.startTime).subtract(5, "hours").hour() +
+                              ":" +
+                              dayjs(ts.startTime)
+                                .subtract(5, "hours")
+                                .minute() +
+                              " - " +
+                              dayjs(ts.endTime).subtract(5, "hours").hour() +
+                              ":" +
+                              dayjs(ts.endTime).subtract(5, "hours").minute()
+                            }
+                            {...register("time")}
+                          />
+                        </div>
+                      ))}
+                    {!adminLoading && extractTimeSlotsForDay(ts, days[new Date(date).getDay() - 1]).length === 0 && (
                       <Text ta="center" fw={500} color="red">
                         No free timeslots available.
                       </Text>
-                    )} */}
+                    )}
                   </div>
                 )}
                 {session?.user.role === "Admin" && (
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                    {timeSlots?.timeSlots?.map((ts) => (
+                    {extractTimeSlotsForDay(ts, days[new Date(date).getDay() - 1]).map((ts) => (
                       <div className="flex flex-col items-center justify-center col-span-1 gap-0">
                         <Radio
-                          value={[ts.startTime, ts.endTime, ts.date]}
+                          value={[ts.startTime, ts.endTime, ts.day]}
                           label={
                             dayjs(ts.startTime).subtract(5, "hours").hour() +
                             ":" +
@@ -224,12 +288,9 @@ const Create = ({ session }) => {
                           }
                           {...register("time")}
                         />
-                        <p className="ml-10 text-xs">
-                          {new Date(ts.date).toDateString()}
-                        </p>
                       </div>
                     ))}
-                    {!tsLoading && timeSlots?.timeSlots.length === 0 && (
+                    {!tsLoading && extractTimeSlotsForDay(ts, days[new Date(date).getDay() - 1]).length === 0 && (
                       <Text ta="center" fw={500} color="red">
                         No free timeslots available.
                       </Text>
@@ -282,7 +343,8 @@ const Create = ({ session }) => {
               <NativeSelect
                 label="Select student registration number"
                 withAsterisk
-                data={assocStudsLoading ? [] : nativeSelectData}
+                // defaultValue={"Select student"}
+                data={assocStudsLoading ? [] : ["select student", ...nativeSelectData]}
                 {...register("assocRegno")}
               />
             )}

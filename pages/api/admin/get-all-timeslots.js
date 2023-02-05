@@ -13,32 +13,21 @@ const handler = async (req, res) => {
     const timeslots = await prisma.timeslot.findMany({
         where: {
             adminId: userId,
-            date: { gte: new Date() },
         },
         select: {
             startTime: true,
             endTime: true,
-            date: true,
+            day: true,
             availibility: true,
             tsid: true,
-            meeting: true,
         },
-        orderBy: [
-           { date: 'asc'},
-           {startTime: 'asc'}
-        ]
-        
     })
-
-    const timeSlots = timeslots.filter((ts)=>ts.meeting==null)
-
-    // console.log("Timeslots: ", timeSlots);
 
     // if (!meetings.Meeting.length) return res.status(204).json();
 
     await prisma.$disconnect();
 
-    return res.status(200).json({ timeSlots });
+    return res.status(200).json({ timeslots });
 }
 
 export default handler;

@@ -14,94 +14,51 @@ export default async function handler(req, res) {
 
         // console.log(req.body);
 
-        const { meetingId, action } = req.body;
-
-        // console.log("at back: ", meetingId, referal);
-
-        if (!meetingId || !action) {
+        const { time, date } = req.body;
+        
+        const timeArray = time.split(",")
+        
+        if(!timeArray[0] || !timeArray[1] || !date){
             return res.status(403).json({ error: "Please fill in all the fields" })
         }
+       
+        // console.log("date is: ", date)
 
-        console.log(action);
+        const oldMid = timeArray[0];
+        const newTimeslotId = timeArray[1];
 
-        const id = Number(action);
-
-        if(id){
-
-            //free the time slot by setting avalibility to true
-            await prisma.meeting.update({
-                where:{
-                    mid: id
-                },
-                data: {
-                    timeslot: {
-                        update: {
-                            availibility: true
-                        },
-                    },
-                }
-            })
-
-            // lock the new timeslot by setting availibility to true
-            await prisma.timeslot.update({
-                where: {
-                    tsid: id
-                },
-                data: {
-                    availibility: false
-                }
-            })
-
-            //I wonder if this is possible in one query somehow 🤔, khair anyway
-
-            //and then change the foreign key to new timeslot id
-            await prisma.meeting.update({
-                where:{
-                    mid: meetingId,
-                },
-                data:{
-                    tsid: id,
-                    status: "pending"
-                }
-            })
-        }
-        else{
-            await prisma.meeting.update({
-                where: {
-                    mid: meetingId
-                },
-                data: {
-                    status: action
-                }
-            })
-
-            if(action === "completed"){
-                const data = await prisma.meeting.findFirst({
-                    where:{
-                        mid: meetingId
-                    },
-                    include:{
-                        timeslot: true
+        await prisma.meeting.update({
+            where: {
+                mid: Number(oldMid)
+            },
+            data:{
+                //free old timeslot
+                timeslot:{
+                    update:{
+                        availibility: true
                     }
-                })
-
-                await prisma.history.create({
-                    data:{
-                        date: data.timeslot.date,
-                        startTime: data.timeslot.startTime,
-                        endTime: data.timeslot.endTime,
-                        reason: data.reason,
-                        status: data.status,
-                        referedTo: data.referedTo,
-                        regNo: data.regNo,
-                        adminId: data.adminId,
-                        parentId: data.parentId,
-                        feedback: "",
-                        rating: 0
-                    }
-                })
+                },
             }
-        }
+        })
+
+        await prisma.meeting.update({
+            where:{
+                mid: Number(oldMid)
+            },
+            data: {
+                tsid: Number(newTimeslotId),
+                date: dayjs(date).add(5, "hour").toDate()
+            }
+        })
+
+        await prisma.timeslot.update({
+            where:{
+                tsid: Number(newTimeslotId)
+            },
+            data: {
+                availibility: false
+            }
+        })
 
 
         res.status(200).json({

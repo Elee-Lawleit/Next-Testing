@@ -9,23 +9,23 @@ const handler = async (req, res) => {
         return res.status(403).json({ error: "Method not allowed" });
     }
 
-    const { dayString, userId, userRole } = req.query;
-    console.log("Date: ", typeof new Date(dayString));
+    // const { dayString, userId, userRole } = req.query;
+    // // console.log("Date: ", typeof new Date(dayString));
 
 
-    // console.log("daystring: ", new Date(dayString))
+    // // console.log("daystring: ", new Date(dayString))
 
-    const ratings = await prisma.history.findMany({
-        where:{
-            adminId: userId
-        },
-        select: {
-            rating: true
-        }
-    })
+    // const ratings = await prisma.history.findMany({
+    //     where:{
+    //         adminId: userId
+    //     },
+    //     select: {
+    //         rating: true
+    //     }
+    // })
 
-    console.log(ratings)
-
+    // console.log(ratings)
+    let ratings = [];
     await prisma.$disconnect();
     return res.status(200).json({ ratings });
 }

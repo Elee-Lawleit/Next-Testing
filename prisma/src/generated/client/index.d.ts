@@ -5,7 +5,7 @@
 
 import * as runtime from './runtime/index';
 declare const prisma: unique symbol
-export type PrismaPromise<A> = Promise<A> & {[prisma]: true}
+export interface PrismaPromise<A> extends Promise<A> {[prisma]: true}
 type UnwrapPromise<P extends any> = P extends Promise<infer R> ? R : P
 type UnwrapTuple<Tuple extends readonly unknown[]> = {
   [K in keyof Tuple]: K extends `${number}` ? Tuple[K] extends PrismaPromise<infer X> ? X : UnwrapPromise<Tuple[K]> : UnwrapPromise<Tuple[K]>
@@ -46,11 +46,11 @@ export type admin = {
  */
 export type timeslot = {
   tsid: number
-  date: Date
   startTime: Date
   endTime: Date
   availibility: boolean
   adminId: string
+  day: string | null
 }
 
 /**
@@ -120,12 +120,13 @@ export type failedsubject = {
 export type meeting = {
   mid: number
   reason: string
-  status: Status
+  status: string
   referedTo: string
   tsid: number
   regNo: string
   adminId: string
   parentId: string
+  date: Date
 }
 
 /**
@@ -140,6 +141,7 @@ export type waitinglist = {
   regNo: string
   adminId: string
   parentId: string
+  status: string | null
 }
 
 /**
@@ -154,11 +156,11 @@ export type history = {
   reason: string
   status: Status
   referedTo: string
-  feedback: string | null
-  rating: number | null
   regNo: string
   adminId: string
   parentId: string
+  adminFeedback: string | null
+  suggestion: string | null
 }
 
 /**
@@ -174,6 +176,18 @@ export type userlogin = {
   regNo: string | null
   adminId: string | null
   parentId: string | null
+}
+
+/**
+ * Model feedback
+ * 
+ */
+export type feedback = {
+  attentive: number | null
+  polite: number | null
+  rude: number | null
+  suggestion: string
+  hid: number
 }
 
 
@@ -224,31 +238,6 @@ export class PrismaClient<
     ? T['rejectOnNotFound']
     : false
       > {
-      /**
-       * @private
-       */
-      private fetcher;
-      /**
-       * @private
-       */
-      private readonly dmmf;
-      /**
-       * @private
-       */
-      private connectionPromise?;
-      /**
-       * @private
-       */
-      private disconnectionPromise?;
-      /**
-       * @private
-       */
-      private readonly engineConfig;
-      /**
-       * @private
-       */
-      private readonly measurePerformance;
-
     /**
    * ##  Prisma Client ʲˢ
    * 
@@ -341,7 +330,9 @@ export class PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
    */
-  $transaction<P extends PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): Promise<UnwrapTuple<P>>;
+  $transaction<P extends PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): Promise<UnwrapTuple<P>>
+
+  $transaction<R>(fn: (prisma: Prisma.TransactionClient) => Promise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): Promise<R>
 
       /**
    * `prisma.parent`: Exposes CRUD operations for the **parent** model.
@@ -462,6 +453,16 @@ export class PrismaClient<
     * ```
     */
   get userlogin(): Prisma.userloginDelegate<GlobalReject>;
+
+  /**
+   * `prisma.feedback`: Exposes CRUD operations for the **feedback** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Feedbacks
+    * const feedbacks = await prisma.feedback.findMany()
+    * ```
+    */
+  get feedback(): Prisma.feedbackDelegate<GlobalReject>;
 }
 
 export namespace Prisma {
@@ -503,8 +504,8 @@ export namespace Prisma {
 
 
   /**
-   * Prisma Client JS version: 4.6.1
-   * Query Engine version: 694eea289a8462c80264df36757e4fdc129b1b32
+   * Prisma Client JS version: 4.9.0
+   * Query Engine version: ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5
    */
   export type PrismaVersion = {
     client: string
@@ -668,9 +669,9 @@ export namespace Prisma {
     [K in keyof T]-?: {} extends Prisma__Pick<T, K> ? never : K
   }[keyof T]
 
-  export type TruthyKeys<T> = {
-    [key in keyof T]: T[key] extends false | undefined | null ? never : key
-  }[keyof T]
+  export type TruthyKeys<T> = keyof {
+    [K in keyof T as T[K] extends false | undefined | null ? never : K]: K
+  }
 
   export type TrueKeys<T> = TruthyKeys<Prisma__Pick<T, RequiredKeys<T>>>
 
@@ -868,19 +869,11 @@ export namespace Prisma {
 
   export type Keys<U extends Union> = U extends unknown ? keyof U : never
 
-  type Exact<A, W = unknown> = 
-  W extends unknown ? A extends Narrowable ? Cast<A, W> : Cast<
-  {[K in keyof A]: K extends keyof W ? Exact<A[K], W[K]> : never},
-  {[K in keyof W]: K extends keyof A ? Exact<A[K], W[K]> : W[K]}>
-  : never;
-
-  type Narrowable = string | number | boolean | bigint;
-
   type Cast<A, B> = A extends B ? A : B;
 
   export const type: unique symbol;
 
-  export function validator<V>(): <S>(select: Exact<S, V>) => S;
+  export function validator<V>(): <S>(select: runtime.Types.Utils.LegacyExact<S, V>) => S;
 
   /**
    * Used by group by
@@ -957,7 +950,8 @@ export namespace Prisma {
     meeting: 'meeting',
     waitinglist: 'waitinglist',
     history: 'history',
-    userlogin: 'userlogin'
+    userlogin: 'userlogin',
+    feedback: 'feedback'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -967,6 +961,7 @@ export namespace Prisma {
     db?: Datasource
   }
 
+  export type DefaultPrismaClient = PrismaClient
   export type RejectOnNotFound = boolean | ((error: Error) => Error)
   export type RejectPerModel = { [P in ModelName]?: RejectOnNotFound }
   export type RejectPerOperation =  { [P in "findUnique" | "findFirst"]?: RejectPerModel | RejectOnNotFound } 
@@ -1107,6 +1102,11 @@ export namespace Prisma {
   // tested in getLogLevel.test.ts
   export function getLogLevel(log: Array<LogLevel | LogDefinition>): LogLevel | undefined;
 
+  /**
+   * `PrismaClient` proxy available in interactive transactions.
+   */
+  export type TransactionClient = Omit<Prisma.DefaultPrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$use'>
+
   export type Datasource = {
     url?: string
   }
@@ -1133,7 +1133,7 @@ export namespace Prisma {
     waitinglist?: boolean | ParentCountOutputTypeCountWaitinglistArgs
   }
 
-  export type ParentCountOutputTypeGetPayload<S extends boolean | null | undefined | ParentCountOutputTypeArgs, U = keyof S> =
+  export type ParentCountOutputTypeGetPayload<S extends boolean | null | undefined | ParentCountOutputTypeArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? ParentCountOutputType :
     S extends undefined ? never :
@@ -1141,7 +1141,7 @@ export namespace Prisma {
     ? ParentCountOutputType 
     : S extends { select: any } & (ParentCountOutputTypeArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
+    [P in TruthyKeys<S['select']>]:
     P extends keyof ParentCountOutputType ? ParentCountOutputType[P] : never
   } 
       : ParentCountOutputType
@@ -1157,8 +1157,7 @@ export namespace Prisma {
   export type ParentCountOutputTypeArgs = {
     /**
      * Select specific fields to fetch from the ParentCountOutputType
-     * 
-    **/
+     */
     select?: ParentCountOutputTypeSelect | null
   }
 
@@ -1207,7 +1206,7 @@ export namespace Prisma {
     waitinglist?: boolean | AdminCountOutputTypeCountWaitinglistArgs
   }
 
-  export type AdminCountOutputTypeGetPayload<S extends boolean | null | undefined | AdminCountOutputTypeArgs, U = keyof S> =
+  export type AdminCountOutputTypeGetPayload<S extends boolean | null | undefined | AdminCountOutputTypeArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? AdminCountOutputType :
     S extends undefined ? never :
@@ -1215,7 +1214,7 @@ export namespace Prisma {
     ? AdminCountOutputType 
     : S extends { select: any } & (AdminCountOutputTypeArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
+    [P in TruthyKeys<S['select']>]:
     P extends keyof AdminCountOutputType ? AdminCountOutputType[P] : never
   } 
       : AdminCountOutputType
@@ -1231,8 +1230,7 @@ export namespace Prisma {
   export type AdminCountOutputTypeArgs = {
     /**
      * Select specific fields to fetch from the AdminCountOutputType
-     * 
-    **/
+     */
     select?: AdminCountOutputTypeSelect | null
   }
 
@@ -1293,7 +1291,7 @@ export namespace Prisma {
     waiinglist?: boolean | StudentCountOutputTypeCountWaiinglistArgs
   }
 
-  export type StudentCountOutputTypeGetPayload<S extends boolean | null | undefined | StudentCountOutputTypeArgs, U = keyof S> =
+  export type StudentCountOutputTypeGetPayload<S extends boolean | null | undefined | StudentCountOutputTypeArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? StudentCountOutputType :
     S extends undefined ? never :
@@ -1301,7 +1299,7 @@ export namespace Prisma {
     ? StudentCountOutputType 
     : S extends { select: any } & (StudentCountOutputTypeArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
+    [P in TruthyKeys<S['select']>]:
     P extends keyof StudentCountOutputType ? StudentCountOutputType[P] : never
   } 
       : StudentCountOutputType
@@ -1317,8 +1315,7 @@ export namespace Prisma {
   export type StudentCountOutputTypeArgs = {
     /**
      * Select specific fields to fetch from the StudentCountOutputType
-     * 
-    **/
+     */
     select?: StudentCountOutputTypeSelect | null
   }
 
@@ -1441,36 +1438,31 @@ export namespace Prisma {
   export type ParentAggregateArgs = {
     /**
      * Filter which parent to aggregate.
-     * 
-    **/
+     */
     where?: parentWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of parents to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<parentOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
-     * 
-    **/
+     */
     cursor?: parentWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` parents from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` parents.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
@@ -1506,7 +1498,7 @@ export namespace Prisma {
   export type ParentGroupByArgs = {
     where?: parentWhereInput
     orderBy?: Enumerable<parentOrderByWithAggregationInput>
-    by: Array<ParentScalarFieldEnum>
+    by: ParentScalarFieldEnum[]
     having?: parentScalarWhereWithAggregatesInput
     take?: number
     skip?: number
@@ -1547,54 +1539,54 @@ export namespace Prisma {
     lastName?: boolean
     email?: boolean
     address?: boolean
-    history?: boolean | historyFindManyArgs
-    meeting?: boolean | meetingFindManyArgs
+    history?: boolean | parent$historyArgs
+    meeting?: boolean | parent$meetingArgs
     userlogin?: boolean | userloginArgs
-    waitinglist?: boolean | waitinglistFindManyArgs
+    waitinglist?: boolean | parent$waitinglistArgs
     _count?: boolean | ParentCountOutputTypeArgs
   }
 
 
   export type parentInclude = {
-    history?: boolean | historyFindManyArgs
-    meeting?: boolean | meetingFindManyArgs
+    history?: boolean | parent$historyArgs
+    meeting?: boolean | parent$meetingArgs
     userlogin?: boolean | userloginArgs
-    waitinglist?: boolean | waitinglistFindManyArgs
+    waitinglist?: boolean | parent$waitinglistArgs
     _count?: boolean | ParentCountOutputTypeArgs
-  } 
+  }
 
-  export type parentGetPayload<S extends boolean | null | undefined | parentArgs, U = keyof S> =
+  export type parentGetPayload<S extends boolean | null | undefined | parentArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? parent :
     S extends undefined ? never :
     S extends { include: any } & (parentArgs | parentFindManyArgs)
     ? parent  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'history' ? Array < historyGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'meeting' ? Array < meetingGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'userlogin' ? userloginGetPayload<Exclude<S['include'], undefined | null>[P]> | null :
-        P extends 'waitinglist' ? Array < waitinglistGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends '_count' ? ParentCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'history' ? Array < historyGetPayload<S['include'][P]>>  :
+        P extends 'meeting' ? Array < meetingGetPayload<S['include'][P]>>  :
+        P extends 'userlogin' ? userloginGetPayload<S['include'][P]> | null :
+        P extends 'waitinglist' ? Array < waitinglistGetPayload<S['include'][P]>>  :
+        P extends '_count' ? ParentCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (parentArgs | parentFindManyArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'history' ? Array < historyGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'meeting' ? Array < meetingGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'userlogin' ? userloginGetPayload<Exclude<S['select'], undefined | null>[P]> | null :
-        P extends 'waitinglist' ? Array < waitinglistGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends '_count' ? ParentCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof parent ? parent[P] : never
+    [P in TruthyKeys<S['select']>]:
+        P extends 'history' ? Array < historyGetPayload<S['select'][P]>>  :
+        P extends 'meeting' ? Array < meetingGetPayload<S['select'][P]>>  :
+        P extends 'userlogin' ? userloginGetPayload<S['select'][P]> | null :
+        P extends 'waitinglist' ? Array < waitinglistGetPayload<S['select'][P]>>  :
+        P extends '_count' ? ParentCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof parent ? parent[P] : never
   } 
       : parent
 
 
-  type parentCountArgs = Merge<
+  type parentCountArgs = 
     Omit<parentFindManyArgs, 'select' | 'include'> & {
       select?: ParentCountAggregateInputType | true
     }
-  >
 
   export interface parentDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
     /**
      * Find zero or one Parent that matches the filter.
      * @param {parentFindUniqueArgs} args - Arguments to find a Parent
@@ -1609,6 +1601,22 @@ export namespace Prisma {
     findUnique<T extends parentFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, parentFindUniqueArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'parent'> extends True ? Prisma__parentClient<parentGetPayload<T>> : Prisma__parentClient<parentGetPayload<T> | null, null>
+
+    /**
+     * Find one Parent that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {parentFindUniqueOrThrowArgs} args - Arguments to find a Parent
+     * @example
+     * // Get one Parent
+     * const parent = await prisma.parent.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends parentFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, parentFindUniqueOrThrowArgs>
+    ): Prisma__parentClient<parentGetPayload<T>>
 
     /**
      * Find the first Parent that matches the filter.
@@ -1626,6 +1634,24 @@ export namespace Prisma {
     findFirst<T extends parentFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, parentFindFirstArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'parent'> extends True ? Prisma__parentClient<parentGetPayload<T>> : Prisma__parentClient<parentGetPayload<T> | null, null>
+
+    /**
+     * Find the first Parent that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {parentFindFirstOrThrowArgs} args - Arguments to find a Parent
+     * @example
+     * // Get one Parent
+     * const parent = await prisma.parent.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends parentFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, parentFindFirstOrThrowArgs>
+    ): Prisma__parentClient<parentGetPayload<T>>
 
     /**
      * Find zero or more Parents that matches the filter.
@@ -1770,40 +1796,6 @@ export namespace Prisma {
     **/
     upsert<T extends parentUpsertArgs>(
       args: SelectSubset<T, parentUpsertArgs>
-    ): Prisma__parentClient<parentGetPayload<T>>
-
-    /**
-     * Find one Parent that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {parentFindUniqueOrThrowArgs} args - Arguments to find a Parent
-     * @example
-     * // Get one Parent
-     * const parent = await prisma.parent.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends parentFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, parentFindUniqueOrThrowArgs>
-    ): Prisma__parentClient<parentGetPayload<T>>
-
-    /**
-     * Find the first Parent that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {parentFindFirstOrThrowArgs} args - Arguments to find a Parent
-     * @example
-     * // Get one Parent
-     * const parent = await prisma.parent.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends parentFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, parentFindFirstOrThrowArgs>
     ): Prisma__parentClient<parentGetPayload<T>>
 
     /**
@@ -1957,13 +1949,13 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    history<T extends historyFindManyArgs= {}>(args?: Subset<T, historyFindManyArgs>): PrismaPromise<Array<historyGetPayload<T>>| Null>;
+    history<T extends parent$historyArgs= {}>(args?: Subset<T, parent$historyArgs>): PrismaPromise<Array<historyGetPayload<T>>| Null>;
 
-    meeting<T extends meetingFindManyArgs= {}>(args?: Subset<T, meetingFindManyArgs>): PrismaPromise<Array<meetingGetPayload<T>>| Null>;
+    meeting<T extends parent$meetingArgs= {}>(args?: Subset<T, parent$meetingArgs>): PrismaPromise<Array<meetingGetPayload<T>>| Null>;
 
     userlogin<T extends userloginArgs= {}>(args?: Subset<T, userloginArgs>): Prisma__userloginClient<userloginGetPayload<T> | Null>;
 
-    waitinglist<T extends waitinglistFindManyArgs= {}>(args?: Subset<T, waitinglistFindManyArgs>): PrismaPromise<Array<waitinglistGetPayload<T>>| Null>;
+    waitinglist<T extends parent$waitinglistArgs= {}>(args?: Subset<T, parent$waitinglistArgs>): PrismaPromise<Array<waitinglistGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -1998,23 +1990,20 @@ export namespace Prisma {
   export type parentFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the parent
-     * 
-    **/
+     */
     select?: parentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: parentInclude | null
     /**
      * Filter, which parent to fetch.
-     * 
-    **/
+     */
     where: parentWhereUniqueInput
   }
 
   /**
-   * parent: findUnique
+   * parent findUnique
    */
   export interface parentFindUniqueArgs extends parentFindUniqueArgsBase {
    /**
@@ -2026,63 +2015,74 @@ export namespace Prisma {
       
 
   /**
+   * parent findUniqueOrThrow
+   */
+  export type parentFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the parent
+     */
+    select?: parentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: parentInclude | null
+    /**
+     * Filter, which parent to fetch.
+     */
+    where: parentWhereUniqueInput
+  }
+
+
+  /**
    * parent base type for findFirst actions
    */
   export type parentFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the parent
-     * 
-    **/
+     */
     select?: parentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: parentInclude | null
     /**
      * Filter, which parent to fetch.
-     * 
-    **/
+     */
     where?: parentWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of parents to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<parentOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the position for searching for parents.
-     * 
-    **/
+     */
     cursor?: parentWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` parents from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` parents.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
      * Filter by unique combinations of parents.
-     * 
-    **/
+     */
     distinct?: Enumerable<ParentScalarFieldEnum>
   }
 
   /**
-   * parent: findFirst
+   * parent findFirst
    */
   export interface parentFindFirstArgs extends parentFindFirstArgsBase {
    /**
@@ -2094,51 +2094,93 @@ export namespace Prisma {
       
 
   /**
-   * parent findMany
+   * parent findFirstOrThrow
    */
-  export type parentFindManyArgs = {
+  export type parentFindFirstOrThrowArgs = {
     /**
      * Select specific fields to fetch from the parent
-     * 
-    **/
+     */
     select?: parentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: parentInclude | null
     /**
-     * Filter, which parents to fetch.
-     * 
-    **/
+     * Filter, which parent to fetch.
+     */
     where?: parentWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of parents to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<parentOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing parents.
-     * 
-    **/
+     * Sets the position for searching for parents.
+     */
     cursor?: parentWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` parents from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` parents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-    **/
+     * Filter by unique combinations of parents.
+     */
+    distinct?: Enumerable<ParentScalarFieldEnum>
+  }
+
+
+  /**
+   * parent findMany
+   */
+  export type parentFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the parent
+     */
+    select?: parentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: parentInclude | null
+    /**
+     * Filter, which parents to fetch.
+     */
+    where?: parentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of parents to fetch.
+     */
+    orderBy?: Enumerable<parentOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing parents.
+     */
+    cursor?: parentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` parents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` parents.
+     */
     skip?: number
     distinct?: Enumerable<ParentScalarFieldEnum>
   }
@@ -2150,18 +2192,15 @@ export namespace Prisma {
   export type parentCreateArgs = {
     /**
      * Select specific fields to fetch from the parent
-     * 
-    **/
+     */
     select?: parentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: parentInclude | null
     /**
      * The data needed to create a parent.
-     * 
-    **/
+     */
     data: XOR<parentCreateInput, parentUncheckedCreateInput>
   }
 
@@ -2172,8 +2211,7 @@ export namespace Prisma {
   export type parentCreateManyArgs = {
     /**
      * The data used to create many parents.
-     * 
-    **/
+     */
     data: Enumerable<parentCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -2185,23 +2223,19 @@ export namespace Prisma {
   export type parentUpdateArgs = {
     /**
      * Select specific fields to fetch from the parent
-     * 
-    **/
+     */
     select?: parentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: parentInclude | null
     /**
      * The data needed to update a parent.
-     * 
-    **/
+     */
     data: XOR<parentUpdateInput, parentUncheckedUpdateInput>
     /**
      * Choose, which parent to update.
-     * 
-    **/
+     */
     where: parentWhereUniqueInput
   }
 
@@ -2212,13 +2246,11 @@ export namespace Prisma {
   export type parentUpdateManyArgs = {
     /**
      * The data used to update parents.
-     * 
-    **/
+     */
     data: XOR<parentUpdateManyMutationInput, parentUncheckedUpdateManyInput>
     /**
      * Filter which parents to update
-     * 
-    **/
+     */
     where?: parentWhereInput
   }
 
@@ -2229,28 +2261,23 @@ export namespace Prisma {
   export type parentUpsertArgs = {
     /**
      * Select specific fields to fetch from the parent
-     * 
-    **/
+     */
     select?: parentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: parentInclude | null
     /**
      * The filter to search for the parent to update in case it exists.
-     * 
-    **/
+     */
     where: parentWhereUniqueInput
     /**
      * In case the parent found by the `where` argument doesn't exist, create a new parent with this data.
-     * 
-    **/
+     */
     create: XOR<parentCreateInput, parentUncheckedCreateInput>
     /**
      * In case the parent was found with the provided `where` argument, update it with this data.
-     * 
-    **/
+     */
     update: XOR<parentUpdateInput, parentUncheckedUpdateInput>
   }
 
@@ -2261,18 +2288,15 @@ export namespace Prisma {
   export type parentDeleteArgs = {
     /**
      * Select specific fields to fetch from the parent
-     * 
-    **/
+     */
     select?: parentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: parentInclude | null
     /**
      * Filter which parent to delete.
-     * 
-    **/
+     */
     where: parentWhereUniqueInput
   }
 
@@ -2283,23 +2307,73 @@ export namespace Prisma {
   export type parentDeleteManyArgs = {
     /**
      * Filter which parents to delete
-     * 
-    **/
+     */
     where?: parentWhereInput
   }
 
 
   /**
-   * parent: findUniqueOrThrow
+   * parent.history
    */
-  export type parentFindUniqueOrThrowArgs = parentFindUniqueArgsBase
-      
+  export type parent$historyArgs = {
+    /**
+     * Select specific fields to fetch from the history
+     */
+    select?: historySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: historyInclude | null
+    where?: historyWhereInput
+    orderBy?: Enumerable<historyOrderByWithRelationInput>
+    cursor?: historyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<HistoryScalarFieldEnum>
+  }
+
 
   /**
-   * parent: findFirstOrThrow
+   * parent.meeting
    */
-  export type parentFindFirstOrThrowArgs = parentFindFirstArgsBase
-      
+  export type parent$meetingArgs = {
+    /**
+     * Select specific fields to fetch from the meeting
+     */
+    select?: meetingSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: meetingInclude | null
+    where?: meetingWhereInput
+    orderBy?: Enumerable<meetingOrderByWithRelationInput>
+    cursor?: meetingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<MeetingScalarFieldEnum>
+  }
+
+
+  /**
+   * parent.waitinglist
+   */
+  export type parent$waitinglistArgs = {
+    /**
+     * Select specific fields to fetch from the waitinglist
+     */
+    select?: waitinglistSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: waitinglistInclude | null
+    where?: waitinglistWhereInput
+    orderBy?: Enumerable<waitinglistOrderByWithRelationInput>
+    cursor?: waitinglistWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<WaitinglistScalarFieldEnum>
+  }
+
 
   /**
    * parent without action
@@ -2307,13 +2381,11 @@ export namespace Prisma {
   export type parentArgs = {
     /**
      * Select specific fields to fetch from the parent
-     * 
-    **/
+     */
     select?: parentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: parentInclude | null
   }
 
@@ -2408,36 +2480,31 @@ export namespace Prisma {
   export type AdminAggregateArgs = {
     /**
      * Filter which admin to aggregate.
-     * 
-    **/
+     */
     where?: adminWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of admins to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<adminOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
-     * 
-    **/
+     */
     cursor?: adminWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` admins from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` admins.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
@@ -2473,7 +2540,7 @@ export namespace Prisma {
   export type AdminGroupByArgs = {
     where?: adminWhereInput
     orderBy?: Enumerable<adminOrderByWithAggregationInput>
-    by: Array<AdminScalarFieldEnum>
+    by: AdminScalarFieldEnum[]
     having?: adminScalarWhereWithAggregatesInput
     take?: number
     skip?: number
@@ -2522,58 +2589,58 @@ export namespace Prisma {
     role?: boolean
     desgination?: boolean
     generalavail?: boolean
-    history?: boolean | historyFindManyArgs
-    meeting?: boolean | meetingFindManyArgs
-    timeslot?: boolean | timeslotFindManyArgs
+    history?: boolean | admin$historyArgs
+    meeting?: boolean | admin$meetingArgs
+    timeslot?: boolean | admin$timeslotArgs
     userlogin?: boolean | userloginArgs
-    waitinglist?: boolean | waitinglistFindManyArgs
+    waitinglist?: boolean | admin$waitinglistArgs
     _count?: boolean | AdminCountOutputTypeArgs
   }
 
 
   export type adminInclude = {
-    history?: boolean | historyFindManyArgs
-    meeting?: boolean | meetingFindManyArgs
-    timeslot?: boolean | timeslotFindManyArgs
+    history?: boolean | admin$historyArgs
+    meeting?: boolean | admin$meetingArgs
+    timeslot?: boolean | admin$timeslotArgs
     userlogin?: boolean | userloginArgs
-    waitinglist?: boolean | waitinglistFindManyArgs
+    waitinglist?: boolean | admin$waitinglistArgs
     _count?: boolean | AdminCountOutputTypeArgs
-  } 
+  }
 
-  export type adminGetPayload<S extends boolean | null | undefined | adminArgs, U = keyof S> =
+  export type adminGetPayload<S extends boolean | null | undefined | adminArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? admin :
     S extends undefined ? never :
     S extends { include: any } & (adminArgs | adminFindManyArgs)
     ? admin  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'history' ? Array < historyGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'meeting' ? Array < meetingGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'timeslot' ? Array < timeslotGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'userlogin' ? userloginGetPayload<Exclude<S['include'], undefined | null>[P]> | null :
-        P extends 'waitinglist' ? Array < waitinglistGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends '_count' ? AdminCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'history' ? Array < historyGetPayload<S['include'][P]>>  :
+        P extends 'meeting' ? Array < meetingGetPayload<S['include'][P]>>  :
+        P extends 'timeslot' ? Array < timeslotGetPayload<S['include'][P]>>  :
+        P extends 'userlogin' ? userloginGetPayload<S['include'][P]> | null :
+        P extends 'waitinglist' ? Array < waitinglistGetPayload<S['include'][P]>>  :
+        P extends '_count' ? AdminCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (adminArgs | adminFindManyArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'history' ? Array < historyGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'meeting' ? Array < meetingGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'timeslot' ? Array < timeslotGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'userlogin' ? userloginGetPayload<Exclude<S['select'], undefined | null>[P]> | null :
-        P extends 'waitinglist' ? Array < waitinglistGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends '_count' ? AdminCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof admin ? admin[P] : never
+    [P in TruthyKeys<S['select']>]:
+        P extends 'history' ? Array < historyGetPayload<S['select'][P]>>  :
+        P extends 'meeting' ? Array < meetingGetPayload<S['select'][P]>>  :
+        P extends 'timeslot' ? Array < timeslotGetPayload<S['select'][P]>>  :
+        P extends 'userlogin' ? userloginGetPayload<S['select'][P]> | null :
+        P extends 'waitinglist' ? Array < waitinglistGetPayload<S['select'][P]>>  :
+        P extends '_count' ? AdminCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof admin ? admin[P] : never
   } 
       : admin
 
 
-  type adminCountArgs = Merge<
+  type adminCountArgs = 
     Omit<adminFindManyArgs, 'select' | 'include'> & {
       select?: AdminCountAggregateInputType | true
     }
-  >
 
   export interface adminDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
     /**
      * Find zero or one Admin that matches the filter.
      * @param {adminFindUniqueArgs} args - Arguments to find a Admin
@@ -2588,6 +2655,22 @@ export namespace Prisma {
     findUnique<T extends adminFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, adminFindUniqueArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'admin'> extends True ? Prisma__adminClient<adminGetPayload<T>> : Prisma__adminClient<adminGetPayload<T> | null, null>
+
+    /**
+     * Find one Admin that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {adminFindUniqueOrThrowArgs} args - Arguments to find a Admin
+     * @example
+     * // Get one Admin
+     * const admin = await prisma.admin.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends adminFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, adminFindUniqueOrThrowArgs>
+    ): Prisma__adminClient<adminGetPayload<T>>
 
     /**
      * Find the first Admin that matches the filter.
@@ -2605,6 +2688,24 @@ export namespace Prisma {
     findFirst<T extends adminFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, adminFindFirstArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'admin'> extends True ? Prisma__adminClient<adminGetPayload<T>> : Prisma__adminClient<adminGetPayload<T> | null, null>
+
+    /**
+     * Find the first Admin that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {adminFindFirstOrThrowArgs} args - Arguments to find a Admin
+     * @example
+     * // Get one Admin
+     * const admin = await prisma.admin.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends adminFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, adminFindFirstOrThrowArgs>
+    ): Prisma__adminClient<adminGetPayload<T>>
 
     /**
      * Find zero or more Admins that matches the filter.
@@ -2749,40 +2850,6 @@ export namespace Prisma {
     **/
     upsert<T extends adminUpsertArgs>(
       args: SelectSubset<T, adminUpsertArgs>
-    ): Prisma__adminClient<adminGetPayload<T>>
-
-    /**
-     * Find one Admin that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {adminFindUniqueOrThrowArgs} args - Arguments to find a Admin
-     * @example
-     * // Get one Admin
-     * const admin = await prisma.admin.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends adminFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, adminFindUniqueOrThrowArgs>
-    ): Prisma__adminClient<adminGetPayload<T>>
-
-    /**
-     * Find the first Admin that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {adminFindFirstOrThrowArgs} args - Arguments to find a Admin
-     * @example
-     * // Get one Admin
-     * const admin = await prisma.admin.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends adminFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, adminFindFirstOrThrowArgs>
     ): Prisma__adminClient<adminGetPayload<T>>
 
     /**
@@ -2936,15 +3003,15 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    history<T extends historyFindManyArgs= {}>(args?: Subset<T, historyFindManyArgs>): PrismaPromise<Array<historyGetPayload<T>>| Null>;
+    history<T extends admin$historyArgs= {}>(args?: Subset<T, admin$historyArgs>): PrismaPromise<Array<historyGetPayload<T>>| Null>;
 
-    meeting<T extends meetingFindManyArgs= {}>(args?: Subset<T, meetingFindManyArgs>): PrismaPromise<Array<meetingGetPayload<T>>| Null>;
+    meeting<T extends admin$meetingArgs= {}>(args?: Subset<T, admin$meetingArgs>): PrismaPromise<Array<meetingGetPayload<T>>| Null>;
 
-    timeslot<T extends timeslotFindManyArgs= {}>(args?: Subset<T, timeslotFindManyArgs>): PrismaPromise<Array<timeslotGetPayload<T>>| Null>;
+    timeslot<T extends admin$timeslotArgs= {}>(args?: Subset<T, admin$timeslotArgs>): PrismaPromise<Array<timeslotGetPayload<T>>| Null>;
 
     userlogin<T extends userloginArgs= {}>(args?: Subset<T, userloginArgs>): Prisma__userloginClient<userloginGetPayload<T> | Null>;
 
-    waitinglist<T extends waitinglistFindManyArgs= {}>(args?: Subset<T, waitinglistFindManyArgs>): PrismaPromise<Array<waitinglistGetPayload<T>>| Null>;
+    waitinglist<T extends admin$waitinglistArgs= {}>(args?: Subset<T, admin$waitinglistArgs>): PrismaPromise<Array<waitinglistGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -2979,23 +3046,20 @@ export namespace Prisma {
   export type adminFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the admin
-     * 
-    **/
+     */
     select?: adminSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: adminInclude | null
     /**
      * Filter, which admin to fetch.
-     * 
-    **/
+     */
     where: adminWhereUniqueInput
   }
 
   /**
-   * admin: findUnique
+   * admin findUnique
    */
   export interface adminFindUniqueArgs extends adminFindUniqueArgsBase {
    /**
@@ -3007,63 +3071,74 @@ export namespace Prisma {
       
 
   /**
+   * admin findUniqueOrThrow
+   */
+  export type adminFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the admin
+     */
+    select?: adminSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: adminInclude | null
+    /**
+     * Filter, which admin to fetch.
+     */
+    where: adminWhereUniqueInput
+  }
+
+
+  /**
    * admin base type for findFirst actions
    */
   export type adminFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the admin
-     * 
-    **/
+     */
     select?: adminSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: adminInclude | null
     /**
      * Filter, which admin to fetch.
-     * 
-    **/
+     */
     where?: adminWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of admins to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<adminOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the position for searching for admins.
-     * 
-    **/
+     */
     cursor?: adminWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` admins from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` admins.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
      * Filter by unique combinations of admins.
-     * 
-    **/
+     */
     distinct?: Enumerable<AdminScalarFieldEnum>
   }
 
   /**
-   * admin: findFirst
+   * admin findFirst
    */
   export interface adminFindFirstArgs extends adminFindFirstArgsBase {
    /**
@@ -3075,51 +3150,93 @@ export namespace Prisma {
       
 
   /**
-   * admin findMany
+   * admin findFirstOrThrow
    */
-  export type adminFindManyArgs = {
+  export type adminFindFirstOrThrowArgs = {
     /**
      * Select specific fields to fetch from the admin
-     * 
-    **/
+     */
     select?: adminSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: adminInclude | null
     /**
-     * Filter, which admins to fetch.
-     * 
-    **/
+     * Filter, which admin to fetch.
+     */
     where?: adminWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of admins to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<adminOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing admins.
-     * 
-    **/
+     * Sets the position for searching for admins.
+     */
     cursor?: adminWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` admins from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` admins.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-    **/
+     * Filter by unique combinations of admins.
+     */
+    distinct?: Enumerable<AdminScalarFieldEnum>
+  }
+
+
+  /**
+   * admin findMany
+   */
+  export type adminFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the admin
+     */
+    select?: adminSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: adminInclude | null
+    /**
+     * Filter, which admins to fetch.
+     */
+    where?: adminWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of admins to fetch.
+     */
+    orderBy?: Enumerable<adminOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing admins.
+     */
+    cursor?: adminWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` admins from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` admins.
+     */
     skip?: number
     distinct?: Enumerable<AdminScalarFieldEnum>
   }
@@ -3131,18 +3248,15 @@ export namespace Prisma {
   export type adminCreateArgs = {
     /**
      * Select specific fields to fetch from the admin
-     * 
-    **/
+     */
     select?: adminSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: adminInclude | null
     /**
      * The data needed to create a admin.
-     * 
-    **/
+     */
     data: XOR<adminCreateInput, adminUncheckedCreateInput>
   }
 
@@ -3153,8 +3267,7 @@ export namespace Prisma {
   export type adminCreateManyArgs = {
     /**
      * The data used to create many admins.
-     * 
-    **/
+     */
     data: Enumerable<adminCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -3166,23 +3279,19 @@ export namespace Prisma {
   export type adminUpdateArgs = {
     /**
      * Select specific fields to fetch from the admin
-     * 
-    **/
+     */
     select?: adminSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: adminInclude | null
     /**
      * The data needed to update a admin.
-     * 
-    **/
+     */
     data: XOR<adminUpdateInput, adminUncheckedUpdateInput>
     /**
      * Choose, which admin to update.
-     * 
-    **/
+     */
     where: adminWhereUniqueInput
   }
 
@@ -3193,13 +3302,11 @@ export namespace Prisma {
   export type adminUpdateManyArgs = {
     /**
      * The data used to update admins.
-     * 
-    **/
+     */
     data: XOR<adminUpdateManyMutationInput, adminUncheckedUpdateManyInput>
     /**
      * Filter which admins to update
-     * 
-    **/
+     */
     where?: adminWhereInput
   }
 
@@ -3210,28 +3317,23 @@ export namespace Prisma {
   export type adminUpsertArgs = {
     /**
      * Select specific fields to fetch from the admin
-     * 
-    **/
+     */
     select?: adminSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: adminInclude | null
     /**
      * The filter to search for the admin to update in case it exists.
-     * 
-    **/
+     */
     where: adminWhereUniqueInput
     /**
      * In case the admin found by the `where` argument doesn't exist, create a new admin with this data.
-     * 
-    **/
+     */
     create: XOR<adminCreateInput, adminUncheckedCreateInput>
     /**
      * In case the admin was found with the provided `where` argument, update it with this data.
-     * 
-    **/
+     */
     update: XOR<adminUpdateInput, adminUncheckedUpdateInput>
   }
 
@@ -3242,18 +3344,15 @@ export namespace Prisma {
   export type adminDeleteArgs = {
     /**
      * Select specific fields to fetch from the admin
-     * 
-    **/
+     */
     select?: adminSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: adminInclude | null
     /**
      * Filter which admin to delete.
-     * 
-    **/
+     */
     where: adminWhereUniqueInput
   }
 
@@ -3264,23 +3363,94 @@ export namespace Prisma {
   export type adminDeleteManyArgs = {
     /**
      * Filter which admins to delete
-     * 
-    **/
+     */
     where?: adminWhereInput
   }
 
 
   /**
-   * admin: findUniqueOrThrow
+   * admin.history
    */
-  export type adminFindUniqueOrThrowArgs = adminFindUniqueArgsBase
-      
+  export type admin$historyArgs = {
+    /**
+     * Select specific fields to fetch from the history
+     */
+    select?: historySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: historyInclude | null
+    where?: historyWhereInput
+    orderBy?: Enumerable<historyOrderByWithRelationInput>
+    cursor?: historyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<HistoryScalarFieldEnum>
+  }
+
 
   /**
-   * admin: findFirstOrThrow
+   * admin.meeting
    */
-  export type adminFindFirstOrThrowArgs = adminFindFirstArgsBase
-      
+  export type admin$meetingArgs = {
+    /**
+     * Select specific fields to fetch from the meeting
+     */
+    select?: meetingSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: meetingInclude | null
+    where?: meetingWhereInput
+    orderBy?: Enumerable<meetingOrderByWithRelationInput>
+    cursor?: meetingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<MeetingScalarFieldEnum>
+  }
+
+
+  /**
+   * admin.timeslot
+   */
+  export type admin$timeslotArgs = {
+    /**
+     * Select specific fields to fetch from the timeslot
+     */
+    select?: timeslotSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: timeslotInclude | null
+    where?: timeslotWhereInput
+    orderBy?: Enumerable<timeslotOrderByWithRelationInput>
+    cursor?: timeslotWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<TimeslotScalarFieldEnum>
+  }
+
+
+  /**
+   * admin.waitinglist
+   */
+  export type admin$waitinglistArgs = {
+    /**
+     * Select specific fields to fetch from the waitinglist
+     */
+    select?: waitinglistSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: waitinglistInclude | null
+    where?: waitinglistWhereInput
+    orderBy?: Enumerable<waitinglistOrderByWithRelationInput>
+    cursor?: waitinglistWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<WaitinglistScalarFieldEnum>
+  }
+
 
   /**
    * admin without action
@@ -3288,13 +3458,11 @@ export namespace Prisma {
   export type adminArgs = {
     /**
      * Select specific fields to fetch from the admin
-     * 
-    **/
+     */
     select?: adminSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: adminInclude | null
   }
 
@@ -3323,29 +3491,29 @@ export namespace Prisma {
 
   export type TimeslotMinAggregateOutputType = {
     tsid: number | null
-    date: Date | null
     startTime: Date | null
     endTime: Date | null
     availibility: boolean | null
     adminId: string | null
+    day: string | null
   }
 
   export type TimeslotMaxAggregateOutputType = {
     tsid: number | null
-    date: Date | null
     startTime: Date | null
     endTime: Date | null
     availibility: boolean | null
     adminId: string | null
+    day: string | null
   }
 
   export type TimeslotCountAggregateOutputType = {
     tsid: number
-    date: number
     startTime: number
     endTime: number
     availibility: number
     adminId: number
+    day: number
     _all: number
   }
 
@@ -3360,65 +3528,60 @@ export namespace Prisma {
 
   export type TimeslotMinAggregateInputType = {
     tsid?: true
-    date?: true
     startTime?: true
     endTime?: true
     availibility?: true
     adminId?: true
+    day?: true
   }
 
   export type TimeslotMaxAggregateInputType = {
     tsid?: true
-    date?: true
     startTime?: true
     endTime?: true
     availibility?: true
     adminId?: true
+    day?: true
   }
 
   export type TimeslotCountAggregateInputType = {
     tsid?: true
-    date?: true
     startTime?: true
     endTime?: true
     availibility?: true
     adminId?: true
+    day?: true
     _all?: true
   }
 
   export type TimeslotAggregateArgs = {
     /**
      * Filter which timeslot to aggregate.
-     * 
-    **/
+     */
     where?: timeslotWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of timeslots to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<timeslotOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
-     * 
-    **/
+     */
     cursor?: timeslotWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` timeslots from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` timeslots.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
@@ -3466,7 +3629,7 @@ export namespace Prisma {
   export type TimeslotGroupByArgs = {
     where?: timeslotWhereInput
     orderBy?: Enumerable<timeslotOrderByWithAggregationInput>
-    by: Array<TimeslotScalarFieldEnum>
+    by: TimeslotScalarFieldEnum[]
     having?: timeslotScalarWhereWithAggregatesInput
     take?: number
     skip?: number
@@ -3480,11 +3643,11 @@ export namespace Prisma {
 
   export type TimeslotGroupByOutputType = {
     tsid: number
-    date: Date
     startTime: Date
     endTime: Date
     availibility: boolean
     adminId: string
+    day: string | null
     _count: TimeslotCountAggregateOutputType | null
     _avg: TimeslotAvgAggregateOutputType | null
     _sum: TimeslotSumAggregateOutputType | null
@@ -3508,47 +3671,47 @@ export namespace Prisma {
 
   export type timeslotSelect = {
     tsid?: boolean
-    date?: boolean
     startTime?: boolean
     endTime?: boolean
     availibility?: boolean
     adminId?: boolean
-    admin?: boolean | adminArgs
+    day?: boolean
     meeting?: boolean | meetingArgs
+    admin?: boolean | adminArgs
   }
 
 
   export type timeslotInclude = {
-    admin?: boolean | adminArgs
     meeting?: boolean | meetingArgs
-  } 
+    admin?: boolean | adminArgs
+  }
 
-  export type timeslotGetPayload<S extends boolean | null | undefined | timeslotArgs, U = keyof S> =
+  export type timeslotGetPayload<S extends boolean | null | undefined | timeslotArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? timeslot :
     S extends undefined ? never :
     S extends { include: any } & (timeslotArgs | timeslotFindManyArgs)
     ? timeslot  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'admin' ? adminGetPayload<Exclude<S['include'], undefined | null>[P]> :
-        P extends 'meeting' ? meetingGetPayload<Exclude<S['include'], undefined | null>[P]> | null :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'meeting' ? meetingGetPayload<S['include'][P]> | null :
+        P extends 'admin' ? adminGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (timeslotArgs | timeslotFindManyArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'admin' ? adminGetPayload<Exclude<S['select'], undefined | null>[P]> :
-        P extends 'meeting' ? meetingGetPayload<Exclude<S['select'], undefined | null>[P]> | null :  P extends keyof timeslot ? timeslot[P] : never
+    [P in TruthyKeys<S['select']>]:
+        P extends 'meeting' ? meetingGetPayload<S['select'][P]> | null :
+        P extends 'admin' ? adminGetPayload<S['select'][P]> :  P extends keyof timeslot ? timeslot[P] : never
   } 
       : timeslot
 
 
-  type timeslotCountArgs = Merge<
+  type timeslotCountArgs = 
     Omit<timeslotFindManyArgs, 'select' | 'include'> & {
       select?: TimeslotCountAggregateInputType | true
     }
-  >
 
   export interface timeslotDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
     /**
      * Find zero or one Timeslot that matches the filter.
      * @param {timeslotFindUniqueArgs} args - Arguments to find a Timeslot
@@ -3563,6 +3726,22 @@ export namespace Prisma {
     findUnique<T extends timeslotFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, timeslotFindUniqueArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'timeslot'> extends True ? Prisma__timeslotClient<timeslotGetPayload<T>> : Prisma__timeslotClient<timeslotGetPayload<T> | null, null>
+
+    /**
+     * Find one Timeslot that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {timeslotFindUniqueOrThrowArgs} args - Arguments to find a Timeslot
+     * @example
+     * // Get one Timeslot
+     * const timeslot = await prisma.timeslot.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends timeslotFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, timeslotFindUniqueOrThrowArgs>
+    ): Prisma__timeslotClient<timeslotGetPayload<T>>
 
     /**
      * Find the first Timeslot that matches the filter.
@@ -3580,6 +3759,24 @@ export namespace Prisma {
     findFirst<T extends timeslotFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, timeslotFindFirstArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'timeslot'> extends True ? Prisma__timeslotClient<timeslotGetPayload<T>> : Prisma__timeslotClient<timeslotGetPayload<T> | null, null>
+
+    /**
+     * Find the first Timeslot that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {timeslotFindFirstOrThrowArgs} args - Arguments to find a Timeslot
+     * @example
+     * // Get one Timeslot
+     * const timeslot = await prisma.timeslot.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends timeslotFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, timeslotFindFirstOrThrowArgs>
+    ): Prisma__timeslotClient<timeslotGetPayload<T>>
 
     /**
      * Find zero or more Timeslots that matches the filter.
@@ -3724,40 +3921,6 @@ export namespace Prisma {
     **/
     upsert<T extends timeslotUpsertArgs>(
       args: SelectSubset<T, timeslotUpsertArgs>
-    ): Prisma__timeslotClient<timeslotGetPayload<T>>
-
-    /**
-     * Find one Timeslot that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {timeslotFindUniqueOrThrowArgs} args - Arguments to find a Timeslot
-     * @example
-     * // Get one Timeslot
-     * const timeslot = await prisma.timeslot.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends timeslotFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, timeslotFindUniqueOrThrowArgs>
-    ): Prisma__timeslotClient<timeslotGetPayload<T>>
-
-    /**
-     * Find the first Timeslot that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {timeslotFindFirstOrThrowArgs} args - Arguments to find a Timeslot
-     * @example
-     * // Get one Timeslot
-     * const timeslot = await prisma.timeslot.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends timeslotFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, timeslotFindFirstOrThrowArgs>
     ): Prisma__timeslotClient<timeslotGetPayload<T>>
 
     /**
@@ -3911,9 +4074,9 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    admin<T extends adminArgs= {}>(args?: Subset<T, adminArgs>): Prisma__adminClient<adminGetPayload<T> | Null>;
-
     meeting<T extends meetingArgs= {}>(args?: Subset<T, meetingArgs>): Prisma__meetingClient<meetingGetPayload<T> | Null>;
+
+    admin<T extends adminArgs= {}>(args?: Subset<T, adminArgs>): Prisma__adminClient<adminGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -3948,23 +4111,20 @@ export namespace Prisma {
   export type timeslotFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the timeslot
-     * 
-    **/
+     */
     select?: timeslotSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: timeslotInclude | null
     /**
      * Filter, which timeslot to fetch.
-     * 
-    **/
+     */
     where: timeslotWhereUniqueInput
   }
 
   /**
-   * timeslot: findUnique
+   * timeslot findUnique
    */
   export interface timeslotFindUniqueArgs extends timeslotFindUniqueArgsBase {
    /**
@@ -3976,63 +4136,74 @@ export namespace Prisma {
       
 
   /**
+   * timeslot findUniqueOrThrow
+   */
+  export type timeslotFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the timeslot
+     */
+    select?: timeslotSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: timeslotInclude | null
+    /**
+     * Filter, which timeslot to fetch.
+     */
+    where: timeslotWhereUniqueInput
+  }
+
+
+  /**
    * timeslot base type for findFirst actions
    */
   export type timeslotFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the timeslot
-     * 
-    **/
+     */
     select?: timeslotSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: timeslotInclude | null
     /**
      * Filter, which timeslot to fetch.
-     * 
-    **/
+     */
     where?: timeslotWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of timeslots to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<timeslotOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the position for searching for timeslots.
-     * 
-    **/
+     */
     cursor?: timeslotWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` timeslots from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` timeslots.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
      * Filter by unique combinations of timeslots.
-     * 
-    **/
+     */
     distinct?: Enumerable<TimeslotScalarFieldEnum>
   }
 
   /**
-   * timeslot: findFirst
+   * timeslot findFirst
    */
   export interface timeslotFindFirstArgs extends timeslotFindFirstArgsBase {
    /**
@@ -4044,51 +4215,93 @@ export namespace Prisma {
       
 
   /**
-   * timeslot findMany
+   * timeslot findFirstOrThrow
    */
-  export type timeslotFindManyArgs = {
+  export type timeslotFindFirstOrThrowArgs = {
     /**
      * Select specific fields to fetch from the timeslot
-     * 
-    **/
+     */
     select?: timeslotSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: timeslotInclude | null
     /**
-     * Filter, which timeslots to fetch.
-     * 
-    **/
+     * Filter, which timeslot to fetch.
+     */
     where?: timeslotWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of timeslots to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<timeslotOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing timeslots.
-     * 
-    **/
+     * Sets the position for searching for timeslots.
+     */
     cursor?: timeslotWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` timeslots from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` timeslots.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-    **/
+     * Filter by unique combinations of timeslots.
+     */
+    distinct?: Enumerable<TimeslotScalarFieldEnum>
+  }
+
+
+  /**
+   * timeslot findMany
+   */
+  export type timeslotFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the timeslot
+     */
+    select?: timeslotSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: timeslotInclude | null
+    /**
+     * Filter, which timeslots to fetch.
+     */
+    where?: timeslotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of timeslots to fetch.
+     */
+    orderBy?: Enumerable<timeslotOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing timeslots.
+     */
+    cursor?: timeslotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` timeslots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` timeslots.
+     */
     skip?: number
     distinct?: Enumerable<TimeslotScalarFieldEnum>
   }
@@ -4100,18 +4313,15 @@ export namespace Prisma {
   export type timeslotCreateArgs = {
     /**
      * Select specific fields to fetch from the timeslot
-     * 
-    **/
+     */
     select?: timeslotSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: timeslotInclude | null
     /**
      * The data needed to create a timeslot.
-     * 
-    **/
+     */
     data: XOR<timeslotCreateInput, timeslotUncheckedCreateInput>
   }
 
@@ -4122,8 +4332,7 @@ export namespace Prisma {
   export type timeslotCreateManyArgs = {
     /**
      * The data used to create many timeslots.
-     * 
-    **/
+     */
     data: Enumerable<timeslotCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -4135,23 +4344,19 @@ export namespace Prisma {
   export type timeslotUpdateArgs = {
     /**
      * Select specific fields to fetch from the timeslot
-     * 
-    **/
+     */
     select?: timeslotSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: timeslotInclude | null
     /**
      * The data needed to update a timeslot.
-     * 
-    **/
+     */
     data: XOR<timeslotUpdateInput, timeslotUncheckedUpdateInput>
     /**
      * Choose, which timeslot to update.
-     * 
-    **/
+     */
     where: timeslotWhereUniqueInput
   }
 
@@ -4162,13 +4367,11 @@ export namespace Prisma {
   export type timeslotUpdateManyArgs = {
     /**
      * The data used to update timeslots.
-     * 
-    **/
+     */
     data: XOR<timeslotUpdateManyMutationInput, timeslotUncheckedUpdateManyInput>
     /**
      * Filter which timeslots to update
-     * 
-    **/
+     */
     where?: timeslotWhereInput
   }
 
@@ -4179,28 +4382,23 @@ export namespace Prisma {
   export type timeslotUpsertArgs = {
     /**
      * Select specific fields to fetch from the timeslot
-     * 
-    **/
+     */
     select?: timeslotSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: timeslotInclude | null
     /**
      * The filter to search for the timeslot to update in case it exists.
-     * 
-    **/
+     */
     where: timeslotWhereUniqueInput
     /**
      * In case the timeslot found by the `where` argument doesn't exist, create a new timeslot with this data.
-     * 
-    **/
+     */
     create: XOR<timeslotCreateInput, timeslotUncheckedCreateInput>
     /**
      * In case the timeslot was found with the provided `where` argument, update it with this data.
-     * 
-    **/
+     */
     update: XOR<timeslotUpdateInput, timeslotUncheckedUpdateInput>
   }
 
@@ -4211,18 +4409,15 @@ export namespace Prisma {
   export type timeslotDeleteArgs = {
     /**
      * Select specific fields to fetch from the timeslot
-     * 
-    **/
+     */
     select?: timeslotSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: timeslotInclude | null
     /**
      * Filter which timeslot to delete.
-     * 
-    **/
+     */
     where: timeslotWhereUniqueInput
   }
 
@@ -4233,23 +4428,10 @@ export namespace Prisma {
   export type timeslotDeleteManyArgs = {
     /**
      * Filter which timeslots to delete
-     * 
-    **/
+     */
     where?: timeslotWhereInput
   }
 
-
-  /**
-   * timeslot: findUniqueOrThrow
-   */
-  export type timeslotFindUniqueOrThrowArgs = timeslotFindUniqueArgsBase
-      
-
-  /**
-   * timeslot: findFirstOrThrow
-   */
-  export type timeslotFindFirstOrThrowArgs = timeslotFindFirstArgsBase
-      
 
   /**
    * timeslot without action
@@ -4257,13 +4439,11 @@ export namespace Prisma {
   export type timeslotArgs = {
     /**
      * Select specific fields to fetch from the timeslot
-     * 
-    **/
+     */
     select?: timeslotSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: timeslotInclude | null
   }
 
@@ -4364,36 +4544,31 @@ export namespace Prisma {
   export type StudentAggregateArgs = {
     /**
      * Filter which student to aggregate.
-     * 
-    **/
+     */
     where?: studentWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of students to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<studentOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
-     * 
-    **/
+     */
     cursor?: studentWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` students from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` students.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
@@ -4429,7 +4604,7 @@ export namespace Prisma {
   export type StudentGroupByArgs = {
     where?: studentWhereInput
     orderBy?: Enumerable<studentOrderByWithAggregationInput>
-    by: Array<StudentScalarFieldEnum>
+    by: StudentScalarFieldEnum[]
     having?: studentScalarWhereWithAggregatesInput
     take?: number
     skip?: number
@@ -4480,70 +4655,70 @@ export namespace Prisma {
     class?: boolean
     section?: boolean
     parentId?: boolean
-    attendance?: boolean | attendanceFindManyArgs
+    attendance?: boolean | student$attendanceArgs
     cgpa?: boolean | cgpaArgs
-    disciplinary?: boolean | disciplinaryFindManyArgs
-    failedsubject?: boolean | failedsubjectFindManyArgs
-    history?: boolean | historyFindManyArgs
-    meeting?: boolean | meetingFindManyArgs
+    disciplinary?: boolean | student$disciplinaryArgs
+    failedsubject?: boolean | student$failedsubjectArgs
+    history?: boolean | student$historyArgs
+    meeting?: boolean | student$meetingArgs
     userlogin?: boolean | userloginArgs
-    waiinglist?: boolean | waitinglistFindManyArgs
+    waiinglist?: boolean | student$waiinglistArgs
     _count?: boolean | StudentCountOutputTypeArgs
   }
 
 
   export type studentInclude = {
-    attendance?: boolean | attendanceFindManyArgs
+    attendance?: boolean | student$attendanceArgs
     cgpa?: boolean | cgpaArgs
-    disciplinary?: boolean | disciplinaryFindManyArgs
-    failedsubject?: boolean | failedsubjectFindManyArgs
-    history?: boolean | historyFindManyArgs
-    meeting?: boolean | meetingFindManyArgs
+    disciplinary?: boolean | student$disciplinaryArgs
+    failedsubject?: boolean | student$failedsubjectArgs
+    history?: boolean | student$historyArgs
+    meeting?: boolean | student$meetingArgs
     userlogin?: boolean | userloginArgs
-    waiinglist?: boolean | waitinglistFindManyArgs
+    waiinglist?: boolean | student$waiinglistArgs
     _count?: boolean | StudentCountOutputTypeArgs
-  } 
+  }
 
-  export type studentGetPayload<S extends boolean | null | undefined | studentArgs, U = keyof S> =
+  export type studentGetPayload<S extends boolean | null | undefined | studentArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? student :
     S extends undefined ? never :
     S extends { include: any } & (studentArgs | studentFindManyArgs)
     ? student  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'attendance' ? Array < attendanceGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'cgpa' ? cgpaGetPayload<Exclude<S['include'], undefined | null>[P]> | null :
-        P extends 'disciplinary' ? Array < disciplinaryGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'failedsubject' ? Array < failedsubjectGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'history' ? Array < historyGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'meeting' ? Array < meetingGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'userlogin' ? userloginGetPayload<Exclude<S['include'], undefined | null>[P]> | null :
-        P extends 'waiinglist' ? Array < waitinglistGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends '_count' ? StudentCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'attendance' ? Array < attendanceGetPayload<S['include'][P]>>  :
+        P extends 'cgpa' ? cgpaGetPayload<S['include'][P]> | null :
+        P extends 'disciplinary' ? Array < disciplinaryGetPayload<S['include'][P]>>  :
+        P extends 'failedsubject' ? Array < failedsubjectGetPayload<S['include'][P]>>  :
+        P extends 'history' ? Array < historyGetPayload<S['include'][P]>>  :
+        P extends 'meeting' ? Array < meetingGetPayload<S['include'][P]>>  :
+        P extends 'userlogin' ? userloginGetPayload<S['include'][P]> | null :
+        P extends 'waiinglist' ? Array < waitinglistGetPayload<S['include'][P]>>  :
+        P extends '_count' ? StudentCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (studentArgs | studentFindManyArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'attendance' ? Array < attendanceGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'cgpa' ? cgpaGetPayload<Exclude<S['select'], undefined | null>[P]> | null :
-        P extends 'disciplinary' ? Array < disciplinaryGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'failedsubject' ? Array < failedsubjectGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'history' ? Array < historyGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'meeting' ? Array < meetingGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'userlogin' ? userloginGetPayload<Exclude<S['select'], undefined | null>[P]> | null :
-        P extends 'waiinglist' ? Array < waitinglistGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends '_count' ? StudentCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof student ? student[P] : never
+    [P in TruthyKeys<S['select']>]:
+        P extends 'attendance' ? Array < attendanceGetPayload<S['select'][P]>>  :
+        P extends 'cgpa' ? cgpaGetPayload<S['select'][P]> | null :
+        P extends 'disciplinary' ? Array < disciplinaryGetPayload<S['select'][P]>>  :
+        P extends 'failedsubject' ? Array < failedsubjectGetPayload<S['select'][P]>>  :
+        P extends 'history' ? Array < historyGetPayload<S['select'][P]>>  :
+        P extends 'meeting' ? Array < meetingGetPayload<S['select'][P]>>  :
+        P extends 'userlogin' ? userloginGetPayload<S['select'][P]> | null :
+        P extends 'waiinglist' ? Array < waitinglistGetPayload<S['select'][P]>>  :
+        P extends '_count' ? StudentCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof student ? student[P] : never
   } 
       : student
 
 
-  type studentCountArgs = Merge<
+  type studentCountArgs = 
     Omit<studentFindManyArgs, 'select' | 'include'> & {
       select?: StudentCountAggregateInputType | true
     }
-  >
 
   export interface studentDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
     /**
      * Find zero or one Student that matches the filter.
      * @param {studentFindUniqueArgs} args - Arguments to find a Student
@@ -4558,6 +4733,22 @@ export namespace Prisma {
     findUnique<T extends studentFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, studentFindUniqueArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'student'> extends True ? Prisma__studentClient<studentGetPayload<T>> : Prisma__studentClient<studentGetPayload<T> | null, null>
+
+    /**
+     * Find one Student that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {studentFindUniqueOrThrowArgs} args - Arguments to find a Student
+     * @example
+     * // Get one Student
+     * const student = await prisma.student.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends studentFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, studentFindUniqueOrThrowArgs>
+    ): Prisma__studentClient<studentGetPayload<T>>
 
     /**
      * Find the first Student that matches the filter.
@@ -4575,6 +4766,24 @@ export namespace Prisma {
     findFirst<T extends studentFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, studentFindFirstArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'student'> extends True ? Prisma__studentClient<studentGetPayload<T>> : Prisma__studentClient<studentGetPayload<T> | null, null>
+
+    /**
+     * Find the first Student that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {studentFindFirstOrThrowArgs} args - Arguments to find a Student
+     * @example
+     * // Get one Student
+     * const student = await prisma.student.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends studentFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, studentFindFirstOrThrowArgs>
+    ): Prisma__studentClient<studentGetPayload<T>>
 
     /**
      * Find zero or more Students that matches the filter.
@@ -4719,40 +4928,6 @@ export namespace Prisma {
     **/
     upsert<T extends studentUpsertArgs>(
       args: SelectSubset<T, studentUpsertArgs>
-    ): Prisma__studentClient<studentGetPayload<T>>
-
-    /**
-     * Find one Student that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {studentFindUniqueOrThrowArgs} args - Arguments to find a Student
-     * @example
-     * // Get one Student
-     * const student = await prisma.student.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends studentFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, studentFindUniqueOrThrowArgs>
-    ): Prisma__studentClient<studentGetPayload<T>>
-
-    /**
-     * Find the first Student that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {studentFindFirstOrThrowArgs} args - Arguments to find a Student
-     * @example
-     * // Get one Student
-     * const student = await prisma.student.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends studentFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, studentFindFirstOrThrowArgs>
     ): Prisma__studentClient<studentGetPayload<T>>
 
     /**
@@ -4906,21 +5081,21 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    attendance<T extends attendanceFindManyArgs= {}>(args?: Subset<T, attendanceFindManyArgs>): PrismaPromise<Array<attendanceGetPayload<T>>| Null>;
+    attendance<T extends student$attendanceArgs= {}>(args?: Subset<T, student$attendanceArgs>): PrismaPromise<Array<attendanceGetPayload<T>>| Null>;
 
     cgpa<T extends cgpaArgs= {}>(args?: Subset<T, cgpaArgs>): Prisma__cgpaClient<cgpaGetPayload<T> | Null>;
 
-    disciplinary<T extends disciplinaryFindManyArgs= {}>(args?: Subset<T, disciplinaryFindManyArgs>): PrismaPromise<Array<disciplinaryGetPayload<T>>| Null>;
+    disciplinary<T extends student$disciplinaryArgs= {}>(args?: Subset<T, student$disciplinaryArgs>): PrismaPromise<Array<disciplinaryGetPayload<T>>| Null>;
 
-    failedsubject<T extends failedsubjectFindManyArgs= {}>(args?: Subset<T, failedsubjectFindManyArgs>): PrismaPromise<Array<failedsubjectGetPayload<T>>| Null>;
+    failedsubject<T extends student$failedsubjectArgs= {}>(args?: Subset<T, student$failedsubjectArgs>): PrismaPromise<Array<failedsubjectGetPayload<T>>| Null>;
 
-    history<T extends historyFindManyArgs= {}>(args?: Subset<T, historyFindManyArgs>): PrismaPromise<Array<historyGetPayload<T>>| Null>;
+    history<T extends student$historyArgs= {}>(args?: Subset<T, student$historyArgs>): PrismaPromise<Array<historyGetPayload<T>>| Null>;
 
-    meeting<T extends meetingFindManyArgs= {}>(args?: Subset<T, meetingFindManyArgs>): PrismaPromise<Array<meetingGetPayload<T>>| Null>;
+    meeting<T extends student$meetingArgs= {}>(args?: Subset<T, student$meetingArgs>): PrismaPromise<Array<meetingGetPayload<T>>| Null>;
 
     userlogin<T extends userloginArgs= {}>(args?: Subset<T, userloginArgs>): Prisma__userloginClient<userloginGetPayload<T> | Null>;
 
-    waiinglist<T extends waitinglistFindManyArgs= {}>(args?: Subset<T, waitinglistFindManyArgs>): PrismaPromise<Array<waitinglistGetPayload<T>>| Null>;
+    waiinglist<T extends student$waiinglistArgs= {}>(args?: Subset<T, student$waiinglistArgs>): PrismaPromise<Array<waitinglistGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -4955,23 +5130,20 @@ export namespace Prisma {
   export type studentFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the student
-     * 
-    **/
+     */
     select?: studentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: studentInclude | null
     /**
      * Filter, which student to fetch.
-     * 
-    **/
+     */
     where: studentWhereUniqueInput
   }
 
   /**
-   * student: findUnique
+   * student findUnique
    */
   export interface studentFindUniqueArgs extends studentFindUniqueArgsBase {
    /**
@@ -4983,63 +5155,74 @@ export namespace Prisma {
       
 
   /**
+   * student findUniqueOrThrow
+   */
+  export type studentFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the student
+     */
+    select?: studentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: studentInclude | null
+    /**
+     * Filter, which student to fetch.
+     */
+    where: studentWhereUniqueInput
+  }
+
+
+  /**
    * student base type for findFirst actions
    */
   export type studentFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the student
-     * 
-    **/
+     */
     select?: studentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: studentInclude | null
     /**
      * Filter, which student to fetch.
-     * 
-    **/
+     */
     where?: studentWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of students to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<studentOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the position for searching for students.
-     * 
-    **/
+     */
     cursor?: studentWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` students from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` students.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
      * Filter by unique combinations of students.
-     * 
-    **/
+     */
     distinct?: Enumerable<StudentScalarFieldEnum>
   }
 
   /**
-   * student: findFirst
+   * student findFirst
    */
   export interface studentFindFirstArgs extends studentFindFirstArgsBase {
    /**
@@ -5051,51 +5234,93 @@ export namespace Prisma {
       
 
   /**
-   * student findMany
+   * student findFirstOrThrow
    */
-  export type studentFindManyArgs = {
+  export type studentFindFirstOrThrowArgs = {
     /**
      * Select specific fields to fetch from the student
-     * 
-    **/
+     */
     select?: studentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: studentInclude | null
     /**
-     * Filter, which students to fetch.
-     * 
-    **/
+     * Filter, which student to fetch.
+     */
     where?: studentWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of students to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<studentOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing students.
-     * 
-    **/
+     * Sets the position for searching for students.
+     */
     cursor?: studentWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` students from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` students.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-    **/
+     * Filter by unique combinations of students.
+     */
+    distinct?: Enumerable<StudentScalarFieldEnum>
+  }
+
+
+  /**
+   * student findMany
+   */
+  export type studentFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the student
+     */
+    select?: studentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: studentInclude | null
+    /**
+     * Filter, which students to fetch.
+     */
+    where?: studentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of students to fetch.
+     */
+    orderBy?: Enumerable<studentOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing students.
+     */
+    cursor?: studentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` students from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` students.
+     */
     skip?: number
     distinct?: Enumerable<StudentScalarFieldEnum>
   }
@@ -5107,18 +5332,15 @@ export namespace Prisma {
   export type studentCreateArgs = {
     /**
      * Select specific fields to fetch from the student
-     * 
-    **/
+     */
     select?: studentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: studentInclude | null
     /**
      * The data needed to create a student.
-     * 
-    **/
+     */
     data: XOR<studentCreateInput, studentUncheckedCreateInput>
   }
 
@@ -5129,8 +5351,7 @@ export namespace Prisma {
   export type studentCreateManyArgs = {
     /**
      * The data used to create many students.
-     * 
-    **/
+     */
     data: Enumerable<studentCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -5142,23 +5363,19 @@ export namespace Prisma {
   export type studentUpdateArgs = {
     /**
      * Select specific fields to fetch from the student
-     * 
-    **/
+     */
     select?: studentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: studentInclude | null
     /**
      * The data needed to update a student.
-     * 
-    **/
+     */
     data: XOR<studentUpdateInput, studentUncheckedUpdateInput>
     /**
      * Choose, which student to update.
-     * 
-    **/
+     */
     where: studentWhereUniqueInput
   }
 
@@ -5169,13 +5386,11 @@ export namespace Prisma {
   export type studentUpdateManyArgs = {
     /**
      * The data used to update students.
-     * 
-    **/
+     */
     data: XOR<studentUpdateManyMutationInput, studentUncheckedUpdateManyInput>
     /**
      * Filter which students to update
-     * 
-    **/
+     */
     where?: studentWhereInput
   }
 
@@ -5186,28 +5401,23 @@ export namespace Prisma {
   export type studentUpsertArgs = {
     /**
      * Select specific fields to fetch from the student
-     * 
-    **/
+     */
     select?: studentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: studentInclude | null
     /**
      * The filter to search for the student to update in case it exists.
-     * 
-    **/
+     */
     where: studentWhereUniqueInput
     /**
      * In case the student found by the `where` argument doesn't exist, create a new student with this data.
-     * 
-    **/
+     */
     create: XOR<studentCreateInput, studentUncheckedCreateInput>
     /**
      * In case the student was found with the provided `where` argument, update it with this data.
-     * 
-    **/
+     */
     update: XOR<studentUpdateInput, studentUncheckedUpdateInput>
   }
 
@@ -5218,18 +5428,15 @@ export namespace Prisma {
   export type studentDeleteArgs = {
     /**
      * Select specific fields to fetch from the student
-     * 
-    **/
+     */
     select?: studentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: studentInclude | null
     /**
      * Filter which student to delete.
-     * 
-    **/
+     */
     where: studentWhereUniqueInput
   }
 
@@ -5240,23 +5447,136 @@ export namespace Prisma {
   export type studentDeleteManyArgs = {
     /**
      * Filter which students to delete
-     * 
-    **/
+     */
     where?: studentWhereInput
   }
 
 
   /**
-   * student: findUniqueOrThrow
+   * student.attendance
    */
-  export type studentFindUniqueOrThrowArgs = studentFindUniqueArgsBase
-      
+  export type student$attendanceArgs = {
+    /**
+     * Select specific fields to fetch from the attendance
+     */
+    select?: attendanceSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: attendanceInclude | null
+    where?: attendanceWhereInput
+    orderBy?: Enumerable<attendanceOrderByWithRelationInput>
+    cursor?: attendanceWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<AttendanceScalarFieldEnum>
+  }
+
 
   /**
-   * student: findFirstOrThrow
+   * student.disciplinary
    */
-  export type studentFindFirstOrThrowArgs = studentFindFirstArgsBase
-      
+  export type student$disciplinaryArgs = {
+    /**
+     * Select specific fields to fetch from the disciplinary
+     */
+    select?: disciplinarySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: disciplinaryInclude | null
+    where?: disciplinaryWhereInput
+    orderBy?: Enumerable<disciplinaryOrderByWithRelationInput>
+    cursor?: disciplinaryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<DisciplinaryScalarFieldEnum>
+  }
+
+
+  /**
+   * student.failedsubject
+   */
+  export type student$failedsubjectArgs = {
+    /**
+     * Select specific fields to fetch from the failedsubject
+     */
+    select?: failedsubjectSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: failedsubjectInclude | null
+    where?: failedsubjectWhereInput
+    orderBy?: Enumerable<failedsubjectOrderByWithRelationInput>
+    cursor?: failedsubjectWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<FailedsubjectScalarFieldEnum>
+  }
+
+
+  /**
+   * student.history
+   */
+  export type student$historyArgs = {
+    /**
+     * Select specific fields to fetch from the history
+     */
+    select?: historySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: historyInclude | null
+    where?: historyWhereInput
+    orderBy?: Enumerable<historyOrderByWithRelationInput>
+    cursor?: historyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<HistoryScalarFieldEnum>
+  }
+
+
+  /**
+   * student.meeting
+   */
+  export type student$meetingArgs = {
+    /**
+     * Select specific fields to fetch from the meeting
+     */
+    select?: meetingSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: meetingInclude | null
+    where?: meetingWhereInput
+    orderBy?: Enumerable<meetingOrderByWithRelationInput>
+    cursor?: meetingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<MeetingScalarFieldEnum>
+  }
+
+
+  /**
+   * student.waiinglist
+   */
+  export type student$waiinglistArgs = {
+    /**
+     * Select specific fields to fetch from the waitinglist
+     */
+    select?: waitinglistSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: waitinglistInclude | null
+    where?: waitinglistWhereInput
+    orderBy?: Enumerable<waitinglistOrderByWithRelationInput>
+    cursor?: waitinglistWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<WaitinglistScalarFieldEnum>
+  }
+
 
   /**
    * student without action
@@ -5264,13 +5584,11 @@ export namespace Prisma {
   export type studentArgs = {
     /**
      * Select specific fields to fetch from the student
-     * 
-    **/
+     */
     select?: studentSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: studentInclude | null
   }
 
@@ -5357,36 +5675,31 @@ export namespace Prisma {
   export type AttendanceAggregateArgs = {
     /**
      * Filter which attendance to aggregate.
-     * 
-    **/
+     */
     where?: attendanceWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of attendances to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<attendanceOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
-     * 
-    **/
+     */
     cursor?: attendanceWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` attendances from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` attendances.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
@@ -5434,7 +5747,7 @@ export namespace Prisma {
   export type AttendanceGroupByArgs = {
     where?: attendanceWhereInput
     orderBy?: Enumerable<attendanceOrderByWithAggregationInput>
-    by: Array<AttendanceScalarFieldEnum>
+    by: AttendanceScalarFieldEnum[]
     having?: attendanceScalarWhereWithAggregatesInput
     take?: number
     skip?: number
@@ -5483,32 +5796,32 @@ export namespace Prisma {
 
   export type attendanceInclude = {
     student?: boolean | studentArgs
-  } 
+  }
 
-  export type attendanceGetPayload<S extends boolean | null | undefined | attendanceArgs, U = keyof S> =
+  export type attendanceGetPayload<S extends boolean | null | undefined | attendanceArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? attendance :
     S extends undefined ? never :
     S extends { include: any } & (attendanceArgs | attendanceFindManyArgs)
     ? attendance  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'student' ? studentGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'student' ? studentGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (attendanceArgs | attendanceFindManyArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'student' ? studentGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof attendance ? attendance[P] : never
+    [P in TruthyKeys<S['select']>]:
+        P extends 'student' ? studentGetPayload<S['select'][P]> :  P extends keyof attendance ? attendance[P] : never
   } 
       : attendance
 
 
-  type attendanceCountArgs = Merge<
+  type attendanceCountArgs = 
     Omit<attendanceFindManyArgs, 'select' | 'include'> & {
       select?: AttendanceCountAggregateInputType | true
     }
-  >
 
   export interface attendanceDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
     /**
      * Find zero or one Attendance that matches the filter.
      * @param {attendanceFindUniqueArgs} args - Arguments to find a Attendance
@@ -5523,6 +5836,22 @@ export namespace Prisma {
     findUnique<T extends attendanceFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, attendanceFindUniqueArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'attendance'> extends True ? Prisma__attendanceClient<attendanceGetPayload<T>> : Prisma__attendanceClient<attendanceGetPayload<T> | null, null>
+
+    /**
+     * Find one Attendance that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {attendanceFindUniqueOrThrowArgs} args - Arguments to find a Attendance
+     * @example
+     * // Get one Attendance
+     * const attendance = await prisma.attendance.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends attendanceFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, attendanceFindUniqueOrThrowArgs>
+    ): Prisma__attendanceClient<attendanceGetPayload<T>>
 
     /**
      * Find the first Attendance that matches the filter.
@@ -5540,6 +5869,24 @@ export namespace Prisma {
     findFirst<T extends attendanceFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, attendanceFindFirstArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'attendance'> extends True ? Prisma__attendanceClient<attendanceGetPayload<T>> : Prisma__attendanceClient<attendanceGetPayload<T> | null, null>
+
+    /**
+     * Find the first Attendance that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {attendanceFindFirstOrThrowArgs} args - Arguments to find a Attendance
+     * @example
+     * // Get one Attendance
+     * const attendance = await prisma.attendance.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends attendanceFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, attendanceFindFirstOrThrowArgs>
+    ): Prisma__attendanceClient<attendanceGetPayload<T>>
 
     /**
      * Find zero or more Attendances that matches the filter.
@@ -5684,40 +6031,6 @@ export namespace Prisma {
     **/
     upsert<T extends attendanceUpsertArgs>(
       args: SelectSubset<T, attendanceUpsertArgs>
-    ): Prisma__attendanceClient<attendanceGetPayload<T>>
-
-    /**
-     * Find one Attendance that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {attendanceFindUniqueOrThrowArgs} args - Arguments to find a Attendance
-     * @example
-     * // Get one Attendance
-     * const attendance = await prisma.attendance.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends attendanceFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, attendanceFindUniqueOrThrowArgs>
-    ): Prisma__attendanceClient<attendanceGetPayload<T>>
-
-    /**
-     * Find the first Attendance that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {attendanceFindFirstOrThrowArgs} args - Arguments to find a Attendance
-     * @example
-     * // Get one Attendance
-     * const attendance = await prisma.attendance.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends attendanceFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, attendanceFindFirstOrThrowArgs>
     ): Prisma__attendanceClient<attendanceGetPayload<T>>
 
     /**
@@ -5906,23 +6219,20 @@ export namespace Prisma {
   export type attendanceFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the attendance
-     * 
-    **/
+     */
     select?: attendanceSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: attendanceInclude | null
     /**
      * Filter, which attendance to fetch.
-     * 
-    **/
+     */
     where: attendanceWhereUniqueInput
   }
 
   /**
-   * attendance: findUnique
+   * attendance findUnique
    */
   export interface attendanceFindUniqueArgs extends attendanceFindUniqueArgsBase {
    /**
@@ -5934,63 +6244,74 @@ export namespace Prisma {
       
 
   /**
+   * attendance findUniqueOrThrow
+   */
+  export type attendanceFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the attendance
+     */
+    select?: attendanceSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: attendanceInclude | null
+    /**
+     * Filter, which attendance to fetch.
+     */
+    where: attendanceWhereUniqueInput
+  }
+
+
+  /**
    * attendance base type for findFirst actions
    */
   export type attendanceFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the attendance
-     * 
-    **/
+     */
     select?: attendanceSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: attendanceInclude | null
     /**
      * Filter, which attendance to fetch.
-     * 
-    **/
+     */
     where?: attendanceWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of attendances to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<attendanceOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the position for searching for attendances.
-     * 
-    **/
+     */
     cursor?: attendanceWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` attendances from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` attendances.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
      * Filter by unique combinations of attendances.
-     * 
-    **/
+     */
     distinct?: Enumerable<AttendanceScalarFieldEnum>
   }
 
   /**
-   * attendance: findFirst
+   * attendance findFirst
    */
   export interface attendanceFindFirstArgs extends attendanceFindFirstArgsBase {
    /**
@@ -6002,51 +6323,93 @@ export namespace Prisma {
       
 
   /**
-   * attendance findMany
+   * attendance findFirstOrThrow
    */
-  export type attendanceFindManyArgs = {
+  export type attendanceFindFirstOrThrowArgs = {
     /**
      * Select specific fields to fetch from the attendance
-     * 
-    **/
+     */
     select?: attendanceSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: attendanceInclude | null
     /**
-     * Filter, which attendances to fetch.
-     * 
-    **/
+     * Filter, which attendance to fetch.
+     */
     where?: attendanceWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of attendances to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<attendanceOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing attendances.
-     * 
-    **/
+     * Sets the position for searching for attendances.
+     */
     cursor?: attendanceWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` attendances from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` attendances.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-    **/
+     * Filter by unique combinations of attendances.
+     */
+    distinct?: Enumerable<AttendanceScalarFieldEnum>
+  }
+
+
+  /**
+   * attendance findMany
+   */
+  export type attendanceFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the attendance
+     */
+    select?: attendanceSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: attendanceInclude | null
+    /**
+     * Filter, which attendances to fetch.
+     */
+    where?: attendanceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of attendances to fetch.
+     */
+    orderBy?: Enumerable<attendanceOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing attendances.
+     */
+    cursor?: attendanceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` attendances from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` attendances.
+     */
     skip?: number
     distinct?: Enumerable<AttendanceScalarFieldEnum>
   }
@@ -6058,18 +6421,15 @@ export namespace Prisma {
   export type attendanceCreateArgs = {
     /**
      * Select specific fields to fetch from the attendance
-     * 
-    **/
+     */
     select?: attendanceSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: attendanceInclude | null
     /**
      * The data needed to create a attendance.
-     * 
-    **/
+     */
     data: XOR<attendanceCreateInput, attendanceUncheckedCreateInput>
   }
 
@@ -6080,8 +6440,7 @@ export namespace Prisma {
   export type attendanceCreateManyArgs = {
     /**
      * The data used to create many attendances.
-     * 
-    **/
+     */
     data: Enumerable<attendanceCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -6093,23 +6452,19 @@ export namespace Prisma {
   export type attendanceUpdateArgs = {
     /**
      * Select specific fields to fetch from the attendance
-     * 
-    **/
+     */
     select?: attendanceSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: attendanceInclude | null
     /**
      * The data needed to update a attendance.
-     * 
-    **/
+     */
     data: XOR<attendanceUpdateInput, attendanceUncheckedUpdateInput>
     /**
      * Choose, which attendance to update.
-     * 
-    **/
+     */
     where: attendanceWhereUniqueInput
   }
 
@@ -6120,13 +6475,11 @@ export namespace Prisma {
   export type attendanceUpdateManyArgs = {
     /**
      * The data used to update attendances.
-     * 
-    **/
+     */
     data: XOR<attendanceUpdateManyMutationInput, attendanceUncheckedUpdateManyInput>
     /**
      * Filter which attendances to update
-     * 
-    **/
+     */
     where?: attendanceWhereInput
   }
 
@@ -6137,28 +6490,23 @@ export namespace Prisma {
   export type attendanceUpsertArgs = {
     /**
      * Select specific fields to fetch from the attendance
-     * 
-    **/
+     */
     select?: attendanceSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: attendanceInclude | null
     /**
      * The filter to search for the attendance to update in case it exists.
-     * 
-    **/
+     */
     where: attendanceWhereUniqueInput
     /**
      * In case the attendance found by the `where` argument doesn't exist, create a new attendance with this data.
-     * 
-    **/
+     */
     create: XOR<attendanceCreateInput, attendanceUncheckedCreateInput>
     /**
      * In case the attendance was found with the provided `where` argument, update it with this data.
-     * 
-    **/
+     */
     update: XOR<attendanceUpdateInput, attendanceUncheckedUpdateInput>
   }
 
@@ -6169,18 +6517,15 @@ export namespace Prisma {
   export type attendanceDeleteArgs = {
     /**
      * Select specific fields to fetch from the attendance
-     * 
-    **/
+     */
     select?: attendanceSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: attendanceInclude | null
     /**
      * Filter which attendance to delete.
-     * 
-    **/
+     */
     where: attendanceWhereUniqueInput
   }
 
@@ -6191,23 +6536,10 @@ export namespace Prisma {
   export type attendanceDeleteManyArgs = {
     /**
      * Filter which attendances to delete
-     * 
-    **/
+     */
     where?: attendanceWhereInput
   }
 
-
-  /**
-   * attendance: findUniqueOrThrow
-   */
-  export type attendanceFindUniqueOrThrowArgs = attendanceFindUniqueArgsBase
-      
-
-  /**
-   * attendance: findFirstOrThrow
-   */
-  export type attendanceFindFirstOrThrowArgs = attendanceFindFirstArgsBase
-      
 
   /**
    * attendance without action
@@ -6215,13 +6547,11 @@ export namespace Prisma {
   export type attendanceArgs = {
     /**
      * Select specific fields to fetch from the attendance
-     * 
-    **/
+     */
     select?: attendanceSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: attendanceInclude | null
   }
 
@@ -6302,36 +6632,31 @@ export namespace Prisma {
   export type CgpaAggregateArgs = {
     /**
      * Filter which cgpa to aggregate.
-     * 
-    **/
+     */
     where?: cgpaWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of cgpas to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<cgpaOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
-     * 
-    **/
+     */
     cursor?: cgpaWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` cgpas from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` cgpas.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
@@ -6379,7 +6704,7 @@ export namespace Prisma {
   export type CgpaGroupByArgs = {
     where?: cgpaWhereInput
     orderBy?: Enumerable<cgpaOrderByWithAggregationInput>
-    by: Array<CgpaScalarFieldEnum>
+    by: CgpaScalarFieldEnum[]
     having?: cgpaScalarWhereWithAggregatesInput
     take?: number
     skip?: number
@@ -6426,32 +6751,32 @@ export namespace Prisma {
 
   export type cgpaInclude = {
     student?: boolean | studentArgs
-  } 
+  }
 
-  export type cgpaGetPayload<S extends boolean | null | undefined | cgpaArgs, U = keyof S> =
+  export type cgpaGetPayload<S extends boolean | null | undefined | cgpaArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? cgpa :
     S extends undefined ? never :
     S extends { include: any } & (cgpaArgs | cgpaFindManyArgs)
     ? cgpa  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'student' ? studentGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'student' ? studentGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (cgpaArgs | cgpaFindManyArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'student' ? studentGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof cgpa ? cgpa[P] : never
+    [P in TruthyKeys<S['select']>]:
+        P extends 'student' ? studentGetPayload<S['select'][P]> :  P extends keyof cgpa ? cgpa[P] : never
   } 
       : cgpa
 
 
-  type cgpaCountArgs = Merge<
+  type cgpaCountArgs = 
     Omit<cgpaFindManyArgs, 'select' | 'include'> & {
       select?: CgpaCountAggregateInputType | true
     }
-  >
 
   export interface cgpaDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
     /**
      * Find zero or one Cgpa that matches the filter.
      * @param {cgpaFindUniqueArgs} args - Arguments to find a Cgpa
@@ -6466,6 +6791,22 @@ export namespace Prisma {
     findUnique<T extends cgpaFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, cgpaFindUniqueArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'cgpa'> extends True ? Prisma__cgpaClient<cgpaGetPayload<T>> : Prisma__cgpaClient<cgpaGetPayload<T> | null, null>
+
+    /**
+     * Find one Cgpa that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {cgpaFindUniqueOrThrowArgs} args - Arguments to find a Cgpa
+     * @example
+     * // Get one Cgpa
+     * const cgpa = await prisma.cgpa.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends cgpaFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, cgpaFindUniqueOrThrowArgs>
+    ): Prisma__cgpaClient<cgpaGetPayload<T>>
 
     /**
      * Find the first Cgpa that matches the filter.
@@ -6483,6 +6824,24 @@ export namespace Prisma {
     findFirst<T extends cgpaFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, cgpaFindFirstArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'cgpa'> extends True ? Prisma__cgpaClient<cgpaGetPayload<T>> : Prisma__cgpaClient<cgpaGetPayload<T> | null, null>
+
+    /**
+     * Find the first Cgpa that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cgpaFindFirstOrThrowArgs} args - Arguments to find a Cgpa
+     * @example
+     * // Get one Cgpa
+     * const cgpa = await prisma.cgpa.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends cgpaFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, cgpaFindFirstOrThrowArgs>
+    ): Prisma__cgpaClient<cgpaGetPayload<T>>
 
     /**
      * Find zero or more Cgpas that matches the filter.
@@ -6627,40 +6986,6 @@ export namespace Prisma {
     **/
     upsert<T extends cgpaUpsertArgs>(
       args: SelectSubset<T, cgpaUpsertArgs>
-    ): Prisma__cgpaClient<cgpaGetPayload<T>>
-
-    /**
-     * Find one Cgpa that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {cgpaFindUniqueOrThrowArgs} args - Arguments to find a Cgpa
-     * @example
-     * // Get one Cgpa
-     * const cgpa = await prisma.cgpa.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends cgpaFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, cgpaFindUniqueOrThrowArgs>
-    ): Prisma__cgpaClient<cgpaGetPayload<T>>
-
-    /**
-     * Find the first Cgpa that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {cgpaFindFirstOrThrowArgs} args - Arguments to find a Cgpa
-     * @example
-     * // Get one Cgpa
-     * const cgpa = await prisma.cgpa.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends cgpaFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, cgpaFindFirstOrThrowArgs>
     ): Prisma__cgpaClient<cgpaGetPayload<T>>
 
     /**
@@ -6849,23 +7174,20 @@ export namespace Prisma {
   export type cgpaFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the cgpa
-     * 
-    **/
+     */
     select?: cgpaSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: cgpaInclude | null
     /**
      * Filter, which cgpa to fetch.
-     * 
-    **/
+     */
     where: cgpaWhereUniqueInput
   }
 
   /**
-   * cgpa: findUnique
+   * cgpa findUnique
    */
   export interface cgpaFindUniqueArgs extends cgpaFindUniqueArgsBase {
    /**
@@ -6877,63 +7199,74 @@ export namespace Prisma {
       
 
   /**
+   * cgpa findUniqueOrThrow
+   */
+  export type cgpaFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: cgpaInclude | null
+    /**
+     * Filter, which cgpa to fetch.
+     */
+    where: cgpaWhereUniqueInput
+  }
+
+
+  /**
    * cgpa base type for findFirst actions
    */
   export type cgpaFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the cgpa
-     * 
-    **/
+     */
     select?: cgpaSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: cgpaInclude | null
     /**
      * Filter, which cgpa to fetch.
-     * 
-    **/
+     */
     where?: cgpaWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of cgpas to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<cgpaOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the position for searching for cgpas.
-     * 
-    **/
+     */
     cursor?: cgpaWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` cgpas from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` cgpas.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
      * Filter by unique combinations of cgpas.
-     * 
-    **/
+     */
     distinct?: Enumerable<CgpaScalarFieldEnum>
   }
 
   /**
-   * cgpa: findFirst
+   * cgpa findFirst
    */
   export interface cgpaFindFirstArgs extends cgpaFindFirstArgsBase {
    /**
@@ -6945,51 +7278,93 @@ export namespace Prisma {
       
 
   /**
-   * cgpa findMany
+   * cgpa findFirstOrThrow
    */
-  export type cgpaFindManyArgs = {
+  export type cgpaFindFirstOrThrowArgs = {
     /**
      * Select specific fields to fetch from the cgpa
-     * 
-    **/
+     */
     select?: cgpaSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: cgpaInclude | null
     /**
-     * Filter, which cgpas to fetch.
-     * 
-    **/
+     * Filter, which cgpa to fetch.
+     */
     where?: cgpaWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of cgpas to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<cgpaOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing cgpas.
-     * 
-    **/
+     * Sets the position for searching for cgpas.
+     */
     cursor?: cgpaWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` cgpas from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` cgpas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-    **/
+     * Filter by unique combinations of cgpas.
+     */
+    distinct?: Enumerable<CgpaScalarFieldEnum>
+  }
+
+
+  /**
+   * cgpa findMany
+   */
+  export type cgpaFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: cgpaInclude | null
+    /**
+     * Filter, which cgpas to fetch.
+     */
+    where?: cgpaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cgpas to fetch.
+     */
+    orderBy?: Enumerable<cgpaOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing cgpas.
+     */
+    cursor?: cgpaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cgpas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cgpas.
+     */
     skip?: number
     distinct?: Enumerable<CgpaScalarFieldEnum>
   }
@@ -7001,18 +7376,15 @@ export namespace Prisma {
   export type cgpaCreateArgs = {
     /**
      * Select specific fields to fetch from the cgpa
-     * 
-    **/
+     */
     select?: cgpaSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: cgpaInclude | null
     /**
      * The data needed to create a cgpa.
-     * 
-    **/
+     */
     data: XOR<cgpaCreateInput, cgpaUncheckedCreateInput>
   }
 
@@ -7023,8 +7395,7 @@ export namespace Prisma {
   export type cgpaCreateManyArgs = {
     /**
      * The data used to create many cgpas.
-     * 
-    **/
+     */
     data: Enumerable<cgpaCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -7036,23 +7407,19 @@ export namespace Prisma {
   export type cgpaUpdateArgs = {
     /**
      * Select specific fields to fetch from the cgpa
-     * 
-    **/
+     */
     select?: cgpaSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: cgpaInclude | null
     /**
      * The data needed to update a cgpa.
-     * 
-    **/
+     */
     data: XOR<cgpaUpdateInput, cgpaUncheckedUpdateInput>
     /**
      * Choose, which cgpa to update.
-     * 
-    **/
+     */
     where: cgpaWhereUniqueInput
   }
 
@@ -7063,13 +7430,11 @@ export namespace Prisma {
   export type cgpaUpdateManyArgs = {
     /**
      * The data used to update cgpas.
-     * 
-    **/
+     */
     data: XOR<cgpaUpdateManyMutationInput, cgpaUncheckedUpdateManyInput>
     /**
      * Filter which cgpas to update
-     * 
-    **/
+     */
     where?: cgpaWhereInput
   }
 
@@ -7080,28 +7445,23 @@ export namespace Prisma {
   export type cgpaUpsertArgs = {
     /**
      * Select specific fields to fetch from the cgpa
-     * 
-    **/
+     */
     select?: cgpaSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: cgpaInclude | null
     /**
      * The filter to search for the cgpa to update in case it exists.
-     * 
-    **/
+     */
     where: cgpaWhereUniqueInput
     /**
      * In case the cgpa found by the `where` argument doesn't exist, create a new cgpa with this data.
-     * 
-    **/
+     */
     create: XOR<cgpaCreateInput, cgpaUncheckedCreateInput>
     /**
      * In case the cgpa was found with the provided `where` argument, update it with this data.
-     * 
-    **/
+     */
     update: XOR<cgpaUpdateInput, cgpaUncheckedUpdateInput>
   }
 
@@ -7112,18 +7472,15 @@ export namespace Prisma {
   export type cgpaDeleteArgs = {
     /**
      * Select specific fields to fetch from the cgpa
-     * 
-    **/
+     */
     select?: cgpaSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: cgpaInclude | null
     /**
      * Filter which cgpa to delete.
-     * 
-    **/
+     */
     where: cgpaWhereUniqueInput
   }
 
@@ -7134,23 +7491,10 @@ export namespace Prisma {
   export type cgpaDeleteManyArgs = {
     /**
      * Filter which cgpas to delete
-     * 
-    **/
+     */
     where?: cgpaWhereInput
   }
 
-
-  /**
-   * cgpa: findUniqueOrThrow
-   */
-  export type cgpaFindUniqueOrThrowArgs = cgpaFindUniqueArgsBase
-      
-
-  /**
-   * cgpa: findFirstOrThrow
-   */
-  export type cgpaFindFirstOrThrowArgs = cgpaFindFirstArgsBase
-      
 
   /**
    * cgpa without action
@@ -7158,13 +7502,11 @@ export namespace Prisma {
   export type cgpaArgs = {
     /**
      * Select specific fields to fetch from the cgpa
-     * 
-    **/
+     */
     select?: cgpaSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: cgpaInclude | null
   }
 
@@ -7241,36 +7583,31 @@ export namespace Prisma {
   export type DisciplinaryAggregateArgs = {
     /**
      * Filter which disciplinary to aggregate.
-     * 
-    **/
+     */
     where?: disciplinaryWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of disciplinaries to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<disciplinaryOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
-     * 
-    **/
+     */
     cursor?: disciplinaryWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` disciplinaries from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` disciplinaries.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
@@ -7318,7 +7655,7 @@ export namespace Prisma {
   export type DisciplinaryGroupByArgs = {
     where?: disciplinaryWhereInput
     orderBy?: Enumerable<disciplinaryOrderByWithAggregationInput>
-    by: Array<DisciplinaryScalarFieldEnum>
+    by: DisciplinaryScalarFieldEnum[]
     having?: disciplinaryScalarWhereWithAggregatesInput
     take?: number
     skip?: number
@@ -7365,32 +7702,32 @@ export namespace Prisma {
 
   export type disciplinaryInclude = {
     student?: boolean | studentArgs
-  } 
+  }
 
-  export type disciplinaryGetPayload<S extends boolean | null | undefined | disciplinaryArgs, U = keyof S> =
+  export type disciplinaryGetPayload<S extends boolean | null | undefined | disciplinaryArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? disciplinary :
     S extends undefined ? never :
     S extends { include: any } & (disciplinaryArgs | disciplinaryFindManyArgs)
     ? disciplinary  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'student' ? studentGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'student' ? studentGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (disciplinaryArgs | disciplinaryFindManyArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'student' ? studentGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof disciplinary ? disciplinary[P] : never
+    [P in TruthyKeys<S['select']>]:
+        P extends 'student' ? studentGetPayload<S['select'][P]> :  P extends keyof disciplinary ? disciplinary[P] : never
   } 
       : disciplinary
 
 
-  type disciplinaryCountArgs = Merge<
+  type disciplinaryCountArgs = 
     Omit<disciplinaryFindManyArgs, 'select' | 'include'> & {
       select?: DisciplinaryCountAggregateInputType | true
     }
-  >
 
   export interface disciplinaryDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
     /**
      * Find zero or one Disciplinary that matches the filter.
      * @param {disciplinaryFindUniqueArgs} args - Arguments to find a Disciplinary
@@ -7405,6 +7742,22 @@ export namespace Prisma {
     findUnique<T extends disciplinaryFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, disciplinaryFindUniqueArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'disciplinary'> extends True ? Prisma__disciplinaryClient<disciplinaryGetPayload<T>> : Prisma__disciplinaryClient<disciplinaryGetPayload<T> | null, null>
+
+    /**
+     * Find one Disciplinary that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {disciplinaryFindUniqueOrThrowArgs} args - Arguments to find a Disciplinary
+     * @example
+     * // Get one Disciplinary
+     * const disciplinary = await prisma.disciplinary.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends disciplinaryFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, disciplinaryFindUniqueOrThrowArgs>
+    ): Prisma__disciplinaryClient<disciplinaryGetPayload<T>>
 
     /**
      * Find the first Disciplinary that matches the filter.
@@ -7422,6 +7775,24 @@ export namespace Prisma {
     findFirst<T extends disciplinaryFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, disciplinaryFindFirstArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'disciplinary'> extends True ? Prisma__disciplinaryClient<disciplinaryGetPayload<T>> : Prisma__disciplinaryClient<disciplinaryGetPayload<T> | null, null>
+
+    /**
+     * Find the first Disciplinary that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {disciplinaryFindFirstOrThrowArgs} args - Arguments to find a Disciplinary
+     * @example
+     * // Get one Disciplinary
+     * const disciplinary = await prisma.disciplinary.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends disciplinaryFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, disciplinaryFindFirstOrThrowArgs>
+    ): Prisma__disciplinaryClient<disciplinaryGetPayload<T>>
 
     /**
      * Find zero or more Disciplinaries that matches the filter.
@@ -7566,40 +7937,6 @@ export namespace Prisma {
     **/
     upsert<T extends disciplinaryUpsertArgs>(
       args: SelectSubset<T, disciplinaryUpsertArgs>
-    ): Prisma__disciplinaryClient<disciplinaryGetPayload<T>>
-
-    /**
-     * Find one Disciplinary that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {disciplinaryFindUniqueOrThrowArgs} args - Arguments to find a Disciplinary
-     * @example
-     * // Get one Disciplinary
-     * const disciplinary = await prisma.disciplinary.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends disciplinaryFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, disciplinaryFindUniqueOrThrowArgs>
-    ): Prisma__disciplinaryClient<disciplinaryGetPayload<T>>
-
-    /**
-     * Find the first Disciplinary that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {disciplinaryFindFirstOrThrowArgs} args - Arguments to find a Disciplinary
-     * @example
-     * // Get one Disciplinary
-     * const disciplinary = await prisma.disciplinary.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends disciplinaryFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, disciplinaryFindFirstOrThrowArgs>
     ): Prisma__disciplinaryClient<disciplinaryGetPayload<T>>
 
     /**
@@ -7788,23 +8125,20 @@ export namespace Prisma {
   export type disciplinaryFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the disciplinary
-     * 
-    **/
+     */
     select?: disciplinarySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: disciplinaryInclude | null
     /**
      * Filter, which disciplinary to fetch.
-     * 
-    **/
+     */
     where: disciplinaryWhereUniqueInput
   }
 
   /**
-   * disciplinary: findUnique
+   * disciplinary findUnique
    */
   export interface disciplinaryFindUniqueArgs extends disciplinaryFindUniqueArgsBase {
    /**
@@ -7816,63 +8150,74 @@ export namespace Prisma {
       
 
   /**
+   * disciplinary findUniqueOrThrow
+   */
+  export type disciplinaryFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the disciplinary
+     */
+    select?: disciplinarySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: disciplinaryInclude | null
+    /**
+     * Filter, which disciplinary to fetch.
+     */
+    where: disciplinaryWhereUniqueInput
+  }
+
+
+  /**
    * disciplinary base type for findFirst actions
    */
   export type disciplinaryFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the disciplinary
-     * 
-    **/
+     */
     select?: disciplinarySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: disciplinaryInclude | null
     /**
      * Filter, which disciplinary to fetch.
-     * 
-    **/
+     */
     where?: disciplinaryWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of disciplinaries to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<disciplinaryOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the position for searching for disciplinaries.
-     * 
-    **/
+     */
     cursor?: disciplinaryWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` disciplinaries from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` disciplinaries.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
      * Filter by unique combinations of disciplinaries.
-     * 
-    **/
+     */
     distinct?: Enumerable<DisciplinaryScalarFieldEnum>
   }
 
   /**
-   * disciplinary: findFirst
+   * disciplinary findFirst
    */
   export interface disciplinaryFindFirstArgs extends disciplinaryFindFirstArgsBase {
    /**
@@ -7884,51 +8229,93 @@ export namespace Prisma {
       
 
   /**
-   * disciplinary findMany
+   * disciplinary findFirstOrThrow
    */
-  export type disciplinaryFindManyArgs = {
+  export type disciplinaryFindFirstOrThrowArgs = {
     /**
      * Select specific fields to fetch from the disciplinary
-     * 
-    **/
+     */
     select?: disciplinarySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: disciplinaryInclude | null
     /**
-     * Filter, which disciplinaries to fetch.
-     * 
-    **/
+     * Filter, which disciplinary to fetch.
+     */
     where?: disciplinaryWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of disciplinaries to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<disciplinaryOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing disciplinaries.
-     * 
-    **/
+     * Sets the position for searching for disciplinaries.
+     */
     cursor?: disciplinaryWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` disciplinaries from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` disciplinaries.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-    **/
+     * Filter by unique combinations of disciplinaries.
+     */
+    distinct?: Enumerable<DisciplinaryScalarFieldEnum>
+  }
+
+
+  /**
+   * disciplinary findMany
+   */
+  export type disciplinaryFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the disciplinary
+     */
+    select?: disciplinarySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: disciplinaryInclude | null
+    /**
+     * Filter, which disciplinaries to fetch.
+     */
+    where?: disciplinaryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of disciplinaries to fetch.
+     */
+    orderBy?: Enumerable<disciplinaryOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing disciplinaries.
+     */
+    cursor?: disciplinaryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` disciplinaries from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` disciplinaries.
+     */
     skip?: number
     distinct?: Enumerable<DisciplinaryScalarFieldEnum>
   }
@@ -7940,18 +8327,15 @@ export namespace Prisma {
   export type disciplinaryCreateArgs = {
     /**
      * Select specific fields to fetch from the disciplinary
-     * 
-    **/
+     */
     select?: disciplinarySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: disciplinaryInclude | null
     /**
      * The data needed to create a disciplinary.
-     * 
-    **/
+     */
     data: XOR<disciplinaryCreateInput, disciplinaryUncheckedCreateInput>
   }
 
@@ -7962,8 +8346,7 @@ export namespace Prisma {
   export type disciplinaryCreateManyArgs = {
     /**
      * The data used to create many disciplinaries.
-     * 
-    **/
+     */
     data: Enumerable<disciplinaryCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -7975,23 +8358,19 @@ export namespace Prisma {
   export type disciplinaryUpdateArgs = {
     /**
      * Select specific fields to fetch from the disciplinary
-     * 
-    **/
+     */
     select?: disciplinarySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: disciplinaryInclude | null
     /**
      * The data needed to update a disciplinary.
-     * 
-    **/
+     */
     data: XOR<disciplinaryUpdateInput, disciplinaryUncheckedUpdateInput>
     /**
      * Choose, which disciplinary to update.
-     * 
-    **/
+     */
     where: disciplinaryWhereUniqueInput
   }
 
@@ -8002,13 +8381,11 @@ export namespace Prisma {
   export type disciplinaryUpdateManyArgs = {
     /**
      * The data used to update disciplinaries.
-     * 
-    **/
+     */
     data: XOR<disciplinaryUpdateManyMutationInput, disciplinaryUncheckedUpdateManyInput>
     /**
      * Filter which disciplinaries to update
-     * 
-    **/
+     */
     where?: disciplinaryWhereInput
   }
 
@@ -8019,28 +8396,23 @@ export namespace Prisma {
   export type disciplinaryUpsertArgs = {
     /**
      * Select specific fields to fetch from the disciplinary
-     * 
-    **/
+     */
     select?: disciplinarySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: disciplinaryInclude | null
     /**
      * The filter to search for the disciplinary to update in case it exists.
-     * 
-    **/
+     */
     where: disciplinaryWhereUniqueInput
     /**
      * In case the disciplinary found by the `where` argument doesn't exist, create a new disciplinary with this data.
-     * 
-    **/
+     */
     create: XOR<disciplinaryCreateInput, disciplinaryUncheckedCreateInput>
     /**
      * In case the disciplinary was found with the provided `where` argument, update it with this data.
-     * 
-    **/
+     */
     update: XOR<disciplinaryUpdateInput, disciplinaryUncheckedUpdateInput>
   }
 
@@ -8051,18 +8423,15 @@ export namespace Prisma {
   export type disciplinaryDeleteArgs = {
     /**
      * Select specific fields to fetch from the disciplinary
-     * 
-    **/
+     */
     select?: disciplinarySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: disciplinaryInclude | null
     /**
      * Filter which disciplinary to delete.
-     * 
-    **/
+     */
     where: disciplinaryWhereUniqueInput
   }
 
@@ -8073,23 +8442,10 @@ export namespace Prisma {
   export type disciplinaryDeleteManyArgs = {
     /**
      * Filter which disciplinaries to delete
-     * 
-    **/
+     */
     where?: disciplinaryWhereInput
   }
 
-
-  /**
-   * disciplinary: findUniqueOrThrow
-   */
-  export type disciplinaryFindUniqueOrThrowArgs = disciplinaryFindUniqueArgsBase
-      
-
-  /**
-   * disciplinary: findFirstOrThrow
-   */
-  export type disciplinaryFindFirstOrThrowArgs = disciplinaryFindFirstArgsBase
-      
 
   /**
    * disciplinary without action
@@ -8097,13 +8453,11 @@ export namespace Prisma {
   export type disciplinaryArgs = {
     /**
      * Select specific fields to fetch from the disciplinary
-     * 
-    **/
+     */
     select?: disciplinarySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: disciplinaryInclude | null
   }
 
@@ -8192,36 +8546,31 @@ export namespace Prisma {
   export type FailedsubjectAggregateArgs = {
     /**
      * Filter which failedsubject to aggregate.
-     * 
-    **/
+     */
     where?: failedsubjectWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of failedsubjects to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<failedsubjectOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
-     * 
-    **/
+     */
     cursor?: failedsubjectWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` failedsubjects from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` failedsubjects.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
@@ -8269,7 +8618,7 @@ export namespace Prisma {
   export type FailedsubjectGroupByArgs = {
     where?: failedsubjectWhereInput
     orderBy?: Enumerable<failedsubjectOrderByWithAggregationInput>
-    by: Array<FailedsubjectScalarFieldEnum>
+    by: FailedsubjectScalarFieldEnum[]
     having?: failedsubjectScalarWhereWithAggregatesInput
     take?: number
     skip?: number
@@ -8320,32 +8669,32 @@ export namespace Prisma {
 
   export type failedsubjectInclude = {
     student?: boolean | studentArgs
-  } 
+  }
 
-  export type failedsubjectGetPayload<S extends boolean | null | undefined | failedsubjectArgs, U = keyof S> =
+  export type failedsubjectGetPayload<S extends boolean | null | undefined | failedsubjectArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? failedsubject :
     S extends undefined ? never :
     S extends { include: any } & (failedsubjectArgs | failedsubjectFindManyArgs)
     ? failedsubject  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'student' ? studentGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'student' ? studentGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (failedsubjectArgs | failedsubjectFindManyArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'student' ? studentGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof failedsubject ? failedsubject[P] : never
+    [P in TruthyKeys<S['select']>]:
+        P extends 'student' ? studentGetPayload<S['select'][P]> :  P extends keyof failedsubject ? failedsubject[P] : never
   } 
       : failedsubject
 
 
-  type failedsubjectCountArgs = Merge<
+  type failedsubjectCountArgs = 
     Omit<failedsubjectFindManyArgs, 'select' | 'include'> & {
       select?: FailedsubjectCountAggregateInputType | true
     }
-  >
 
   export interface failedsubjectDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
     /**
      * Find zero or one Failedsubject that matches the filter.
      * @param {failedsubjectFindUniqueArgs} args - Arguments to find a Failedsubject
@@ -8360,6 +8709,22 @@ export namespace Prisma {
     findUnique<T extends failedsubjectFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, failedsubjectFindUniqueArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'failedsubject'> extends True ? Prisma__failedsubjectClient<failedsubjectGetPayload<T>> : Prisma__failedsubjectClient<failedsubjectGetPayload<T> | null, null>
+
+    /**
+     * Find one Failedsubject that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {failedsubjectFindUniqueOrThrowArgs} args - Arguments to find a Failedsubject
+     * @example
+     * // Get one Failedsubject
+     * const failedsubject = await prisma.failedsubject.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends failedsubjectFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, failedsubjectFindUniqueOrThrowArgs>
+    ): Prisma__failedsubjectClient<failedsubjectGetPayload<T>>
 
     /**
      * Find the first Failedsubject that matches the filter.
@@ -8377,6 +8742,24 @@ export namespace Prisma {
     findFirst<T extends failedsubjectFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, failedsubjectFindFirstArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'failedsubject'> extends True ? Prisma__failedsubjectClient<failedsubjectGetPayload<T>> : Prisma__failedsubjectClient<failedsubjectGetPayload<T> | null, null>
+
+    /**
+     * Find the first Failedsubject that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {failedsubjectFindFirstOrThrowArgs} args - Arguments to find a Failedsubject
+     * @example
+     * // Get one Failedsubject
+     * const failedsubject = await prisma.failedsubject.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends failedsubjectFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, failedsubjectFindFirstOrThrowArgs>
+    ): Prisma__failedsubjectClient<failedsubjectGetPayload<T>>
 
     /**
      * Find zero or more Failedsubjects that matches the filter.
@@ -8521,40 +8904,6 @@ export namespace Prisma {
     **/
     upsert<T extends failedsubjectUpsertArgs>(
       args: SelectSubset<T, failedsubjectUpsertArgs>
-    ): Prisma__failedsubjectClient<failedsubjectGetPayload<T>>
-
-    /**
-     * Find one Failedsubject that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {failedsubjectFindUniqueOrThrowArgs} args - Arguments to find a Failedsubject
-     * @example
-     * // Get one Failedsubject
-     * const failedsubject = await prisma.failedsubject.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends failedsubjectFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, failedsubjectFindUniqueOrThrowArgs>
-    ): Prisma__failedsubjectClient<failedsubjectGetPayload<T>>
-
-    /**
-     * Find the first Failedsubject that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {failedsubjectFindFirstOrThrowArgs} args - Arguments to find a Failedsubject
-     * @example
-     * // Get one Failedsubject
-     * const failedsubject = await prisma.failedsubject.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends failedsubjectFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, failedsubjectFindFirstOrThrowArgs>
     ): Prisma__failedsubjectClient<failedsubjectGetPayload<T>>
 
     /**
@@ -8743,23 +9092,20 @@ export namespace Prisma {
   export type failedsubjectFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the failedsubject
-     * 
-    **/
+     */
     select?: failedsubjectSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: failedsubjectInclude | null
     /**
      * Filter, which failedsubject to fetch.
-     * 
-    **/
+     */
     where: failedsubjectWhereUniqueInput
   }
 
   /**
-   * failedsubject: findUnique
+   * failedsubject findUnique
    */
   export interface failedsubjectFindUniqueArgs extends failedsubjectFindUniqueArgsBase {
    /**
@@ -8771,63 +9117,74 @@ export namespace Prisma {
       
 
   /**
+   * failedsubject findUniqueOrThrow
+   */
+  export type failedsubjectFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the failedsubject
+     */
+    select?: failedsubjectSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: failedsubjectInclude | null
+    /**
+     * Filter, which failedsubject to fetch.
+     */
+    where: failedsubjectWhereUniqueInput
+  }
+
+
+  /**
    * failedsubject base type for findFirst actions
    */
   export type failedsubjectFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the failedsubject
-     * 
-    **/
+     */
     select?: failedsubjectSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: failedsubjectInclude | null
     /**
      * Filter, which failedsubject to fetch.
-     * 
-    **/
+     */
     where?: failedsubjectWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of failedsubjects to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<failedsubjectOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the position for searching for failedsubjects.
-     * 
-    **/
+     */
     cursor?: failedsubjectWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` failedsubjects from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` failedsubjects.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
      * Filter by unique combinations of failedsubjects.
-     * 
-    **/
+     */
     distinct?: Enumerable<FailedsubjectScalarFieldEnum>
   }
 
   /**
-   * failedsubject: findFirst
+   * failedsubject findFirst
    */
   export interface failedsubjectFindFirstArgs extends failedsubjectFindFirstArgsBase {
    /**
@@ -8839,51 +9196,93 @@ export namespace Prisma {
       
 
   /**
-   * failedsubject findMany
+   * failedsubject findFirstOrThrow
    */
-  export type failedsubjectFindManyArgs = {
+  export type failedsubjectFindFirstOrThrowArgs = {
     /**
      * Select specific fields to fetch from the failedsubject
-     * 
-    **/
+     */
     select?: failedsubjectSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: failedsubjectInclude | null
     /**
-     * Filter, which failedsubjects to fetch.
-     * 
-    **/
+     * Filter, which failedsubject to fetch.
+     */
     where?: failedsubjectWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of failedsubjects to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<failedsubjectOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing failedsubjects.
-     * 
-    **/
+     * Sets the position for searching for failedsubjects.
+     */
     cursor?: failedsubjectWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` failedsubjects from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` failedsubjects.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-    **/
+     * Filter by unique combinations of failedsubjects.
+     */
+    distinct?: Enumerable<FailedsubjectScalarFieldEnum>
+  }
+
+
+  /**
+   * failedsubject findMany
+   */
+  export type failedsubjectFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the failedsubject
+     */
+    select?: failedsubjectSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: failedsubjectInclude | null
+    /**
+     * Filter, which failedsubjects to fetch.
+     */
+    where?: failedsubjectWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of failedsubjects to fetch.
+     */
+    orderBy?: Enumerable<failedsubjectOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing failedsubjects.
+     */
+    cursor?: failedsubjectWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` failedsubjects from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` failedsubjects.
+     */
     skip?: number
     distinct?: Enumerable<FailedsubjectScalarFieldEnum>
   }
@@ -8895,18 +9294,15 @@ export namespace Prisma {
   export type failedsubjectCreateArgs = {
     /**
      * Select specific fields to fetch from the failedsubject
-     * 
-    **/
+     */
     select?: failedsubjectSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: failedsubjectInclude | null
     /**
      * The data needed to create a failedsubject.
-     * 
-    **/
+     */
     data: XOR<failedsubjectCreateInput, failedsubjectUncheckedCreateInput>
   }
 
@@ -8917,8 +9313,7 @@ export namespace Prisma {
   export type failedsubjectCreateManyArgs = {
     /**
      * The data used to create many failedsubjects.
-     * 
-    **/
+     */
     data: Enumerable<failedsubjectCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -8930,23 +9325,19 @@ export namespace Prisma {
   export type failedsubjectUpdateArgs = {
     /**
      * Select specific fields to fetch from the failedsubject
-     * 
-    **/
+     */
     select?: failedsubjectSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: failedsubjectInclude | null
     /**
      * The data needed to update a failedsubject.
-     * 
-    **/
+     */
     data: XOR<failedsubjectUpdateInput, failedsubjectUncheckedUpdateInput>
     /**
      * Choose, which failedsubject to update.
-     * 
-    **/
+     */
     where: failedsubjectWhereUniqueInput
   }
 
@@ -8957,13 +9348,11 @@ export namespace Prisma {
   export type failedsubjectUpdateManyArgs = {
     /**
      * The data used to update failedsubjects.
-     * 
-    **/
+     */
     data: XOR<failedsubjectUpdateManyMutationInput, failedsubjectUncheckedUpdateManyInput>
     /**
      * Filter which failedsubjects to update
-     * 
-    **/
+     */
     where?: failedsubjectWhereInput
   }
 
@@ -8974,28 +9363,23 @@ export namespace Prisma {
   export type failedsubjectUpsertArgs = {
     /**
      * Select specific fields to fetch from the failedsubject
-     * 
-    **/
+     */
     select?: failedsubjectSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: failedsubjectInclude | null
     /**
      * The filter to search for the failedsubject to update in case it exists.
-     * 
-    **/
+     */
     where: failedsubjectWhereUniqueInput
     /**
      * In case the failedsubject found by the `where` argument doesn't exist, create a new failedsubject with this data.
-     * 
-    **/
+     */
     create: XOR<failedsubjectCreateInput, failedsubjectUncheckedCreateInput>
     /**
      * In case the failedsubject was found with the provided `where` argument, update it with this data.
-     * 
-    **/
+     */
     update: XOR<failedsubjectUpdateInput, failedsubjectUncheckedUpdateInput>
   }
 
@@ -9006,18 +9390,15 @@ export namespace Prisma {
   export type failedsubjectDeleteArgs = {
     /**
      * Select specific fields to fetch from the failedsubject
-     * 
-    **/
+     */
     select?: failedsubjectSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: failedsubjectInclude | null
     /**
      * Filter which failedsubject to delete.
-     * 
-    **/
+     */
     where: failedsubjectWhereUniqueInput
   }
 
@@ -9028,23 +9409,10 @@ export namespace Prisma {
   export type failedsubjectDeleteManyArgs = {
     /**
      * Filter which failedsubjects to delete
-     * 
-    **/
+     */
     where?: failedsubjectWhereInput
   }
 
-
-  /**
-   * failedsubject: findUniqueOrThrow
-   */
-  export type failedsubjectFindUniqueOrThrowArgs = failedsubjectFindUniqueArgsBase
-      
-
-  /**
-   * failedsubject: findFirstOrThrow
-   */
-  export type failedsubjectFindFirstOrThrowArgs = failedsubjectFindFirstArgsBase
-      
 
   /**
    * failedsubject without action
@@ -9052,13 +9420,11 @@ export namespace Prisma {
   export type failedsubjectArgs = {
     /**
      * Select specific fields to fetch from the failedsubject
-     * 
-    **/
+     */
     select?: failedsubjectSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: failedsubjectInclude | null
   }
 
@@ -9090,23 +9456,25 @@ export namespace Prisma {
   export type MeetingMinAggregateOutputType = {
     mid: number | null
     reason: string | null
-    status: Status | null
+    status: string | null
     referedTo: string | null
     tsid: number | null
     regNo: string | null
     adminId: string | null
     parentId: string | null
+    date: Date | null
   }
 
   export type MeetingMaxAggregateOutputType = {
     mid: number | null
     reason: string | null
-    status: Status | null
+    status: string | null
     referedTo: string | null
     tsid: number | null
     regNo: string | null
     adminId: string | null
     parentId: string | null
+    date: Date | null
   }
 
   export type MeetingCountAggregateOutputType = {
@@ -9118,6 +9486,7 @@ export namespace Prisma {
     regNo: number
     adminId: number
     parentId: number
+    date: number
     _all: number
   }
 
@@ -9141,6 +9510,7 @@ export namespace Prisma {
     regNo?: true
     adminId?: true
     parentId?: true
+    date?: true
   }
 
   export type MeetingMaxAggregateInputType = {
@@ -9152,6 +9522,7 @@ export namespace Prisma {
     regNo?: true
     adminId?: true
     parentId?: true
+    date?: true
   }
 
   export type MeetingCountAggregateInputType = {
@@ -9163,42 +9534,38 @@ export namespace Prisma {
     regNo?: true
     adminId?: true
     parentId?: true
+    date?: true
     _all?: true
   }
 
   export type MeetingAggregateArgs = {
     /**
      * Filter which meeting to aggregate.
-     * 
-    **/
+     */
     where?: meetingWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of meetings to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<meetingOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
-     * 
-    **/
+     */
     cursor?: meetingWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` meetings from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` meetings.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
@@ -9246,7 +9613,7 @@ export namespace Prisma {
   export type MeetingGroupByArgs = {
     where?: meetingWhereInput
     orderBy?: Enumerable<meetingOrderByWithAggregationInput>
-    by: Array<MeetingScalarFieldEnum>
+    by: MeetingScalarFieldEnum[]
     having?: meetingScalarWhereWithAggregatesInput
     take?: number
     skip?: number
@@ -9261,12 +9628,13 @@ export namespace Prisma {
   export type MeetingGroupByOutputType = {
     mid: number
     reason: string
-    status: Status
+    status: string
     referedTo: string
     tsid: number
     regNo: string
     adminId: string
     parentId: string
+    date: Date
     _count: MeetingCountAggregateOutputType | null
     _avg: MeetingAvgAggregateOutputType | null
     _sum: MeetingSumAggregateOutputType | null
@@ -9297,6 +9665,7 @@ export namespace Prisma {
     regNo?: boolean
     adminId?: boolean
     parentId?: boolean
+    date?: boolean
     admin?: boolean | adminArgs
     parent?: boolean | parentArgs
     student?: boolean | studentArgs
@@ -9309,38 +9678,38 @@ export namespace Prisma {
     parent?: boolean | parentArgs
     student?: boolean | studentArgs
     timeslot?: boolean | timeslotArgs
-  } 
+  }
 
-  export type meetingGetPayload<S extends boolean | null | undefined | meetingArgs, U = keyof S> =
+  export type meetingGetPayload<S extends boolean | null | undefined | meetingArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? meeting :
     S extends undefined ? never :
     S extends { include: any } & (meetingArgs | meetingFindManyArgs)
     ? meeting  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'admin' ? adminGetPayload<Exclude<S['include'], undefined | null>[P]> :
-        P extends 'parent' ? parentGetPayload<Exclude<S['include'], undefined | null>[P]> :
-        P extends 'student' ? studentGetPayload<Exclude<S['include'], undefined | null>[P]> :
-        P extends 'timeslot' ? timeslotGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'admin' ? adminGetPayload<S['include'][P]> :
+        P extends 'parent' ? parentGetPayload<S['include'][P]> :
+        P extends 'student' ? studentGetPayload<S['include'][P]> :
+        P extends 'timeslot' ? timeslotGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (meetingArgs | meetingFindManyArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'admin' ? adminGetPayload<Exclude<S['select'], undefined | null>[P]> :
-        P extends 'parent' ? parentGetPayload<Exclude<S['select'], undefined | null>[P]> :
-        P extends 'student' ? studentGetPayload<Exclude<S['select'], undefined | null>[P]> :
-        P extends 'timeslot' ? timeslotGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof meeting ? meeting[P] : never
+    [P in TruthyKeys<S['select']>]:
+        P extends 'admin' ? adminGetPayload<S['select'][P]> :
+        P extends 'parent' ? parentGetPayload<S['select'][P]> :
+        P extends 'student' ? studentGetPayload<S['select'][P]> :
+        P extends 'timeslot' ? timeslotGetPayload<S['select'][P]> :  P extends keyof meeting ? meeting[P] : never
   } 
       : meeting
 
 
-  type meetingCountArgs = Merge<
+  type meetingCountArgs = 
     Omit<meetingFindManyArgs, 'select' | 'include'> & {
       select?: MeetingCountAggregateInputType | true
     }
-  >
 
   export interface meetingDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
     /**
      * Find zero or one Meeting that matches the filter.
      * @param {meetingFindUniqueArgs} args - Arguments to find a Meeting
@@ -9355,6 +9724,22 @@ export namespace Prisma {
     findUnique<T extends meetingFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, meetingFindUniqueArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'meeting'> extends True ? Prisma__meetingClient<meetingGetPayload<T>> : Prisma__meetingClient<meetingGetPayload<T> | null, null>
+
+    /**
+     * Find one Meeting that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {meetingFindUniqueOrThrowArgs} args - Arguments to find a Meeting
+     * @example
+     * // Get one Meeting
+     * const meeting = await prisma.meeting.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends meetingFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, meetingFindUniqueOrThrowArgs>
+    ): Prisma__meetingClient<meetingGetPayload<T>>
 
     /**
      * Find the first Meeting that matches the filter.
@@ -9372,6 +9757,24 @@ export namespace Prisma {
     findFirst<T extends meetingFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, meetingFindFirstArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'meeting'> extends True ? Prisma__meetingClient<meetingGetPayload<T>> : Prisma__meetingClient<meetingGetPayload<T> | null, null>
+
+    /**
+     * Find the first Meeting that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {meetingFindFirstOrThrowArgs} args - Arguments to find a Meeting
+     * @example
+     * // Get one Meeting
+     * const meeting = await prisma.meeting.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends meetingFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, meetingFindFirstOrThrowArgs>
+    ): Prisma__meetingClient<meetingGetPayload<T>>
 
     /**
      * Find zero or more Meetings that matches the filter.
@@ -9516,40 +9919,6 @@ export namespace Prisma {
     **/
     upsert<T extends meetingUpsertArgs>(
       args: SelectSubset<T, meetingUpsertArgs>
-    ): Prisma__meetingClient<meetingGetPayload<T>>
-
-    /**
-     * Find one Meeting that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {meetingFindUniqueOrThrowArgs} args - Arguments to find a Meeting
-     * @example
-     * // Get one Meeting
-     * const meeting = await prisma.meeting.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends meetingFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, meetingFindUniqueOrThrowArgs>
-    ): Prisma__meetingClient<meetingGetPayload<T>>
-
-    /**
-     * Find the first Meeting that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {meetingFindFirstOrThrowArgs} args - Arguments to find a Meeting
-     * @example
-     * // Get one Meeting
-     * const meeting = await prisma.meeting.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends meetingFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, meetingFindFirstOrThrowArgs>
     ): Prisma__meetingClient<meetingGetPayload<T>>
 
     /**
@@ -9744,23 +10113,20 @@ export namespace Prisma {
   export type meetingFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the meeting
-     * 
-    **/
+     */
     select?: meetingSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: meetingInclude | null
     /**
      * Filter, which meeting to fetch.
-     * 
-    **/
+     */
     where: meetingWhereUniqueInput
   }
 
   /**
-   * meeting: findUnique
+   * meeting findUnique
    */
   export interface meetingFindUniqueArgs extends meetingFindUniqueArgsBase {
    /**
@@ -9772,63 +10138,74 @@ export namespace Prisma {
       
 
   /**
+   * meeting findUniqueOrThrow
+   */
+  export type meetingFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the meeting
+     */
+    select?: meetingSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: meetingInclude | null
+    /**
+     * Filter, which meeting to fetch.
+     */
+    where: meetingWhereUniqueInput
+  }
+
+
+  /**
    * meeting base type for findFirst actions
    */
   export type meetingFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the meeting
-     * 
-    **/
+     */
     select?: meetingSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: meetingInclude | null
     /**
      * Filter, which meeting to fetch.
-     * 
-    **/
+     */
     where?: meetingWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of meetings to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<meetingOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the position for searching for meetings.
-     * 
-    **/
+     */
     cursor?: meetingWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` meetings from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` meetings.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
      * Filter by unique combinations of meetings.
-     * 
-    **/
+     */
     distinct?: Enumerable<MeetingScalarFieldEnum>
   }
 
   /**
-   * meeting: findFirst
+   * meeting findFirst
    */
   export interface meetingFindFirstArgs extends meetingFindFirstArgsBase {
    /**
@@ -9840,51 +10217,93 @@ export namespace Prisma {
       
 
   /**
-   * meeting findMany
+   * meeting findFirstOrThrow
    */
-  export type meetingFindManyArgs = {
+  export type meetingFindFirstOrThrowArgs = {
     /**
      * Select specific fields to fetch from the meeting
-     * 
-    **/
+     */
     select?: meetingSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: meetingInclude | null
     /**
-     * Filter, which meetings to fetch.
-     * 
-    **/
+     * Filter, which meeting to fetch.
+     */
     where?: meetingWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of meetings to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<meetingOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing meetings.
-     * 
-    **/
+     * Sets the position for searching for meetings.
+     */
     cursor?: meetingWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` meetings from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` meetings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-    **/
+     * Filter by unique combinations of meetings.
+     */
+    distinct?: Enumerable<MeetingScalarFieldEnum>
+  }
+
+
+  /**
+   * meeting findMany
+   */
+  export type meetingFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the meeting
+     */
+    select?: meetingSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: meetingInclude | null
+    /**
+     * Filter, which meetings to fetch.
+     */
+    where?: meetingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of meetings to fetch.
+     */
+    orderBy?: Enumerable<meetingOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing meetings.
+     */
+    cursor?: meetingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` meetings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` meetings.
+     */
     skip?: number
     distinct?: Enumerable<MeetingScalarFieldEnum>
   }
@@ -9896,18 +10315,15 @@ export namespace Prisma {
   export type meetingCreateArgs = {
     /**
      * Select specific fields to fetch from the meeting
-     * 
-    **/
+     */
     select?: meetingSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: meetingInclude | null
     /**
      * The data needed to create a meeting.
-     * 
-    **/
+     */
     data: XOR<meetingCreateInput, meetingUncheckedCreateInput>
   }
 
@@ -9918,8 +10334,7 @@ export namespace Prisma {
   export type meetingCreateManyArgs = {
     /**
      * The data used to create many meetings.
-     * 
-    **/
+     */
     data: Enumerable<meetingCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -9931,23 +10346,19 @@ export namespace Prisma {
   export type meetingUpdateArgs = {
     /**
      * Select specific fields to fetch from the meeting
-     * 
-    **/
+     */
     select?: meetingSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: meetingInclude | null
     /**
      * The data needed to update a meeting.
-     * 
-    **/
+     */
     data: XOR<meetingUpdateInput, meetingUncheckedUpdateInput>
     /**
      * Choose, which meeting to update.
-     * 
-    **/
+     */
     where: meetingWhereUniqueInput
   }
 
@@ -9958,13 +10369,11 @@ export namespace Prisma {
   export type meetingUpdateManyArgs = {
     /**
      * The data used to update meetings.
-     * 
-    **/
+     */
     data: XOR<meetingUpdateManyMutationInput, meetingUncheckedUpdateManyInput>
     /**
      * Filter which meetings to update
-     * 
-    **/
+     */
     where?: meetingWhereInput
   }
 
@@ -9975,28 +10384,23 @@ export namespace Prisma {
   export type meetingUpsertArgs = {
     /**
      * Select specific fields to fetch from the meeting
-     * 
-    **/
+     */
     select?: meetingSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: meetingInclude | null
     /**
      * The filter to search for the meeting to update in case it exists.
-     * 
-    **/
+     */
     where: meetingWhereUniqueInput
     /**
      * In case the meeting found by the `where` argument doesn't exist, create a new meeting with this data.
-     * 
-    **/
+     */
     create: XOR<meetingCreateInput, meetingUncheckedCreateInput>
     /**
      * In case the meeting was found with the provided `where` argument, update it with this data.
-     * 
-    **/
+     */
     update: XOR<meetingUpdateInput, meetingUncheckedUpdateInput>
   }
 
@@ -10007,18 +10411,15 @@ export namespace Prisma {
   export type meetingDeleteArgs = {
     /**
      * Select specific fields to fetch from the meeting
-     * 
-    **/
+     */
     select?: meetingSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: meetingInclude | null
     /**
      * Filter which meeting to delete.
-     * 
-    **/
+     */
     where: meetingWhereUniqueInput
   }
 
@@ -10029,23 +10430,10 @@ export namespace Prisma {
   export type meetingDeleteManyArgs = {
     /**
      * Filter which meetings to delete
-     * 
-    **/
+     */
     where?: meetingWhereInput
   }
 
-
-  /**
-   * meeting: findUniqueOrThrow
-   */
-  export type meetingFindUniqueOrThrowArgs = meetingFindUniqueArgsBase
-      
-
-  /**
-   * meeting: findFirstOrThrow
-   */
-  export type meetingFindFirstOrThrowArgs = meetingFindFirstArgsBase
-      
 
   /**
    * meeting without action
@@ -10053,13 +10441,11 @@ export namespace Prisma {
   export type meetingArgs = {
     /**
      * Select specific fields to fetch from the meeting
-     * 
-    **/
+     */
     select?: meetingSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: meetingInclude | null
   }
 
@@ -10096,6 +10482,7 @@ export namespace Prisma {
     regNo: string | null
     adminId: string | null
     parentId: string | null
+    status: string | null
   }
 
   export type WaitinglistMaxAggregateOutputType = {
@@ -10106,6 +10493,7 @@ export namespace Prisma {
     regNo: string | null
     adminId: string | null
     parentId: string | null
+    status: string | null
   }
 
   export type WaitinglistCountAggregateOutputType = {
@@ -10116,6 +10504,7 @@ export namespace Prisma {
     regNo: number
     adminId: number
     parentId: number
+    status: number
     _all: number
   }
 
@@ -10138,6 +10527,7 @@ export namespace Prisma {
     regNo?: true
     adminId?: true
     parentId?: true
+    status?: true
   }
 
   export type WaitinglistMaxAggregateInputType = {
@@ -10148,6 +10538,7 @@ export namespace Prisma {
     regNo?: true
     adminId?: true
     parentId?: true
+    status?: true
   }
 
   export type WaitinglistCountAggregateInputType = {
@@ -10158,42 +10549,38 @@ export namespace Prisma {
     regNo?: true
     adminId?: true
     parentId?: true
+    status?: true
     _all?: true
   }
 
   export type WaitinglistAggregateArgs = {
     /**
      * Filter which waitinglist to aggregate.
-     * 
-    **/
+     */
     where?: waitinglistWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of waitinglists to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<waitinglistOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
-     * 
-    **/
+     */
     cursor?: waitinglistWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` waitinglists from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` waitinglists.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
@@ -10241,7 +10628,7 @@ export namespace Prisma {
   export type WaitinglistGroupByArgs = {
     where?: waitinglistWhereInput
     orderBy?: Enumerable<waitinglistOrderByWithAggregationInput>
-    by: Array<WaitinglistScalarFieldEnum>
+    by: WaitinglistScalarFieldEnum[]
     having?: waitinglistScalarWhereWithAggregatesInput
     take?: number
     skip?: number
@@ -10261,6 +10648,7 @@ export namespace Prisma {
     regNo: string
     adminId: string
     parentId: string
+    status: string | null
     _count: WaitinglistCountAggregateOutputType | null
     _avg: WaitinglistAvgAggregateOutputType | null
     _sum: WaitinglistSumAggregateOutputType | null
@@ -10290,6 +10678,7 @@ export namespace Prisma {
     regNo?: boolean
     adminId?: boolean
     parentId?: boolean
+    status?: boolean
     admin?: boolean | adminArgs
     parent?: boolean | parentArgs
     student?: boolean | studentArgs
@@ -10300,36 +10689,36 @@ export namespace Prisma {
     admin?: boolean | adminArgs
     parent?: boolean | parentArgs
     student?: boolean | studentArgs
-  } 
+  }
 
-  export type waitinglistGetPayload<S extends boolean | null | undefined | waitinglistArgs, U = keyof S> =
+  export type waitinglistGetPayload<S extends boolean | null | undefined | waitinglistArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? waitinglist :
     S extends undefined ? never :
     S extends { include: any } & (waitinglistArgs | waitinglistFindManyArgs)
     ? waitinglist  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'admin' ? adminGetPayload<Exclude<S['include'], undefined | null>[P]> :
-        P extends 'parent' ? parentGetPayload<Exclude<S['include'], undefined | null>[P]> :
-        P extends 'student' ? studentGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'admin' ? adminGetPayload<S['include'][P]> :
+        P extends 'parent' ? parentGetPayload<S['include'][P]> :
+        P extends 'student' ? studentGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (waitinglistArgs | waitinglistFindManyArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'admin' ? adminGetPayload<Exclude<S['select'], undefined | null>[P]> :
-        P extends 'parent' ? parentGetPayload<Exclude<S['select'], undefined | null>[P]> :
-        P extends 'student' ? studentGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof waitinglist ? waitinglist[P] : never
+    [P in TruthyKeys<S['select']>]:
+        P extends 'admin' ? adminGetPayload<S['select'][P]> :
+        P extends 'parent' ? parentGetPayload<S['select'][P]> :
+        P extends 'student' ? studentGetPayload<S['select'][P]> :  P extends keyof waitinglist ? waitinglist[P] : never
   } 
       : waitinglist
 
 
-  type waitinglistCountArgs = Merge<
+  type waitinglistCountArgs = 
     Omit<waitinglistFindManyArgs, 'select' | 'include'> & {
       select?: WaitinglistCountAggregateInputType | true
     }
-  >
 
   export interface waitinglistDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
     /**
      * Find zero or one Waitinglist that matches the filter.
      * @param {waitinglistFindUniqueArgs} args - Arguments to find a Waitinglist
@@ -10344,6 +10733,22 @@ export namespace Prisma {
     findUnique<T extends waitinglistFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, waitinglistFindUniqueArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'waitinglist'> extends True ? Prisma__waitinglistClient<waitinglistGetPayload<T>> : Prisma__waitinglistClient<waitinglistGetPayload<T> | null, null>
+
+    /**
+     * Find one Waitinglist that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {waitinglistFindUniqueOrThrowArgs} args - Arguments to find a Waitinglist
+     * @example
+     * // Get one Waitinglist
+     * const waitinglist = await prisma.waitinglist.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends waitinglistFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, waitinglistFindUniqueOrThrowArgs>
+    ): Prisma__waitinglistClient<waitinglistGetPayload<T>>
 
     /**
      * Find the first Waitinglist that matches the filter.
@@ -10361,6 +10766,24 @@ export namespace Prisma {
     findFirst<T extends waitinglistFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, waitinglistFindFirstArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'waitinglist'> extends True ? Prisma__waitinglistClient<waitinglistGetPayload<T>> : Prisma__waitinglistClient<waitinglistGetPayload<T> | null, null>
+
+    /**
+     * Find the first Waitinglist that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {waitinglistFindFirstOrThrowArgs} args - Arguments to find a Waitinglist
+     * @example
+     * // Get one Waitinglist
+     * const waitinglist = await prisma.waitinglist.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends waitinglistFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, waitinglistFindFirstOrThrowArgs>
+    ): Prisma__waitinglistClient<waitinglistGetPayload<T>>
 
     /**
      * Find zero or more Waitinglists that matches the filter.
@@ -10505,40 +10928,6 @@ export namespace Prisma {
     **/
     upsert<T extends waitinglistUpsertArgs>(
       args: SelectSubset<T, waitinglistUpsertArgs>
-    ): Prisma__waitinglistClient<waitinglistGetPayload<T>>
-
-    /**
-     * Find one Waitinglist that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {waitinglistFindUniqueOrThrowArgs} args - Arguments to find a Waitinglist
-     * @example
-     * // Get one Waitinglist
-     * const waitinglist = await prisma.waitinglist.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends waitinglistFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, waitinglistFindUniqueOrThrowArgs>
-    ): Prisma__waitinglistClient<waitinglistGetPayload<T>>
-
-    /**
-     * Find the first Waitinglist that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {waitinglistFindFirstOrThrowArgs} args - Arguments to find a Waitinglist
-     * @example
-     * // Get one Waitinglist
-     * const waitinglist = await prisma.waitinglist.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends waitinglistFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, waitinglistFindFirstOrThrowArgs>
     ): Prisma__waitinglistClient<waitinglistGetPayload<T>>
 
     /**
@@ -10731,23 +11120,20 @@ export namespace Prisma {
   export type waitinglistFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the waitinglist
-     * 
-    **/
+     */
     select?: waitinglistSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: waitinglistInclude | null
     /**
      * Filter, which waitinglist to fetch.
-     * 
-    **/
+     */
     where: waitinglistWhereUniqueInput
   }
 
   /**
-   * waitinglist: findUnique
+   * waitinglist findUnique
    */
   export interface waitinglistFindUniqueArgs extends waitinglistFindUniqueArgsBase {
    /**
@@ -10759,63 +11145,74 @@ export namespace Prisma {
       
 
   /**
+   * waitinglist findUniqueOrThrow
+   */
+  export type waitinglistFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the waitinglist
+     */
+    select?: waitinglistSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: waitinglistInclude | null
+    /**
+     * Filter, which waitinglist to fetch.
+     */
+    where: waitinglistWhereUniqueInput
+  }
+
+
+  /**
    * waitinglist base type for findFirst actions
    */
   export type waitinglistFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the waitinglist
-     * 
-    **/
+     */
     select?: waitinglistSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: waitinglistInclude | null
     /**
      * Filter, which waitinglist to fetch.
-     * 
-    **/
+     */
     where?: waitinglistWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of waitinglists to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<waitinglistOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the position for searching for waitinglists.
-     * 
-    **/
+     */
     cursor?: waitinglistWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` waitinglists from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` waitinglists.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
      * Filter by unique combinations of waitinglists.
-     * 
-    **/
+     */
     distinct?: Enumerable<WaitinglistScalarFieldEnum>
   }
 
   /**
-   * waitinglist: findFirst
+   * waitinglist findFirst
    */
   export interface waitinglistFindFirstArgs extends waitinglistFindFirstArgsBase {
    /**
@@ -10827,51 +11224,93 @@ export namespace Prisma {
       
 
   /**
-   * waitinglist findMany
+   * waitinglist findFirstOrThrow
    */
-  export type waitinglistFindManyArgs = {
+  export type waitinglistFindFirstOrThrowArgs = {
     /**
      * Select specific fields to fetch from the waitinglist
-     * 
-    **/
+     */
     select?: waitinglistSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: waitinglistInclude | null
     /**
-     * Filter, which waitinglists to fetch.
-     * 
-    **/
+     * Filter, which waitinglist to fetch.
+     */
     where?: waitinglistWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of waitinglists to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<waitinglistOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing waitinglists.
-     * 
-    **/
+     * Sets the position for searching for waitinglists.
+     */
     cursor?: waitinglistWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` waitinglists from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` waitinglists.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-    **/
+     * Filter by unique combinations of waitinglists.
+     */
+    distinct?: Enumerable<WaitinglistScalarFieldEnum>
+  }
+
+
+  /**
+   * waitinglist findMany
+   */
+  export type waitinglistFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the waitinglist
+     */
+    select?: waitinglistSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: waitinglistInclude | null
+    /**
+     * Filter, which waitinglists to fetch.
+     */
+    where?: waitinglistWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of waitinglists to fetch.
+     */
+    orderBy?: Enumerable<waitinglistOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing waitinglists.
+     */
+    cursor?: waitinglistWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` waitinglists from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` waitinglists.
+     */
     skip?: number
     distinct?: Enumerable<WaitinglistScalarFieldEnum>
   }
@@ -10883,18 +11322,15 @@ export namespace Prisma {
   export type waitinglistCreateArgs = {
     /**
      * Select specific fields to fetch from the waitinglist
-     * 
-    **/
+     */
     select?: waitinglistSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: waitinglistInclude | null
     /**
      * The data needed to create a waitinglist.
-     * 
-    **/
+     */
     data: XOR<waitinglistCreateInput, waitinglistUncheckedCreateInput>
   }
 
@@ -10905,8 +11341,7 @@ export namespace Prisma {
   export type waitinglistCreateManyArgs = {
     /**
      * The data used to create many waitinglists.
-     * 
-    **/
+     */
     data: Enumerable<waitinglistCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -10918,23 +11353,19 @@ export namespace Prisma {
   export type waitinglistUpdateArgs = {
     /**
      * Select specific fields to fetch from the waitinglist
-     * 
-    **/
+     */
     select?: waitinglistSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: waitinglistInclude | null
     /**
      * The data needed to update a waitinglist.
-     * 
-    **/
+     */
     data: XOR<waitinglistUpdateInput, waitinglistUncheckedUpdateInput>
     /**
      * Choose, which waitinglist to update.
-     * 
-    **/
+     */
     where: waitinglistWhereUniqueInput
   }
 
@@ -10945,13 +11376,11 @@ export namespace Prisma {
   export type waitinglistUpdateManyArgs = {
     /**
      * The data used to update waitinglists.
-     * 
-    **/
+     */
     data: XOR<waitinglistUpdateManyMutationInput, waitinglistUncheckedUpdateManyInput>
     /**
      * Filter which waitinglists to update
-     * 
-    **/
+     */
     where?: waitinglistWhereInput
   }
 
@@ -10962,28 +11391,23 @@ export namespace Prisma {
   export type waitinglistUpsertArgs = {
     /**
      * Select specific fields to fetch from the waitinglist
-     * 
-    **/
+     */
     select?: waitinglistSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: waitinglistInclude | null
     /**
      * The filter to search for the waitinglist to update in case it exists.
-     * 
-    **/
+     */
     where: waitinglistWhereUniqueInput
     /**
      * In case the waitinglist found by the `where` argument doesn't exist, create a new waitinglist with this data.
-     * 
-    **/
+     */
     create: XOR<waitinglistCreateInput, waitinglistUncheckedCreateInput>
     /**
      * In case the waitinglist was found with the provided `where` argument, update it with this data.
-     * 
-    **/
+     */
     update: XOR<waitinglistUpdateInput, waitinglistUncheckedUpdateInput>
   }
 
@@ -10994,18 +11418,15 @@ export namespace Prisma {
   export type waitinglistDeleteArgs = {
     /**
      * Select specific fields to fetch from the waitinglist
-     * 
-    **/
+     */
     select?: waitinglistSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: waitinglistInclude | null
     /**
      * Filter which waitinglist to delete.
-     * 
-    **/
+     */
     where: waitinglistWhereUniqueInput
   }
 
@@ -11016,23 +11437,10 @@ export namespace Prisma {
   export type waitinglistDeleteManyArgs = {
     /**
      * Filter which waitinglists to delete
-     * 
-    **/
+     */
     where?: waitinglistWhereInput
   }
 
-
-  /**
-   * waitinglist: findUniqueOrThrow
-   */
-  export type waitinglistFindUniqueOrThrowArgs = waitinglistFindUniqueArgsBase
-      
-
-  /**
-   * waitinglist: findFirstOrThrow
-   */
-  export type waitinglistFindFirstOrThrowArgs = waitinglistFindFirstArgsBase
-      
 
   /**
    * waitinglist without action
@@ -11040,13 +11448,11 @@ export namespace Prisma {
   export type waitinglistArgs = {
     /**
      * Select specific fields to fetch from the waitinglist
-     * 
-    **/
+     */
     select?: waitinglistSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: waitinglistInclude | null
   }
 
@@ -11067,12 +11473,10 @@ export namespace Prisma {
 
   export type HistoryAvgAggregateOutputType = {
     hid: number | null
-    rating: number | null
   }
 
   export type HistorySumAggregateOutputType = {
     hid: number | null
-    rating: number | null
   }
 
   export type HistoryMinAggregateOutputType = {
@@ -11083,11 +11487,11 @@ export namespace Prisma {
     reason: string | null
     status: Status | null
     referedTo: string | null
-    feedback: string | null
-    rating: number | null
     regNo: string | null
     adminId: string | null
     parentId: string | null
+    adminFeedback: string | null
+    suggestion: string | null
   }
 
   export type HistoryMaxAggregateOutputType = {
@@ -11098,11 +11502,11 @@ export namespace Prisma {
     reason: string | null
     status: Status | null
     referedTo: string | null
-    feedback: string | null
-    rating: number | null
     regNo: string | null
     adminId: string | null
     parentId: string | null
+    adminFeedback: string | null
+    suggestion: string | null
   }
 
   export type HistoryCountAggregateOutputType = {
@@ -11113,23 +11517,21 @@ export namespace Prisma {
     reason: number
     status: number
     referedTo: number
-    feedback: number
-    rating: number
     regNo: number
     adminId: number
     parentId: number
+    adminFeedback: number
+    suggestion: number
     _all: number
   }
 
 
   export type HistoryAvgAggregateInputType = {
     hid?: true
-    rating?: true
   }
 
   export type HistorySumAggregateInputType = {
     hid?: true
-    rating?: true
   }
 
   export type HistoryMinAggregateInputType = {
@@ -11140,11 +11542,11 @@ export namespace Prisma {
     reason?: true
     status?: true
     referedTo?: true
-    feedback?: true
-    rating?: true
     regNo?: true
     adminId?: true
     parentId?: true
+    adminFeedback?: true
+    suggestion?: true
   }
 
   export type HistoryMaxAggregateInputType = {
@@ -11155,11 +11557,11 @@ export namespace Prisma {
     reason?: true
     status?: true
     referedTo?: true
-    feedback?: true
-    rating?: true
     regNo?: true
     adminId?: true
     parentId?: true
+    adminFeedback?: true
+    suggestion?: true
   }
 
   export type HistoryCountAggregateInputType = {
@@ -11170,47 +11572,42 @@ export namespace Prisma {
     reason?: true
     status?: true
     referedTo?: true
-    feedback?: true
-    rating?: true
     regNo?: true
     adminId?: true
     parentId?: true
+    adminFeedback?: true
+    suggestion?: true
     _all?: true
   }
 
   export type HistoryAggregateArgs = {
     /**
      * Filter which history to aggregate.
-     * 
-    **/
+     */
     where?: historyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of histories to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<historyOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
-     * 
-    **/
+     */
     cursor?: historyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` histories from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` histories.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
@@ -11258,7 +11655,7 @@ export namespace Prisma {
   export type HistoryGroupByArgs = {
     where?: historyWhereInput
     orderBy?: Enumerable<historyOrderByWithAggregationInput>
-    by: Array<HistoryScalarFieldEnum>
+    by: HistoryScalarFieldEnum[]
     having?: historyScalarWhereWithAggregatesInput
     take?: number
     skip?: number
@@ -11278,11 +11675,11 @@ export namespace Prisma {
     reason: string
     status: Status
     referedTo: string
-    feedback: string | null
-    rating: number | null
     regNo: string
     adminId: string
     parentId: string
+    adminFeedback: string | null
+    suggestion: string | null
     _count: HistoryCountAggregateOutputType | null
     _avg: HistoryAvgAggregateOutputType | null
     _sum: HistorySumAggregateOutputType | null
@@ -11312,11 +11709,12 @@ export namespace Prisma {
     reason?: boolean
     status?: boolean
     referedTo?: boolean
-    feedback?: boolean
-    rating?: boolean
     regNo?: boolean
     adminId?: boolean
     parentId?: boolean
+    adminFeedback?: boolean
+    suggestion?: boolean
+    feedback?: boolean | feedbackArgs
     admin?: boolean | adminArgs
     parent?: boolean | parentArgs
     student?: boolean | studentArgs
@@ -11324,39 +11722,42 @@ export namespace Prisma {
 
 
   export type historyInclude = {
+    feedback?: boolean | feedbackArgs
     admin?: boolean | adminArgs
     parent?: boolean | parentArgs
     student?: boolean | studentArgs
-  } 
+  }
 
-  export type historyGetPayload<S extends boolean | null | undefined | historyArgs, U = keyof S> =
+  export type historyGetPayload<S extends boolean | null | undefined | historyArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? history :
     S extends undefined ? never :
     S extends { include: any } & (historyArgs | historyFindManyArgs)
     ? history  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'admin' ? adminGetPayload<Exclude<S['include'], undefined | null>[P]> :
-        P extends 'parent' ? parentGetPayload<Exclude<S['include'], undefined | null>[P]> :
-        P extends 'student' ? studentGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'feedback' ? feedbackGetPayload<S['include'][P]> | null :
+        P extends 'admin' ? adminGetPayload<S['include'][P]> :
+        P extends 'parent' ? parentGetPayload<S['include'][P]> :
+        P extends 'student' ? studentGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (historyArgs | historyFindManyArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'admin' ? adminGetPayload<Exclude<S['select'], undefined | null>[P]> :
-        P extends 'parent' ? parentGetPayload<Exclude<S['select'], undefined | null>[P]> :
-        P extends 'student' ? studentGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof history ? history[P] : never
+    [P in TruthyKeys<S['select']>]:
+        P extends 'feedback' ? feedbackGetPayload<S['select'][P]> | null :
+        P extends 'admin' ? adminGetPayload<S['select'][P]> :
+        P extends 'parent' ? parentGetPayload<S['select'][P]> :
+        P extends 'student' ? studentGetPayload<S['select'][P]> :  P extends keyof history ? history[P] : never
   } 
       : history
 
 
-  type historyCountArgs = Merge<
+  type historyCountArgs = 
     Omit<historyFindManyArgs, 'select' | 'include'> & {
       select?: HistoryCountAggregateInputType | true
     }
-  >
 
   export interface historyDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
     /**
      * Find zero or one History that matches the filter.
      * @param {historyFindUniqueArgs} args - Arguments to find a History
@@ -11371,6 +11772,22 @@ export namespace Prisma {
     findUnique<T extends historyFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, historyFindUniqueArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'history'> extends True ? Prisma__historyClient<historyGetPayload<T>> : Prisma__historyClient<historyGetPayload<T> | null, null>
+
+    /**
+     * Find one History that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {historyFindUniqueOrThrowArgs} args - Arguments to find a History
+     * @example
+     * // Get one History
+     * const history = await prisma.history.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends historyFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, historyFindUniqueOrThrowArgs>
+    ): Prisma__historyClient<historyGetPayload<T>>
 
     /**
      * Find the first History that matches the filter.
@@ -11388,6 +11805,24 @@ export namespace Prisma {
     findFirst<T extends historyFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, historyFindFirstArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'history'> extends True ? Prisma__historyClient<historyGetPayload<T>> : Prisma__historyClient<historyGetPayload<T> | null, null>
+
+    /**
+     * Find the first History that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {historyFindFirstOrThrowArgs} args - Arguments to find a History
+     * @example
+     * // Get one History
+     * const history = await prisma.history.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends historyFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, historyFindFirstOrThrowArgs>
+    ): Prisma__historyClient<historyGetPayload<T>>
 
     /**
      * Find zero or more Histories that matches the filter.
@@ -11532,40 +11967,6 @@ export namespace Prisma {
     **/
     upsert<T extends historyUpsertArgs>(
       args: SelectSubset<T, historyUpsertArgs>
-    ): Prisma__historyClient<historyGetPayload<T>>
-
-    /**
-     * Find one History that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {historyFindUniqueOrThrowArgs} args - Arguments to find a History
-     * @example
-     * // Get one History
-     * const history = await prisma.history.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends historyFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, historyFindUniqueOrThrowArgs>
-    ): Prisma__historyClient<historyGetPayload<T>>
-
-    /**
-     * Find the first History that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {historyFindFirstOrThrowArgs} args - Arguments to find a History
-     * @example
-     * // Get one History
-     * const history = await prisma.history.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends historyFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, historyFindFirstOrThrowArgs>
     ): Prisma__historyClient<historyGetPayload<T>>
 
     /**
@@ -11719,6 +12120,8 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
+    feedback<T extends feedbackArgs= {}>(args?: Subset<T, feedbackArgs>): Prisma__feedbackClient<feedbackGetPayload<T> | Null>;
+
     admin<T extends adminArgs= {}>(args?: Subset<T, adminArgs>): Prisma__adminClient<adminGetPayload<T> | Null>;
 
     parent<T extends parentArgs= {}>(args?: Subset<T, parentArgs>): Prisma__parentClient<parentGetPayload<T> | Null>;
@@ -11758,23 +12161,20 @@ export namespace Prisma {
   export type historyFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the history
-     * 
-    **/
+     */
     select?: historySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: historyInclude | null
     /**
      * Filter, which history to fetch.
-     * 
-    **/
+     */
     where: historyWhereUniqueInput
   }
 
   /**
-   * history: findUnique
+   * history findUnique
    */
   export interface historyFindUniqueArgs extends historyFindUniqueArgsBase {
    /**
@@ -11786,63 +12186,74 @@ export namespace Prisma {
       
 
   /**
+   * history findUniqueOrThrow
+   */
+  export type historyFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the history
+     */
+    select?: historySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: historyInclude | null
+    /**
+     * Filter, which history to fetch.
+     */
+    where: historyWhereUniqueInput
+  }
+
+
+  /**
    * history base type for findFirst actions
    */
   export type historyFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the history
-     * 
-    **/
+     */
     select?: historySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: historyInclude | null
     /**
      * Filter, which history to fetch.
-     * 
-    **/
+     */
     where?: historyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of histories to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<historyOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the position for searching for histories.
-     * 
-    **/
+     */
     cursor?: historyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` histories from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` histories.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
      * Filter by unique combinations of histories.
-     * 
-    **/
+     */
     distinct?: Enumerable<HistoryScalarFieldEnum>
   }
 
   /**
-   * history: findFirst
+   * history findFirst
    */
   export interface historyFindFirstArgs extends historyFindFirstArgsBase {
    /**
@@ -11854,51 +12265,93 @@ export namespace Prisma {
       
 
   /**
-   * history findMany
+   * history findFirstOrThrow
    */
-  export type historyFindManyArgs = {
+  export type historyFindFirstOrThrowArgs = {
     /**
      * Select specific fields to fetch from the history
-     * 
-    **/
+     */
     select?: historySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: historyInclude | null
     /**
-     * Filter, which histories to fetch.
-     * 
-    **/
+     * Filter, which history to fetch.
+     */
     where?: historyWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of histories to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<historyOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing histories.
-     * 
-    **/
+     * Sets the position for searching for histories.
+     */
     cursor?: historyWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` histories from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` histories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-    **/
+     * Filter by unique combinations of histories.
+     */
+    distinct?: Enumerable<HistoryScalarFieldEnum>
+  }
+
+
+  /**
+   * history findMany
+   */
+  export type historyFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the history
+     */
+    select?: historySelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: historyInclude | null
+    /**
+     * Filter, which histories to fetch.
+     */
+    where?: historyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of histories to fetch.
+     */
+    orderBy?: Enumerable<historyOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing histories.
+     */
+    cursor?: historyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` histories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` histories.
+     */
     skip?: number
     distinct?: Enumerable<HistoryScalarFieldEnum>
   }
@@ -11910,18 +12363,15 @@ export namespace Prisma {
   export type historyCreateArgs = {
     /**
      * Select specific fields to fetch from the history
-     * 
-    **/
+     */
     select?: historySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: historyInclude | null
     /**
      * The data needed to create a history.
-     * 
-    **/
+     */
     data: XOR<historyCreateInput, historyUncheckedCreateInput>
   }
 
@@ -11932,8 +12382,7 @@ export namespace Prisma {
   export type historyCreateManyArgs = {
     /**
      * The data used to create many histories.
-     * 
-    **/
+     */
     data: Enumerable<historyCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -11945,23 +12394,19 @@ export namespace Prisma {
   export type historyUpdateArgs = {
     /**
      * Select specific fields to fetch from the history
-     * 
-    **/
+     */
     select?: historySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: historyInclude | null
     /**
      * The data needed to update a history.
-     * 
-    **/
+     */
     data: XOR<historyUpdateInput, historyUncheckedUpdateInput>
     /**
      * Choose, which history to update.
-     * 
-    **/
+     */
     where: historyWhereUniqueInput
   }
 
@@ -11972,13 +12417,11 @@ export namespace Prisma {
   export type historyUpdateManyArgs = {
     /**
      * The data used to update histories.
-     * 
-    **/
+     */
     data: XOR<historyUpdateManyMutationInput, historyUncheckedUpdateManyInput>
     /**
      * Filter which histories to update
-     * 
-    **/
+     */
     where?: historyWhereInput
   }
 
@@ -11989,28 +12432,23 @@ export namespace Prisma {
   export type historyUpsertArgs = {
     /**
      * Select specific fields to fetch from the history
-     * 
-    **/
+     */
     select?: historySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: historyInclude | null
     /**
      * The filter to search for the history to update in case it exists.
-     * 
-    **/
+     */
     where: historyWhereUniqueInput
     /**
      * In case the history found by the `where` argument doesn't exist, create a new history with this data.
-     * 
-    **/
+     */
     create: XOR<historyCreateInput, historyUncheckedCreateInput>
     /**
      * In case the history was found with the provided `where` argument, update it with this data.
-     * 
-    **/
+     */
     update: XOR<historyUpdateInput, historyUncheckedUpdateInput>
   }
 
@@ -12021,18 +12459,15 @@ export namespace Prisma {
   export type historyDeleteArgs = {
     /**
      * Select specific fields to fetch from the history
-     * 
-    **/
+     */
     select?: historySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: historyInclude | null
     /**
      * Filter which history to delete.
-     * 
-    **/
+     */
     where: historyWhereUniqueInput
   }
 
@@ -12043,23 +12478,10 @@ export namespace Prisma {
   export type historyDeleteManyArgs = {
     /**
      * Filter which histories to delete
-     * 
-    **/
+     */
     where?: historyWhereInput
   }
 
-
-  /**
-   * history: findUniqueOrThrow
-   */
-  export type historyFindUniqueOrThrowArgs = historyFindUniqueArgsBase
-      
-
-  /**
-   * history: findFirstOrThrow
-   */
-  export type historyFindFirstOrThrowArgs = historyFindFirstArgsBase
-      
 
   /**
    * history without action
@@ -12067,13 +12489,11 @@ export namespace Prisma {
   export type historyArgs = {
     /**
      * Select specific fields to fetch from the history
-     * 
-    **/
+     */
     select?: historySelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: historyInclude | null
   }
 
@@ -12180,36 +12600,31 @@ export namespace Prisma {
   export type UserloginAggregateArgs = {
     /**
      * Filter which userlogin to aggregate.
-     * 
-    **/
+     */
     where?: userloginWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of userlogins to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<userloginOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
-     * 
-    **/
+     */
     cursor?: userloginWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` userlogins from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` userlogins.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
@@ -12257,7 +12672,7 @@ export namespace Prisma {
   export type UserloginGroupByArgs = {
     where?: userloginWhereInput
     orderBy?: Enumerable<userloginOrderByWithAggregationInput>
-    by: Array<UserloginScalarFieldEnum>
+    by: UserloginScalarFieldEnum[]
     having?: userloginScalarWhereWithAggregatesInput
     take?: number
     skip?: number
@@ -12318,36 +12733,36 @@ export namespace Prisma {
     admin?: boolean | adminArgs
     parent?: boolean | parentArgs
     student?: boolean | studentArgs
-  } 
+  }
 
-  export type userloginGetPayload<S extends boolean | null | undefined | userloginArgs, U = keyof S> =
+  export type userloginGetPayload<S extends boolean | null | undefined | userloginArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? userlogin :
     S extends undefined ? never :
     S extends { include: any } & (userloginArgs | userloginFindManyArgs)
     ? userlogin  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'admin' ? adminGetPayload<Exclude<S['include'], undefined | null>[P]> | null :
-        P extends 'parent' ? parentGetPayload<Exclude<S['include'], undefined | null>[P]> | null :
-        P extends 'student' ? studentGetPayload<Exclude<S['include'], undefined | null>[P]> | null :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'admin' ? adminGetPayload<S['include'][P]> | null :
+        P extends 'parent' ? parentGetPayload<S['include'][P]> | null :
+        P extends 'student' ? studentGetPayload<S['include'][P]> | null :  never
   } 
     : S extends { select: any } & (userloginArgs | userloginFindManyArgs)
       ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'admin' ? adminGetPayload<Exclude<S['select'], undefined | null>[P]> | null :
-        P extends 'parent' ? parentGetPayload<Exclude<S['select'], undefined | null>[P]> | null :
-        P extends 'student' ? studentGetPayload<Exclude<S['select'], undefined | null>[P]> | null :  P extends keyof userlogin ? userlogin[P] : never
+    [P in TruthyKeys<S['select']>]:
+        P extends 'admin' ? adminGetPayload<S['select'][P]> | null :
+        P extends 'parent' ? parentGetPayload<S['select'][P]> | null :
+        P extends 'student' ? studentGetPayload<S['select'][P]> | null :  P extends keyof userlogin ? userlogin[P] : never
   } 
       : userlogin
 
 
-  type userloginCountArgs = Merge<
+  type userloginCountArgs = 
     Omit<userloginFindManyArgs, 'select' | 'include'> & {
       select?: UserloginCountAggregateInputType | true
     }
-  >
 
   export interface userloginDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
     /**
      * Find zero or one Userlogin that matches the filter.
      * @param {userloginFindUniqueArgs} args - Arguments to find a Userlogin
@@ -12362,6 +12777,22 @@ export namespace Prisma {
     findUnique<T extends userloginFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, userloginFindUniqueArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'userlogin'> extends True ? Prisma__userloginClient<userloginGetPayload<T>> : Prisma__userloginClient<userloginGetPayload<T> | null, null>
+
+    /**
+     * Find one Userlogin that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {userloginFindUniqueOrThrowArgs} args - Arguments to find a Userlogin
+     * @example
+     * // Get one Userlogin
+     * const userlogin = await prisma.userlogin.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends userloginFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, userloginFindUniqueOrThrowArgs>
+    ): Prisma__userloginClient<userloginGetPayload<T>>
 
     /**
      * Find the first Userlogin that matches the filter.
@@ -12379,6 +12810,24 @@ export namespace Prisma {
     findFirst<T extends userloginFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, userloginFindFirstArgs>
     ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'userlogin'> extends True ? Prisma__userloginClient<userloginGetPayload<T>> : Prisma__userloginClient<userloginGetPayload<T> | null, null>
+
+    /**
+     * Find the first Userlogin that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {userloginFindFirstOrThrowArgs} args - Arguments to find a Userlogin
+     * @example
+     * // Get one Userlogin
+     * const userlogin = await prisma.userlogin.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends userloginFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, userloginFindFirstOrThrowArgs>
+    ): Prisma__userloginClient<userloginGetPayload<T>>
 
     /**
      * Find zero or more Userlogins that matches the filter.
@@ -12523,40 +12972,6 @@ export namespace Prisma {
     **/
     upsert<T extends userloginUpsertArgs>(
       args: SelectSubset<T, userloginUpsertArgs>
-    ): Prisma__userloginClient<userloginGetPayload<T>>
-
-    /**
-     * Find one Userlogin that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {userloginFindUniqueOrThrowArgs} args - Arguments to find a Userlogin
-     * @example
-     * // Get one Userlogin
-     * const userlogin = await prisma.userlogin.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends userloginFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, userloginFindUniqueOrThrowArgs>
-    ): Prisma__userloginClient<userloginGetPayload<T>>
-
-    /**
-     * Find the first Userlogin that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {userloginFindFirstOrThrowArgs} args - Arguments to find a Userlogin
-     * @example
-     * // Get one Userlogin
-     * const userlogin = await prisma.userlogin.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends userloginFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, userloginFindFirstOrThrowArgs>
     ): Prisma__userloginClient<userloginGetPayload<T>>
 
     /**
@@ -12749,23 +13164,20 @@ export namespace Prisma {
   export type userloginFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the userlogin
-     * 
-    **/
+     */
     select?: userloginSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: userloginInclude | null
     /**
      * Filter, which userlogin to fetch.
-     * 
-    **/
+     */
     where: userloginWhereUniqueInput
   }
 
   /**
-   * userlogin: findUnique
+   * userlogin findUnique
    */
   export interface userloginFindUniqueArgs extends userloginFindUniqueArgsBase {
    /**
@@ -12777,63 +13189,74 @@ export namespace Prisma {
       
 
   /**
+   * userlogin findUniqueOrThrow
+   */
+  export type userloginFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the userlogin
+     */
+    select?: userloginSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: userloginInclude | null
+    /**
+     * Filter, which userlogin to fetch.
+     */
+    where: userloginWhereUniqueInput
+  }
+
+
+  /**
    * userlogin base type for findFirst actions
    */
   export type userloginFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the userlogin
-     * 
-    **/
+     */
     select?: userloginSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: userloginInclude | null
     /**
      * Filter, which userlogin to fetch.
-     * 
-    **/
+     */
     where?: userloginWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of userlogins to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<userloginOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the position for searching for userlogins.
-     * 
-    **/
+     */
     cursor?: userloginWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` userlogins from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` userlogins.
-     * 
-    **/
+     */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
      * Filter by unique combinations of userlogins.
-     * 
-    **/
+     */
     distinct?: Enumerable<UserloginScalarFieldEnum>
   }
 
   /**
-   * userlogin: findFirst
+   * userlogin findFirst
    */
   export interface userloginFindFirstArgs extends userloginFindFirstArgsBase {
    /**
@@ -12845,51 +13268,93 @@ export namespace Prisma {
       
 
   /**
-   * userlogin findMany
+   * userlogin findFirstOrThrow
    */
-  export type userloginFindManyArgs = {
+  export type userloginFindFirstOrThrowArgs = {
     /**
      * Select specific fields to fetch from the userlogin
-     * 
-    **/
+     */
     select?: userloginSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: userloginInclude | null
     /**
-     * Filter, which userlogins to fetch.
-     * 
-    **/
+     * Filter, which userlogin to fetch.
+     */
     where?: userloginWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of userlogins to fetch.
-     * 
-    **/
+     */
     orderBy?: Enumerable<userloginOrderByWithRelationInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing userlogins.
-     * 
-    **/
+     * Sets the position for searching for userlogins.
+     */
     cursor?: userloginWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Take `±n` userlogins from the position of the cursor.
-     * 
-    **/
+     */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
      * Skip the first `n` userlogins.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-    **/
+     * Filter by unique combinations of userlogins.
+     */
+    distinct?: Enumerable<UserloginScalarFieldEnum>
+  }
+
+
+  /**
+   * userlogin findMany
+   */
+  export type userloginFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the userlogin
+     */
+    select?: userloginSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: userloginInclude | null
+    /**
+     * Filter, which userlogins to fetch.
+     */
+    where?: userloginWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of userlogins to fetch.
+     */
+    orderBy?: Enumerable<userloginOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing userlogins.
+     */
+    cursor?: userloginWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` userlogins from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` userlogins.
+     */
     skip?: number
     distinct?: Enumerable<UserloginScalarFieldEnum>
   }
@@ -12901,18 +13366,15 @@ export namespace Prisma {
   export type userloginCreateArgs = {
     /**
      * Select specific fields to fetch from the userlogin
-     * 
-    **/
+     */
     select?: userloginSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: userloginInclude | null
     /**
      * The data needed to create a userlogin.
-     * 
-    **/
+     */
     data: XOR<userloginCreateInput, userloginUncheckedCreateInput>
   }
 
@@ -12923,8 +13385,7 @@ export namespace Prisma {
   export type userloginCreateManyArgs = {
     /**
      * The data used to create many userlogins.
-     * 
-    **/
+     */
     data: Enumerable<userloginCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -12936,23 +13397,19 @@ export namespace Prisma {
   export type userloginUpdateArgs = {
     /**
      * Select specific fields to fetch from the userlogin
-     * 
-    **/
+     */
     select?: userloginSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: userloginInclude | null
     /**
      * The data needed to update a userlogin.
-     * 
-    **/
+     */
     data: XOR<userloginUpdateInput, userloginUncheckedUpdateInput>
     /**
      * Choose, which userlogin to update.
-     * 
-    **/
+     */
     where: userloginWhereUniqueInput
   }
 
@@ -12963,13 +13420,11 @@ export namespace Prisma {
   export type userloginUpdateManyArgs = {
     /**
      * The data used to update userlogins.
-     * 
-    **/
+     */
     data: XOR<userloginUpdateManyMutationInput, userloginUncheckedUpdateManyInput>
     /**
      * Filter which userlogins to update
-     * 
-    **/
+     */
     where?: userloginWhereInput
   }
 
@@ -12980,28 +13435,23 @@ export namespace Prisma {
   export type userloginUpsertArgs = {
     /**
      * Select specific fields to fetch from the userlogin
-     * 
-    **/
+     */
     select?: userloginSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: userloginInclude | null
     /**
      * The filter to search for the userlogin to update in case it exists.
-     * 
-    **/
+     */
     where: userloginWhereUniqueInput
     /**
      * In case the userlogin found by the `where` argument doesn't exist, create a new userlogin with this data.
-     * 
-    **/
+     */
     create: XOR<userloginCreateInput, userloginUncheckedCreateInput>
     /**
      * In case the userlogin was found with the provided `where` argument, update it with this data.
-     * 
-    **/
+     */
     update: XOR<userloginUpdateInput, userloginUncheckedUpdateInput>
   }
 
@@ -13012,18 +13462,15 @@ export namespace Prisma {
   export type userloginDeleteArgs = {
     /**
      * Select specific fields to fetch from the userlogin
-     * 
-    **/
+     */
     select?: userloginSelect | null
     /**
      * Choose, which related nodes to fetch as well.
-     * 
-    **/
+     */
     include?: userloginInclude | null
     /**
      * Filter which userlogin to delete.
-     * 
-    **/
+     */
     where: userloginWhereUniqueInput
   }
 
@@ -13034,23 +13481,10 @@ export namespace Prisma {
   export type userloginDeleteManyArgs = {
     /**
      * Filter which userlogins to delete
-     * 
-    **/
+     */
     where?: userloginWhereInput
   }
 
-
-  /**
-   * userlogin: findUniqueOrThrow
-   */
-  export type userloginFindUniqueOrThrowArgs = userloginFindUniqueArgsBase
-      
-
-  /**
-   * userlogin: findFirstOrThrow
-   */
-  export type userloginFindFirstOrThrowArgs = userloginFindFirstArgsBase
-      
 
   /**
    * userlogin without action
@@ -13058,14 +13492,991 @@ export namespace Prisma {
   export type userloginArgs = {
     /**
      * Select specific fields to fetch from the userlogin
-     * 
-    **/
+     */
     select?: userloginSelect | null
     /**
      * Choose, which related nodes to fetch as well.
+     */
+    include?: userloginInclude | null
+  }
+
+
+
+  /**
+   * Model feedback
+   */
+
+
+  export type AggregateFeedback = {
+    _count: FeedbackCountAggregateOutputType | null
+    _avg: FeedbackAvgAggregateOutputType | null
+    _sum: FeedbackSumAggregateOutputType | null
+    _min: FeedbackMinAggregateOutputType | null
+    _max: FeedbackMaxAggregateOutputType | null
+  }
+
+  export type FeedbackAvgAggregateOutputType = {
+    attentive: number | null
+    polite: number | null
+    rude: number | null
+    hid: number | null
+  }
+
+  export type FeedbackSumAggregateOutputType = {
+    attentive: number | null
+    polite: number | null
+    rude: number | null
+    hid: number | null
+  }
+
+  export type FeedbackMinAggregateOutputType = {
+    attentive: number | null
+    polite: number | null
+    rude: number | null
+    suggestion: string | null
+    hid: number | null
+  }
+
+  export type FeedbackMaxAggregateOutputType = {
+    attentive: number | null
+    polite: number | null
+    rude: number | null
+    suggestion: string | null
+    hid: number | null
+  }
+
+  export type FeedbackCountAggregateOutputType = {
+    attentive: number
+    polite: number
+    rude: number
+    suggestion: number
+    hid: number
+    _all: number
+  }
+
+
+  export type FeedbackAvgAggregateInputType = {
+    attentive?: true
+    polite?: true
+    rude?: true
+    hid?: true
+  }
+
+  export type FeedbackSumAggregateInputType = {
+    attentive?: true
+    polite?: true
+    rude?: true
+    hid?: true
+  }
+
+  export type FeedbackMinAggregateInputType = {
+    attentive?: true
+    polite?: true
+    rude?: true
+    suggestion?: true
+    hid?: true
+  }
+
+  export type FeedbackMaxAggregateInputType = {
+    attentive?: true
+    polite?: true
+    rude?: true
+    suggestion?: true
+    hid?: true
+  }
+
+  export type FeedbackCountAggregateInputType = {
+    attentive?: true
+    polite?: true
+    rude?: true
+    suggestion?: true
+    hid?: true
+    _all?: true
+  }
+
+  export type FeedbackAggregateArgs = {
+    /**
+     * Filter which feedback to aggregate.
+     */
+    where?: feedbackWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of feedbacks to fetch.
+     */
+    orderBy?: Enumerable<feedbackOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: feedbackWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` feedbacks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` feedbacks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned feedbacks
+    **/
+    _count?: true | FeedbackCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: FeedbackAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: FeedbackSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FeedbackMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FeedbackMaxAggregateInputType
+  }
+
+  export type GetFeedbackAggregateType<T extends FeedbackAggregateArgs> = {
+        [P in keyof T & keyof AggregateFeedback]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFeedback[P]>
+      : GetScalarType<T[P], AggregateFeedback[P]>
+  }
+
+
+
+
+  export type FeedbackGroupByArgs = {
+    where?: feedbackWhereInput
+    orderBy?: Enumerable<feedbackOrderByWithAggregationInput>
+    by: FeedbackScalarFieldEnum[]
+    having?: feedbackScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FeedbackCountAggregateInputType | true
+    _avg?: FeedbackAvgAggregateInputType
+    _sum?: FeedbackSumAggregateInputType
+    _min?: FeedbackMinAggregateInputType
+    _max?: FeedbackMaxAggregateInputType
+  }
+
+
+  export type FeedbackGroupByOutputType = {
+    attentive: number | null
+    polite: number | null
+    rude: number | null
+    suggestion: string
+    hid: number
+    _count: FeedbackCountAggregateOutputType | null
+    _avg: FeedbackAvgAggregateOutputType | null
+    _sum: FeedbackSumAggregateOutputType | null
+    _min: FeedbackMinAggregateOutputType | null
+    _max: FeedbackMaxAggregateOutputType | null
+  }
+
+  type GetFeedbackGroupByPayload<T extends FeedbackGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<FeedbackGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FeedbackGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FeedbackGroupByOutputType[P]>
+            : GetScalarType<T[P], FeedbackGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type feedbackSelect = {
+    attentive?: boolean
+    polite?: boolean
+    rude?: boolean
+    suggestion?: boolean
+    hid?: boolean
+    history?: boolean | historyArgs
+  }
+
+
+  export type feedbackInclude = {
+    history?: boolean | historyArgs
+  }
+
+  export type feedbackGetPayload<S extends boolean | null | undefined | feedbackArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? feedback :
+    S extends undefined ? never :
+    S extends { include: any } & (feedbackArgs | feedbackFindManyArgs)
+    ? feedback  & {
+    [P in TruthyKeys<S['include']>]:
+        P extends 'history' ? historyGetPayload<S['include'][P]> :  never
+  } 
+    : S extends { select: any } & (feedbackArgs | feedbackFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+        P extends 'history' ? historyGetPayload<S['select'][P]> :  P extends keyof feedback ? feedback[P] : never
+  } 
+      : feedback
+
+
+  type feedbackCountArgs = 
+    Omit<feedbackFindManyArgs, 'select' | 'include'> & {
+      select?: FeedbackCountAggregateInputType | true
+    }
+
+  export interface feedbackDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
+    /**
+     * Find zero or one Feedback that matches the filter.
+     * @param {feedbackFindUniqueArgs} args - Arguments to find a Feedback
+     * @example
+     * // Get one Feedback
+     * const feedback = await prisma.feedback.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends feedbackFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, feedbackFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'feedback'> extends True ? Prisma__feedbackClient<feedbackGetPayload<T>> : Prisma__feedbackClient<feedbackGetPayload<T> | null, null>
+
+    /**
+     * Find one Feedback that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {feedbackFindUniqueOrThrowArgs} args - Arguments to find a Feedback
+     * @example
+     * // Get one Feedback
+     * const feedback = await prisma.feedback.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends feedbackFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, feedbackFindUniqueOrThrowArgs>
+    ): Prisma__feedbackClient<feedbackGetPayload<T>>
+
+    /**
+     * Find the first Feedback that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {feedbackFindFirstArgs} args - Arguments to find a Feedback
+     * @example
+     * // Get one Feedback
+     * const feedback = await prisma.feedback.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends feedbackFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, feedbackFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'feedback'> extends True ? Prisma__feedbackClient<feedbackGetPayload<T>> : Prisma__feedbackClient<feedbackGetPayload<T> | null, null>
+
+    /**
+     * Find the first Feedback that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {feedbackFindFirstOrThrowArgs} args - Arguments to find a Feedback
+     * @example
+     * // Get one Feedback
+     * const feedback = await prisma.feedback.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends feedbackFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, feedbackFindFirstOrThrowArgs>
+    ): Prisma__feedbackClient<feedbackGetPayload<T>>
+
+    /**
+     * Find zero or more Feedbacks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {feedbackFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Feedbacks
+     * const feedbacks = await prisma.feedback.findMany()
+     * 
+     * // Get first 10 Feedbacks
+     * const feedbacks = await prisma.feedback.findMany({ take: 10 })
+     * 
+     * // Only select the `attentive`
+     * const feedbackWithAttentiveOnly = await prisma.feedback.findMany({ select: { attentive: true } })
      * 
     **/
-    include?: userloginInclude | null
+    findMany<T extends feedbackFindManyArgs>(
+      args?: SelectSubset<T, feedbackFindManyArgs>
+    ): PrismaPromise<Array<feedbackGetPayload<T>>>
+
+    /**
+     * Create a Feedback.
+     * @param {feedbackCreateArgs} args - Arguments to create a Feedback.
+     * @example
+     * // Create one Feedback
+     * const Feedback = await prisma.feedback.create({
+     *   data: {
+     *     // ... data to create a Feedback
+     *   }
+     * })
+     * 
+    **/
+    create<T extends feedbackCreateArgs>(
+      args: SelectSubset<T, feedbackCreateArgs>
+    ): Prisma__feedbackClient<feedbackGetPayload<T>>
+
+    /**
+     * Create many Feedbacks.
+     *     @param {feedbackCreateManyArgs} args - Arguments to create many Feedbacks.
+     *     @example
+     *     // Create many Feedbacks
+     *     const feedback = await prisma.feedback.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends feedbackCreateManyArgs>(
+      args?: SelectSubset<T, feedbackCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Feedback.
+     * @param {feedbackDeleteArgs} args - Arguments to delete one Feedback.
+     * @example
+     * // Delete one Feedback
+     * const Feedback = await prisma.feedback.delete({
+     *   where: {
+     *     // ... filter to delete one Feedback
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends feedbackDeleteArgs>(
+      args: SelectSubset<T, feedbackDeleteArgs>
+    ): Prisma__feedbackClient<feedbackGetPayload<T>>
+
+    /**
+     * Update one Feedback.
+     * @param {feedbackUpdateArgs} args - Arguments to update one Feedback.
+     * @example
+     * // Update one Feedback
+     * const feedback = await prisma.feedback.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends feedbackUpdateArgs>(
+      args: SelectSubset<T, feedbackUpdateArgs>
+    ): Prisma__feedbackClient<feedbackGetPayload<T>>
+
+    /**
+     * Delete zero or more Feedbacks.
+     * @param {feedbackDeleteManyArgs} args - Arguments to filter Feedbacks to delete.
+     * @example
+     * // Delete a few Feedbacks
+     * const { count } = await prisma.feedback.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends feedbackDeleteManyArgs>(
+      args?: SelectSubset<T, feedbackDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Feedbacks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {feedbackUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Feedbacks
+     * const feedback = await prisma.feedback.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends feedbackUpdateManyArgs>(
+      args: SelectSubset<T, feedbackUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Feedback.
+     * @param {feedbackUpsertArgs} args - Arguments to update or create a Feedback.
+     * @example
+     * // Update or create a Feedback
+     * const feedback = await prisma.feedback.upsert({
+     *   create: {
+     *     // ... data to create a Feedback
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Feedback we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends feedbackUpsertArgs>(
+      args: SelectSubset<T, feedbackUpsertArgs>
+    ): Prisma__feedbackClient<feedbackGetPayload<T>>
+
+    /**
+     * Count the number of Feedbacks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {feedbackCountArgs} args - Arguments to filter Feedbacks to count.
+     * @example
+     * // Count the number of Feedbacks
+     * const count = await prisma.feedback.count({
+     *   where: {
+     *     // ... the filter for the Feedbacks we want to count
+     *   }
+     * })
+    **/
+    count<T extends feedbackCountArgs>(
+      args?: Subset<T, feedbackCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FeedbackCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Feedback.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedbackAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FeedbackAggregateArgs>(args: Subset<T, FeedbackAggregateArgs>): PrismaPromise<GetFeedbackAggregateType<T>>
+
+    /**
+     * Group by Feedback.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedbackGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FeedbackGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FeedbackGroupByArgs['orderBy'] }
+        : { orderBy?: FeedbackGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FeedbackGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFeedbackGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for feedback.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__feedbackClient<T, Null = never> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    history<T extends historyArgs= {}>(args?: Subset<T, historyArgs>): Prisma__historyClient<historyGetPayload<T> | Null>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * feedback base type for findUnique actions
+   */
+  export type feedbackFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the feedback
+     */
+    select?: feedbackSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: feedbackInclude | null
+    /**
+     * Filter, which feedback to fetch.
+     */
+    where: feedbackWhereUniqueInput
+  }
+
+  /**
+   * feedback findUnique
+   */
+  export interface feedbackFindUniqueArgs extends feedbackFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * feedback findUniqueOrThrow
+   */
+  export type feedbackFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the feedback
+     */
+    select?: feedbackSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: feedbackInclude | null
+    /**
+     * Filter, which feedback to fetch.
+     */
+    where: feedbackWhereUniqueInput
+  }
+
+
+  /**
+   * feedback base type for findFirst actions
+   */
+  export type feedbackFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the feedback
+     */
+    select?: feedbackSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: feedbackInclude | null
+    /**
+     * Filter, which feedback to fetch.
+     */
+    where?: feedbackWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of feedbacks to fetch.
+     */
+    orderBy?: Enumerable<feedbackOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for feedbacks.
+     */
+    cursor?: feedbackWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` feedbacks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` feedbacks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of feedbacks.
+     */
+    distinct?: Enumerable<FeedbackScalarFieldEnum>
+  }
+
+  /**
+   * feedback findFirst
+   */
+  export interface feedbackFindFirstArgs extends feedbackFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * feedback findFirstOrThrow
+   */
+  export type feedbackFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the feedback
+     */
+    select?: feedbackSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: feedbackInclude | null
+    /**
+     * Filter, which feedback to fetch.
+     */
+    where?: feedbackWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of feedbacks to fetch.
+     */
+    orderBy?: Enumerable<feedbackOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for feedbacks.
+     */
+    cursor?: feedbackWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` feedbacks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` feedbacks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of feedbacks.
+     */
+    distinct?: Enumerable<FeedbackScalarFieldEnum>
+  }
+
+
+  /**
+   * feedback findMany
+   */
+  export type feedbackFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the feedback
+     */
+    select?: feedbackSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: feedbackInclude | null
+    /**
+     * Filter, which feedbacks to fetch.
+     */
+    where?: feedbackWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of feedbacks to fetch.
+     */
+    orderBy?: Enumerable<feedbackOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing feedbacks.
+     */
+    cursor?: feedbackWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` feedbacks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` feedbacks.
+     */
+    skip?: number
+    distinct?: Enumerable<FeedbackScalarFieldEnum>
+  }
+
+
+  /**
+   * feedback create
+   */
+  export type feedbackCreateArgs = {
+    /**
+     * Select specific fields to fetch from the feedback
+     */
+    select?: feedbackSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: feedbackInclude | null
+    /**
+     * The data needed to create a feedback.
+     */
+    data: XOR<feedbackCreateInput, feedbackUncheckedCreateInput>
+  }
+
+
+  /**
+   * feedback createMany
+   */
+  export type feedbackCreateManyArgs = {
+    /**
+     * The data used to create many feedbacks.
+     */
+    data: Enumerable<feedbackCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * feedback update
+   */
+  export type feedbackUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the feedback
+     */
+    select?: feedbackSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: feedbackInclude | null
+    /**
+     * The data needed to update a feedback.
+     */
+    data: XOR<feedbackUpdateInput, feedbackUncheckedUpdateInput>
+    /**
+     * Choose, which feedback to update.
+     */
+    where: feedbackWhereUniqueInput
+  }
+
+
+  /**
+   * feedback updateMany
+   */
+  export type feedbackUpdateManyArgs = {
+    /**
+     * The data used to update feedbacks.
+     */
+    data: XOR<feedbackUpdateManyMutationInput, feedbackUncheckedUpdateManyInput>
+    /**
+     * Filter which feedbacks to update
+     */
+    where?: feedbackWhereInput
+  }
+
+
+  /**
+   * feedback upsert
+   */
+  export type feedbackUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the feedback
+     */
+    select?: feedbackSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: feedbackInclude | null
+    /**
+     * The filter to search for the feedback to update in case it exists.
+     */
+    where: feedbackWhereUniqueInput
+    /**
+     * In case the feedback found by the `where` argument doesn't exist, create a new feedback with this data.
+     */
+    create: XOR<feedbackCreateInput, feedbackUncheckedCreateInput>
+    /**
+     * In case the feedback was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<feedbackUpdateInput, feedbackUncheckedUpdateInput>
+  }
+
+
+  /**
+   * feedback delete
+   */
+  export type feedbackDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the feedback
+     */
+    select?: feedbackSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: feedbackInclude | null
+    /**
+     * Filter which feedback to delete.
+     */
+    where: feedbackWhereUniqueInput
+  }
+
+
+  /**
+   * feedback deleteMany
+   */
+  export type feedbackDeleteManyArgs = {
+    /**
+     * Filter which feedbacks to delete
+     */
+    where?: feedbackWhereInput
+  }
+
+
+  /**
+   * feedback without action
+   */
+  export type feedbackArgs = {
+    /**
+     * Select specific fields to fetch from the feedback
+     */
+    select?: feedbackSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: feedbackInclude | null
   }
 
 
@@ -13131,6 +14542,17 @@ export namespace Prisma {
   export type FailedsubjectScalarFieldEnum = (typeof FailedsubjectScalarFieldEnum)[keyof typeof FailedsubjectScalarFieldEnum]
 
 
+  export const FeedbackScalarFieldEnum: {
+    attentive: 'attentive',
+    polite: 'polite',
+    rude: 'rude',
+    suggestion: 'suggestion',
+    hid: 'hid'
+  };
+
+  export type FeedbackScalarFieldEnum = (typeof FeedbackScalarFieldEnum)[keyof typeof FeedbackScalarFieldEnum]
+
+
   export const HistoryScalarFieldEnum: {
     hid: 'hid',
     date: 'date',
@@ -13139,11 +14561,11 @@ export namespace Prisma {
     reason: 'reason',
     status: 'status',
     referedTo: 'referedTo',
-    feedback: 'feedback',
-    rating: 'rating',
     regNo: 'regNo',
     adminId: 'adminId',
-    parentId: 'parentId'
+    parentId: 'parentId',
+    adminFeedback: 'adminFeedback',
+    suggestion: 'suggestion'
   };
 
   export type HistoryScalarFieldEnum = (typeof HistoryScalarFieldEnum)[keyof typeof HistoryScalarFieldEnum]
@@ -13157,7 +14579,8 @@ export namespace Prisma {
     tsid: 'tsid',
     regNo: 'regNo',
     adminId: 'adminId',
-    parentId: 'parentId'
+    parentId: 'parentId',
+    date: 'date'
   };
 
   export type MeetingScalarFieldEnum = (typeof MeetingScalarFieldEnum)[keyof typeof MeetingScalarFieldEnum]
@@ -13208,11 +14631,11 @@ export namespace Prisma {
 
   export const TimeslotScalarFieldEnum: {
     tsid: 'tsid',
-    date: 'date',
     startTime: 'startTime',
     endTime: 'endTime',
     availibility: 'availibility',
-    adminId: 'adminId'
+    adminId: 'adminId',
+    day: 'day'
   };
 
   export type TimeslotScalarFieldEnum = (typeof TimeslotScalarFieldEnum)[keyof typeof TimeslotScalarFieldEnum]
@@ -13249,7 +14672,8 @@ export namespace Prisma {
     tsid: 'tsid',
     regNo: 'regNo',
     adminId: 'adminId',
-    parentId: 'parentId'
+    parentId: 'parentId',
+    status: 'status'
   };
 
   export type WaitinglistScalarFieldEnum = (typeof WaitinglistScalarFieldEnum)[keyof typeof WaitinglistScalarFieldEnum]
@@ -13389,24 +14813,24 @@ export namespace Prisma {
     OR?: Enumerable<timeslotWhereInput>
     NOT?: Enumerable<timeslotWhereInput>
     tsid?: IntFilter | number
-    date?: DateTimeFilter | Date | string
     startTime?: DateTimeFilter | Date | string
     endTime?: DateTimeFilter | Date | string
     availibility?: BoolFilter | boolean
     adminId?: StringFilter | string
-    admin?: XOR<AdminRelationFilter, adminWhereInput>
+    day?: StringNullableFilter | string | null
     meeting?: XOR<MeetingRelationFilter, meetingWhereInput> | null
+    admin?: XOR<AdminRelationFilter, adminWhereInput>
   }
 
   export type timeslotOrderByWithRelationInput = {
     tsid?: SortOrder
-    date?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
     availibility?: SortOrder
     adminId?: SortOrder
-    admin?: adminOrderByWithRelationInput
+    day?: SortOrder
     meeting?: meetingOrderByWithRelationInput
+    admin?: adminOrderByWithRelationInput
   }
 
   export type timeslotWhereUniqueInput = {
@@ -13415,11 +14839,11 @@ export namespace Prisma {
 
   export type timeslotOrderByWithAggregationInput = {
     tsid?: SortOrder
-    date?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
     availibility?: SortOrder
     adminId?: SortOrder
+    day?: SortOrder
     _count?: timeslotCountOrderByAggregateInput
     _avg?: timeslotAvgOrderByAggregateInput
     _max?: timeslotMaxOrderByAggregateInput
@@ -13432,11 +14856,11 @@ export namespace Prisma {
     OR?: Enumerable<timeslotScalarWhereWithAggregatesInput>
     NOT?: Enumerable<timeslotScalarWhereWithAggregatesInput>
     tsid?: IntWithAggregatesFilter | number
-    date?: DateTimeWithAggregatesFilter | Date | string
     startTime?: DateTimeWithAggregatesFilter | Date | string
     endTime?: DateTimeWithAggregatesFilter | Date | string
     availibility?: BoolWithAggregatesFilter | boolean
     adminId?: StringWithAggregatesFilter | string
+    day?: StringNullableWithAggregatesFilter | string | null
   }
 
   export type studentWhereInput = {
@@ -13703,12 +15127,13 @@ export namespace Prisma {
     NOT?: Enumerable<meetingWhereInput>
     mid?: IntFilter | number
     reason?: StringFilter | string
-    status?: EnumStatusFilter | Status
+    status?: StringFilter | string
     referedTo?: StringFilter | string
     tsid?: IntFilter | number
     regNo?: StringFilter | string
     adminId?: StringFilter | string
     parentId?: StringFilter | string
+    date?: DateTimeFilter | Date | string
     admin?: XOR<AdminRelationFilter, adminWhereInput>
     parent?: XOR<ParentRelationFilter, parentWhereInput>
     student?: XOR<StudentRelationFilter, studentWhereInput>
@@ -13724,6 +15149,7 @@ export namespace Prisma {
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    date?: SortOrder
     admin?: adminOrderByWithRelationInput
     parent?: parentOrderByWithRelationInput
     student?: studentOrderByWithRelationInput
@@ -13744,6 +15170,7 @@ export namespace Prisma {
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    date?: SortOrder
     _count?: meetingCountOrderByAggregateInput
     _avg?: meetingAvgOrderByAggregateInput
     _max?: meetingMaxOrderByAggregateInput
@@ -13757,12 +15184,13 @@ export namespace Prisma {
     NOT?: Enumerable<meetingScalarWhereWithAggregatesInput>
     mid?: IntWithAggregatesFilter | number
     reason?: StringWithAggregatesFilter | string
-    status?: EnumStatusWithAggregatesFilter | Status
+    status?: StringWithAggregatesFilter | string
     referedTo?: StringWithAggregatesFilter | string
     tsid?: IntWithAggregatesFilter | number
     regNo?: StringWithAggregatesFilter | string
     adminId?: StringWithAggregatesFilter | string
     parentId?: StringWithAggregatesFilter | string
+    date?: DateTimeWithAggregatesFilter | Date | string
   }
 
   export type waitinglistWhereInput = {
@@ -13776,6 +15204,7 @@ export namespace Prisma {
     regNo?: StringFilter | string
     adminId?: StringFilter | string
     parentId?: StringFilter | string
+    status?: StringNullableFilter | string | null
     admin?: XOR<AdminRelationFilter, adminWhereInput>
     parent?: XOR<ParentRelationFilter, parentWhereInput>
     student?: XOR<StudentRelationFilter, studentWhereInput>
@@ -13789,6 +15218,7 @@ export namespace Prisma {
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    status?: SortOrder
     admin?: adminOrderByWithRelationInput
     parent?: parentOrderByWithRelationInput
     student?: studentOrderByWithRelationInput
@@ -13806,6 +15236,7 @@ export namespace Prisma {
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    status?: SortOrder
     _count?: waitinglistCountOrderByAggregateInput
     _avg?: waitinglistAvgOrderByAggregateInput
     _max?: waitinglistMaxOrderByAggregateInput
@@ -13824,6 +15255,7 @@ export namespace Prisma {
     regNo?: StringWithAggregatesFilter | string
     adminId?: StringWithAggregatesFilter | string
     parentId?: StringWithAggregatesFilter | string
+    status?: StringNullableWithAggregatesFilter | string | null
   }
 
   export type historyWhereInput = {
@@ -13837,11 +15269,12 @@ export namespace Prisma {
     reason?: StringFilter | string
     status?: EnumStatusFilter | Status
     referedTo?: StringFilter | string
-    feedback?: StringNullableFilter | string | null
-    rating?: IntNullableFilter | number | null
     regNo?: StringFilter | string
     adminId?: StringFilter | string
     parentId?: StringFilter | string
+    adminFeedback?: StringNullableFilter | string | null
+    suggestion?: StringNullableFilter | string | null
+    feedback?: XOR<FeedbackRelationFilter, feedbackWhereInput> | null
     admin?: XOR<AdminRelationFilter, adminWhereInput>
     parent?: XOR<ParentRelationFilter, parentWhereInput>
     student?: XOR<StudentRelationFilter, studentWhereInput>
@@ -13855,11 +15288,12 @@ export namespace Prisma {
     reason?: SortOrder
     status?: SortOrder
     referedTo?: SortOrder
-    feedback?: SortOrder
-    rating?: SortOrder
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    adminFeedback?: SortOrder
+    suggestion?: SortOrder
+    feedback?: feedbackOrderByWithRelationInput
     admin?: adminOrderByWithRelationInput
     parent?: parentOrderByWithRelationInput
     student?: studentOrderByWithRelationInput
@@ -13877,11 +15311,11 @@ export namespace Prisma {
     reason?: SortOrder
     status?: SortOrder
     referedTo?: SortOrder
-    feedback?: SortOrder
-    rating?: SortOrder
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    adminFeedback?: SortOrder
+    suggestion?: SortOrder
     _count?: historyCountOrderByAggregateInput
     _avg?: historyAvgOrderByAggregateInput
     _max?: historyMaxOrderByAggregateInput
@@ -13900,11 +15334,11 @@ export namespace Prisma {
     reason?: StringWithAggregatesFilter | string
     status?: EnumStatusWithAggregatesFilter | Status
     referedTo?: StringWithAggregatesFilter | string
-    feedback?: StringNullableWithAggregatesFilter | string | null
-    rating?: IntNullableWithAggregatesFilter | number | null
     regNo?: StringWithAggregatesFilter | string
     adminId?: StringWithAggregatesFilter | string
     parentId?: StringWithAggregatesFilter | string
+    adminFeedback?: StringNullableWithAggregatesFilter | string | null
+    suggestion?: StringNullableWithAggregatesFilter | string | null
   }
 
   export type userloginWhereInput = {
@@ -13973,6 +15407,55 @@ export namespace Prisma {
     regNo?: StringNullableWithAggregatesFilter | string | null
     adminId?: StringNullableWithAggregatesFilter | string | null
     parentId?: StringNullableWithAggregatesFilter | string | null
+  }
+
+  export type feedbackWhereInput = {
+    AND?: Enumerable<feedbackWhereInput>
+    OR?: Enumerable<feedbackWhereInput>
+    NOT?: Enumerable<feedbackWhereInput>
+    attentive?: FloatNullableFilter | number | null
+    polite?: FloatNullableFilter | number | null
+    rude?: FloatNullableFilter | number | null
+    suggestion?: StringFilter | string
+    hid?: IntFilter | number
+    history?: XOR<HistoryRelationFilter, historyWhereInput>
+  }
+
+  export type feedbackOrderByWithRelationInput = {
+    attentive?: SortOrder
+    polite?: SortOrder
+    rude?: SortOrder
+    suggestion?: SortOrder
+    hid?: SortOrder
+    history?: historyOrderByWithRelationInput
+  }
+
+  export type feedbackWhereUniqueInput = {
+    hid?: number
+  }
+
+  export type feedbackOrderByWithAggregationInput = {
+    attentive?: SortOrder
+    polite?: SortOrder
+    rude?: SortOrder
+    suggestion?: SortOrder
+    hid?: SortOrder
+    _count?: feedbackCountOrderByAggregateInput
+    _avg?: feedbackAvgOrderByAggregateInput
+    _max?: feedbackMaxOrderByAggregateInput
+    _min?: feedbackMinOrderByAggregateInput
+    _sum?: feedbackSumOrderByAggregateInput
+  }
+
+  export type feedbackScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<feedbackScalarWhereWithAggregatesInput>
+    OR?: Enumerable<feedbackScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<feedbackScalarWhereWithAggregatesInput>
+    attentive?: FloatNullableWithAggregatesFilter | number | null
+    polite?: FloatNullableWithAggregatesFilter | number | null
+    rude?: FloatNullableWithAggregatesFilter | number | null
+    suggestion?: StringWithAggregatesFilter | string
+    hid?: IntWithAggregatesFilter | number
   }
 
   export type parentCreateInput = {
@@ -14152,66 +15635,66 @@ export namespace Prisma {
   }
 
   export type timeslotCreateInput = {
-    date: Date | string
     startTime: Date | string
     endTime: Date | string
     availibility: boolean
-    admin: adminCreateNestedOneWithoutTimeslotInput
+    day?: string | null
     meeting?: meetingCreateNestedOneWithoutTimeslotInput
+    admin: adminCreateNestedOneWithoutTimeslotInput
   }
 
   export type timeslotUncheckedCreateInput = {
     tsid?: number
-    date: Date | string
     startTime: Date | string
     endTime: Date | string
     availibility: boolean
     adminId: string
+    day?: string | null
     meeting?: meetingUncheckedCreateNestedOneWithoutTimeslotInput
   }
 
   export type timeslotUpdateInput = {
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     availibility?: BoolFieldUpdateOperationsInput | boolean
-    admin?: adminUpdateOneRequiredWithoutTimeslotNestedInput
+    day?: NullableStringFieldUpdateOperationsInput | string | null
     meeting?: meetingUpdateOneWithoutTimeslotNestedInput
+    admin?: adminUpdateOneRequiredWithoutTimeslotNestedInput
   }
 
   export type timeslotUncheckedUpdateInput = {
     tsid?: IntFieldUpdateOperationsInput | number
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     availibility?: BoolFieldUpdateOperationsInput | boolean
     adminId?: StringFieldUpdateOperationsInput | string
+    day?: NullableStringFieldUpdateOperationsInput | string | null
     meeting?: meetingUncheckedUpdateOneWithoutTimeslotNestedInput
   }
 
   export type timeslotCreateManyInput = {
     tsid?: number
-    date: Date | string
     startTime: Date | string
     endTime: Date | string
     availibility: boolean
     adminId: string
+    day?: string | null
   }
 
   export type timeslotUpdateManyMutationInput = {
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     availibility?: BoolFieldUpdateOperationsInput | boolean
+    day?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type timeslotUncheckedUpdateManyInput = {
     tsid?: IntFieldUpdateOperationsInput | number
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     availibility?: BoolFieldUpdateOperationsInput | boolean
     adminId?: StringFieldUpdateOperationsInput | string
+    day?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type studentCreateInput = {
@@ -14512,8 +15995,9 @@ export namespace Prisma {
 
   export type meetingCreateInput = {
     reason: string
-    status: Status
+    status: string
     referedTo: string
+    date: Date | string
     admin: adminCreateNestedOneWithoutMeetingInput
     parent: parentCreateNestedOneWithoutMeetingInput
     student: studentCreateNestedOneWithoutMeetingInput
@@ -14523,18 +16007,20 @@ export namespace Prisma {
   export type meetingUncheckedCreateInput = {
     mid?: number
     reason: string
-    status: Status
+    status: string
     referedTo: string
     tsid: number
     regNo: string
     adminId: string
     parentId: string
+    date: Date | string
   }
 
   export type meetingUpdateInput = {
     reason?: StringFieldUpdateOperationsInput | string
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: StringFieldUpdateOperationsInput | string
     referedTo?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
     admin?: adminUpdateOneRequiredWithoutMeetingNestedInput
     parent?: parentUpdateOneRequiredWithoutMeetingNestedInput
     student?: studentUpdateOneRequiredWithoutMeetingNestedInput
@@ -14544,46 +16030,51 @@ export namespace Prisma {
   export type meetingUncheckedUpdateInput = {
     mid?: IntFieldUpdateOperationsInput | number
     reason?: StringFieldUpdateOperationsInput | string
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: StringFieldUpdateOperationsInput | string
     referedTo?: StringFieldUpdateOperationsInput | string
     tsid?: IntFieldUpdateOperationsInput | number
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type meetingCreateManyInput = {
     mid?: number
     reason: string
-    status: Status
+    status: string
     referedTo: string
     tsid: number
     regNo: string
     adminId: string
     parentId: string
+    date: Date | string
   }
 
   export type meetingUpdateManyMutationInput = {
     reason?: StringFieldUpdateOperationsInput | string
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: StringFieldUpdateOperationsInput | string
     referedTo?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type meetingUncheckedUpdateManyInput = {
     mid?: IntFieldUpdateOperationsInput | number
     reason?: StringFieldUpdateOperationsInput | string
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: StringFieldUpdateOperationsInput | string
     referedTo?: StringFieldUpdateOperationsInput | string
     tsid?: IntFieldUpdateOperationsInput | number
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type waitinglistCreateInput = {
     reason: string
     date: Date | string
     tsid: number
+    status?: string | null
     admin: adminCreateNestedOneWithoutWaitinglistInput
     parent: parentCreateNestedOneWithoutWaitinglistInput
     student: studentCreateNestedOneWithoutWaiinglistInput
@@ -14597,12 +16088,14 @@ export namespace Prisma {
     regNo: string
     adminId: string
     parentId: string
+    status?: string | null
   }
 
   export type waitinglistUpdateInput = {
     reason?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     tsid?: IntFieldUpdateOperationsInput | number
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: adminUpdateOneRequiredWithoutWaitinglistNestedInput
     parent?: parentUpdateOneRequiredWithoutWaitinglistNestedInput
     student?: studentUpdateOneRequiredWithoutWaiinglistNestedInput
@@ -14616,6 +16109,7 @@ export namespace Prisma {
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type waitinglistCreateManyInput = {
@@ -14626,12 +16120,14 @@ export namespace Prisma {
     regNo: string
     adminId: string
     parentId: string
+    status?: string | null
   }
 
   export type waitinglistUpdateManyMutationInput = {
     reason?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     tsid?: IntFieldUpdateOperationsInput | number
+    status?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type waitinglistUncheckedUpdateManyInput = {
@@ -14642,6 +16138,7 @@ export namespace Prisma {
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type historyCreateInput = {
@@ -14651,8 +16148,9 @@ export namespace Prisma {
     reason: string
     status: Status
     referedTo: string
-    feedback?: string | null
-    rating?: number | null
+    adminFeedback?: string | null
+    suggestion?: string | null
+    feedback?: feedbackCreateNestedOneWithoutHistoryInput
     admin: adminCreateNestedOneWithoutHistoryInput
     parent: parentCreateNestedOneWithoutHistoryInput
     student: studentCreateNestedOneWithoutHistoryInput
@@ -14666,11 +16164,12 @@ export namespace Prisma {
     reason: string
     status: Status
     referedTo: string
-    feedback?: string | null
-    rating?: number | null
     regNo: string
     adminId: string
     parentId: string
+    adminFeedback?: string | null
+    suggestion?: string | null
+    feedback?: feedbackUncheckedCreateNestedOneWithoutHistoryInput
   }
 
   export type historyUpdateInput = {
@@ -14680,8 +16179,9 @@ export namespace Prisma {
     reason?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
-    feedback?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
+    adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
+    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    feedback?: feedbackUpdateOneWithoutHistoryNestedInput
     admin?: adminUpdateOneRequiredWithoutHistoryNestedInput
     parent?: parentUpdateOneRequiredWithoutHistoryNestedInput
     student?: studentUpdateOneRequiredWithoutHistoryNestedInput
@@ -14695,11 +16195,12 @@ export namespace Prisma {
     reason?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
-    feedback?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
+    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    feedback?: feedbackUncheckedUpdateOneWithoutHistoryNestedInput
   }
 
   export type historyCreateManyInput = {
@@ -14710,11 +16211,11 @@ export namespace Prisma {
     reason: string
     status: Status
     referedTo: string
-    feedback?: string | null
-    rating?: number | null
     regNo: string
     adminId: string
     parentId: string
+    adminFeedback?: string | null
+    suggestion?: string | null
   }
 
   export type historyUpdateManyMutationInput = {
@@ -14724,8 +16225,8 @@ export namespace Prisma {
     reason?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
-    feedback?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
+    adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
+    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type historyUncheckedUpdateManyInput = {
@@ -14736,11 +16237,11 @@ export namespace Prisma {
     reason?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
-    feedback?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
+    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type userloginCreateInput = {
@@ -14812,6 +16313,61 @@ export namespace Prisma {
     regNo?: NullableStringFieldUpdateOperationsInput | string | null
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type feedbackCreateInput = {
+    attentive?: number | null
+    polite?: number | null
+    rude?: number | null
+    suggestion: string
+    history?: historyCreateNestedOneWithoutFeedbackInput
+  }
+
+  export type feedbackUncheckedCreateInput = {
+    attentive?: number | null
+    polite?: number | null
+    rude?: number | null
+    suggestion: string
+    hid?: number
+  }
+
+  export type feedbackUpdateInput = {
+    attentive?: NullableFloatFieldUpdateOperationsInput | number | null
+    polite?: NullableFloatFieldUpdateOperationsInput | number | null
+    rude?: NullableFloatFieldUpdateOperationsInput | number | null
+    suggestion?: StringFieldUpdateOperationsInput | string
+    history?: historyUpdateOneRequiredWithoutFeedbackNestedInput
+  }
+
+  export type feedbackUncheckedUpdateInput = {
+    attentive?: NullableFloatFieldUpdateOperationsInput | number | null
+    polite?: NullableFloatFieldUpdateOperationsInput | number | null
+    rude?: NullableFloatFieldUpdateOperationsInput | number | null
+    suggestion?: StringFieldUpdateOperationsInput | string
+    hid?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type feedbackCreateManyInput = {
+    attentive?: number | null
+    polite?: number | null
+    rude?: number | null
+    suggestion: string
+    hid?: number
+  }
+
+  export type feedbackUpdateManyMutationInput = {
+    attentive?: NullableFloatFieldUpdateOperationsInput | number | null
+    polite?: NullableFloatFieldUpdateOperationsInput | number | null
+    rude?: NullableFloatFieldUpdateOperationsInput | number | null
+    suggestion?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type feedbackUncheckedUpdateManyInput = {
+    attentive?: NullableFloatFieldUpdateOperationsInput | number | null
+    polite?: NullableFloatFieldUpdateOperationsInput | number | null
+    rude?: NullableFloatFieldUpdateOperationsInput | number | null
+    suggestion?: StringFieldUpdateOperationsInput | string
+    hid?: IntFieldUpdateOperationsInput | number
   }
 
   export type StringFilter = {
@@ -14992,9 +16548,19 @@ export namespace Prisma {
     not?: NestedBoolFilter | boolean
   }
 
-  export type AdminRelationFilter = {
-    is?: adminWhereInput
-    isNot?: adminWhereInput
+  export type StringNullableFilter = {
+    equals?: string | null
+    in?: Enumerable<string> | null
+    notIn?: Enumerable<string> | null
+    lt?: string
+    lte?: string
+    gt?: string
+    gte?: string
+    contains?: string
+    startsWith?: string
+    endsWith?: string
+    mode?: QueryMode
+    not?: NestedStringNullableFilter | string | null
   }
 
   export type MeetingRelationFilter = {
@@ -15002,13 +16568,18 @@ export namespace Prisma {
     isNot?: meetingWhereInput | null
   }
 
+  export type AdminRelationFilter = {
+    is?: adminWhereInput
+    isNot?: adminWhereInput
+  }
+
   export type timeslotCountOrderByAggregateInput = {
     tsid?: SortOrder
-    date?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
     availibility?: SortOrder
     adminId?: SortOrder
+    day?: SortOrder
   }
 
   export type timeslotAvgOrderByAggregateInput = {
@@ -15017,20 +16588,20 @@ export namespace Prisma {
 
   export type timeslotMaxOrderByAggregateInput = {
     tsid?: SortOrder
-    date?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
     availibility?: SortOrder
     adminId?: SortOrder
+    day?: SortOrder
   }
 
   export type timeslotMinOrderByAggregateInput = {
     tsid?: SortOrder
-    date?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
     availibility?: SortOrder
     adminId?: SortOrder
+    day?: SortOrder
   }
 
   export type timeslotSumOrderByAggregateInput = {
@@ -15075,7 +16646,7 @@ export namespace Prisma {
     _max?: NestedBoolFilter
   }
 
-  export type StringNullableFilter = {
+  export type StringNullableWithAggregatesFilter = {
     equals?: string | null
     in?: Enumerable<string> | null
     notIn?: Enumerable<string> | null
@@ -15087,7 +16658,10 @@ export namespace Prisma {
     startsWith?: string
     endsWith?: string
     mode?: QueryMode
-    not?: NestedStringNullableFilter | string | null
+    not?: NestedStringNullableWithAggregatesFilter | string | null
+    _count?: NestedIntNullableFilter
+    _min?: NestedStringNullableFilter
+    _max?: NestedStringNullableFilter
   }
 
   export type AttendanceListRelationFilter = {
@@ -15162,24 +16736,6 @@ export namespace Prisma {
     class?: SortOrder
     section?: SortOrder
     parentId?: SortOrder
-  }
-
-  export type StringNullableWithAggregatesFilter = {
-    equals?: string | null
-    in?: Enumerable<string> | null
-    notIn?: Enumerable<string> | null
-    lt?: string
-    lte?: string
-    gt?: string
-    gte?: string
-    contains?: string
-    startsWith?: string
-    endsWith?: string
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter | string | null
-    _count?: NestedIntNullableFilter
-    _min?: NestedStringNullableFilter
-    _max?: NestedStringNullableFilter
   }
 
   export type StudentRelationFilter = {
@@ -15331,13 +16887,6 @@ export namespace Prisma {
     id?: SortOrder
   }
 
-  export type EnumStatusFilter = {
-    equals?: Status
-    in?: Enumerable<Status>
-    notIn?: Enumerable<Status>
-    not?: NestedEnumStatusFilter | Status
-  }
-
   export type ParentRelationFilter = {
     is?: parentWhereInput | null
     isNot?: parentWhereInput | null
@@ -15357,6 +16906,7 @@ export namespace Prisma {
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    date?: SortOrder
   }
 
   export type meetingAvgOrderByAggregateInput = {
@@ -15373,6 +16923,7 @@ export namespace Prisma {
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    date?: SortOrder
   }
 
   export type meetingMinOrderByAggregateInput = {
@@ -15384,21 +16935,12 @@ export namespace Prisma {
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    date?: SortOrder
   }
 
   export type meetingSumOrderByAggregateInput = {
     mid?: SortOrder
     tsid?: SortOrder
-  }
-
-  export type EnumStatusWithAggregatesFilter = {
-    equals?: Status
-    in?: Enumerable<Status>
-    notIn?: Enumerable<Status>
-    not?: NestedEnumStatusWithAggregatesFilter | Status
-    _count?: NestedIntFilter
-    _min?: NestedEnumStatusFilter
-    _max?: NestedEnumStatusFilter
   }
 
   export type waitinglistCountOrderByAggregateInput = {
@@ -15409,6 +16951,7 @@ export namespace Prisma {
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    status?: SortOrder
   }
 
   export type waitinglistAvgOrderByAggregateInput = {
@@ -15424,6 +16967,7 @@ export namespace Prisma {
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    status?: SortOrder
   }
 
   export type waitinglistMinOrderByAggregateInput = {
@@ -15434,6 +16978,7 @@ export namespace Prisma {
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    status?: SortOrder
   }
 
   export type waitinglistSumOrderByAggregateInput = {
@@ -15441,15 +16986,16 @@ export namespace Prisma {
     tsid?: SortOrder
   }
 
-  export type IntNullableFilter = {
-    equals?: number | null
-    in?: Enumerable<number> | null
-    notIn?: Enumerable<number> | null
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntNullableFilter | number | null
+  export type EnumStatusFilter = {
+    equals?: Status
+    in?: Enumerable<Status>
+    notIn?: Enumerable<Status>
+    not?: NestedEnumStatusFilter | Status
+  }
+
+  export type FeedbackRelationFilter = {
+    is?: feedbackWhereInput | null
+    isNot?: feedbackWhereInput | null
   }
 
   export type historyCountOrderByAggregateInput = {
@@ -15460,16 +17006,15 @@ export namespace Prisma {
     reason?: SortOrder
     status?: SortOrder
     referedTo?: SortOrder
-    feedback?: SortOrder
-    rating?: SortOrder
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    adminFeedback?: SortOrder
+    suggestion?: SortOrder
   }
 
   export type historyAvgOrderByAggregateInput = {
     hid?: SortOrder
-    rating?: SortOrder
   }
 
   export type historyMaxOrderByAggregateInput = {
@@ -15480,11 +17025,11 @@ export namespace Prisma {
     reason?: SortOrder
     status?: SortOrder
     referedTo?: SortOrder
-    feedback?: SortOrder
-    rating?: SortOrder
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    adminFeedback?: SortOrder
+    suggestion?: SortOrder
   }
 
   export type historyMinOrderByAggregateInput = {
@@ -15495,32 +17040,25 @@ export namespace Prisma {
     reason?: SortOrder
     status?: SortOrder
     referedTo?: SortOrder
-    feedback?: SortOrder
-    rating?: SortOrder
     regNo?: SortOrder
     adminId?: SortOrder
     parentId?: SortOrder
+    adminFeedback?: SortOrder
+    suggestion?: SortOrder
   }
 
   export type historySumOrderByAggregateInput = {
     hid?: SortOrder
-    rating?: SortOrder
   }
 
-  export type IntNullableWithAggregatesFilter = {
-    equals?: number | null
-    in?: Enumerable<number> | null
-    notIn?: Enumerable<number> | null
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntNullableWithAggregatesFilter | number | null
-    _count?: NestedIntNullableFilter
-    _avg?: NestedFloatNullableFilter
-    _sum?: NestedIntNullableFilter
-    _min?: NestedIntNullableFilter
-    _max?: NestedIntNullableFilter
+  export type EnumStatusWithAggregatesFilter = {
+    equals?: Status
+    in?: Enumerable<Status>
+    notIn?: Enumerable<Status>
+    not?: NestedEnumStatusWithAggregatesFilter | Status
+    _count?: NestedIntFilter
+    _min?: NestedEnumStatusFilter
+    _max?: NestedEnumStatusFilter
   }
 
   export type EnumRoleFilter = {
@@ -15579,6 +17117,76 @@ export namespace Prisma {
     _count?: NestedIntFilter
     _min?: NestedEnumRoleFilter
     _max?: NestedEnumRoleFilter
+  }
+
+  export type FloatNullableFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedFloatNullableFilter | number | null
+  }
+
+  export type HistoryRelationFilter = {
+    is?: historyWhereInput
+    isNot?: historyWhereInput
+  }
+
+  export type feedbackCountOrderByAggregateInput = {
+    attentive?: SortOrder
+    polite?: SortOrder
+    rude?: SortOrder
+    suggestion?: SortOrder
+    hid?: SortOrder
+  }
+
+  export type feedbackAvgOrderByAggregateInput = {
+    attentive?: SortOrder
+    polite?: SortOrder
+    rude?: SortOrder
+    hid?: SortOrder
+  }
+
+  export type feedbackMaxOrderByAggregateInput = {
+    attentive?: SortOrder
+    polite?: SortOrder
+    rude?: SortOrder
+    suggestion?: SortOrder
+    hid?: SortOrder
+  }
+
+  export type feedbackMinOrderByAggregateInput = {
+    attentive?: SortOrder
+    polite?: SortOrder
+    rude?: SortOrder
+    suggestion?: SortOrder
+    hid?: SortOrder
+  }
+
+  export type feedbackSumOrderByAggregateInput = {
+    attentive?: SortOrder
+    polite?: SortOrder
+    rude?: SortOrder
+    hid?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedFloatNullableWithAggregatesFilter | number | null
+    _count?: NestedIntNullableFilter
+    _avg?: NestedFloatNullableFilter
+    _sum?: NestedFloatNullableFilter
+    _min?: NestedFloatNullableFilter
+    _max?: NestedFloatNullableFilter
   }
 
   export type historyCreateNestedManyWithoutParentInput = {
@@ -15947,16 +17555,16 @@ export namespace Prisma {
     deleteMany?: Enumerable<waitinglistScalarWhereInput>
   }
 
-  export type adminCreateNestedOneWithoutTimeslotInput = {
-    create?: XOR<adminCreateWithoutTimeslotInput, adminUncheckedCreateWithoutTimeslotInput>
-    connectOrCreate?: adminCreateOrConnectWithoutTimeslotInput
-    connect?: adminWhereUniqueInput
-  }
-
   export type meetingCreateNestedOneWithoutTimeslotInput = {
     create?: XOR<meetingCreateWithoutTimeslotInput, meetingUncheckedCreateWithoutTimeslotInput>
     connectOrCreate?: meetingCreateOrConnectWithoutTimeslotInput
     connect?: meetingWhereUniqueInput
+  }
+
+  export type adminCreateNestedOneWithoutTimeslotInput = {
+    create?: XOR<adminCreateWithoutTimeslotInput, adminUncheckedCreateWithoutTimeslotInput>
+    connectOrCreate?: adminCreateOrConnectWithoutTimeslotInput
+    connect?: adminWhereUniqueInput
   }
 
   export type meetingUncheckedCreateNestedOneWithoutTimeslotInput = {
@@ -15973,12 +17581,8 @@ export namespace Prisma {
     set?: boolean
   }
 
-  export type adminUpdateOneRequiredWithoutTimeslotNestedInput = {
-    create?: XOR<adminCreateWithoutTimeslotInput, adminUncheckedCreateWithoutTimeslotInput>
-    connectOrCreate?: adminCreateOrConnectWithoutTimeslotInput
-    upsert?: adminUpsertWithoutTimeslotInput
-    connect?: adminWhereUniqueInput
-    update?: XOR<adminUpdateWithoutTimeslotInput, adminUncheckedUpdateWithoutTimeslotInput>
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type meetingUpdateOneWithoutTimeslotNestedInput = {
@@ -15989,6 +17593,14 @@ export namespace Prisma {
     delete?: boolean
     connect?: meetingWhereUniqueInput
     update?: XOR<meetingUpdateWithoutTimeslotInput, meetingUncheckedUpdateWithoutTimeslotInput>
+  }
+
+  export type adminUpdateOneRequiredWithoutTimeslotNestedInput = {
+    create?: XOR<adminCreateWithoutTimeslotInput, adminUncheckedCreateWithoutTimeslotInput>
+    connectOrCreate?: adminCreateOrConnectWithoutTimeslotInput
+    upsert?: adminUpsertWithoutTimeslotInput
+    connect?: adminWhereUniqueInput
+    update?: XOR<adminUpdateWithoutTimeslotInput, adminUncheckedUpdateWithoutTimeslotInput>
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -16115,10 +17727,6 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<waitinglistCreateOrConnectWithoutStudentInput>
     createMany?: waitinglistCreateManyStudentInputEnvelope
     connect?: Enumerable<waitinglistWhereUniqueInput>
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type attendanceUpdateManyWithoutStudentNestedInput = {
@@ -16417,10 +18025,6 @@ export namespace Prisma {
     connect?: timeslotWhereUniqueInput
   }
 
-  export type EnumStatusFieldUpdateOperationsInput = {
-    set?: Status
-  }
-
   export type adminUpdateOneRequiredWithoutMeetingNestedInput = {
     create?: XOR<adminCreateWithoutMeetingInput, adminUncheckedCreateWithoutMeetingInput>
     connectOrCreate?: adminCreateOrConnectWithoutMeetingInput
@@ -16495,6 +18099,12 @@ export namespace Prisma {
     update?: XOR<studentUpdateWithoutWaiinglistInput, studentUncheckedUpdateWithoutWaiinglistInput>
   }
 
+  export type feedbackCreateNestedOneWithoutHistoryInput = {
+    create?: XOR<feedbackCreateWithoutHistoryInput, feedbackUncheckedCreateWithoutHistoryInput>
+    connectOrCreate?: feedbackCreateOrConnectWithoutHistoryInput
+    connect?: feedbackWhereUniqueInput
+  }
+
   export type adminCreateNestedOneWithoutHistoryInput = {
     create?: XOR<adminCreateWithoutHistoryInput, adminUncheckedCreateWithoutHistoryInput>
     connectOrCreate?: adminCreateOrConnectWithoutHistoryInput
@@ -16513,12 +18123,24 @@ export namespace Prisma {
     connect?: studentWhereUniqueInput
   }
 
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
+  export type feedbackUncheckedCreateNestedOneWithoutHistoryInput = {
+    create?: XOR<feedbackCreateWithoutHistoryInput, feedbackUncheckedCreateWithoutHistoryInput>
+    connectOrCreate?: feedbackCreateOrConnectWithoutHistoryInput
+    connect?: feedbackWhereUniqueInput
+  }
+
+  export type EnumStatusFieldUpdateOperationsInput = {
+    set?: Status
+  }
+
+  export type feedbackUpdateOneWithoutHistoryNestedInput = {
+    create?: XOR<feedbackCreateWithoutHistoryInput, feedbackUncheckedCreateWithoutHistoryInput>
+    connectOrCreate?: feedbackCreateOrConnectWithoutHistoryInput
+    upsert?: feedbackUpsertWithoutHistoryInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: feedbackWhereUniqueInput
+    update?: XOR<feedbackUpdateWithoutHistoryInput, feedbackUncheckedUpdateWithoutHistoryInput>
   }
 
   export type adminUpdateOneRequiredWithoutHistoryNestedInput = {
@@ -16543,6 +18165,16 @@ export namespace Prisma {
     upsert?: studentUpsertWithoutHistoryInput
     connect?: studentWhereUniqueInput
     update?: XOR<studentUpdateWithoutHistoryInput, studentUncheckedUpdateWithoutHistoryInput>
+  }
+
+  export type feedbackUncheckedUpdateOneWithoutHistoryNestedInput = {
+    create?: XOR<feedbackCreateWithoutHistoryInput, feedbackUncheckedCreateWithoutHistoryInput>
+    connectOrCreate?: feedbackCreateOrConnectWithoutHistoryInput
+    upsert?: feedbackUpsertWithoutHistoryInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: feedbackWhereUniqueInput
+    update?: XOR<feedbackUpdateWithoutHistoryInput, feedbackUncheckedUpdateWithoutHistoryInput>
   }
 
   export type adminCreateNestedOneWithoutUserloginInput = {
@@ -16595,6 +18227,28 @@ export namespace Prisma {
     delete?: boolean
     connect?: studentWhereUniqueInput
     update?: XOR<studentUpdateWithoutUserloginInput, studentUncheckedUpdateWithoutUserloginInput>
+  }
+
+  export type historyCreateNestedOneWithoutFeedbackInput = {
+    create?: XOR<historyCreateWithoutFeedbackInput, historyUncheckedCreateWithoutFeedbackInput>
+    connectOrCreate?: historyCreateOrConnectWithoutFeedbackInput
+    connect?: historyWhereUniqueInput
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type historyUpdateOneRequiredWithoutFeedbackNestedInput = {
+    create?: XOR<historyCreateWithoutFeedbackInput, historyUncheckedCreateWithoutFeedbackInput>
+    connectOrCreate?: historyCreateOrConnectWithoutFeedbackInput
+    upsert?: historyUpsertWithoutFeedbackInput
+    connect?: historyWhereUniqueInput
+    update?: XOR<historyUpdateWithoutFeedbackInput, historyUncheckedUpdateWithoutFeedbackInput>
   }
 
   export type NestedStringFilter = {
@@ -16679,6 +18333,20 @@ export namespace Prisma {
     not?: NestedBoolFilter | boolean
   }
 
+  export type NestedStringNullableFilter = {
+    equals?: string | null
+    in?: Enumerable<string> | null
+    notIn?: Enumerable<string> | null
+    lt?: string
+    lte?: string
+    gt?: string
+    gte?: string
+    contains?: string
+    startsWith?: string
+    endsWith?: string
+    not?: NestedStringNullableFilter | string | null
+  }
+
   export type NestedIntWithAggregatesFilter = {
     equals?: number
     in?: Enumerable<number>
@@ -16726,20 +18394,6 @@ export namespace Prisma {
     _count?: NestedIntFilter
     _min?: NestedBoolFilter
     _max?: NestedBoolFilter
-  }
-
-  export type NestedStringNullableFilter = {
-    equals?: string | null
-    in?: Enumerable<string> | null
-    notIn?: Enumerable<string> | null
-    lt?: string
-    lte?: string
-    gt?: string
-    gte?: string
-    contains?: string
-    startsWith?: string
-    endsWith?: string
-    not?: NestedStringNullableFilter | string | null
   }
 
   export type NestedStringNullableWithAggregatesFilter = {
@@ -16792,33 +18446,6 @@ export namespace Prisma {
     _max?: NestedEnumStatusFilter
   }
 
-  export type NestedIntNullableWithAggregatesFilter = {
-    equals?: number | null
-    in?: Enumerable<number> | null
-    notIn?: Enumerable<number> | null
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntNullableWithAggregatesFilter | number | null
-    _count?: NestedIntNullableFilter
-    _avg?: NestedFloatNullableFilter
-    _sum?: NestedIntNullableFilter
-    _min?: NestedIntNullableFilter
-    _max?: NestedIntNullableFilter
-  }
-
-  export type NestedFloatNullableFilter = {
-    equals?: number | null
-    in?: Enumerable<number> | null
-    notIn?: Enumerable<number> | null
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedFloatNullableFilter | number | null
-  }
-
   export type NestedEnumRoleFilter = {
     equals?: Role
     in?: Enumerable<Role>
@@ -16836,6 +18463,33 @@ export namespace Prisma {
     _max?: NestedEnumRoleFilter
   }
 
+  export type NestedFloatNullableFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedFloatNullableFilter | number | null
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedFloatNullableWithAggregatesFilter | number | null
+    _count?: NestedIntNullableFilter
+    _avg?: NestedFloatNullableFilter
+    _sum?: NestedFloatNullableFilter
+    _min?: NestedFloatNullableFilter
+    _max?: NestedFloatNullableFilter
+  }
+
   export type historyCreateWithoutParentInput = {
     date: Date | string
     startTime: Date | string
@@ -16843,8 +18497,9 @@ export namespace Prisma {
     reason: string
     status: Status
     referedTo: string
-    feedback?: string | null
-    rating?: number | null
+    adminFeedback?: string | null
+    suggestion?: string | null
+    feedback?: feedbackCreateNestedOneWithoutHistoryInput
     admin: adminCreateNestedOneWithoutHistoryInput
     student: studentCreateNestedOneWithoutHistoryInput
   }
@@ -16857,10 +18512,11 @@ export namespace Prisma {
     reason: string
     status: Status
     referedTo: string
-    feedback?: string | null
-    rating?: number | null
     regNo: string
     adminId: string
+    adminFeedback?: string | null
+    suggestion?: string | null
+    feedback?: feedbackUncheckedCreateNestedOneWithoutHistoryInput
   }
 
   export type historyCreateOrConnectWithoutParentInput = {
@@ -16875,8 +18531,9 @@ export namespace Prisma {
 
   export type meetingCreateWithoutParentInput = {
     reason: string
-    status: Status
+    status: string
     referedTo: string
+    date: Date | string
     admin: adminCreateNestedOneWithoutMeetingInput
     student: studentCreateNestedOneWithoutMeetingInput
     timeslot: timeslotCreateNestedOneWithoutMeetingInput
@@ -16885,11 +18542,12 @@ export namespace Prisma {
   export type meetingUncheckedCreateWithoutParentInput = {
     mid?: number
     reason: string
-    status: Status
+    status: string
     referedTo: string
     tsid: number
     regNo: string
     adminId: string
+    date: Date | string
   }
 
   export type meetingCreateOrConnectWithoutParentInput = {
@@ -16930,6 +18588,7 @@ export namespace Prisma {
     reason: string
     date: Date | string
     tsid: number
+    status?: string | null
     admin: adminCreateNestedOneWithoutWaitinglistInput
     student: studentCreateNestedOneWithoutWaiinglistInput
   }
@@ -16941,6 +18600,7 @@ export namespace Prisma {
     tsid: number
     regNo: string
     adminId: string
+    status?: string | null
   }
 
   export type waitinglistCreateOrConnectWithoutParentInput = {
@@ -16980,11 +18640,11 @@ export namespace Prisma {
     reason?: StringFilter | string
     status?: EnumStatusFilter | Status
     referedTo?: StringFilter | string
-    feedback?: StringNullableFilter | string | null
-    rating?: IntNullableFilter | number | null
     regNo?: StringFilter | string
     adminId?: StringFilter | string
     parentId?: StringFilter | string
+    adminFeedback?: StringNullableFilter | string | null
+    suggestion?: StringNullableFilter | string | null
   }
 
   export type meetingUpsertWithWhereUniqueWithoutParentInput = {
@@ -17009,12 +18669,13 @@ export namespace Prisma {
     NOT?: Enumerable<meetingScalarWhereInput>
     mid?: IntFilter | number
     reason?: StringFilter | string
-    status?: EnumStatusFilter | Status
+    status?: StringFilter | string
     referedTo?: StringFilter | string
     tsid?: IntFilter | number
     regNo?: StringFilter | string
     adminId?: StringFilter | string
     parentId?: StringFilter | string
+    date?: DateTimeFilter | Date | string
   }
 
   export type userloginUpsertWithoutParentInput = {
@@ -17068,6 +18729,7 @@ export namespace Prisma {
     regNo?: StringFilter | string
     adminId?: StringFilter | string
     parentId?: StringFilter | string
+    status?: StringNullableFilter | string | null
   }
 
   export type historyCreateWithoutAdminInput = {
@@ -17077,8 +18739,9 @@ export namespace Prisma {
     reason: string
     status: Status
     referedTo: string
-    feedback?: string | null
-    rating?: number | null
+    adminFeedback?: string | null
+    suggestion?: string | null
+    feedback?: feedbackCreateNestedOneWithoutHistoryInput
     parent: parentCreateNestedOneWithoutHistoryInput
     student: studentCreateNestedOneWithoutHistoryInput
   }
@@ -17091,10 +18754,11 @@ export namespace Prisma {
     reason: string
     status: Status
     referedTo: string
-    feedback?: string | null
-    rating?: number | null
     regNo: string
     parentId: string
+    adminFeedback?: string | null
+    suggestion?: string | null
+    feedback?: feedbackUncheckedCreateNestedOneWithoutHistoryInput
   }
 
   export type historyCreateOrConnectWithoutAdminInput = {
@@ -17109,8 +18773,9 @@ export namespace Prisma {
 
   export type meetingCreateWithoutAdminInput = {
     reason: string
-    status: Status
+    status: string
     referedTo: string
+    date: Date | string
     parent: parentCreateNestedOneWithoutMeetingInput
     student: studentCreateNestedOneWithoutMeetingInput
     timeslot: timeslotCreateNestedOneWithoutMeetingInput
@@ -17119,11 +18784,12 @@ export namespace Prisma {
   export type meetingUncheckedCreateWithoutAdminInput = {
     mid?: number
     reason: string
-    status: Status
+    status: string
     referedTo: string
     tsid: number
     regNo: string
     parentId: string
+    date: Date | string
   }
 
   export type meetingCreateOrConnectWithoutAdminInput = {
@@ -17137,19 +18803,19 @@ export namespace Prisma {
   }
 
   export type timeslotCreateWithoutAdminInput = {
-    date: Date | string
     startTime: Date | string
     endTime: Date | string
     availibility: boolean
+    day?: string | null
     meeting?: meetingCreateNestedOneWithoutTimeslotInput
   }
 
   export type timeslotUncheckedCreateWithoutAdminInput = {
     tsid?: number
-    date: Date | string
     startTime: Date | string
     endTime: Date | string
     availibility: boolean
+    day?: string | null
     meeting?: meetingUncheckedCreateNestedOneWithoutTimeslotInput
   }
 
@@ -17191,6 +18857,7 @@ export namespace Prisma {
     reason: string
     date: Date | string
     tsid: number
+    status?: string | null
     parent: parentCreateNestedOneWithoutWaitinglistInput
     student: studentCreateNestedOneWithoutWaiinglistInput
   }
@@ -17202,6 +18869,7 @@ export namespace Prisma {
     tsid: number
     regNo: string
     parentId: string
+    status?: string | null
   }
 
   export type waitinglistCreateOrConnectWithoutAdminInput = {
@@ -17267,11 +18935,11 @@ export namespace Prisma {
     OR?: Enumerable<timeslotScalarWhereInput>
     NOT?: Enumerable<timeslotScalarWhereInput>
     tsid?: IntFilter | number
-    date?: DateTimeFilter | Date | string
     startTime?: DateTimeFilter | Date | string
     endTime?: DateTimeFilter | Date | string
     availibility?: BoolFilter | boolean
     adminId?: StringFilter | string
+    day?: StringNullableFilter | string | null
   }
 
   export type userloginUpsertWithoutAdminInput = {
@@ -17314,6 +18982,32 @@ export namespace Prisma {
     data: XOR<waitinglistUpdateManyMutationInput, waitinglistUncheckedUpdateManyWithoutWaitinglistInput>
   }
 
+  export type meetingCreateWithoutTimeslotInput = {
+    reason: string
+    status: string
+    referedTo: string
+    date: Date | string
+    admin: adminCreateNestedOneWithoutMeetingInput
+    parent: parentCreateNestedOneWithoutMeetingInput
+    student: studentCreateNestedOneWithoutMeetingInput
+  }
+
+  export type meetingUncheckedCreateWithoutTimeslotInput = {
+    mid?: number
+    reason: string
+    status: string
+    referedTo: string
+    regNo: string
+    adminId: string
+    parentId: string
+    date: Date | string
+  }
+
+  export type meetingCreateOrConnectWithoutTimeslotInput = {
+    where: meetingWhereUniqueInput
+    create: XOR<meetingCreateWithoutTimeslotInput, meetingUncheckedCreateWithoutTimeslotInput>
+  }
+
   export type adminCreateWithoutTimeslotInput = {
     cnic: string
     firstName: string
@@ -17351,28 +19045,30 @@ export namespace Prisma {
     create: XOR<adminCreateWithoutTimeslotInput, adminUncheckedCreateWithoutTimeslotInput>
   }
 
-  export type meetingCreateWithoutTimeslotInput = {
-    reason: string
-    status: Status
-    referedTo: string
-    admin: adminCreateNestedOneWithoutMeetingInput
-    parent: parentCreateNestedOneWithoutMeetingInput
-    student: studentCreateNestedOneWithoutMeetingInput
-  }
-
-  export type meetingUncheckedCreateWithoutTimeslotInput = {
-    mid?: number
-    reason: string
-    status: Status
-    referedTo: string
-    regNo: string
-    adminId: string
-    parentId: string
-  }
-
-  export type meetingCreateOrConnectWithoutTimeslotInput = {
-    where: meetingWhereUniqueInput
+  export type meetingUpsertWithoutTimeslotInput = {
+    update: XOR<meetingUpdateWithoutTimeslotInput, meetingUncheckedUpdateWithoutTimeslotInput>
     create: XOR<meetingCreateWithoutTimeslotInput, meetingUncheckedCreateWithoutTimeslotInput>
+  }
+
+  export type meetingUpdateWithoutTimeslotInput = {
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    referedTo?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    admin?: adminUpdateOneRequiredWithoutMeetingNestedInput
+    parent?: parentUpdateOneRequiredWithoutMeetingNestedInput
+    student?: studentUpdateOneRequiredWithoutMeetingNestedInput
+  }
+
+  export type meetingUncheckedUpdateWithoutTimeslotInput = {
+    mid?: IntFieldUpdateOperationsInput | number
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    referedTo?: StringFieldUpdateOperationsInput | string
+    regNo?: StringFieldUpdateOperationsInput | string
+    adminId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type adminUpsertWithoutTimeslotInput = {
@@ -17410,30 +19106,6 @@ export namespace Prisma {
     meeting?: meetingUncheckedUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUncheckedUpdateOneWithoutAdminNestedInput
     waitinglist?: waitinglistUncheckedUpdateManyWithoutAdminNestedInput
-  }
-
-  export type meetingUpsertWithoutTimeslotInput = {
-    update: XOR<meetingUpdateWithoutTimeslotInput, meetingUncheckedUpdateWithoutTimeslotInput>
-    create: XOR<meetingCreateWithoutTimeslotInput, meetingUncheckedCreateWithoutTimeslotInput>
-  }
-
-  export type meetingUpdateWithoutTimeslotInput = {
-    reason?: StringFieldUpdateOperationsInput | string
-    status?: EnumStatusFieldUpdateOperationsInput | Status
-    referedTo?: StringFieldUpdateOperationsInput | string
-    admin?: adminUpdateOneRequiredWithoutMeetingNestedInput
-    parent?: parentUpdateOneRequiredWithoutMeetingNestedInput
-    student?: studentUpdateOneRequiredWithoutMeetingNestedInput
-  }
-
-  export type meetingUncheckedUpdateWithoutTimeslotInput = {
-    mid?: IntFieldUpdateOperationsInput | number
-    reason?: StringFieldUpdateOperationsInput | string
-    status?: EnumStatusFieldUpdateOperationsInput | Status
-    referedTo?: StringFieldUpdateOperationsInput | string
-    regNo?: StringFieldUpdateOperationsInput | string
-    adminId?: StringFieldUpdateOperationsInput | string
-    parentId?: StringFieldUpdateOperationsInput | string
   }
 
   export type attendanceCreateWithoutStudentInput = {
@@ -17520,8 +19192,9 @@ export namespace Prisma {
     reason: string
     status: Status
     referedTo: string
-    feedback?: string | null
-    rating?: number | null
+    adminFeedback?: string | null
+    suggestion?: string | null
+    feedback?: feedbackCreateNestedOneWithoutHistoryInput
     admin: adminCreateNestedOneWithoutHistoryInput
     parent: parentCreateNestedOneWithoutHistoryInput
   }
@@ -17534,10 +19207,11 @@ export namespace Prisma {
     reason: string
     status: Status
     referedTo: string
-    feedback?: string | null
-    rating?: number | null
     adminId: string
     parentId: string
+    adminFeedback?: string | null
+    suggestion?: string | null
+    feedback?: feedbackUncheckedCreateNestedOneWithoutHistoryInput
   }
 
   export type historyCreateOrConnectWithoutStudentInput = {
@@ -17552,8 +19226,9 @@ export namespace Prisma {
 
   export type meetingCreateWithoutStudentInput = {
     reason: string
-    status: Status
+    status: string
     referedTo: string
+    date: Date | string
     admin: adminCreateNestedOneWithoutMeetingInput
     parent: parentCreateNestedOneWithoutMeetingInput
     timeslot: timeslotCreateNestedOneWithoutMeetingInput
@@ -17562,11 +19237,12 @@ export namespace Prisma {
   export type meetingUncheckedCreateWithoutStudentInput = {
     mid?: number
     reason: string
-    status: Status
+    status: string
     referedTo: string
     tsid: number
     adminId: string
     parentId: string
+    date: Date | string
   }
 
   export type meetingCreateOrConnectWithoutStudentInput = {
@@ -17607,6 +19283,7 @@ export namespace Prisma {
     reason: string
     date: Date | string
     tsid: number
+    status?: string | null
     admin: adminCreateNestedOneWithoutWaitinglistInput
     parent: parentCreateNestedOneWithoutWaitinglistInput
   }
@@ -17618,6 +19295,7 @@ export namespace Prisma {
     tsid: number
     adminId: string
     parentId: string
+    status?: string | null
   }
 
   export type waitinglistCreateOrConnectWithoutStudentInput = {
@@ -18264,20 +19942,20 @@ export namespace Prisma {
   }
 
   export type timeslotCreateWithoutMeetingInput = {
-    date: Date | string
     startTime: Date | string
     endTime: Date | string
     availibility: boolean
+    day?: string | null
     admin: adminCreateNestedOneWithoutTimeslotInput
   }
 
   export type timeslotUncheckedCreateWithoutMeetingInput = {
     tsid?: number
-    date: Date | string
     startTime: Date | string
     endTime: Date | string
     availibility: boolean
     adminId: string
+    day?: string | null
   }
 
   export type timeslotCreateOrConnectWithoutMeetingInput = {
@@ -18400,20 +20078,20 @@ export namespace Prisma {
   }
 
   export type timeslotUpdateWithoutMeetingInput = {
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     availibility?: BoolFieldUpdateOperationsInput | boolean
+    day?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: adminUpdateOneRequiredWithoutTimeslotNestedInput
   }
 
   export type timeslotUncheckedUpdateWithoutMeetingInput = {
     tsid?: IntFieldUpdateOperationsInput | number
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     availibility?: BoolFieldUpdateOperationsInput | boolean
     adminId?: StringFieldUpdateOperationsInput | string
+    day?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type adminCreateWithoutWaitinglistInput = {
@@ -18634,6 +20312,25 @@ export namespace Prisma {
     userlogin?: userloginUncheckedUpdateOneWithoutStudentNestedInput
   }
 
+  export type feedbackCreateWithoutHistoryInput = {
+    attentive?: number | null
+    polite?: number | null
+    rude?: number | null
+    suggestion: string
+  }
+
+  export type feedbackUncheckedCreateWithoutHistoryInput = {
+    attentive?: number | null
+    polite?: number | null
+    rude?: number | null
+    suggestion: string
+  }
+
+  export type feedbackCreateOrConnectWithoutHistoryInput = {
+    where: feedbackWhereUniqueInput
+    create: XOR<feedbackCreateWithoutHistoryInput, feedbackUncheckedCreateWithoutHistoryInput>
+  }
+
   export type adminCreateWithoutHistoryInput = {
     cnic: string
     firstName: string
@@ -18741,6 +20438,25 @@ export namespace Prisma {
   export type studentCreateOrConnectWithoutHistoryInput = {
     where: studentWhereUniqueInput
     create: XOR<studentCreateWithoutHistoryInput, studentUncheckedCreateWithoutHistoryInput>
+  }
+
+  export type feedbackUpsertWithoutHistoryInput = {
+    update: XOR<feedbackUpdateWithoutHistoryInput, feedbackUncheckedUpdateWithoutHistoryInput>
+    create: XOR<feedbackCreateWithoutHistoryInput, feedbackUncheckedCreateWithoutHistoryInput>
+  }
+
+  export type feedbackUpdateWithoutHistoryInput = {
+    attentive?: NullableFloatFieldUpdateOperationsInput | number | null
+    polite?: NullableFloatFieldUpdateOperationsInput | number | null
+    rude?: NullableFloatFieldUpdateOperationsInput | number | null
+    suggestion?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type feedbackUncheckedUpdateWithoutHistoryInput = {
+    attentive?: NullableFloatFieldUpdateOperationsInput | number | null
+    polite?: NullableFloatFieldUpdateOperationsInput | number | null
+    rude?: NullableFloatFieldUpdateOperationsInput | number | null
+    suggestion?: StringFieldUpdateOperationsInput | string
   }
 
   export type adminUpsertWithoutHistoryInput = {
@@ -19070,6 +20786,74 @@ export namespace Prisma {
     waiinglist?: waitinglistUncheckedUpdateManyWithoutStudentNestedInput
   }
 
+  export type historyCreateWithoutFeedbackInput = {
+    date: Date | string
+    startTime: Date | string
+    endTime: Date | string
+    reason: string
+    status: Status
+    referedTo: string
+    adminFeedback?: string | null
+    suggestion?: string | null
+    admin: adminCreateNestedOneWithoutHistoryInput
+    parent: parentCreateNestedOneWithoutHistoryInput
+    student: studentCreateNestedOneWithoutHistoryInput
+  }
+
+  export type historyUncheckedCreateWithoutFeedbackInput = {
+    hid?: number
+    date: Date | string
+    startTime: Date | string
+    endTime: Date | string
+    reason: string
+    status: Status
+    referedTo: string
+    regNo: string
+    adminId: string
+    parentId: string
+    adminFeedback?: string | null
+    suggestion?: string | null
+  }
+
+  export type historyCreateOrConnectWithoutFeedbackInput = {
+    where: historyWhereUniqueInput
+    create: XOR<historyCreateWithoutFeedbackInput, historyUncheckedCreateWithoutFeedbackInput>
+  }
+
+  export type historyUpsertWithoutFeedbackInput = {
+    update: XOR<historyUpdateWithoutFeedbackInput, historyUncheckedUpdateWithoutFeedbackInput>
+    create: XOR<historyCreateWithoutFeedbackInput, historyUncheckedCreateWithoutFeedbackInput>
+  }
+
+  export type historyUpdateWithoutFeedbackInput = {
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumStatusFieldUpdateOperationsInput | Status
+    referedTo?: StringFieldUpdateOperationsInput | string
+    adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
+    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    admin?: adminUpdateOneRequiredWithoutHistoryNestedInput
+    parent?: parentUpdateOneRequiredWithoutHistoryNestedInput
+    student?: studentUpdateOneRequiredWithoutHistoryNestedInput
+  }
+
+  export type historyUncheckedUpdateWithoutFeedbackInput = {
+    hid?: IntFieldUpdateOperationsInput | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumStatusFieldUpdateOperationsInput | Status
+    referedTo?: StringFieldUpdateOperationsInput | string
+    regNo?: StringFieldUpdateOperationsInput | string
+    adminId?: StringFieldUpdateOperationsInput | string
+    parentId?: StringFieldUpdateOperationsInput | string
+    adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
+    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type historyCreateManyParentInput = {
     hid?: number
     date: Date | string
@@ -19078,20 +20862,21 @@ export namespace Prisma {
     reason: string
     status: Status
     referedTo: string
-    feedback?: string | null
-    rating?: number | null
     regNo: string
     adminId: string
+    adminFeedback?: string | null
+    suggestion?: string | null
   }
 
   export type meetingCreateManyParentInput = {
     mid?: number
     reason: string
-    status: Status
+    status: string
     referedTo: string
     tsid: number
     regNo: string
     adminId: string
+    date: Date | string
   }
 
   export type waitinglistCreateManyParentInput = {
@@ -19101,6 +20886,7 @@ export namespace Prisma {
     tsid: number
     regNo: string
     adminId: string
+    status?: string | null
   }
 
   export type historyUpdateWithoutParentInput = {
@@ -19110,8 +20896,9 @@ export namespace Prisma {
     reason?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
-    feedback?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
+    adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
+    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    feedback?: feedbackUpdateOneWithoutHistoryNestedInput
     admin?: adminUpdateOneRequiredWithoutHistoryNestedInput
     student?: studentUpdateOneRequiredWithoutHistoryNestedInput
   }
@@ -19124,10 +20911,11 @@ export namespace Prisma {
     reason?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
-    feedback?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
+    adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
+    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    feedback?: feedbackUncheckedUpdateOneWithoutHistoryNestedInput
   }
 
   export type historyUncheckedUpdateManyWithoutHistoryInput = {
@@ -19138,16 +20926,17 @@ export namespace Prisma {
     reason?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
-    feedback?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
+    adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
+    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type meetingUpdateWithoutParentInput = {
     reason?: StringFieldUpdateOperationsInput | string
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: StringFieldUpdateOperationsInput | string
     referedTo?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
     admin?: adminUpdateOneRequiredWithoutMeetingNestedInput
     student?: studentUpdateOneRequiredWithoutMeetingNestedInput
     timeslot?: timeslotUpdateOneRequiredWithoutMeetingNestedInput
@@ -19156,27 +20945,30 @@ export namespace Prisma {
   export type meetingUncheckedUpdateWithoutParentInput = {
     mid?: IntFieldUpdateOperationsInput | number
     reason?: StringFieldUpdateOperationsInput | string
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: StringFieldUpdateOperationsInput | string
     referedTo?: StringFieldUpdateOperationsInput | string
     tsid?: IntFieldUpdateOperationsInput | number
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type meetingUncheckedUpdateManyWithoutMeetingInput = {
     mid?: IntFieldUpdateOperationsInput | number
     reason?: StringFieldUpdateOperationsInput | string
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: StringFieldUpdateOperationsInput | string
     referedTo?: StringFieldUpdateOperationsInput | string
     tsid?: IntFieldUpdateOperationsInput | number
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type waitinglistUpdateWithoutParentInput = {
     reason?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     tsid?: IntFieldUpdateOperationsInput | number
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: adminUpdateOneRequiredWithoutWaitinglistNestedInput
     student?: studentUpdateOneRequiredWithoutWaiinglistNestedInput
   }
@@ -19188,6 +20980,7 @@ export namespace Prisma {
     tsid?: IntFieldUpdateOperationsInput | number
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type waitinglistUncheckedUpdateManyWithoutWaitinglistInput = {
@@ -19197,6 +20990,7 @@ export namespace Prisma {
     tsid?: IntFieldUpdateOperationsInput | number
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type historyCreateManyAdminInput = {
@@ -19207,28 +21001,29 @@ export namespace Prisma {
     reason: string
     status: Status
     referedTo: string
-    feedback?: string | null
-    rating?: number | null
     regNo: string
     parentId: string
+    adminFeedback?: string | null
+    suggestion?: string | null
   }
 
   export type meetingCreateManyAdminInput = {
     mid?: number
     reason: string
-    status: Status
+    status: string
     referedTo: string
     tsid: number
     regNo: string
     parentId: string
+    date: Date | string
   }
 
   export type timeslotCreateManyAdminInput = {
     tsid?: number
-    date: Date | string
     startTime: Date | string
     endTime: Date | string
     availibility: boolean
+    day?: string | null
   }
 
   export type waitinglistCreateManyAdminInput = {
@@ -19238,6 +21033,7 @@ export namespace Prisma {
     tsid: number
     regNo: string
     parentId: string
+    status?: string | null
   }
 
   export type historyUpdateWithoutAdminInput = {
@@ -19247,8 +21043,9 @@ export namespace Prisma {
     reason?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
-    feedback?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
+    adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
+    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    feedback?: feedbackUpdateOneWithoutHistoryNestedInput
     parent?: parentUpdateOneRequiredWithoutHistoryNestedInput
     student?: studentUpdateOneRequiredWithoutHistoryNestedInput
   }
@@ -19261,16 +21058,18 @@ export namespace Prisma {
     reason?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
-    feedback?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
     regNo?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
+    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    feedback?: feedbackUncheckedUpdateOneWithoutHistoryNestedInput
   }
 
   export type meetingUpdateWithoutAdminInput = {
     reason?: StringFieldUpdateOperationsInput | string
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: StringFieldUpdateOperationsInput | string
     referedTo?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
     parent?: parentUpdateOneRequiredWithoutMeetingNestedInput
     student?: studentUpdateOneRequiredWithoutMeetingNestedInput
     timeslot?: timeslotUpdateOneRequiredWithoutMeetingNestedInput
@@ -19279,42 +21078,44 @@ export namespace Prisma {
   export type meetingUncheckedUpdateWithoutAdminInput = {
     mid?: IntFieldUpdateOperationsInput | number
     reason?: StringFieldUpdateOperationsInput | string
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: StringFieldUpdateOperationsInput | string
     referedTo?: StringFieldUpdateOperationsInput | string
     tsid?: IntFieldUpdateOperationsInput | number
     regNo?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type timeslotUpdateWithoutAdminInput = {
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     availibility?: BoolFieldUpdateOperationsInput | boolean
+    day?: NullableStringFieldUpdateOperationsInput | string | null
     meeting?: meetingUpdateOneWithoutTimeslotNestedInput
   }
 
   export type timeslotUncheckedUpdateWithoutAdminInput = {
     tsid?: IntFieldUpdateOperationsInput | number
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     availibility?: BoolFieldUpdateOperationsInput | boolean
+    day?: NullableStringFieldUpdateOperationsInput | string | null
     meeting?: meetingUncheckedUpdateOneWithoutTimeslotNestedInput
   }
 
   export type timeslotUncheckedUpdateManyWithoutTimeslotInput = {
     tsid?: IntFieldUpdateOperationsInput | number
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     availibility?: BoolFieldUpdateOperationsInput | boolean
+    day?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type waitinglistUpdateWithoutAdminInput = {
     reason?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     tsid?: IntFieldUpdateOperationsInput | number
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     parent?: parentUpdateOneRequiredWithoutWaitinglistNestedInput
     student?: studentUpdateOneRequiredWithoutWaiinglistNestedInput
   }
@@ -19326,6 +21127,7 @@ export namespace Prisma {
     tsid?: IntFieldUpdateOperationsInput | number
     regNo?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type attendanceCreateManyStudentInput = {
@@ -19354,20 +21156,21 @@ export namespace Prisma {
     reason: string
     status: Status
     referedTo: string
-    feedback?: string | null
-    rating?: number | null
     adminId: string
     parentId: string
+    adminFeedback?: string | null
+    suggestion?: string | null
   }
 
   export type meetingCreateManyStudentInput = {
     mid?: number
     reason: string
-    status: Status
+    status: string
     referedTo: string
     tsid: number
     adminId: string
     parentId: string
+    date: Date | string
   }
 
   export type waitinglistCreateManyStudentInput = {
@@ -19377,6 +21180,7 @@ export namespace Prisma {
     tsid: number
     adminId: string
     parentId: string
+    status?: string | null
   }
 
   export type attendanceUpdateWithoutStudentInput = {
@@ -19437,8 +21241,9 @@ export namespace Prisma {
     reason?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
-    feedback?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
+    adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
+    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    feedback?: feedbackUpdateOneWithoutHistoryNestedInput
     admin?: adminUpdateOneRequiredWithoutHistoryNestedInput
     parent?: parentUpdateOneRequiredWithoutHistoryNestedInput
   }
@@ -19451,16 +21256,18 @@ export namespace Prisma {
     reason?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
-    feedback?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: NullableIntFieldUpdateOperationsInput | number | null
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
+    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    feedback?: feedbackUncheckedUpdateOneWithoutHistoryNestedInput
   }
 
   export type meetingUpdateWithoutStudentInput = {
     reason?: StringFieldUpdateOperationsInput | string
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: StringFieldUpdateOperationsInput | string
     referedTo?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
     admin?: adminUpdateOneRequiredWithoutMeetingNestedInput
     parent?: parentUpdateOneRequiredWithoutMeetingNestedInput
     timeslot?: timeslotUpdateOneRequiredWithoutMeetingNestedInput
@@ -19469,17 +21276,19 @@ export namespace Prisma {
   export type meetingUncheckedUpdateWithoutStudentInput = {
     mid?: IntFieldUpdateOperationsInput | number
     reason?: StringFieldUpdateOperationsInput | string
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: StringFieldUpdateOperationsInput | string
     referedTo?: StringFieldUpdateOperationsInput | string
     tsid?: IntFieldUpdateOperationsInput | number
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type waitinglistUpdateWithoutStudentInput = {
     reason?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     tsid?: IntFieldUpdateOperationsInput | number
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: adminUpdateOneRequiredWithoutWaitinglistNestedInput
     parent?: parentUpdateOneRequiredWithoutWaitinglistNestedInput
   }
@@ -19491,6 +21300,7 @@ export namespace Prisma {
     tsid?: IntFieldUpdateOperationsInput | number
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type waitinglistUncheckedUpdateManyWithoutWaiinglistInput = {
@@ -19500,6 +21310,7 @@ export namespace Prisma {
     tsid?: IntFieldUpdateOperationsInput | number
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
+    status?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

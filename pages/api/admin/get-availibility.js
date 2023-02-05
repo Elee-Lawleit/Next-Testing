@@ -23,7 +23,6 @@ const handler = async (req, res) => {
     
     await prisma.$disconnect();
     
-    console.log("AVAILIBILITY: ", availibility);
     return res.status(200).json({ availibility });
 }
 

@@ -2,11 +2,12 @@ import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 
 const useUpdateMeetingStatus = () => {
-
+    
     return useMutation(
-        async ({ meetingId, action }) => {
+        async ({ time, date }) => {
+            
             return await axios.post("/api/meetings/update-meeting-status", {
-                meetingId, action
+                time, date
             });
         },
         {

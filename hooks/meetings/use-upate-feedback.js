@@ -4,9 +4,9 @@ import axios from "axios";
 const useUpdateFeedback = () => {
 
     return useMutation(
-        async ({meetingId, feedback, rating }) => {
+        async ({meetingId, suggesstion, rude, polite, attentive }) => {
             return await axios.post("/api/meetings/update-meeting-feedback", {
-                meetingId, feedback, rating
+                meetingId, suggesstion, rude, polite, attentive
             });
         },
         {
