@@ -18,34 +18,35 @@ const handler = async (req, res) => {
         return res.status(403).json({ error: "Please fill in all the fields" });
     }
 
-    //this only gives the count, now how do I get the details for every meeting
-    // const totalMonthlyMeetings = await prisma.$queryRaw`SELECT COUNT(m.mid)::int as meetings_in_week, TO_CHAR(t.date, 'W')::integer AS week_number
-    // FROM meeting m, timeslot t
-    // WHERE t.date >= ${new Date(`2022-${month}-"1"`)} 
-    // AND t.date <= ${new Date(`2022-${month}-"31"`)}
-    // AND m.tsid = t.tsid
-    // GROUP BY week_number`;
+    console.log("USerID: ", userId)
 
-    // const totalPendingMeetings = await prisma.$queryRaw`SELECT COUNT(m.mid)::int as meetings_in_week, TO_CHAR(t.date, 'W')::integer AS week_number
-    // FROM meeting m, timeslot t
-    // WHERE t.date >= ${new Date(`2022-${month}-"1"`)} 
-    // AND t.date <= ${new Date(`2022-${month}-"31"`)}
-    // AND m.status = 'pending'
-    // AND m.tsid = t.tsid
-    // GROUP BY week_number`;
+    // this only gives the count, now how do I get the details for every meeting
+    const totalMonthlyMeetings = await prisma.$queryRaw`SELECT COUNT(mid)::int as meetings_in_week, TO_CHAR(date, 'W')::integer AS week_number
+    FROM meeting
+    WHERE date >= ${new Date(`${year}-${month}-"1"`)} 
+    AND date <= ${new Date(`${year}-${month}-"31"`)}
+    AND ( "adminId" = ${userId} OR "parentId" = ${userId} OR "regNo" = ${userId} )
+    GROUP BY week_number`;
 
-    // const totalCompletedMeetings = await prisma.$queryRaw`SELECT COUNT(m.mid)::int as meetings_in_week, TO_CHAR(t.date, 'W')::integer AS week_number
-    // FROM meeting m, timeslot t
-    // WHERE t.date >= ${new Date(`${year}-${month}-"1"`)} 
-    // AND t.date <= ${new Date(`${year}-${month}-"31"`)}
-    // AND m.status = 'completed'
-    // AND m.tsid = t.tsid
-    // GROUP BY week_number`;
+    const totalPendingMeetings = await prisma.$queryRaw`SELECT COUNT(mid)::int as meetings_in_week, TO_CHAR(date, 'W')::integer AS week_number
+    FROM meeting
+    WHERE date >= ${new Date(`${year}-${month}-"1"`)} 
+    AND date <= ${new Date(`${year}-${month}-"31"`)}
+    AND status = 'pending'
+    AND ( "adminId" = ${userId} OR "parentId" = ${userId} OR "regNo" = ${userId} )
+    GROUP BY week_number`;
 
-    // console.log("monthly meetings are: ", monthlyMeetings);
-    let totalMonthlyMeetings = []
-     let totalPendingMeetings = []
-     let totalCompletedMeetings = []
+    const totalCompletedMeetings = await prisma.$queryRaw`SELECT COUNT(hid)::int as meetings_in_week, TO_CHAR(date, 'W')::integer AS week_number
+    FROM history
+    WHERE date >= ${new Date(`${year}-${month}-"1"`)} 
+    AND date <= ${new Date(`${year}-${month}-"31"`)}
+    AND status = 'completed'
+    AND ( "adminId" = ${userId} OR "parentId" = ${userId} OR "regNo" = ${userId} )
+    GROUP BY week_number`;
+
+    console.log("monthly meetings are: ", totalMonthlyMeetings);
+    console.log("monthly meetings are: ", totalPendingMeetings);
+    console.log("monthly meetings are: ", totalCompletedMeetings);
 
     await prisma.$disconnect();
 

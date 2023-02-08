@@ -21,16 +21,21 @@ export default async function handler(req, res) {
             return res.status(403).json({ error: "Please fill in all the fields" })
         }
 
+        console.log("meetinID: ", meetingId);
+
+
+        //meetingId constains an arrays when the action is "waiting"
+        //the 0 index is old tsid, the 1 index is wait id
 
         if (action === "waiting") {
             const meeting = await prisma.meeting.findFirst({
                 where:{
-                    tsid: meetingId
+                    tsid: meetingId[0]
                 }
             })
             await prisma.waitinglist.update({
                 where: {
-                    id: meetingId
+                    id: meetingId[1]
                 },
                 data: {
                     status: action
@@ -92,6 +97,7 @@ export default async function handler(req, res) {
                     if (feedback) {
 
                         console.log("feedback2: ", feedback)
+
                         history = await prisma.history.create({
                             data: {
                                 date: meeting.date,
@@ -107,11 +113,18 @@ export default async function handler(req, res) {
 
                             }
                         })
+
+                        await prisma.meeting.delete({
+                            where:{
+                                mid: Number(meetingId)
+                            }
+                        })
+
+                        console.log("HISTORU: ", history)
                     }
                 }
             }
         }
-
 
         res.status(200).json({
             msg: "Meeting status update successful",

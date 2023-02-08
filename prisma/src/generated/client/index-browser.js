@@ -151,6 +151,13 @@ exports.Prisma.HistoryScalarFieldEnum = makeEnum({
   suggestion: 'suggestion'
 });
 
+exports.Prisma.LeaveScalarFieldEnum = makeEnum({
+  id: 'id',
+  date: 'date',
+  tsid: 'tsid',
+  adminId: 'adminId'
+});
+
 exports.Prisma.MeetingScalarFieldEnum = makeEnum({
   mid: 'mid',
   reason: 'reason',
@@ -231,13 +238,6 @@ exports.Prisma.WaitinglistScalarFieldEnum = makeEnum({
   parentId: 'parentId',
   status: 'status'
 });
-exports.Role = makeEnum({
-  Admin: 'Admin',
-  Parent: 'Parent',
-  Student: 'Student',
-  Director: 'Director'
-});
-
 exports.Status = makeEnum({
   held: 'held',
   pending: 'pending',
@@ -257,7 +257,8 @@ exports.Prisma.ModelName = makeEnum({
   waitinglist: 'waitinglist',
   history: 'history',
   userlogin: 'userlogin',
-  feedback: 'feedback'
+  feedback: 'feedback',
+  leave: 'leave'
 });
 
 /**

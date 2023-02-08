@@ -20,6 +20,7 @@ const handler = async (req, res) => {
             day: true,
             availibility: true,
             tsid: true,
+            meeting: true
         },
     })
 

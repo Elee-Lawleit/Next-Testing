@@ -16,16 +16,21 @@ const handler = async (req, res) => {
 
     //if parent is fetching the waiting list,
     //he should only see his own
-    if(userId){
+    console.log("USERDIDSAD: ", typeof userId)
+    if (userId === "null" || userId === "undefined") {
+        meetings = await prisma.waitinglist.findMany();
+        console.log("ESKE RUNFUANSF")
+
+    } else {
         meetings = await prisma.waitinglist.findMany({
-            where:{
+            where: {
                 parentId: userId
             }
         })
+        console.log("ESKE RUNFUANSFASDASDASDASfd111");
+
     }
-    else{
-         meetings = await prisma.waitinglist.findMany({})
-    }
+
 
     // if(!meetings.Meeting.length) return res.status(204).json();
 

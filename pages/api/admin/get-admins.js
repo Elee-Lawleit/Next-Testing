@@ -14,11 +14,14 @@ const handler = async (req, res) => {
             timeslot: {
                 include: {
                     meeting: true
+                },
+                where:{
+                    availibility: true
                 }
             }
         },
         where:{
-            role: {notIn: ["director", "deputy director", "datacell"]}
+            role: { notIn: ["Director", "Deputy Director", "Datacell", "Attendance", "Project Committee"]}
         }
     })
 

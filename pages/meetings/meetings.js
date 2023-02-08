@@ -81,6 +81,7 @@ const Meetings = ({ session }) => {
     session?.user.role === "Parent" ? session?.user.id : null
   );
 
+  console.log("WAITING: ", waitingList);
 
   const [referModal, setReferModal] = useState(null);
   const [statusModal, setStatusModal] = useState(null);
@@ -142,7 +143,7 @@ const Meetings = ({ session }) => {
   //extracting timeslots from the admins data
   const ts = admins?.admin.map((admin) => admin.timeslot);
 
-  console.log("timeslots: ", ts)
+  console.log("timeslots: ", ts);
 
   // function written by chat gpt btw, not me
   // the easiet and simplest solution I've seen so far
@@ -204,23 +205,6 @@ const Meetings = ({ session }) => {
       }
     );
   };
-
-  const updateMeetingStatus = async (meetingId, action) => {
-    updateStatus(
-      { meetingId, action },
-      {
-        onSuccess: () => {
-          queryClient.refetchQueries("all-meetings");
-          queryClient.refetchQueries("meetings-for-calendar");
-          toast.success("Meeting status updated");
-        },
-        onError: () => {
-          toast.error("Error updating status");
-        },
-      }
-    );
-  };
-
 
 
   //to get rating icons
@@ -346,30 +330,37 @@ const Meetings = ({ session }) => {
     );
   };
 
-  const {mutate: changeWaitToRes, isLoading: changingtoRes, isError: changingToResError} = useChangeWaitToRes();
+  const {
+    mutate: changeWaitToRes,
+    isLoading: changingtoRes,
+    isError: changingToResError,
+  } = useChangeWaitToRes();
 
-  const onWaitToRes = (data)=>{
-    if(!waitToResDate){
+  const onWaitToRes = (data) => {
+    if (!waitToResDate) {
       setDateError(true);
       return;
     }
 
     data.date = waitToResDate;
 
-    console.log("WAITORES: ", data)
+    console.log("WAITORES: ", data);
     //make hook
-    changeWaitToRes({ ...data }, {
-      onSuccess: () => {
-        toast.success("Meeting rescheduled successfully.");
-        queryClient.refetchQueries(["all-meetings", "waiting-meetings"]);
-        setWaitDialog(false);
-        setWaitToResModal(false);
-      },
-      onError: () => {
-        toast.error("Error rescheduling meeting.");
-      },
-    })
-  }
+    changeWaitToRes(
+      { ...data },
+      {
+        onSuccess: () => {
+          toast.success("Meeting rescheduled successfully.");
+          queryClient.refetchQueries(["all-meetings", "waiting-meetings"]);
+          setWaitDialog(false);
+          setWaitToResModal(false);
+        },
+        onError: () => {
+          toast.error("Error rescheduling meeting.");
+        },
+      }
+    );
+  };
 
   const [feedbackError, setFeedbackError] = useState(false);
   const adminFeedbackRef = useRef(null);
@@ -379,39 +370,8 @@ const Meetings = ({ session }) => {
   const [suggestionError, setSuggestionError] = useState(false);
   const [waitToResModal, setWaitToResModal] = useState(false);
 
-
-
   return (
     <AppSkeloton session={session}>
-      <Dialog
-        className="border-red-500"
-        opened={adminLeftDialog}
-        size="xl"
-        onClose={() => setAdminLeftDialog(false)}
-        withCloseButton
-      >
-        <Text
-          size="sm"
-          display={"flex"}
-          style={{ marginBottom: 10 }}
-          weight={500}
-        >
-          <IconAlertCircle className="mr-1" color="red" />
-          The admin for this meeting is currently unavailable.
-        </Text>
-        <div className="flex gap-3">
-          <Button
-            className="bg-purple-500 hover:bg-purple-600"
-            onClick={() => handleAdminSwitch(adminLeftDialog)}
-            loading={isSwitching}
-          >
-            Switch admin
-          </Button>
-          <Button className="bg-purple-500 hover:bg-purple-600">
-            Reschedule
-          </Button>
-        </div>
-      </Dialog>
       <Dialog
         className="border-red-500"
         opened={waitDialog}
@@ -439,7 +399,7 @@ const Meetings = ({ session }) => {
               onClick={() => {
                 updateStatusCW(
                   {
-                    meetingId: waitDialog?.id,
+                    meetingId: [waitDialog?.tsid, waitDialog?.id],
                     action: "waiting",
                     feedback: "",
                   },
@@ -458,9 +418,9 @@ const Meetings = ({ session }) => {
             </Button>
             <Button
               className="bg-purple-500 hover:bg-purple-600"
-              onClick={() =>{ 
-                waitDialog.action = "ResFromWait"
-                setWaitToResModal(waitDialog)
+              onClick={() => {
+                waitDialog.action = "ResFromWait";
+                setWaitToResModal(waitDialog);
               }}
             >
               Reschedule
@@ -490,6 +450,351 @@ const Meetings = ({ session }) => {
             </thead>
             <tbody>
               <Loading visible={isLoading} />
+              {session?.user.role === "Datacell" &&
+                data?.meetings
+                  ?.filter(
+                    (meeting) =>
+                      meeting.referedTo === "Datacell" &&
+                      meeting.status === "pending"
+                  )
+                  .map((meeting) => {
+                    return (
+                      <tr key={meeting.mid}>
+                        <td>{meeting.mid}</td>
+                        <td>{meeting.status}</td>
+                        <td>{meeting.regNo}</td>
+                        <td>{meeting.reason}</td>
+                        <td>{meeting.referedTo}</td>
+                        <td>
+                          <Menu width={200} shadow="sm">
+                            <Menu.Target>
+                              <ActionIcon>
+                                <FontAwesomeIcon icon={faEllipsis} />
+                              </ActionIcon>
+                            </Menu.Target>
+
+                            <Menu.Dropdown>
+                              <Menu.Label>Change meeting state</Menu.Label>
+                              {session?.user.role !== "Parent" &&
+                                session?.user.role !== "Student" && (
+                                  <Menu.Item
+                                    onClick={() => {
+                                      meeting.action = "confirmWait";
+                                      setStatusModal(meeting);
+                                    }}
+                                  >
+                                    Put on hold
+                                  </Menu.Item>
+                                )}
+                              {session?.user.role !== "Parent" &&
+                                session?.user.role !== "Student" && (
+                                  <Menu.Item
+                                    onClick={() => {
+                                      meeting.action = "held";
+                                      setStatusModal(meeting);
+                                    }}
+                                  >
+                                    Mark as completed
+                                  </Menu.Item>
+                                )}
+                              <Menu.Item
+                                onClick={() => {
+                                  setRescheduleModal(meeting);
+                                }}
+                              >
+                                Rescedule
+                              </Menu.Item>
+                              {session?.user.role === "Admin" && (
+                                <Menu.Item
+                                  onClick={() => {
+                                    setReferModal(meeting);
+                                  }}
+                                >
+                                  Refer
+                                </Menu.Item>
+                              )}
+                            </Menu.Dropdown>
+                          </Menu>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              {session?.user.role === "Attendance" &&
+                data?.meetings
+                  ?.filter(
+                    (meeting) =>
+                      meeting.referedTo === "Attendance" &&
+                      meeting.status === "pending"
+                  )
+                  .map((meeting) => {
+                    return (
+                      <tr key={meeting.mid}>
+                        <td>{meeting.mid}</td>
+                        <td>{meeting.status}</td>
+                        <td>{meeting.regNo}</td>
+                        <td>{meeting.reason}</td>
+                        <td>{meeting.referedTo}</td>
+                        <td>
+                          <Menu width={200} shadow="sm">
+                            <Menu.Target>
+                              <ActionIcon>
+                                <FontAwesomeIcon icon={faEllipsis} />
+                              </ActionIcon>
+                            </Menu.Target>
+
+                            <Menu.Dropdown>
+                              <Menu.Label>Change meeting state</Menu.Label>
+                              {session?.user.role !== "Parent" &&
+                                session?.user.role !== "Student" && (
+                                  <Menu.Item
+                                    onClick={() => {
+                                      meeting.action = "confirmWait";
+                                      setStatusModal(meeting);
+                                    }}
+                                  >
+                                    Put on hold
+                                  </Menu.Item>
+                                )}
+                              {session?.user.role !== "Parent" &&
+                                session?.user.role !== "Student" && (
+                                  <Menu.Item
+                                    onClick={() => {
+                                      meeting.action = "call";
+                                      setStatusModal(meeting);
+                                    }}
+                                  >
+                                    Call
+                                  </Menu.Item>
+                                )}
+                              <Menu.Item
+                                onClick={() => {
+                                  setRescheduleModal(meeting);
+                                }}
+                              >
+                                Rescedule
+                              </Menu.Item>
+                              {session?.user.role === "Admin" && (
+                                <Menu.Item
+                                  onClick={() => {
+                                    setReferModal(meeting);
+                                  }}
+                                >
+                                  Refer
+                                </Menu.Item>
+                              )}
+                            </Menu.Dropdown>
+                          </Menu>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              {session?.user.role === "Project Committee" &&
+                data?.meetings
+                  ?.filter(
+                    (meeting) =>
+                      meeting.referedTo === "Project Committee" &&
+                      meeting.status === "pending"
+                  )
+                  .map((meeting) => {
+                    return (
+                      <tr key={meeting.mid}>
+                        <td>{meeting.mid}</td>
+                        <td>{meeting.status}</td>
+                        <td>{meeting.regNo}</td>
+                        <td>{meeting.reason}</td>
+                        <td>{meeting.referedTo}</td>
+                        <td>
+                          <Menu width={200} shadow="sm">
+                            <Menu.Target>
+                              <ActionIcon>
+                                <FontAwesomeIcon icon={faEllipsis} />
+                              </ActionIcon>
+                            </Menu.Target>
+
+                            <Menu.Dropdown>
+                              <Menu.Label>Change meeting state</Menu.Label>
+                              {session?.user.role !== "Parent" &&
+                                session?.user.role !== "Student" && (
+                                  <Menu.Item
+                                    onClick={() => {
+                                      meeting.action = "confirmWait";
+                                      setStatusModal(meeting);
+                                    }}
+                                  >
+                                    Put on hold
+                                  </Menu.Item>
+                                )}
+                              {session?.user.role !== "Parent" &&
+                                session?.user.role !== "Student" && (
+                                  <Menu.Item
+                                    onClick={() => {
+                                      meeting.action = "held";
+                                      setStatusModal(meeting);
+                                    }}
+                                  >
+                                    Mark as completed
+                                  </Menu.Item>
+                                )}
+                              <Menu.Item
+                                onClick={() => {
+                                  setRescheduleModal(meeting);
+                                }}
+                              >
+                                Rescedule
+                              </Menu.Item>
+                              {session?.user.role === "Admin" && (
+                                <Menu.Item
+                                  onClick={() => {
+                                    setReferModal(meeting);
+                                  }}
+                                >
+                                  Refer
+                                </Menu.Item>
+                              )}
+                            </Menu.Dropdown>
+                          </Menu>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              {session?.user.role === "Director" &&
+                data?.meetings
+                  ?.filter(
+                    (meeting) =>
+                      meeting.referedTo === "Director" &&
+                      meeting.status === "pending"
+                  )
+                  .map((meeting) => {
+                    return (
+                      <tr key={meeting.mid}>
+                        <td>{meeting.mid}</td>
+                        <td>{meeting.status}</td>
+                        <td>{meeting.regNo}</td>
+                        <td>{meeting.reason}</td>
+                        <td>{meeting.referedTo}</td>
+                        <td>
+                          <Menu width={200} shadow="sm">
+                            <Menu.Target>
+                              <ActionIcon>
+                                <FontAwesomeIcon icon={faEllipsis} />
+                              </ActionIcon>
+                            </Menu.Target>
+
+                            <Menu.Dropdown>
+                              <Menu.Label>Change meeting state</Menu.Label>
+                              {session?.user.role !== "Parent" &&
+                                session?.user.role !== "Student" && (
+                                  <Menu.Item
+                                    onClick={() => {
+                                      meeting.action = "confirmWait";
+                                      setStatusModal(meeting);
+                                    }}
+                                  >
+                                    Put on hold
+                                  </Menu.Item>
+                                )}
+                              {session?.user.role !== "Parent" &&
+                                session?.user.role !== "Student" && (
+                                  <Menu.Item
+                                    onClick={() => {
+                                      meeting.action = "held";
+                                      setStatusModal(meeting);
+                                    }}
+                                  >
+                                    Mark as completed
+                                  </Menu.Item>
+                                )}
+                              <Menu.Item
+                                onClick={() => {
+                                  setRescheduleModal(meeting);
+                                }}
+                              >
+                                Rescedule
+                              </Menu.Item>
+                              {session?.user.role === "Admin" && (
+                                <Menu.Item
+                                  onClick={() => {
+                                    setReferModal(meeting);
+                                  }}
+                                >
+                                  Refer
+                                </Menu.Item>
+                              )}
+                            </Menu.Dropdown>
+                          </Menu>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              {session?.user.role === "Deputy Director" &&
+                data?.meetings
+                  ?.filter(
+                    (meeting) =>
+                      meeting.referedTo === "Deputy Director" &&
+                      meeting.status === "pending"
+                  )
+                  .map((meeting) => {
+                    return (
+                      <tr key={meeting.mid}>
+                        <td>{meeting.mid}</td>
+                        <td>{meeting.status}</td>
+                        <td>{meeting.regNo}</td>
+                        <td>{meeting.reason}</td>
+                        <td>{meeting.referedTo}</td>
+                        <td>
+                          <Menu width={200} shadow="sm">
+                            <Menu.Target>
+                              <ActionIcon>
+                                <FontAwesomeIcon icon={faEllipsis} />
+                              </ActionIcon>
+                            </Menu.Target>
+
+                            <Menu.Dropdown>
+                              <Menu.Label>Change meeting state</Menu.Label>
+                              {session?.user.role !== "Parent" &&
+                                session?.user.role !== "Student" && (
+                                  <Menu.Item
+                                    onClick={() => {
+                                      meeting.action = "confirmWait";
+                                      setStatusModal(meeting);
+                                    }}
+                                  >
+                                    Put on hold
+                                  </Menu.Item>
+                                )}
+                              {session?.user.role !== "Parent" &&
+                                session?.user.role !== "Student" && (
+                                  <Menu.Item
+                                    onClick={() => {
+                                      meeting.action = "held";
+                                      setStatusModal(meeting);
+                                    }}
+                                  >
+                                    Mark as completed
+                                  </Menu.Item>
+                                )}
+                              <Menu.Item
+                                onClick={() => {
+                                  setRescheduleModal(meeting);
+                                }}
+                              >
+                                Rescedule
+                              </Menu.Item>
+                              {session?.user.role === "Admin" && (
+                                <Menu.Item
+                                  onClick={() => {
+                                    setReferModal(meeting);
+                                  }}
+                                >
+                                  Refer
+                                </Menu.Item>
+                              )}
+                            </Menu.Dropdown>
+                          </Menu>
+                        </td>
+                      </tr>
+                    );
+                  })}
               {data?.meetings
                 ?.filter(
                   (meeting) =>
@@ -552,20 +857,6 @@ const Meetings = ({ session }) => {
                           </Menu.Dropdown>
                         </Menu>
                       </td>
-                      {/* DON'T FORGET TO CHANGE THIS */}
-                      {meeting.mid == 5 && (
-                        <td>
-                          <Tooltip label="admin unavailable">
-                            <ActionIcon
-                              onClick={() => {
-                                setAdminLeftDialog(meeting);
-                              }}
-                            >
-                              <IconAlertCircle color="red" />
-                            </ActionIcon>
-                          </Tooltip>
-                        </td>
-                      )}
                     </tr>
                   );
                 })}
@@ -618,11 +909,11 @@ const Meetings = ({ session }) => {
                           {session?.user.role === "Admin" && (
                             <Menu.Item
                               onClick={() => {
-                                meeting.action = "pending";
+                                meeting.action = "call";
                                 setStatusModal(meeting);
                               }}
                             >
-                              Mark as pending
+                              Call parent
                             </Menu.Item>
                           )}
                           {session?.user.role === "Admin" && (
@@ -677,7 +968,7 @@ const Meetings = ({ session }) => {
             <tbody>
               <Loading visible={isLoading} />
               {completedMeetings?.meetings?.map((meeting) => {
-                console.log("Completed meetings: ASDASD: ", meeting)
+                console.log("Completed meetings: ASDASD: ", meeting);
                 return (
                   <tr key={meeting.mid}>
                     <td>{meeting.hid}</td>
@@ -685,7 +976,11 @@ const Meetings = ({ session }) => {
                     <td>{meeting.regNo}</td>
                     <td>{meeting.reason}</td>
                     <td>{meeting.referedTo}</td>
-                    <td>{meeting.feedback?.suggestion ? meeting.feedback?.suggestion : "required"}</td>
+                    <td>
+                      {meeting.feedback?.suggestion
+                        ? meeting.feedback?.suggestion
+                        : "required"}
+                    </td>
                     <td>
                       <Menu width={200} shadow="sm">
                         <Menu.Target>
@@ -694,27 +989,30 @@ const Meetings = ({ session }) => {
                           </ActionIcon>
                         </Menu.Target>
 
-                        {session?.user.role === "Parent" && (
-                          <Menu.Dropdown>
+                        <Menu.Dropdown>
+                          <Menu.Label>Feedback</Menu.Label>
+                          {(session?.user.role === "Parent") ?
+                            !meeting?.feedback ?  
+                            <Menu.Item
+                              onClick={() => setFeedbackModal(meeting)}
+                            >
+                              Provide feedback
+                            </Menu.Item> :
+                            <Menu.Item
+                              onClick={() => setRatingModal(meeting)}
+                            >
+                              View Rating
+                            </Menu.Item>
+                            :
+                            //for admin
+                            <Menu.Item
+                                onClick={() => setRatingModal(meeting)}
+                            >
+                              View rating
+                            </Menu.Item>
+                          }
 
-                            {
-                              !meeting.feedback ? <><Menu.Item
-                                onClick={() => setFeedbackModal(meeting)}
-                              >
-                                Provide feedback
-                              </Menu.Item></> :
-                                <>
-                                  <Menu.Label>Feedback</Menu.Label>
-                                  <Menu.Item
-                                    onClick={() => setRatingModal(meeting)}
-                                  >
-                                    View rating
-                                  </Menu.Item>
-                                </>
-                            }
-
-                          </Menu.Dropdown>
-                        )}
+                        </Menu.Dropdown>
                       </Menu>
                     </td>
                   </tr>
@@ -734,7 +1032,13 @@ const Meetings = ({ session }) => {
       >
         <LoadingOverlay visible={submittingReferal} />
         <NativeSelect
-          data={["Datacell", "Attendance", "Project Committee"]}
+          data={[
+            "Director",
+            "Deputy Director",
+            "Datacell",
+            "Attendance",
+            "Project Committee",
+          ]}
           ref={referalRef}
         />
         <div className="flex gap-4 justify-start mt-3">
@@ -776,7 +1080,7 @@ const Meetings = ({ session }) => {
           <Button
             className="bg-purple-500 hover:bg-purple-600"
             onClick={() => {
-              if(statusModal?.action === "confirmWait"){
+              if (statusModal?.action === "confirmWait") {
                 updateStatusCW(
                   {
                     meetingId: statusModal?.mid,
@@ -797,7 +1101,26 @@ const Meetings = ({ session }) => {
                   }
                 );
               }
-              else{
+              else if(statusModal?.action === "call"){
+                // console.log("Meeting: ", statusModal)
+                updateStatus(
+                  { currentAdminId: session?.user.id,
+                    oldTimeslotId: statusModal?.tsid,
+                    status: "call"
+                  },
+                  {
+                    onSuccess: () => {
+                      queryClient.refetchQueries("all-meetings");
+                      queryClient.refetchQueries("meetings-for-calendar");
+                      toast.success("Meeting status updated");
+                    },
+                    onError: () => {
+                      toast.error("Error updating status");
+                    },
+                  }
+                );
+              } 
+              else {
                 if (!adminFeedbackRef?.current?.value) {
                   setFeedbackError(true);
                   return;
@@ -946,9 +1269,22 @@ const Meetings = ({ session }) => {
           </tr>
         </Table>
         <div>
-          <Textarea ref={suggesstionRef} error={suggestionError} label="Enter suggesstion for improvement" />
+          <Textarea
+            ref={suggesstionRef}
+            error={suggestionError}
+            label="Enter suggesstion for improvement"
+          />
         </div>
-        <span className={clsx(rudeRating < 1 || politeRating < 1 || attentiveRating < 1 || !suggesstionRef.current?.value ? "visible text-xs text-red-500" : "hidden")}>
+        <span
+          className={clsx(
+            rudeRating < 1 ||
+              politeRating < 1 ||
+              attentiveRating < 1 ||
+              !suggesstionRef.current?.value
+              ? "visible text-xs text-red-500"
+              : "hidden"
+          )}
+        >
           Please fill feedback details properly
         </span>
         <div className="flex gap-4 justify-start mt-4">
@@ -956,10 +1292,9 @@ const Meetings = ({ session }) => {
             className="bg-purple-500 hover:bg-purple-600"
             onClick={() => {
               if (!suggesstionRef.current.value) {
-                setSuggestionError(true)
+                setSuggestionError(true);
               }
               if (rudeRating < 1 || politeRating < 1 || attentiveRating < 1) {
-
               }
               updateMeetingFeedback(
                 {
@@ -967,17 +1302,17 @@ const Meetings = ({ session }) => {
                   suggesstion: suggesstionRef.current.value,
                   rude: rudeRating,
                   polite: politeRating,
-                  attentive: attentiveRating
+                  attentive: attentiveRating,
                 },
                 {
                   onSuccess: () => {
-                    queryClient.refetchQueries("completed-meetings")
-                    toast.success("Feedback updated successfully.")
+                    queryClient.refetchQueries("completed-meetings");
+                    toast.success("Feedback updated successfully.");
                     setFeedbackModal(false);
                   },
                   onError: () => {
                     toast.error("Error updating feedback.");
-                  }
+                  },
                 }
               );
             }}
@@ -1005,34 +1340,25 @@ const Meetings = ({ session }) => {
           <Table>
             <tbody>
               <tr>
-                <td className="font-semibold">
-                  Polite
-                </td>
-                <td>
-                  {getFullIcon(ratingModal?.feedback?.polite)}
-                </td>
+                <td className="font-semibold">Polite</td>
+                <td>{getFullIcon(ratingModal?.feedback?.polite)}</td>
               </tr>
               <tr>
-                <td className="font-semibold">
-                  Attentive
-                </td>
-                <td>
-                  {getFullIcon(ratingModal?.feedback?.attentive)}
-                </td>
+                <td className="font-semibold">Attentive</td>
+                <td>{getFullIcon(ratingModal?.feedback?.attentive)}</td>
               </tr>
               <tr>
-                <td className="font-semibold">
-                  Rude
-                </td>
-                <td>
-                  {getFullIcon(ratingModal?.feedback?.rude)}
-                </td>
+                <td className="font-semibold">Rude</td>
+                <td>{getFullIcon(ratingModal?.feedback?.rude)}</td>
+              </tr>
+              <tr>
+                <td className="font-semibold">Suggestion</td>
+                <td>{ratingModal?.feedback?.suggestion}</td>
               </tr>
             </tbody>
           </Table>
         </div>
       </Modal>
-
 
       {/* A very shitty approach indeed, but I'm not really looking for the 
       best appraoches right now so, SUE ME */}
@@ -1045,21 +1371,21 @@ const Meetings = ({ session }) => {
         centered
       >
         <LoadingOverlay visible={changingtoRes} />
-          <form action="" onSubmit={handleSubmit(onWaitToRes)}>
-            <div>
-              <DatePicker
-                value={waitToResDate}
-                placeholder="Pick meeting day"
-                label="Meeting day"
-                initialMonth={new Date()}
-                excludeDate={(date) => date.getDay() === 0 || date.getDay() === 6}
-                onChange={setWaitToResDate}
-                allowLevelChange={false}
-                minDate={new Date()}
-                error={dateError ? "Please fill this field properly" : false}
-                withAsterisk
-              />
-            </div>
+        <form action="" onSubmit={handleSubmit(onWaitToRes)}>
+          <div>
+            <DatePicker
+              value={waitToResDate}
+              placeholder="Pick meeting day"
+              label="Meeting day"
+              initialMonth={new Date()}
+              excludeDate={(date) => date.getDay() === 0 || date.getDay() === 6}
+              onChange={setWaitToResDate}
+              allowLevelChange={false}
+              minDate={new Date()}
+              error={dateError ? "Please fill this field properly" : false}
+              withAsterisk
+            />
+          </div>
           <ScrollArea style={{ height: 220 }}>
             <div className="grid grid-cols-2 gap-3 mt-3">
               {extractTimeSlotsForDay(
@@ -1068,7 +1394,6 @@ const Meetings = ({ session }) => {
               ).map((ts) => (
                 <div className="flex flex-col col-span-1 gap-0">
                   <Radio
-                  
                     value={[waitToResModal?.tsid, ts.tsid]}
                     label={
                       dayjs(ts.startTime).subtract(5, "hours").hour() +
@@ -1086,9 +1411,7 @@ const Meetings = ({ session }) => {
             </div>
           </ScrollArea>
           <div className="flex gap-4 justify-start mt-3">
-            <Button className="bg-purple-500 hover:bg-purple-600"
-              type="submit"
-            >
+            <Button className="bg-purple-500 hover:bg-purple-600" type="submit">
               Update
             </Button>
             <Button

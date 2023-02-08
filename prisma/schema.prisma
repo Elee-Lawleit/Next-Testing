@@ -32,6 +32,7 @@ model admin {
   desgination  String        @db.VarChar(30)
   generalavail Boolean?
   history      history[]
+  leave        leave[]
   meeting      meeting[]
   timeslot     timeslot[]
   userlogin    userlogin?
@@ -45,6 +46,7 @@ model timeslot {
   availibility Boolean
   adminId      String   @db.VarChar(13)
   day          String?  @db.VarChar(9)
+  leave        leave[]
   meeting      meeting?
   admin        admin    @relation(fields: [adminId], references: [cnic])
 }
@@ -155,7 +157,7 @@ model userlogin {
   userName String   @db.VarChar(128)
   password String   @db.VarChar(128)
   email    String   @db.VarChar(128)
-  role     Role
+  role     String   @db.VarChar(30)
   regNo    String?  @unique(map: "unique_regno") @db.VarChar(30)
   adminId  String?  @unique(map: "unique_adminid") @db.VarChar(13)
   parentId String?  @unique(map: "unique_parentid") @db.VarChar(13)
@@ -171,6 +173,15 @@ model feedback {
   suggestion String  @db.VarChar(128)
   hid        Int     @unique(map: "feedback_pk") @default(autoincrement())
   history    history @relation(fields: [hid], references: [hid], onDelete: NoAction, onUpdate: NoAction, map: "meeting_fk")
+}
+
+model leave {
+  id       Int       @id(map: "leave_pk") @default(autoincrement())
+  date     DateTime? @db.Date
+  tsid     Int?
+  adminId  String?   @db.VarChar(30)
+  admin    admin?    @relation(fields: [adminId], references: [cnic], onDelete: NoAction, onUpdate: NoAction, map: "admin_leave_fk")
+  timeslot timeslot? @relation(fields: [tsid], references: [tsid], onDelete: NoAction, onUpdate: NoAction, map: "timeslot_fk")
 }
 
 enum Status {

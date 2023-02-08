@@ -72,11 +72,14 @@ const Create = ({ session }) => {
     isLoading: loadingAtt,
     isError: errorAtt,
   } = useSelectStudentsAtt(attendance, subject);
+  
   const {
     data: timeSlots,
     isLoading: tsLoading,
     isError: tsError,
   } = useFetchTimeSlots(session?.user.id);
+
+  // console.log("asdsad", timeSlots)
 
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [selectedStudentsAtt, setSelectedStudentsAtt] = useState([]);
@@ -153,22 +156,20 @@ const Create = ({ session }) => {
 
 
   const ts = admins?.admin.map((admin)=>admin.timeslot);
-  // console.log("timeslots: ", JSON.stringify(ts));
+  
 
-
-  // function written by chat gpt btw, not me
-  // the easiet and simplest solution I've seen so far
   function removeDuplicateTimeSlots(dataSet) {
 
     let uniqueTimeSlots = {};
     let distinctTimeSlots = [];
+
     dataSet?.forEach(innerArr => {
       innerArr.forEach(timeSlot => {
 
         // creating a unique key by concatinating date and startTime
         // if this already exists then, we don't wanna add it to the unique array
         let key = timeSlot.startTime + timeSlot.day;
-        if (!uniqueTimeSlots[key]) {
+        if (!uniqueTimeSlots[key] && Math.random() >= 0.5) { //math.random is to randomize picking the timeslot
           uniqueTimeSlots[key] = true;
           distinctTimeSlots.push(timeSlot);
         }
@@ -177,8 +178,6 @@ const Create = ({ session }) => {
     return distinctTimeSlots;
   }
 
-  // had to slightly edit this one to get the correct result
-  // or just change 2 characters in total, I should say while not taking away any credit from chap gpt
   function extractTimeSlotsForDay(dataSet, day) {
     let distinctTimeSlots = removeDuplicateTimeSlots(dataSet);
     //filter the time slots based on the day
@@ -188,6 +187,22 @@ const Create = ({ session }) => {
       }
     });
     if (filteredTimeSlots.length === 0) {
+      return [];
+    } else {
+      return filteredTimeSlots;
+    }
+  }
+
+
+  function extractTimeSlotsForDayAdmin(dataSet, day) {
+    //filter the time slots based on the day
+    
+    let filteredTimeSlots = dataSet?.filter(timeSlot => {
+      // console.log("adasdasdasfasd: ", timeSlot.day)
+        return timeSlot.day === day;
+    });
+    
+    if (dataSet?.length === 0) {
       return [];
     } else {
       return filteredTimeSlots;
@@ -273,7 +288,7 @@ const Create = ({ session }) => {
                 )}
                 {session?.user.role === "Admin" && (
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                    {extractTimeSlotsForDay(ts, days[new Date(date).getDay() - 1]).map((ts) => (
+                    {extractTimeSlotsForDayAdmin(timeSlots?.timeSlots, days[new Date(date).getDay() - 1])?.map((ts) => (
                       <div className="flex flex-col items-center justify-center col-span-1 gap-0">
                         <Radio
                           value={[ts.startTime, ts.endTime, ts.day]}

@@ -32,7 +32,10 @@ export const authOptions = {
         // console.log("ADASDASDASDASFD")
         let user = await prisma.userlogin.findFirst({
           where: {
-            userName: credentials.username,
+            OR:[
+              {userName: credentials.username},
+              {email : credentials.username}
+            ],
             password: credentials.password,
           },
           include:{

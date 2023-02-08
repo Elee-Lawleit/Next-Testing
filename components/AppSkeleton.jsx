@@ -98,7 +98,7 @@ const AppSkeloton = ({ children, ...props }) => {
                 className="m-auto rounded-md shadow"
                 value={date}
                 onChange={setDate}
-                // excludeDate={(date) => date.getDay() === 0 || date.getDay() === 6}
+                excludeDate={(date) => date.getDay() === 0 || date.getDay() === 6}
               />
               <Divider />
               <Text className='font-bold'>Upcoming Meetings</Text>

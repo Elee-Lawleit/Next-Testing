@@ -4,10 +4,9 @@ import axios from "axios";
 const useUpdateTimeslotStatus = () => {
 
     return useMutation(
-        async ({ timeslotId, status }) => {
-            console.log("IN HOOK: ", timeslotId, " ", status)
+        async ({ timeslotId, status, date }) => {
             return await axios.post("/api/admin/update-timeslot-status", {
-                timeslotId, status
+                timeslotId, status, date
             });
         },
         {

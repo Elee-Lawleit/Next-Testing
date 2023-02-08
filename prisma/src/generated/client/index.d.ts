@@ -172,7 +172,7 @@ export type userlogin = {
   userName: string
   password: string
   email: string
-  role: Role
+  role: string
   regNo: string | null
   adminId: string | null
   parentId: string | null
@@ -190,6 +190,17 @@ export type feedback = {
   hid: number
 }
 
+/**
+ * Model leave
+ * 
+ */
+export type leave = {
+  id: number
+  date: Date | null
+  tsid: number | null
+  adminId: string | null
+}
+
 
 /**
  * Enums
@@ -197,16 +208,6 @@ export type feedback = {
 
 // Based on
 // https://github.com/microsoft/TypeScript/issues/3192#issuecomment-261720275
-
-export const Role: {
-  Admin: 'Admin',
-  Parent: 'Parent',
-  Student: 'Student',
-  Director: 'Director'
-};
-
-export type Role = (typeof Role)[keyof typeof Role]
-
 
 export const Status: {
   held: 'held',
@@ -463,6 +464,16 @@ export class PrismaClient<
     * ```
     */
   get feedback(): Prisma.feedbackDelegate<GlobalReject>;
+
+  /**
+   * `prisma.leave`: Exposes CRUD operations for the **leave** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Leaves
+    * const leaves = await prisma.leave.findMany()
+    * ```
+    */
+  get leave(): Prisma.leaveDelegate<GlobalReject>;
 }
 
 export namespace Prisma {
@@ -951,7 +962,8 @@ export namespace Prisma {
     waitinglist: 'waitinglist',
     history: 'history',
     userlogin: 'userlogin',
-    feedback: 'feedback'
+    feedback: 'feedback',
+    leave: 'leave'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1194,6 +1206,7 @@ export namespace Prisma {
 
   export type AdminCountOutputType = {
     history: number
+    leave: number
     meeting: number
     timeslot: number
     waitinglist: number
@@ -1201,6 +1214,7 @@ export namespace Prisma {
 
   export type AdminCountOutputTypeSelect = {
     history?: boolean | AdminCountOutputTypeCountHistoryArgs
+    leave?: boolean | AdminCountOutputTypeCountLeaveArgs
     meeting?: boolean | AdminCountOutputTypeCountMeetingArgs
     timeslot?: boolean | AdminCountOutputTypeCountTimeslotArgs
     waitinglist?: boolean | AdminCountOutputTypeCountWaitinglistArgs
@@ -1246,6 +1260,14 @@ export namespace Prisma {
   /**
    * AdminCountOutputType without action
    */
+  export type AdminCountOutputTypeCountLeaveArgs = {
+    where?: leaveWhereInput
+  }
+
+
+  /**
+   * AdminCountOutputType without action
+   */
   export type AdminCountOutputTypeCountMeetingArgs = {
     where?: meetingWhereInput
   }
@@ -1264,6 +1286,57 @@ export namespace Prisma {
    */
   export type AdminCountOutputTypeCountWaitinglistArgs = {
     where?: waitinglistWhereInput
+  }
+
+
+
+  /**
+   * Count Type TimeslotCountOutputType
+   */
+
+
+  export type TimeslotCountOutputType = {
+    leave: number
+  }
+
+  export type TimeslotCountOutputTypeSelect = {
+    leave?: boolean | TimeslotCountOutputTypeCountLeaveArgs
+  }
+
+  export type TimeslotCountOutputTypeGetPayload<S extends boolean | null | undefined | TimeslotCountOutputTypeArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? TimeslotCountOutputType :
+    S extends undefined ? never :
+    S extends { include: any } & (TimeslotCountOutputTypeArgs)
+    ? TimeslotCountOutputType 
+    : S extends { select: any } & (TimeslotCountOutputTypeArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+    P extends keyof TimeslotCountOutputType ? TimeslotCountOutputType[P] : never
+  } 
+      : TimeslotCountOutputType
+
+
+
+
+  // Custom InputTypes
+
+  /**
+   * TimeslotCountOutputType without action
+   */
+  export type TimeslotCountOutputTypeArgs = {
+    /**
+     * Select specific fields to fetch from the TimeslotCountOutputType
+     */
+    select?: TimeslotCountOutputTypeSelect | null
+  }
+
+
+  /**
+   * TimeslotCountOutputType without action
+   */
+  export type TimeslotCountOutputTypeCountLeaveArgs = {
+    where?: leaveWhereInput
   }
 
 
@@ -2590,6 +2663,7 @@ export namespace Prisma {
     desgination?: boolean
     generalavail?: boolean
     history?: boolean | admin$historyArgs
+    leave?: boolean | admin$leaveArgs
     meeting?: boolean | admin$meetingArgs
     timeslot?: boolean | admin$timeslotArgs
     userlogin?: boolean | userloginArgs
@@ -2600,6 +2674,7 @@ export namespace Prisma {
 
   export type adminInclude = {
     history?: boolean | admin$historyArgs
+    leave?: boolean | admin$leaveArgs
     meeting?: boolean | admin$meetingArgs
     timeslot?: boolean | admin$timeslotArgs
     userlogin?: boolean | userloginArgs
@@ -2615,6 +2690,7 @@ export namespace Prisma {
     ? admin  & {
     [P in TruthyKeys<S['include']>]:
         P extends 'history' ? Array < historyGetPayload<S['include'][P]>>  :
+        P extends 'leave' ? Array < leaveGetPayload<S['include'][P]>>  :
         P extends 'meeting' ? Array < meetingGetPayload<S['include'][P]>>  :
         P extends 'timeslot' ? Array < timeslotGetPayload<S['include'][P]>>  :
         P extends 'userlogin' ? userloginGetPayload<S['include'][P]> | null :
@@ -2625,6 +2701,7 @@ export namespace Prisma {
       ? {
     [P in TruthyKeys<S['select']>]:
         P extends 'history' ? Array < historyGetPayload<S['select'][P]>>  :
+        P extends 'leave' ? Array < leaveGetPayload<S['select'][P]>>  :
         P extends 'meeting' ? Array < meetingGetPayload<S['select'][P]>>  :
         P extends 'timeslot' ? Array < timeslotGetPayload<S['select'][P]>>  :
         P extends 'userlogin' ? userloginGetPayload<S['select'][P]> | null :
@@ -3004,6 +3081,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
     history<T extends admin$historyArgs= {}>(args?: Subset<T, admin$historyArgs>): PrismaPromise<Array<historyGetPayload<T>>| Null>;
+
+    leave<T extends admin$leaveArgs= {}>(args?: Subset<T, admin$leaveArgs>): PrismaPromise<Array<leaveGetPayload<T>>| Null>;
 
     meeting<T extends admin$meetingArgs= {}>(args?: Subset<T, admin$meetingArgs>): PrismaPromise<Array<meetingGetPayload<T>>| Null>;
 
@@ -3390,6 +3469,27 @@ export namespace Prisma {
 
 
   /**
+   * admin.leave
+   */
+  export type admin$leaveArgs = {
+    /**
+     * Select specific fields to fetch from the leave
+     */
+    select?: leaveSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: leaveInclude | null
+    where?: leaveWhereInput
+    orderBy?: Enumerable<leaveOrderByWithRelationInput>
+    cursor?: leaveWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<LeaveScalarFieldEnum>
+  }
+
+
+  /**
    * admin.meeting
    */
   export type admin$meetingArgs = {
@@ -3676,14 +3776,18 @@ export namespace Prisma {
     availibility?: boolean
     adminId?: boolean
     day?: boolean
+    leave?: boolean | timeslot$leaveArgs
     meeting?: boolean | meetingArgs
     admin?: boolean | adminArgs
+    _count?: boolean | TimeslotCountOutputTypeArgs
   }
 
 
   export type timeslotInclude = {
+    leave?: boolean | timeslot$leaveArgs
     meeting?: boolean | meetingArgs
     admin?: boolean | adminArgs
+    _count?: boolean | TimeslotCountOutputTypeArgs
   }
 
   export type timeslotGetPayload<S extends boolean | null | undefined | timeslotArgs> =
@@ -3693,14 +3797,18 @@ export namespace Prisma {
     S extends { include: any } & (timeslotArgs | timeslotFindManyArgs)
     ? timeslot  & {
     [P in TruthyKeys<S['include']>]:
+        P extends 'leave' ? Array < leaveGetPayload<S['include'][P]>>  :
         P extends 'meeting' ? meetingGetPayload<S['include'][P]> | null :
-        P extends 'admin' ? adminGetPayload<S['include'][P]> :  never
+        P extends 'admin' ? adminGetPayload<S['include'][P]> :
+        P extends '_count' ? TimeslotCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (timeslotArgs | timeslotFindManyArgs)
       ? {
     [P in TruthyKeys<S['select']>]:
+        P extends 'leave' ? Array < leaveGetPayload<S['select'][P]>>  :
         P extends 'meeting' ? meetingGetPayload<S['select'][P]> | null :
-        P extends 'admin' ? adminGetPayload<S['select'][P]> :  P extends keyof timeslot ? timeslot[P] : never
+        P extends 'admin' ? adminGetPayload<S['select'][P]> :
+        P extends '_count' ? TimeslotCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof timeslot ? timeslot[P] : never
   } 
       : timeslot
 
@@ -4074,6 +4182,8 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
+    leave<T extends timeslot$leaveArgs= {}>(args?: Subset<T, timeslot$leaveArgs>): PrismaPromise<Array<leaveGetPayload<T>>| Null>;
+
     meeting<T extends meetingArgs= {}>(args?: Subset<T, meetingArgs>): Prisma__meetingClient<meetingGetPayload<T> | Null>;
 
     admin<T extends adminArgs= {}>(args?: Subset<T, adminArgs>): Prisma__adminClient<adminGetPayload<T> | Null>;
@@ -4430,6 +4540,27 @@ export namespace Prisma {
      * Filter which timeslots to delete
      */
     where?: timeslotWhereInput
+  }
+
+
+  /**
+   * timeslot.leave
+   */
+  export type timeslot$leaveArgs = {
+    /**
+     * Select specific fields to fetch from the leave
+     */
+    select?: leaveSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: leaveInclude | null
+    where?: leaveWhereInput
+    orderBy?: Enumerable<leaveOrderByWithRelationInput>
+    cursor?: leaveWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<LeaveScalarFieldEnum>
   }
 
 
@@ -12525,7 +12656,7 @@ export namespace Prisma {
     userName: string | null
     password: string | null
     email: string | null
-    role: Role | null
+    role: string | null
     regNo: string | null
     adminId: string | null
     parentId: string | null
@@ -12536,7 +12667,7 @@ export namespace Prisma {
     userName: string | null
     password: string | null
     email: string | null
-    role: Role | null
+    role: string | null
     regNo: string | null
     adminId: string | null
     parentId: string | null
@@ -12689,7 +12820,7 @@ export namespace Prisma {
     userName: string
     password: string
     email: string
-    role: Role
+    role: string
     regNo: string | null
     adminId: string | null
     parentId: string | null
@@ -14482,6 +14613,975 @@ export namespace Prisma {
 
 
   /**
+   * Model leave
+   */
+
+
+  export type AggregateLeave = {
+    _count: LeaveCountAggregateOutputType | null
+    _avg: LeaveAvgAggregateOutputType | null
+    _sum: LeaveSumAggregateOutputType | null
+    _min: LeaveMinAggregateOutputType | null
+    _max: LeaveMaxAggregateOutputType | null
+  }
+
+  export type LeaveAvgAggregateOutputType = {
+    id: number | null
+    tsid: number | null
+  }
+
+  export type LeaveSumAggregateOutputType = {
+    id: number | null
+    tsid: number | null
+  }
+
+  export type LeaveMinAggregateOutputType = {
+    id: number | null
+    date: Date | null
+    tsid: number | null
+    adminId: string | null
+  }
+
+  export type LeaveMaxAggregateOutputType = {
+    id: number | null
+    date: Date | null
+    tsid: number | null
+    adminId: string | null
+  }
+
+  export type LeaveCountAggregateOutputType = {
+    id: number
+    date: number
+    tsid: number
+    adminId: number
+    _all: number
+  }
+
+
+  export type LeaveAvgAggregateInputType = {
+    id?: true
+    tsid?: true
+  }
+
+  export type LeaveSumAggregateInputType = {
+    id?: true
+    tsid?: true
+  }
+
+  export type LeaveMinAggregateInputType = {
+    id?: true
+    date?: true
+    tsid?: true
+    adminId?: true
+  }
+
+  export type LeaveMaxAggregateInputType = {
+    id?: true
+    date?: true
+    tsid?: true
+    adminId?: true
+  }
+
+  export type LeaveCountAggregateInputType = {
+    id?: true
+    date?: true
+    tsid?: true
+    adminId?: true
+    _all?: true
+  }
+
+  export type LeaveAggregateArgs = {
+    /**
+     * Filter which leave to aggregate.
+     */
+    where?: leaveWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of leaves to fetch.
+     */
+    orderBy?: Enumerable<leaveOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: leaveWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` leaves from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` leaves.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned leaves
+    **/
+    _count?: true | LeaveCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: LeaveAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: LeaveSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LeaveMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LeaveMaxAggregateInputType
+  }
+
+  export type GetLeaveAggregateType<T extends LeaveAggregateArgs> = {
+        [P in keyof T & keyof AggregateLeave]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLeave[P]>
+      : GetScalarType<T[P], AggregateLeave[P]>
+  }
+
+
+
+
+  export type LeaveGroupByArgs = {
+    where?: leaveWhereInput
+    orderBy?: Enumerable<leaveOrderByWithAggregationInput>
+    by: LeaveScalarFieldEnum[]
+    having?: leaveScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LeaveCountAggregateInputType | true
+    _avg?: LeaveAvgAggregateInputType
+    _sum?: LeaveSumAggregateInputType
+    _min?: LeaveMinAggregateInputType
+    _max?: LeaveMaxAggregateInputType
+  }
+
+
+  export type LeaveGroupByOutputType = {
+    id: number
+    date: Date | null
+    tsid: number | null
+    adminId: string | null
+    _count: LeaveCountAggregateOutputType | null
+    _avg: LeaveAvgAggregateOutputType | null
+    _sum: LeaveSumAggregateOutputType | null
+    _min: LeaveMinAggregateOutputType | null
+    _max: LeaveMaxAggregateOutputType | null
+  }
+
+  type GetLeaveGroupByPayload<T extends LeaveGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<LeaveGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LeaveGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LeaveGroupByOutputType[P]>
+            : GetScalarType<T[P], LeaveGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type leaveSelect = {
+    id?: boolean
+    date?: boolean
+    tsid?: boolean
+    adminId?: boolean
+    admin?: boolean | adminArgs
+    timeslot?: boolean | timeslotArgs
+  }
+
+
+  export type leaveInclude = {
+    admin?: boolean | adminArgs
+    timeslot?: boolean | timeslotArgs
+  }
+
+  export type leaveGetPayload<S extends boolean | null | undefined | leaveArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? leave :
+    S extends undefined ? never :
+    S extends { include: any } & (leaveArgs | leaveFindManyArgs)
+    ? leave  & {
+    [P in TruthyKeys<S['include']>]:
+        P extends 'admin' ? adminGetPayload<S['include'][P]> | null :
+        P extends 'timeslot' ? timeslotGetPayload<S['include'][P]> | null :  never
+  } 
+    : S extends { select: any } & (leaveArgs | leaveFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+        P extends 'admin' ? adminGetPayload<S['select'][P]> | null :
+        P extends 'timeslot' ? timeslotGetPayload<S['select'][P]> | null :  P extends keyof leave ? leave[P] : never
+  } 
+      : leave
+
+
+  type leaveCountArgs = 
+    Omit<leaveFindManyArgs, 'select' | 'include'> & {
+      select?: LeaveCountAggregateInputType | true
+    }
+
+  export interface leaveDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+
+    /**
+     * Find zero or one Leave that matches the filter.
+     * @param {leaveFindUniqueArgs} args - Arguments to find a Leave
+     * @example
+     * // Get one Leave
+     * const leave = await prisma.leave.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends leaveFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, leaveFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'leave'> extends True ? Prisma__leaveClient<leaveGetPayload<T>> : Prisma__leaveClient<leaveGetPayload<T> | null, null>
+
+    /**
+     * Find one Leave that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {leaveFindUniqueOrThrowArgs} args - Arguments to find a Leave
+     * @example
+     * // Get one Leave
+     * const leave = await prisma.leave.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends leaveFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, leaveFindUniqueOrThrowArgs>
+    ): Prisma__leaveClient<leaveGetPayload<T>>
+
+    /**
+     * Find the first Leave that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {leaveFindFirstArgs} args - Arguments to find a Leave
+     * @example
+     * // Get one Leave
+     * const leave = await prisma.leave.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends leaveFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, leaveFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'leave'> extends True ? Prisma__leaveClient<leaveGetPayload<T>> : Prisma__leaveClient<leaveGetPayload<T> | null, null>
+
+    /**
+     * Find the first Leave that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {leaveFindFirstOrThrowArgs} args - Arguments to find a Leave
+     * @example
+     * // Get one Leave
+     * const leave = await prisma.leave.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends leaveFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, leaveFindFirstOrThrowArgs>
+    ): Prisma__leaveClient<leaveGetPayload<T>>
+
+    /**
+     * Find zero or more Leaves that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {leaveFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Leaves
+     * const leaves = await prisma.leave.findMany()
+     * 
+     * // Get first 10 Leaves
+     * const leaves = await prisma.leave.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const leaveWithIdOnly = await prisma.leave.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends leaveFindManyArgs>(
+      args?: SelectSubset<T, leaveFindManyArgs>
+    ): PrismaPromise<Array<leaveGetPayload<T>>>
+
+    /**
+     * Create a Leave.
+     * @param {leaveCreateArgs} args - Arguments to create a Leave.
+     * @example
+     * // Create one Leave
+     * const Leave = await prisma.leave.create({
+     *   data: {
+     *     // ... data to create a Leave
+     *   }
+     * })
+     * 
+    **/
+    create<T extends leaveCreateArgs>(
+      args: SelectSubset<T, leaveCreateArgs>
+    ): Prisma__leaveClient<leaveGetPayload<T>>
+
+    /**
+     * Create many Leaves.
+     *     @param {leaveCreateManyArgs} args - Arguments to create many Leaves.
+     *     @example
+     *     // Create many Leaves
+     *     const leave = await prisma.leave.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends leaveCreateManyArgs>(
+      args?: SelectSubset<T, leaveCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Leave.
+     * @param {leaveDeleteArgs} args - Arguments to delete one Leave.
+     * @example
+     * // Delete one Leave
+     * const Leave = await prisma.leave.delete({
+     *   where: {
+     *     // ... filter to delete one Leave
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends leaveDeleteArgs>(
+      args: SelectSubset<T, leaveDeleteArgs>
+    ): Prisma__leaveClient<leaveGetPayload<T>>
+
+    /**
+     * Update one Leave.
+     * @param {leaveUpdateArgs} args - Arguments to update one Leave.
+     * @example
+     * // Update one Leave
+     * const leave = await prisma.leave.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends leaveUpdateArgs>(
+      args: SelectSubset<T, leaveUpdateArgs>
+    ): Prisma__leaveClient<leaveGetPayload<T>>
+
+    /**
+     * Delete zero or more Leaves.
+     * @param {leaveDeleteManyArgs} args - Arguments to filter Leaves to delete.
+     * @example
+     * // Delete a few Leaves
+     * const { count } = await prisma.leave.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends leaveDeleteManyArgs>(
+      args?: SelectSubset<T, leaveDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Leaves.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {leaveUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Leaves
+     * const leave = await prisma.leave.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends leaveUpdateManyArgs>(
+      args: SelectSubset<T, leaveUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Leave.
+     * @param {leaveUpsertArgs} args - Arguments to update or create a Leave.
+     * @example
+     * // Update or create a Leave
+     * const leave = await prisma.leave.upsert({
+     *   create: {
+     *     // ... data to create a Leave
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Leave we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends leaveUpsertArgs>(
+      args: SelectSubset<T, leaveUpsertArgs>
+    ): Prisma__leaveClient<leaveGetPayload<T>>
+
+    /**
+     * Count the number of Leaves.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {leaveCountArgs} args - Arguments to filter Leaves to count.
+     * @example
+     * // Count the number of Leaves
+     * const count = await prisma.leave.count({
+     *   where: {
+     *     // ... the filter for the Leaves we want to count
+     *   }
+     * })
+    **/
+    count<T extends leaveCountArgs>(
+      args?: Subset<T, leaveCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LeaveCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Leave.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeaveAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LeaveAggregateArgs>(args: Subset<T, LeaveAggregateArgs>): PrismaPromise<GetLeaveAggregateType<T>>
+
+    /**
+     * Group by Leave.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeaveGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LeaveGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LeaveGroupByArgs['orderBy'] }
+        : { orderBy?: LeaveGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LeaveGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLeaveGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for leave.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__leaveClient<T, Null = never> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    admin<T extends adminArgs= {}>(args?: Subset<T, adminArgs>): Prisma__adminClient<adminGetPayload<T> | Null>;
+
+    timeslot<T extends timeslotArgs= {}>(args?: Subset<T, timeslotArgs>): Prisma__timeslotClient<timeslotGetPayload<T> | Null>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * leave base type for findUnique actions
+   */
+  export type leaveFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the leave
+     */
+    select?: leaveSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: leaveInclude | null
+    /**
+     * Filter, which leave to fetch.
+     */
+    where: leaveWhereUniqueInput
+  }
+
+  /**
+   * leave findUnique
+   */
+  export interface leaveFindUniqueArgs extends leaveFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * leave findUniqueOrThrow
+   */
+  export type leaveFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the leave
+     */
+    select?: leaveSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: leaveInclude | null
+    /**
+     * Filter, which leave to fetch.
+     */
+    where: leaveWhereUniqueInput
+  }
+
+
+  /**
+   * leave base type for findFirst actions
+   */
+  export type leaveFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the leave
+     */
+    select?: leaveSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: leaveInclude | null
+    /**
+     * Filter, which leave to fetch.
+     */
+    where?: leaveWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of leaves to fetch.
+     */
+    orderBy?: Enumerable<leaveOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for leaves.
+     */
+    cursor?: leaveWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` leaves from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` leaves.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of leaves.
+     */
+    distinct?: Enumerable<LeaveScalarFieldEnum>
+  }
+
+  /**
+   * leave findFirst
+   */
+  export interface leaveFindFirstArgs extends leaveFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * leave findFirstOrThrow
+   */
+  export type leaveFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the leave
+     */
+    select?: leaveSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: leaveInclude | null
+    /**
+     * Filter, which leave to fetch.
+     */
+    where?: leaveWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of leaves to fetch.
+     */
+    orderBy?: Enumerable<leaveOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for leaves.
+     */
+    cursor?: leaveWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` leaves from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` leaves.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of leaves.
+     */
+    distinct?: Enumerable<LeaveScalarFieldEnum>
+  }
+
+
+  /**
+   * leave findMany
+   */
+  export type leaveFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the leave
+     */
+    select?: leaveSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: leaveInclude | null
+    /**
+     * Filter, which leaves to fetch.
+     */
+    where?: leaveWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of leaves to fetch.
+     */
+    orderBy?: Enumerable<leaveOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing leaves.
+     */
+    cursor?: leaveWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` leaves from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` leaves.
+     */
+    skip?: number
+    distinct?: Enumerable<LeaveScalarFieldEnum>
+  }
+
+
+  /**
+   * leave create
+   */
+  export type leaveCreateArgs = {
+    /**
+     * Select specific fields to fetch from the leave
+     */
+    select?: leaveSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: leaveInclude | null
+    /**
+     * The data needed to create a leave.
+     */
+    data: XOR<leaveCreateInput, leaveUncheckedCreateInput>
+  }
+
+
+  /**
+   * leave createMany
+   */
+  export type leaveCreateManyArgs = {
+    /**
+     * The data used to create many leaves.
+     */
+    data: Enumerable<leaveCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * leave update
+   */
+  export type leaveUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the leave
+     */
+    select?: leaveSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: leaveInclude | null
+    /**
+     * The data needed to update a leave.
+     */
+    data: XOR<leaveUpdateInput, leaveUncheckedUpdateInput>
+    /**
+     * Choose, which leave to update.
+     */
+    where: leaveWhereUniqueInput
+  }
+
+
+  /**
+   * leave updateMany
+   */
+  export type leaveUpdateManyArgs = {
+    /**
+     * The data used to update leaves.
+     */
+    data: XOR<leaveUpdateManyMutationInput, leaveUncheckedUpdateManyInput>
+    /**
+     * Filter which leaves to update
+     */
+    where?: leaveWhereInput
+  }
+
+
+  /**
+   * leave upsert
+   */
+  export type leaveUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the leave
+     */
+    select?: leaveSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: leaveInclude | null
+    /**
+     * The filter to search for the leave to update in case it exists.
+     */
+    where: leaveWhereUniqueInput
+    /**
+     * In case the leave found by the `where` argument doesn't exist, create a new leave with this data.
+     */
+    create: XOR<leaveCreateInput, leaveUncheckedCreateInput>
+    /**
+     * In case the leave was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<leaveUpdateInput, leaveUncheckedUpdateInput>
+  }
+
+
+  /**
+   * leave delete
+   */
+  export type leaveDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the leave
+     */
+    select?: leaveSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: leaveInclude | null
+    /**
+     * Filter which leave to delete.
+     */
+    where: leaveWhereUniqueInput
+  }
+
+
+  /**
+   * leave deleteMany
+   */
+  export type leaveDeleteManyArgs = {
+    /**
+     * Filter which leaves to delete
+     */
+    where?: leaveWhereInput
+  }
+
+
+  /**
+   * leave without action
+   */
+  export type leaveArgs = {
+    /**
+     * Select specific fields to fetch from the leave
+     */
+    select?: leaveSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: leaveInclude | null
+  }
+
+
+
+  /**
    * Enums
    */
 
@@ -14569,6 +15669,16 @@ export namespace Prisma {
   };
 
   export type HistoryScalarFieldEnum = (typeof HistoryScalarFieldEnum)[keyof typeof HistoryScalarFieldEnum]
+
+
+  export const LeaveScalarFieldEnum: {
+    id: 'id',
+    date: 'date',
+    tsid: 'tsid',
+    adminId: 'adminId'
+  };
+
+  export type LeaveScalarFieldEnum = (typeof LeaveScalarFieldEnum)[keyof typeof LeaveScalarFieldEnum]
 
 
   export const MeetingScalarFieldEnum: {
@@ -14751,6 +15861,7 @@ export namespace Prisma {
     desgination?: StringFilter | string
     generalavail?: BoolNullableFilter | boolean | null
     history?: HistoryListRelationFilter
+    leave?: LeaveListRelationFilter
     meeting?: MeetingListRelationFilter
     timeslot?: TimeslotListRelationFilter
     userlogin?: XOR<UserloginRelationFilter, userloginWhereInput> | null
@@ -14768,6 +15879,7 @@ export namespace Prisma {
     desgination?: SortOrder
     generalavail?: SortOrder
     history?: historyOrderByRelationAggregateInput
+    leave?: leaveOrderByRelationAggregateInput
     meeting?: meetingOrderByRelationAggregateInput
     timeslot?: timeslotOrderByRelationAggregateInput
     userlogin?: userloginOrderByWithRelationInput
@@ -14818,6 +15930,7 @@ export namespace Prisma {
     availibility?: BoolFilter | boolean
     adminId?: StringFilter | string
     day?: StringNullableFilter | string | null
+    leave?: LeaveListRelationFilter
     meeting?: XOR<MeetingRelationFilter, meetingWhereInput> | null
     admin?: XOR<AdminRelationFilter, adminWhereInput>
   }
@@ -14829,6 +15942,7 @@ export namespace Prisma {
     availibility?: SortOrder
     adminId?: SortOrder
     day?: SortOrder
+    leave?: leaveOrderByRelationAggregateInput
     meeting?: meetingOrderByWithRelationInput
     admin?: adminOrderByWithRelationInput
   }
@@ -15349,7 +16463,7 @@ export namespace Prisma {
     userName?: StringFilter | string
     password?: StringFilter | string
     email?: StringFilter | string
-    role?: EnumRoleFilter | Role
+    role?: StringFilter | string
     regNo?: StringNullableFilter | string | null
     adminId?: StringNullableFilter | string | null
     parentId?: StringNullableFilter | string | null
@@ -15403,7 +16517,7 @@ export namespace Prisma {
     userName?: StringWithAggregatesFilter | string
     password?: StringWithAggregatesFilter | string
     email?: StringWithAggregatesFilter | string
-    role?: EnumRoleWithAggregatesFilter | Role
+    role?: StringWithAggregatesFilter | string
     regNo?: StringNullableWithAggregatesFilter | string | null
     adminId?: StringNullableWithAggregatesFilter | string | null
     parentId?: StringNullableWithAggregatesFilter | string | null
@@ -15456,6 +16570,53 @@ export namespace Prisma {
     rude?: FloatNullableWithAggregatesFilter | number | null
     suggestion?: StringWithAggregatesFilter | string
     hid?: IntWithAggregatesFilter | number
+  }
+
+  export type leaveWhereInput = {
+    AND?: Enumerable<leaveWhereInput>
+    OR?: Enumerable<leaveWhereInput>
+    NOT?: Enumerable<leaveWhereInput>
+    id?: IntFilter | number
+    date?: DateTimeNullableFilter | Date | string | null
+    tsid?: IntNullableFilter | number | null
+    adminId?: StringNullableFilter | string | null
+    admin?: XOR<AdminRelationFilter, adminWhereInput> | null
+    timeslot?: XOR<TimeslotRelationFilter, timeslotWhereInput> | null
+  }
+
+  export type leaveOrderByWithRelationInput = {
+    id?: SortOrder
+    date?: SortOrder
+    tsid?: SortOrder
+    adminId?: SortOrder
+    admin?: adminOrderByWithRelationInput
+    timeslot?: timeslotOrderByWithRelationInput
+  }
+
+  export type leaveWhereUniqueInput = {
+    id?: number
+  }
+
+  export type leaveOrderByWithAggregationInput = {
+    id?: SortOrder
+    date?: SortOrder
+    tsid?: SortOrder
+    adminId?: SortOrder
+    _count?: leaveCountOrderByAggregateInput
+    _avg?: leaveAvgOrderByAggregateInput
+    _max?: leaveMaxOrderByAggregateInput
+    _min?: leaveMinOrderByAggregateInput
+    _sum?: leaveSumOrderByAggregateInput
+  }
+
+  export type leaveScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<leaveScalarWhereWithAggregatesInput>
+    OR?: Enumerable<leaveScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<leaveScalarWhereWithAggregatesInput>
+    id?: IntWithAggregatesFilter | number
+    date?: DateTimeNullableWithAggregatesFilter | Date | string | null
+    tsid?: IntNullableWithAggregatesFilter | number | null
+    adminId?: StringNullableWithAggregatesFilter | string | null
   }
 
   export type parentCreateInput = {
@@ -15541,6 +16702,7 @@ export namespace Prisma {
     desgination: string
     generalavail?: boolean | null
     history?: historyCreateNestedManyWithoutAdminInput
+    leave?: leaveCreateNestedManyWithoutAdminInput
     meeting?: meetingCreateNestedManyWithoutAdminInput
     timeslot?: timeslotCreateNestedManyWithoutAdminInput
     userlogin?: userloginCreateNestedOneWithoutAdminInput
@@ -15558,6 +16720,7 @@ export namespace Prisma {
     desgination: string
     generalavail?: boolean | null
     history?: historyUncheckedCreateNestedManyWithoutAdminInput
+    leave?: leaveUncheckedCreateNestedManyWithoutAdminInput
     meeting?: meetingUncheckedCreateNestedManyWithoutAdminInput
     timeslot?: timeslotUncheckedCreateNestedManyWithoutAdminInput
     userlogin?: userloginUncheckedCreateNestedOneWithoutAdminInput
@@ -15575,6 +16738,7 @@ export namespace Prisma {
     desgination?: StringFieldUpdateOperationsInput | string
     generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUpdateManyWithoutAdminNestedInput
+    leave?: leaveUpdateManyWithoutAdminNestedInput
     meeting?: meetingUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUpdateOneWithoutAdminNestedInput
@@ -15592,6 +16756,7 @@ export namespace Prisma {
     desgination?: StringFieldUpdateOperationsInput | string
     generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUncheckedUpdateManyWithoutAdminNestedInput
+    leave?: leaveUncheckedUpdateManyWithoutAdminNestedInput
     meeting?: meetingUncheckedUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUncheckedUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUncheckedUpdateOneWithoutAdminNestedInput
@@ -15639,6 +16804,7 @@ export namespace Prisma {
     endTime: Date | string
     availibility: boolean
     day?: string | null
+    leave?: leaveCreateNestedManyWithoutTimeslotInput
     meeting?: meetingCreateNestedOneWithoutTimeslotInput
     admin: adminCreateNestedOneWithoutTimeslotInput
   }
@@ -15650,6 +16816,7 @@ export namespace Prisma {
     availibility: boolean
     adminId: string
     day?: string | null
+    leave?: leaveUncheckedCreateNestedManyWithoutTimeslotInput
     meeting?: meetingUncheckedCreateNestedOneWithoutTimeslotInput
   }
 
@@ -15658,6 +16825,7 @@ export namespace Prisma {
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     availibility?: BoolFieldUpdateOperationsInput | boolean
     day?: NullableStringFieldUpdateOperationsInput | string | null
+    leave?: leaveUpdateManyWithoutTimeslotNestedInput
     meeting?: meetingUpdateOneWithoutTimeslotNestedInput
     admin?: adminUpdateOneRequiredWithoutTimeslotNestedInput
   }
@@ -15669,6 +16837,7 @@ export namespace Prisma {
     availibility?: BoolFieldUpdateOperationsInput | boolean
     adminId?: StringFieldUpdateOperationsInput | string
     day?: NullableStringFieldUpdateOperationsInput | string | null
+    leave?: leaveUncheckedUpdateManyWithoutTimeslotNestedInput
     meeting?: meetingUncheckedUpdateOneWithoutTimeslotNestedInput
   }
 
@@ -16248,7 +17417,7 @@ export namespace Prisma {
     userName: string
     password: string
     email: string
-    role: Role
+    role: string
     admin?: adminCreateNestedOneWithoutUserloginInput
     parent?: parentCreateNestedOneWithoutUserloginInput
     student?: studentCreateNestedOneWithoutUserloginInput
@@ -16259,7 +17428,7 @@ export namespace Prisma {
     userName: string
     password: string
     email: string
-    role: Role
+    role: string
     regNo?: string | null
     adminId?: string | null
     parentId?: string | null
@@ -16269,7 +17438,7 @@ export namespace Prisma {
     userName?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | Role
+    role?: StringFieldUpdateOperationsInput | string
     admin?: adminUpdateOneWithoutUserloginNestedInput
     parent?: parentUpdateOneWithoutUserloginNestedInput
     student?: studentUpdateOneWithoutUserloginNestedInput
@@ -16280,7 +17449,7 @@ export namespace Prisma {
     userName?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | Role
+    role?: StringFieldUpdateOperationsInput | string
     regNo?: NullableStringFieldUpdateOperationsInput | string | null
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16291,7 +17460,7 @@ export namespace Prisma {
     userName: string
     password: string
     email: string
-    role: Role
+    role: string
     regNo?: string | null
     adminId?: string | null
     parentId?: string | null
@@ -16301,7 +17470,7 @@ export namespace Prisma {
     userName?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | Role
+    role?: StringFieldUpdateOperationsInput | string
   }
 
   export type userloginUncheckedUpdateManyInput = {
@@ -16309,7 +17478,7 @@ export namespace Prisma {
     userName?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | Role
+    role?: StringFieldUpdateOperationsInput | string
     regNo?: NullableStringFieldUpdateOperationsInput | string | null
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16368,6 +17537,50 @@ export namespace Prisma {
     rude?: NullableFloatFieldUpdateOperationsInput | number | null
     suggestion?: StringFieldUpdateOperationsInput | string
     hid?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type leaveCreateInput = {
+    date?: Date | string | null
+    admin?: adminCreateNestedOneWithoutLeaveInput
+    timeslot?: timeslotCreateNestedOneWithoutLeaveInput
+  }
+
+  export type leaveUncheckedCreateInput = {
+    id?: number
+    date?: Date | string | null
+    tsid?: number | null
+    adminId?: string | null
+  }
+
+  export type leaveUpdateInput = {
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    admin?: adminUpdateOneWithoutLeaveNestedInput
+    timeslot?: timeslotUpdateOneWithoutLeaveNestedInput
+  }
+
+  export type leaveUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tsid?: NullableIntFieldUpdateOperationsInput | number | null
+    adminId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type leaveCreateManyInput = {
+    id?: number
+    date?: Date | string | null
+    tsid?: number | null
+    adminId?: string | null
+  }
+
+  export type leaveUpdateManyMutationInput = {
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type leaveUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tsid?: NullableIntFieldUpdateOperationsInput | number | null
+    adminId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StringFilter = {
@@ -16467,10 +17680,20 @@ export namespace Prisma {
     not?: NestedBoolNullableFilter | boolean | null
   }
 
+  export type LeaveListRelationFilter = {
+    every?: leaveWhereInput
+    some?: leaveWhereInput
+    none?: leaveWhereInput
+  }
+
   export type TimeslotListRelationFilter = {
     every?: timeslotWhereInput
     some?: timeslotWhereInput
     none?: timeslotWhereInput
+  }
+
+  export type leaveOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type timeslotOrderByRelationAggregateInput = {
@@ -16569,8 +17792,8 @@ export namespace Prisma {
   }
 
   export type AdminRelationFilter = {
-    is?: adminWhereInput
-    isNot?: adminWhereInput
+    is?: adminWhereInput | null
+    isNot?: adminWhereInput | null
   }
 
   export type timeslotCountOrderByAggregateInput = {
@@ -17061,13 +18284,6 @@ export namespace Prisma {
     _max?: NestedEnumStatusFilter
   }
 
-  export type EnumRoleFilter = {
-    equals?: Role
-    in?: Enumerable<Role>
-    notIn?: Enumerable<Role>
-    not?: NestedEnumRoleFilter | Role
-  }
-
   export type userloginCountOrderByAggregateInput = {
     id?: SortOrder
     userName?: SortOrder
@@ -17107,16 +18323,6 @@ export namespace Prisma {
 
   export type userloginSumOrderByAggregateInput = {
     id?: SortOrder
-  }
-
-  export type EnumRoleWithAggregatesFilter = {
-    equals?: Role
-    in?: Enumerable<Role>
-    notIn?: Enumerable<Role>
-    not?: NestedEnumRoleWithAggregatesFilter | Role
-    _count?: NestedIntFilter
-    _min?: NestedEnumRoleFilter
-    _max?: NestedEnumRoleFilter
   }
 
   export type FloatNullableFilter = {
@@ -17187,6 +18393,89 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter
     _min?: NestedFloatNullableFilter
     _max?: NestedFloatNullableFilter
+  }
+
+  export type DateTimeNullableFilter = {
+    equals?: Date | string | null
+    in?: Enumerable<Date> | Enumerable<string> | null
+    notIn?: Enumerable<Date> | Enumerable<string> | null
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeNullableFilter | Date | string | null
+  }
+
+  export type IntNullableFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableFilter | number | null
+  }
+
+  export type leaveCountOrderByAggregateInput = {
+    id?: SortOrder
+    date?: SortOrder
+    tsid?: SortOrder
+    adminId?: SortOrder
+  }
+
+  export type leaveAvgOrderByAggregateInput = {
+    id?: SortOrder
+    tsid?: SortOrder
+  }
+
+  export type leaveMaxOrderByAggregateInput = {
+    id?: SortOrder
+    date?: SortOrder
+    tsid?: SortOrder
+    adminId?: SortOrder
+  }
+
+  export type leaveMinOrderByAggregateInput = {
+    id?: SortOrder
+    date?: SortOrder
+    tsid?: SortOrder
+    adminId?: SortOrder
+  }
+
+  export type leaveSumOrderByAggregateInput = {
+    id?: SortOrder
+    tsid?: SortOrder
+  }
+
+  export type DateTimeNullableWithAggregatesFilter = {
+    equals?: Date | string | null
+    in?: Enumerable<Date> | Enumerable<string> | null
+    notIn?: Enumerable<Date> | Enumerable<string> | null
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeNullableWithAggregatesFilter | Date | string | null
+    _count?: NestedIntNullableFilter
+    _min?: NestedDateTimeNullableFilter
+    _max?: NestedDateTimeNullableFilter
+  }
+
+  export type IntNullableWithAggregatesFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableWithAggregatesFilter | number | null
+    _count?: NestedIntNullableFilter
+    _avg?: NestedFloatNullableFilter
+    _sum?: NestedIntNullableFilter
+    _min?: NestedIntNullableFilter
+    _max?: NestedIntNullableFilter
   }
 
   export type historyCreateNestedManyWithoutParentInput = {
@@ -17358,6 +18647,13 @@ export namespace Prisma {
     connect?: Enumerable<historyWhereUniqueInput>
   }
 
+  export type leaveCreateNestedManyWithoutAdminInput = {
+    create?: XOR<Enumerable<leaveCreateWithoutAdminInput>, Enumerable<leaveUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<leaveCreateOrConnectWithoutAdminInput>
+    createMany?: leaveCreateManyAdminInputEnvelope
+    connect?: Enumerable<leaveWhereUniqueInput>
+  }
+
   export type meetingCreateNestedManyWithoutAdminInput = {
     create?: XOR<Enumerable<meetingCreateWithoutAdminInput>, Enumerable<meetingUncheckedCreateWithoutAdminInput>>
     connectOrCreate?: Enumerable<meetingCreateOrConnectWithoutAdminInput>
@@ -17390,6 +18686,13 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<historyCreateOrConnectWithoutAdminInput>
     createMany?: historyCreateManyAdminInputEnvelope
     connect?: Enumerable<historyWhereUniqueInput>
+  }
+
+  export type leaveUncheckedCreateNestedManyWithoutAdminInput = {
+    create?: XOR<Enumerable<leaveCreateWithoutAdminInput>, Enumerable<leaveUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<leaveCreateOrConnectWithoutAdminInput>
+    createMany?: leaveCreateManyAdminInputEnvelope
+    connect?: Enumerable<leaveWhereUniqueInput>
   }
 
   export type meetingUncheckedCreateNestedManyWithoutAdminInput = {
@@ -17435,6 +18738,20 @@ export namespace Prisma {
     update?: Enumerable<historyUpdateWithWhereUniqueWithoutAdminInput>
     updateMany?: Enumerable<historyUpdateManyWithWhereWithoutAdminInput>
     deleteMany?: Enumerable<historyScalarWhereInput>
+  }
+
+  export type leaveUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<Enumerable<leaveCreateWithoutAdminInput>, Enumerable<leaveUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<leaveCreateOrConnectWithoutAdminInput>
+    upsert?: Enumerable<leaveUpsertWithWhereUniqueWithoutAdminInput>
+    createMany?: leaveCreateManyAdminInputEnvelope
+    set?: Enumerable<leaveWhereUniqueInput>
+    disconnect?: Enumerable<leaveWhereUniqueInput>
+    delete?: Enumerable<leaveWhereUniqueInput>
+    connect?: Enumerable<leaveWhereUniqueInput>
+    update?: Enumerable<leaveUpdateWithWhereUniqueWithoutAdminInput>
+    updateMany?: Enumerable<leaveUpdateManyWithWhereWithoutAdminInput>
+    deleteMany?: Enumerable<leaveScalarWhereInput>
   }
 
   export type meetingUpdateManyWithoutAdminNestedInput = {
@@ -17503,6 +18820,20 @@ export namespace Prisma {
     deleteMany?: Enumerable<historyScalarWhereInput>
   }
 
+  export type leaveUncheckedUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<Enumerable<leaveCreateWithoutAdminInput>, Enumerable<leaveUncheckedCreateWithoutAdminInput>>
+    connectOrCreate?: Enumerable<leaveCreateOrConnectWithoutAdminInput>
+    upsert?: Enumerable<leaveUpsertWithWhereUniqueWithoutAdminInput>
+    createMany?: leaveCreateManyAdminInputEnvelope
+    set?: Enumerable<leaveWhereUniqueInput>
+    disconnect?: Enumerable<leaveWhereUniqueInput>
+    delete?: Enumerable<leaveWhereUniqueInput>
+    connect?: Enumerable<leaveWhereUniqueInput>
+    update?: Enumerable<leaveUpdateWithWhereUniqueWithoutAdminInput>
+    updateMany?: Enumerable<leaveUpdateManyWithWhereWithoutAdminInput>
+    deleteMany?: Enumerable<leaveScalarWhereInput>
+  }
+
   export type meetingUncheckedUpdateManyWithoutAdminNestedInput = {
     create?: XOR<Enumerable<meetingCreateWithoutAdminInput>, Enumerable<meetingUncheckedCreateWithoutAdminInput>>
     connectOrCreate?: Enumerable<meetingCreateOrConnectWithoutAdminInput>
@@ -17555,6 +18886,13 @@ export namespace Prisma {
     deleteMany?: Enumerable<waitinglistScalarWhereInput>
   }
 
+  export type leaveCreateNestedManyWithoutTimeslotInput = {
+    create?: XOR<Enumerable<leaveCreateWithoutTimeslotInput>, Enumerable<leaveUncheckedCreateWithoutTimeslotInput>>
+    connectOrCreate?: Enumerable<leaveCreateOrConnectWithoutTimeslotInput>
+    createMany?: leaveCreateManyTimeslotInputEnvelope
+    connect?: Enumerable<leaveWhereUniqueInput>
+  }
+
   export type meetingCreateNestedOneWithoutTimeslotInput = {
     create?: XOR<meetingCreateWithoutTimeslotInput, meetingUncheckedCreateWithoutTimeslotInput>
     connectOrCreate?: meetingCreateOrConnectWithoutTimeslotInput
@@ -17565,6 +18903,13 @@ export namespace Prisma {
     create?: XOR<adminCreateWithoutTimeslotInput, adminUncheckedCreateWithoutTimeslotInput>
     connectOrCreate?: adminCreateOrConnectWithoutTimeslotInput
     connect?: adminWhereUniqueInput
+  }
+
+  export type leaveUncheckedCreateNestedManyWithoutTimeslotInput = {
+    create?: XOR<Enumerable<leaveCreateWithoutTimeslotInput>, Enumerable<leaveUncheckedCreateWithoutTimeslotInput>>
+    connectOrCreate?: Enumerable<leaveCreateOrConnectWithoutTimeslotInput>
+    createMany?: leaveCreateManyTimeslotInputEnvelope
+    connect?: Enumerable<leaveWhereUniqueInput>
   }
 
   export type meetingUncheckedCreateNestedOneWithoutTimeslotInput = {
@@ -17583,6 +18928,20 @@ export namespace Prisma {
 
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type leaveUpdateManyWithoutTimeslotNestedInput = {
+    create?: XOR<Enumerable<leaveCreateWithoutTimeslotInput>, Enumerable<leaveUncheckedCreateWithoutTimeslotInput>>
+    connectOrCreate?: Enumerable<leaveCreateOrConnectWithoutTimeslotInput>
+    upsert?: Enumerable<leaveUpsertWithWhereUniqueWithoutTimeslotInput>
+    createMany?: leaveCreateManyTimeslotInputEnvelope
+    set?: Enumerable<leaveWhereUniqueInput>
+    disconnect?: Enumerable<leaveWhereUniqueInput>
+    delete?: Enumerable<leaveWhereUniqueInput>
+    connect?: Enumerable<leaveWhereUniqueInput>
+    update?: Enumerable<leaveUpdateWithWhereUniqueWithoutTimeslotInput>
+    updateMany?: Enumerable<leaveUpdateManyWithWhereWithoutTimeslotInput>
+    deleteMany?: Enumerable<leaveScalarWhereInput>
   }
 
   export type meetingUpdateOneWithoutTimeslotNestedInput = {
@@ -17609,6 +18968,20 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type leaveUncheckedUpdateManyWithoutTimeslotNestedInput = {
+    create?: XOR<Enumerable<leaveCreateWithoutTimeslotInput>, Enumerable<leaveUncheckedCreateWithoutTimeslotInput>>
+    connectOrCreate?: Enumerable<leaveCreateOrConnectWithoutTimeslotInput>
+    upsert?: Enumerable<leaveUpsertWithWhereUniqueWithoutTimeslotInput>
+    createMany?: leaveCreateManyTimeslotInputEnvelope
+    set?: Enumerable<leaveWhereUniqueInput>
+    disconnect?: Enumerable<leaveWhereUniqueInput>
+    delete?: Enumerable<leaveWhereUniqueInput>
+    connect?: Enumerable<leaveWhereUniqueInput>
+    update?: Enumerable<leaveUpdateWithWhereUniqueWithoutTimeslotInput>
+    updateMany?: Enumerable<leaveUpdateManyWithWhereWithoutTimeslotInput>
+    deleteMany?: Enumerable<leaveScalarWhereInput>
   }
 
   export type meetingUncheckedUpdateOneWithoutTimeslotNestedInput = {
@@ -18195,10 +19568,6 @@ export namespace Prisma {
     connect?: studentWhereUniqueInput
   }
 
-  export type EnumRoleFieldUpdateOperationsInput = {
-    set?: Role
-  }
-
   export type adminUpdateOneWithoutUserloginNestedInput = {
     create?: XOR<adminCreateWithoutUserloginInput, adminUncheckedCreateWithoutUserloginInput>
     connectOrCreate?: adminCreateOrConnectWithoutUserloginInput
@@ -18249,6 +19618,50 @@ export namespace Prisma {
     upsert?: historyUpsertWithoutFeedbackInput
     connect?: historyWhereUniqueInput
     update?: XOR<historyUpdateWithoutFeedbackInput, historyUncheckedUpdateWithoutFeedbackInput>
+  }
+
+  export type adminCreateNestedOneWithoutLeaveInput = {
+    create?: XOR<adminCreateWithoutLeaveInput, adminUncheckedCreateWithoutLeaveInput>
+    connectOrCreate?: adminCreateOrConnectWithoutLeaveInput
+    connect?: adminWhereUniqueInput
+  }
+
+  export type timeslotCreateNestedOneWithoutLeaveInput = {
+    create?: XOR<timeslotCreateWithoutLeaveInput, timeslotUncheckedCreateWithoutLeaveInput>
+    connectOrCreate?: timeslotCreateOrConnectWithoutLeaveInput
+    connect?: timeslotWhereUniqueInput
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type adminUpdateOneWithoutLeaveNestedInput = {
+    create?: XOR<adminCreateWithoutLeaveInput, adminUncheckedCreateWithoutLeaveInput>
+    connectOrCreate?: adminCreateOrConnectWithoutLeaveInput
+    upsert?: adminUpsertWithoutLeaveInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: adminWhereUniqueInput
+    update?: XOR<adminUpdateWithoutLeaveInput, adminUncheckedUpdateWithoutLeaveInput>
+  }
+
+  export type timeslotUpdateOneWithoutLeaveNestedInput = {
+    create?: XOR<timeslotCreateWithoutLeaveInput, timeslotUncheckedCreateWithoutLeaveInput>
+    connectOrCreate?: timeslotCreateOrConnectWithoutLeaveInput
+    upsert?: timeslotUpsertWithoutLeaveInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: timeslotWhereUniqueInput
+    update?: XOR<timeslotUpdateWithoutLeaveInput, timeslotUncheckedUpdateWithoutLeaveInput>
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type NestedStringFilter = {
@@ -18446,23 +19859,6 @@ export namespace Prisma {
     _max?: NestedEnumStatusFilter
   }
 
-  export type NestedEnumRoleFilter = {
-    equals?: Role
-    in?: Enumerable<Role>
-    notIn?: Enumerable<Role>
-    not?: NestedEnumRoleFilter | Role
-  }
-
-  export type NestedEnumRoleWithAggregatesFilter = {
-    equals?: Role
-    in?: Enumerable<Role>
-    notIn?: Enumerable<Role>
-    not?: NestedEnumRoleWithAggregatesFilter | Role
-    _count?: NestedIntFilter
-    _min?: NestedEnumRoleFilter
-    _max?: NestedEnumRoleFilter
-  }
-
   export type NestedFloatNullableFilter = {
     equals?: number | null
     in?: Enumerable<number> | null
@@ -18488,6 +19884,47 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter
     _min?: NestedFloatNullableFilter
     _max?: NestedFloatNullableFilter
+  }
+
+  export type NestedDateTimeNullableFilter = {
+    equals?: Date | string | null
+    in?: Enumerable<Date> | Enumerable<string> | null
+    notIn?: Enumerable<Date> | Enumerable<string> | null
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeNullableFilter | Date | string | null
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter = {
+    equals?: Date | string | null
+    in?: Enumerable<Date> | Enumerable<string> | null
+    notIn?: Enumerable<Date> | Enumerable<string> | null
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeNullableWithAggregatesFilter | Date | string | null
+    _count?: NestedIntNullableFilter
+    _min?: NestedDateTimeNullableFilter
+    _max?: NestedDateTimeNullableFilter
+  }
+
+  export type NestedIntNullableWithAggregatesFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableWithAggregatesFilter | number | null
+    _count?: NestedIntNullableFilter
+    _avg?: NestedFloatNullableFilter
+    _sum?: NestedIntNullableFilter
+    _min?: NestedIntNullableFilter
+    _max?: NestedIntNullableFilter
   }
 
   export type historyCreateWithoutParentInput = {
@@ -18564,7 +20001,7 @@ export namespace Prisma {
     userName: string
     password: string
     email: string
-    role: Role
+    role: string
     admin?: adminCreateNestedOneWithoutUserloginInput
     student?: studentCreateNestedOneWithoutUserloginInput
   }
@@ -18574,7 +20011,7 @@ export namespace Prisma {
     userName: string
     password: string
     email: string
-    role: Role
+    role: string
     regNo?: string | null
     adminId?: string | null
   }
@@ -18687,7 +20124,7 @@ export namespace Prisma {
     userName?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | Role
+    role?: StringFieldUpdateOperationsInput | string
     admin?: adminUpdateOneWithoutUserloginNestedInput
     student?: studentUpdateOneWithoutUserloginNestedInput
   }
@@ -18697,7 +20134,7 @@ export namespace Prisma {
     userName?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | Role
+    role?: StringFieldUpdateOperationsInput | string
     regNo?: NullableStringFieldUpdateOperationsInput | string | null
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -18771,6 +20208,27 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type leaveCreateWithoutAdminInput = {
+    date?: Date | string | null
+    timeslot?: timeslotCreateNestedOneWithoutLeaveInput
+  }
+
+  export type leaveUncheckedCreateWithoutAdminInput = {
+    id?: number
+    date?: Date | string | null
+    tsid?: number | null
+  }
+
+  export type leaveCreateOrConnectWithoutAdminInput = {
+    where: leaveWhereUniqueInput
+    create: XOR<leaveCreateWithoutAdminInput, leaveUncheckedCreateWithoutAdminInput>
+  }
+
+  export type leaveCreateManyAdminInputEnvelope = {
+    data: Enumerable<leaveCreateManyAdminInput>
+    skipDuplicates?: boolean
+  }
+
   export type meetingCreateWithoutAdminInput = {
     reason: string
     status: string
@@ -18807,6 +20265,7 @@ export namespace Prisma {
     endTime: Date | string
     availibility: boolean
     day?: string | null
+    leave?: leaveCreateNestedManyWithoutTimeslotInput
     meeting?: meetingCreateNestedOneWithoutTimeslotInput
   }
 
@@ -18816,6 +20275,7 @@ export namespace Prisma {
     endTime: Date | string
     availibility: boolean
     day?: string | null
+    leave?: leaveUncheckedCreateNestedManyWithoutTimeslotInput
     meeting?: meetingUncheckedCreateNestedOneWithoutTimeslotInput
   }
 
@@ -18833,7 +20293,7 @@ export namespace Prisma {
     userName: string
     password: string
     email: string
-    role: Role
+    role: string
     parent?: parentCreateNestedOneWithoutUserloginInput
     student?: studentCreateNestedOneWithoutUserloginInput
   }
@@ -18843,7 +20303,7 @@ export namespace Prisma {
     userName: string
     password: string
     email: string
-    role: Role
+    role: string
     regNo?: string | null
     parentId?: string | null
   }
@@ -18896,6 +20356,32 @@ export namespace Prisma {
   export type historyUpdateManyWithWhereWithoutAdminInput = {
     where: historyScalarWhereInput
     data: XOR<historyUpdateManyMutationInput, historyUncheckedUpdateManyWithoutHistoryInput>
+  }
+
+  export type leaveUpsertWithWhereUniqueWithoutAdminInput = {
+    where: leaveWhereUniqueInput
+    update: XOR<leaveUpdateWithoutAdminInput, leaveUncheckedUpdateWithoutAdminInput>
+    create: XOR<leaveCreateWithoutAdminInput, leaveUncheckedCreateWithoutAdminInput>
+  }
+
+  export type leaveUpdateWithWhereUniqueWithoutAdminInput = {
+    where: leaveWhereUniqueInput
+    data: XOR<leaveUpdateWithoutAdminInput, leaveUncheckedUpdateWithoutAdminInput>
+  }
+
+  export type leaveUpdateManyWithWhereWithoutAdminInput = {
+    where: leaveScalarWhereInput
+    data: XOR<leaveUpdateManyMutationInput, leaveUncheckedUpdateManyWithoutLeaveInput>
+  }
+
+  export type leaveScalarWhereInput = {
+    AND?: Enumerable<leaveScalarWhereInput>
+    OR?: Enumerable<leaveScalarWhereInput>
+    NOT?: Enumerable<leaveScalarWhereInput>
+    id?: IntFilter | number
+    date?: DateTimeNullableFilter | Date | string | null
+    tsid?: IntNullableFilter | number | null
+    adminId?: StringNullableFilter | string | null
   }
 
   export type meetingUpsertWithWhereUniqueWithoutAdminInput = {
@@ -18951,7 +20437,7 @@ export namespace Prisma {
     userName?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | Role
+    role?: StringFieldUpdateOperationsInput | string
     parent?: parentUpdateOneWithoutUserloginNestedInput
     student?: studentUpdateOneWithoutUserloginNestedInput
   }
@@ -18961,7 +20447,7 @@ export namespace Prisma {
     userName?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | Role
+    role?: StringFieldUpdateOperationsInput | string
     regNo?: NullableStringFieldUpdateOperationsInput | string | null
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -18980,6 +20466,27 @@ export namespace Prisma {
   export type waitinglistUpdateManyWithWhereWithoutAdminInput = {
     where: waitinglistScalarWhereInput
     data: XOR<waitinglistUpdateManyMutationInput, waitinglistUncheckedUpdateManyWithoutWaitinglistInput>
+  }
+
+  export type leaveCreateWithoutTimeslotInput = {
+    date?: Date | string | null
+    admin?: adminCreateNestedOneWithoutLeaveInput
+  }
+
+  export type leaveUncheckedCreateWithoutTimeslotInput = {
+    id?: number
+    date?: Date | string | null
+    adminId?: string | null
+  }
+
+  export type leaveCreateOrConnectWithoutTimeslotInput = {
+    where: leaveWhereUniqueInput
+    create: XOR<leaveCreateWithoutTimeslotInput, leaveUncheckedCreateWithoutTimeslotInput>
+  }
+
+  export type leaveCreateManyTimeslotInputEnvelope = {
+    data: Enumerable<leaveCreateManyTimeslotInput>
+    skipDuplicates?: boolean
   }
 
   export type meetingCreateWithoutTimeslotInput = {
@@ -19019,6 +20526,7 @@ export namespace Prisma {
     desgination: string
     generalavail?: boolean | null
     history?: historyCreateNestedManyWithoutAdminInput
+    leave?: leaveCreateNestedManyWithoutAdminInput
     meeting?: meetingCreateNestedManyWithoutAdminInput
     userlogin?: userloginCreateNestedOneWithoutAdminInput
     waitinglist?: waitinglistCreateNestedManyWithoutAdminInput
@@ -19035,6 +20543,7 @@ export namespace Prisma {
     desgination: string
     generalavail?: boolean | null
     history?: historyUncheckedCreateNestedManyWithoutAdminInput
+    leave?: leaveUncheckedCreateNestedManyWithoutAdminInput
     meeting?: meetingUncheckedCreateNestedManyWithoutAdminInput
     userlogin?: userloginUncheckedCreateNestedOneWithoutAdminInput
     waitinglist?: waitinglistUncheckedCreateNestedManyWithoutAdminInput
@@ -19043,6 +20552,22 @@ export namespace Prisma {
   export type adminCreateOrConnectWithoutTimeslotInput = {
     where: adminWhereUniqueInput
     create: XOR<adminCreateWithoutTimeslotInput, adminUncheckedCreateWithoutTimeslotInput>
+  }
+
+  export type leaveUpsertWithWhereUniqueWithoutTimeslotInput = {
+    where: leaveWhereUniqueInput
+    update: XOR<leaveUpdateWithoutTimeslotInput, leaveUncheckedUpdateWithoutTimeslotInput>
+    create: XOR<leaveCreateWithoutTimeslotInput, leaveUncheckedCreateWithoutTimeslotInput>
+  }
+
+  export type leaveUpdateWithWhereUniqueWithoutTimeslotInput = {
+    where: leaveWhereUniqueInput
+    data: XOR<leaveUpdateWithoutTimeslotInput, leaveUncheckedUpdateWithoutTimeslotInput>
+  }
+
+  export type leaveUpdateManyWithWhereWithoutTimeslotInput = {
+    where: leaveScalarWhereInput
+    data: XOR<leaveUpdateManyMutationInput, leaveUncheckedUpdateManyWithoutLeaveInput>
   }
 
   export type meetingUpsertWithoutTimeslotInput = {
@@ -19087,6 +20612,7 @@ export namespace Prisma {
     desgination?: StringFieldUpdateOperationsInput | string
     generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUpdateManyWithoutAdminNestedInput
+    leave?: leaveUpdateManyWithoutAdminNestedInput
     meeting?: meetingUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUpdateOneWithoutAdminNestedInput
     waitinglist?: waitinglistUpdateManyWithoutAdminNestedInput
@@ -19103,6 +20629,7 @@ export namespace Prisma {
     desgination?: StringFieldUpdateOperationsInput | string
     generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUncheckedUpdateManyWithoutAdminNestedInput
+    leave?: leaveUncheckedUpdateManyWithoutAdminNestedInput
     meeting?: meetingUncheckedUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUncheckedUpdateOneWithoutAdminNestedInput
     waitinglist?: waitinglistUncheckedUpdateManyWithoutAdminNestedInput
@@ -19259,7 +20786,7 @@ export namespace Prisma {
     userName: string
     password: string
     email: string
-    role: Role
+    role: string
     admin?: adminCreateNestedOneWithoutUserloginInput
     parent?: parentCreateNestedOneWithoutUserloginInput
   }
@@ -19269,7 +20796,7 @@ export namespace Prisma {
     userName: string
     password: string
     email: string
-    role: Role
+    role: string
     adminId?: string | null
     parentId?: string | null
   }
@@ -19441,7 +20968,7 @@ export namespace Prisma {
     userName?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | Role
+    role?: StringFieldUpdateOperationsInput | string
     admin?: adminUpdateOneWithoutUserloginNestedInput
     parent?: parentUpdateOneWithoutUserloginNestedInput
   }
@@ -19451,7 +20978,7 @@ export namespace Prisma {
     userName?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | Role
+    role?: StringFieldUpdateOperationsInput | string
     adminId?: NullableStringFieldUpdateOperationsInput | string | null
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -19843,6 +21370,7 @@ export namespace Prisma {
     desgination: string
     generalavail?: boolean | null
     history?: historyCreateNestedManyWithoutAdminInput
+    leave?: leaveCreateNestedManyWithoutAdminInput
     timeslot?: timeslotCreateNestedManyWithoutAdminInput
     userlogin?: userloginCreateNestedOneWithoutAdminInput
     waitinglist?: waitinglistCreateNestedManyWithoutAdminInput
@@ -19859,6 +21387,7 @@ export namespace Prisma {
     desgination: string
     generalavail?: boolean | null
     history?: historyUncheckedCreateNestedManyWithoutAdminInput
+    leave?: leaveUncheckedCreateNestedManyWithoutAdminInput
     timeslot?: timeslotUncheckedCreateNestedManyWithoutAdminInput
     userlogin?: userloginUncheckedCreateNestedOneWithoutAdminInput
     waitinglist?: waitinglistUncheckedCreateNestedManyWithoutAdminInput
@@ -19946,6 +21475,7 @@ export namespace Prisma {
     endTime: Date | string
     availibility: boolean
     day?: string | null
+    leave?: leaveCreateNestedManyWithoutTimeslotInput
     admin: adminCreateNestedOneWithoutTimeslotInput
   }
 
@@ -19956,6 +21486,7 @@ export namespace Prisma {
     availibility: boolean
     adminId: string
     day?: string | null
+    leave?: leaveUncheckedCreateNestedManyWithoutTimeslotInput
   }
 
   export type timeslotCreateOrConnectWithoutMeetingInput = {
@@ -19979,6 +21510,7 @@ export namespace Prisma {
     desgination?: StringFieldUpdateOperationsInput | string
     generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUpdateManyWithoutAdminNestedInput
+    leave?: leaveUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUpdateOneWithoutAdminNestedInput
     waitinglist?: waitinglistUpdateManyWithoutAdminNestedInput
@@ -19995,6 +21527,7 @@ export namespace Prisma {
     desgination?: StringFieldUpdateOperationsInput | string
     generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUncheckedUpdateManyWithoutAdminNestedInput
+    leave?: leaveUncheckedUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUncheckedUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUncheckedUpdateOneWithoutAdminNestedInput
     waitinglist?: waitinglistUncheckedUpdateManyWithoutAdminNestedInput
@@ -20082,6 +21615,7 @@ export namespace Prisma {
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     availibility?: BoolFieldUpdateOperationsInput | boolean
     day?: NullableStringFieldUpdateOperationsInput | string | null
+    leave?: leaveUpdateManyWithoutTimeslotNestedInput
     admin?: adminUpdateOneRequiredWithoutTimeslotNestedInput
   }
 
@@ -20092,6 +21626,7 @@ export namespace Prisma {
     availibility?: BoolFieldUpdateOperationsInput | boolean
     adminId?: StringFieldUpdateOperationsInput | string
     day?: NullableStringFieldUpdateOperationsInput | string | null
+    leave?: leaveUncheckedUpdateManyWithoutTimeslotNestedInput
   }
 
   export type adminCreateWithoutWaitinglistInput = {
@@ -20105,6 +21640,7 @@ export namespace Prisma {
     desgination: string
     generalavail?: boolean | null
     history?: historyCreateNestedManyWithoutAdminInput
+    leave?: leaveCreateNestedManyWithoutAdminInput
     meeting?: meetingCreateNestedManyWithoutAdminInput
     timeslot?: timeslotCreateNestedManyWithoutAdminInput
     userlogin?: userloginCreateNestedOneWithoutAdminInput
@@ -20121,6 +21657,7 @@ export namespace Prisma {
     desgination: string
     generalavail?: boolean | null
     history?: historyUncheckedCreateNestedManyWithoutAdminInput
+    leave?: leaveUncheckedCreateNestedManyWithoutAdminInput
     meeting?: meetingUncheckedCreateNestedManyWithoutAdminInput
     timeslot?: timeslotUncheckedCreateNestedManyWithoutAdminInput
     userlogin?: userloginUncheckedCreateNestedOneWithoutAdminInput
@@ -20219,6 +21756,7 @@ export namespace Prisma {
     desgination?: StringFieldUpdateOperationsInput | string
     generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUpdateManyWithoutAdminNestedInput
+    leave?: leaveUpdateManyWithoutAdminNestedInput
     meeting?: meetingUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUpdateOneWithoutAdminNestedInput
@@ -20235,6 +21773,7 @@ export namespace Prisma {
     desgination?: StringFieldUpdateOperationsInput | string
     generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUncheckedUpdateManyWithoutAdminNestedInput
+    leave?: leaveUncheckedUpdateManyWithoutAdminNestedInput
     meeting?: meetingUncheckedUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUncheckedUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUncheckedUpdateOneWithoutAdminNestedInput
@@ -20341,6 +21880,7 @@ export namespace Prisma {
     role: string
     desgination: string
     generalavail?: boolean | null
+    leave?: leaveCreateNestedManyWithoutAdminInput
     meeting?: meetingCreateNestedManyWithoutAdminInput
     timeslot?: timeslotCreateNestedManyWithoutAdminInput
     userlogin?: userloginCreateNestedOneWithoutAdminInput
@@ -20357,6 +21897,7 @@ export namespace Prisma {
     role: string
     desgination: string
     generalavail?: boolean | null
+    leave?: leaveUncheckedCreateNestedManyWithoutAdminInput
     meeting?: meetingUncheckedCreateNestedManyWithoutAdminInput
     timeslot?: timeslotUncheckedCreateNestedManyWithoutAdminInput
     userlogin?: userloginUncheckedCreateNestedOneWithoutAdminInput
@@ -20474,6 +22015,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
     generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    leave?: leaveUpdateManyWithoutAdminNestedInput
     meeting?: meetingUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUpdateOneWithoutAdminNestedInput
@@ -20490,6 +22032,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     desgination?: StringFieldUpdateOperationsInput | string
     generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    leave?: leaveUncheckedUpdateManyWithoutAdminNestedInput
     meeting?: meetingUncheckedUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUncheckedUpdateManyWithoutAdminNestedInput
     userlogin?: userloginUncheckedUpdateOneWithoutAdminNestedInput
@@ -20579,6 +22122,7 @@ export namespace Prisma {
     desgination: string
     generalavail?: boolean | null
     history?: historyCreateNestedManyWithoutAdminInput
+    leave?: leaveCreateNestedManyWithoutAdminInput
     meeting?: meetingCreateNestedManyWithoutAdminInput
     timeslot?: timeslotCreateNestedManyWithoutAdminInput
     waitinglist?: waitinglistCreateNestedManyWithoutAdminInput
@@ -20595,6 +22139,7 @@ export namespace Prisma {
     desgination: string
     generalavail?: boolean | null
     history?: historyUncheckedCreateNestedManyWithoutAdminInput
+    leave?: leaveUncheckedCreateNestedManyWithoutAdminInput
     meeting?: meetingUncheckedCreateNestedManyWithoutAdminInput
     timeslot?: timeslotUncheckedCreateNestedManyWithoutAdminInput
     waitinglist?: waitinglistUncheckedCreateNestedManyWithoutAdminInput
@@ -20693,6 +22238,7 @@ export namespace Prisma {
     desgination?: StringFieldUpdateOperationsInput | string
     generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUpdateManyWithoutAdminNestedInput
+    leave?: leaveUpdateManyWithoutAdminNestedInput
     meeting?: meetingUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUpdateManyWithoutAdminNestedInput
     waitinglist?: waitinglistUpdateManyWithoutAdminNestedInput
@@ -20709,6 +22255,7 @@ export namespace Prisma {
     desgination?: StringFieldUpdateOperationsInput | string
     generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
     history?: historyUncheckedUpdateManyWithoutAdminNestedInput
+    leave?: leaveUncheckedUpdateManyWithoutAdminNestedInput
     meeting?: meetingUncheckedUpdateManyWithoutAdminNestedInput
     timeslot?: timeslotUncheckedUpdateManyWithoutAdminNestedInput
     waitinglist?: waitinglistUncheckedUpdateManyWithoutAdminNestedInput
@@ -20852,6 +22399,132 @@ export namespace Prisma {
     parentId?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
     suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type adminCreateWithoutLeaveInput = {
+    cnic: string
+    firstName: string
+    lastName: string
+    email: string
+    gender: string
+    phone: string
+    role: string
+    desgination: string
+    generalavail?: boolean | null
+    history?: historyCreateNestedManyWithoutAdminInput
+    meeting?: meetingCreateNestedManyWithoutAdminInput
+    timeslot?: timeslotCreateNestedManyWithoutAdminInput
+    userlogin?: userloginCreateNestedOneWithoutAdminInput
+    waitinglist?: waitinglistCreateNestedManyWithoutAdminInput
+  }
+
+  export type adminUncheckedCreateWithoutLeaveInput = {
+    cnic: string
+    firstName: string
+    lastName: string
+    email: string
+    gender: string
+    phone: string
+    role: string
+    desgination: string
+    generalavail?: boolean | null
+    history?: historyUncheckedCreateNestedManyWithoutAdminInput
+    meeting?: meetingUncheckedCreateNestedManyWithoutAdminInput
+    timeslot?: timeslotUncheckedCreateNestedManyWithoutAdminInput
+    userlogin?: userloginUncheckedCreateNestedOneWithoutAdminInput
+    waitinglist?: waitinglistUncheckedCreateNestedManyWithoutAdminInput
+  }
+
+  export type adminCreateOrConnectWithoutLeaveInput = {
+    where: adminWhereUniqueInput
+    create: XOR<adminCreateWithoutLeaveInput, adminUncheckedCreateWithoutLeaveInput>
+  }
+
+  export type timeslotCreateWithoutLeaveInput = {
+    startTime: Date | string
+    endTime: Date | string
+    availibility: boolean
+    day?: string | null
+    meeting?: meetingCreateNestedOneWithoutTimeslotInput
+    admin: adminCreateNestedOneWithoutTimeslotInput
+  }
+
+  export type timeslotUncheckedCreateWithoutLeaveInput = {
+    tsid?: number
+    startTime: Date | string
+    endTime: Date | string
+    availibility: boolean
+    adminId: string
+    day?: string | null
+    meeting?: meetingUncheckedCreateNestedOneWithoutTimeslotInput
+  }
+
+  export type timeslotCreateOrConnectWithoutLeaveInput = {
+    where: timeslotWhereUniqueInput
+    create: XOR<timeslotCreateWithoutLeaveInput, timeslotUncheckedCreateWithoutLeaveInput>
+  }
+
+  export type adminUpsertWithoutLeaveInput = {
+    update: XOR<adminUpdateWithoutLeaveInput, adminUncheckedUpdateWithoutLeaveInput>
+    create: XOR<adminCreateWithoutLeaveInput, adminUncheckedCreateWithoutLeaveInput>
+  }
+
+  export type adminUpdateWithoutLeaveInput = {
+    cnic?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    gender?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    history?: historyUpdateManyWithoutAdminNestedInput
+    meeting?: meetingUpdateManyWithoutAdminNestedInput
+    timeslot?: timeslotUpdateManyWithoutAdminNestedInput
+    userlogin?: userloginUpdateOneWithoutAdminNestedInput
+    waitinglist?: waitinglistUpdateManyWithoutAdminNestedInput
+  }
+
+  export type adminUncheckedUpdateWithoutLeaveInput = {
+    cnic?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    gender?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    desgination?: StringFieldUpdateOperationsInput | string
+    generalavail?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    history?: historyUncheckedUpdateManyWithoutAdminNestedInput
+    meeting?: meetingUncheckedUpdateManyWithoutAdminNestedInput
+    timeslot?: timeslotUncheckedUpdateManyWithoutAdminNestedInput
+    userlogin?: userloginUncheckedUpdateOneWithoutAdminNestedInput
+    waitinglist?: waitinglistUncheckedUpdateManyWithoutAdminNestedInput
+  }
+
+  export type timeslotUpsertWithoutLeaveInput = {
+    update: XOR<timeslotUpdateWithoutLeaveInput, timeslotUncheckedUpdateWithoutLeaveInput>
+    create: XOR<timeslotCreateWithoutLeaveInput, timeslotUncheckedCreateWithoutLeaveInput>
+  }
+
+  export type timeslotUpdateWithoutLeaveInput = {
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    availibility?: BoolFieldUpdateOperationsInput | boolean
+    day?: NullableStringFieldUpdateOperationsInput | string | null
+    meeting?: meetingUpdateOneWithoutTimeslotNestedInput
+    admin?: adminUpdateOneRequiredWithoutTimeslotNestedInput
+  }
+
+  export type timeslotUncheckedUpdateWithoutLeaveInput = {
+    tsid?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    availibility?: BoolFieldUpdateOperationsInput | boolean
+    adminId?: StringFieldUpdateOperationsInput | string
+    day?: NullableStringFieldUpdateOperationsInput | string | null
+    meeting?: meetingUncheckedUpdateOneWithoutTimeslotNestedInput
   }
 
   export type historyCreateManyParentInput = {
@@ -21007,6 +22680,12 @@ export namespace Prisma {
     suggestion?: string | null
   }
 
+  export type leaveCreateManyAdminInput = {
+    id?: number
+    date?: Date | string | null
+    tsid?: number | null
+  }
+
   export type meetingCreateManyAdminInput = {
     mid?: number
     reason: string
@@ -21065,6 +22744,23 @@ export namespace Prisma {
     feedback?: feedbackUncheckedUpdateOneWithoutHistoryNestedInput
   }
 
+  export type leaveUpdateWithoutAdminInput = {
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timeslot?: timeslotUpdateOneWithoutLeaveNestedInput
+  }
+
+  export type leaveUncheckedUpdateWithoutAdminInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tsid?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type leaveUncheckedUpdateManyWithoutLeaveInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tsid?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
   export type meetingUpdateWithoutAdminInput = {
     reason?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
@@ -21091,6 +22787,7 @@ export namespace Prisma {
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     availibility?: BoolFieldUpdateOperationsInput | boolean
     day?: NullableStringFieldUpdateOperationsInput | string | null
+    leave?: leaveUpdateManyWithoutTimeslotNestedInput
     meeting?: meetingUpdateOneWithoutTimeslotNestedInput
   }
 
@@ -21100,6 +22797,7 @@ export namespace Prisma {
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     availibility?: BoolFieldUpdateOperationsInput | boolean
     day?: NullableStringFieldUpdateOperationsInput | string | null
+    leave?: leaveUncheckedUpdateManyWithoutTimeslotNestedInput
     meeting?: meetingUncheckedUpdateOneWithoutTimeslotNestedInput
   }
 
@@ -21128,6 +22826,23 @@ export namespace Prisma {
     regNo?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
     status?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type leaveCreateManyTimeslotInput = {
+    id?: number
+    date?: Date | string | null
+    adminId?: string | null
+  }
+
+  export type leaveUpdateWithoutTimeslotInput = {
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    admin?: adminUpdateOneWithoutLeaveNestedInput
+  }
+
+  export type leaveUncheckedUpdateWithoutTimeslotInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type attendanceCreateManyStudentInput = {

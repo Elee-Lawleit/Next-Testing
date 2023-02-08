@@ -3,6 +3,7 @@ import axios from "axios";
 
 const useFetchWaitingList = (userId) => {
 
+    console.log("USERID ", userId)
     return useQuery(["waiting-meetings"], async () => {
         const res = await axios.get(`/api/meetings/get-waiting-meetings?userId=${userId}`);
         return res?.data;

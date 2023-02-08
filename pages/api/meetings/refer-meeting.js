@@ -21,12 +21,19 @@ export default async function handler(req, res) {
       return res.status(403).json({error: "Please fill in all the fields"})
     }
 
+    const refGuy = await prisma.admin.findFirst({
+      where: {
+        role: referal
+      }
+    })
+
     await prisma.meeting.update({
       where: {
        mid: meetingId 
       },
       data: {
-        referedTo: referal
+        referedTo: referal,
+        adminId: refGuy.cnic
       }
     })
 

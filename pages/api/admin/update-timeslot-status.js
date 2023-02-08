@@ -7,11 +7,13 @@ const handler = async (req, res) => {
         return res.status(403).json({ error: "Method not allowed" });
     }
 
-    const { timeslotId, status } = req.body;
+    const { timeslotId, status, date } = req.body;
 
     if (!timeslotId || status === undefined || status === null) {
         return res.status(403).json({ error: "please fill in all the fields" })
     }
+
+    console.log("DATE: ", date)
 
     try {
         await prisma.timeslot.update({
@@ -22,7 +24,26 @@ const handler = async (req, res) => {
                 availibility: status
             }
         });
-        
+
+        let admin = await prisma.timeslot.findFirst({
+            where: {
+                tsid: Number(timeslotId)
+            },
+            select: {
+                adminId: true
+            }
+        })
+
+        if (status == false) {
+            await prisma.leave.create({
+                data: {
+                    date: new Date(date),
+                    tsid: Number(timeslotId),
+                    adminId: admin.adminId
+                }
+            })
+        }
+
     } catch (error) {
         return res.status(500).json({ message: "server error" });
     }
