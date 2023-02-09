@@ -18,7 +18,7 @@ LEFT JOIN (
 LEFT JOIN admin a ON m1."adminId" = a.cnic`;
 
     
-console.log("pair stats: ", pairStats)
+// console.log("pair stats: ", pairStats)
 
     // if(!meetings.Meeting.length) return res.status(204).json();
 

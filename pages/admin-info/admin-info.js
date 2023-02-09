@@ -16,6 +16,7 @@ import {
   IconAlertCircle,
 } from "@tabler/icons";
 import useGetPairStats from "hooks/meetings/use-get-admin-parent-pair-statistics";
+import useFetchBestAdmin from "hooks/admin/use-get-avarage-rating";
 
 const adminInfo = ({session}) => {
 
@@ -33,7 +34,10 @@ const adminInfo = ({session}) => {
     const [adminId, setAdminId] = useState(0);
 
     const{data: meetings, isLoading: meetingsLoading, isError: meetingsError} = useFetchAllMeetings(adminId);
-    console.log("KOLK: ", adminId)
+    const{data: avgRating, isLoading: bestAdminLoading, isError: bestAdminError} = useFetchBestAdmin();
+
+  const bestRating = avgRating?.avgRating.reduce((prev, curr) => (prev.average_rating > curr.average_rating ? prev : curr), 0);
+  console.log("BEST: ", bestRating)
 
   let processedData = [];
 
@@ -229,6 +233,30 @@ const adminInfo = ({session}) => {
                     <td>{ad.firstName} {ad.lastName}</td>
                     <td>{ad.parentId}</td>
                     <td>{ad.total_meetings}</td>
+                  </tr>
+                })
+              }
+            </tbody>
+          </Table>
+        </div>
+
+        <div className="mt-4">
+          <Title order={2} align="center" className="text-gray-900 font-Montserrat">
+            Average Admin Ratings
+          </Title>
+          <Table>
+            <thead>
+              <tr>
+                <th>Admin name</th>
+                <th>Average Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                avgRating?.avgRating.map((ad) => {
+                  return <tr>
+                    <td>{ad.firstName} {ad.lastName}</td>
+                    <td>{ad.average_rating}</td>
                   </tr>
                 })
               }
