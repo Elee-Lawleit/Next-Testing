@@ -148,7 +148,7 @@ exports.Prisma.HistoryScalarFieldEnum = makeEnum({
   adminId: 'adminId',
   parentId: 'parentId',
   adminFeedback: 'adminFeedback',
-  suggestion: 'suggestion'
+  adminRating: 'adminRating'
 });
 
 exports.Prisma.LeaveScalarFieldEnum = makeEnum({

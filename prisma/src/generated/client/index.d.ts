@@ -160,7 +160,7 @@ export type history = {
   adminId: string
   parentId: string
   adminFeedback: string | null
-  suggestion: string | null
+  adminRating: number | null
 }
 
 /**
@@ -11604,10 +11604,12 @@ export namespace Prisma {
 
   export type HistoryAvgAggregateOutputType = {
     hid: number | null
+    adminRating: number | null
   }
 
   export type HistorySumAggregateOutputType = {
     hid: number | null
+    adminRating: number | null
   }
 
   export type HistoryMinAggregateOutputType = {
@@ -11622,7 +11624,7 @@ export namespace Prisma {
     adminId: string | null
     parentId: string | null
     adminFeedback: string | null
-    suggestion: string | null
+    adminRating: number | null
   }
 
   export type HistoryMaxAggregateOutputType = {
@@ -11637,7 +11639,7 @@ export namespace Prisma {
     adminId: string | null
     parentId: string | null
     adminFeedback: string | null
-    suggestion: string | null
+    adminRating: number | null
   }
 
   export type HistoryCountAggregateOutputType = {
@@ -11652,17 +11654,19 @@ export namespace Prisma {
     adminId: number
     parentId: number
     adminFeedback: number
-    suggestion: number
+    adminRating: number
     _all: number
   }
 
 
   export type HistoryAvgAggregateInputType = {
     hid?: true
+    adminRating?: true
   }
 
   export type HistorySumAggregateInputType = {
     hid?: true
+    adminRating?: true
   }
 
   export type HistoryMinAggregateInputType = {
@@ -11677,7 +11681,7 @@ export namespace Prisma {
     adminId?: true
     parentId?: true
     adminFeedback?: true
-    suggestion?: true
+    adminRating?: true
   }
 
   export type HistoryMaxAggregateInputType = {
@@ -11692,7 +11696,7 @@ export namespace Prisma {
     adminId?: true
     parentId?: true
     adminFeedback?: true
-    suggestion?: true
+    adminRating?: true
   }
 
   export type HistoryCountAggregateInputType = {
@@ -11707,7 +11711,7 @@ export namespace Prisma {
     adminId?: true
     parentId?: true
     adminFeedback?: true
-    suggestion?: true
+    adminRating?: true
     _all?: true
   }
 
@@ -11810,7 +11814,7 @@ export namespace Prisma {
     adminId: string
     parentId: string
     adminFeedback: string | null
-    suggestion: string | null
+    adminRating: number | null
     _count: HistoryCountAggregateOutputType | null
     _avg: HistoryAvgAggregateOutputType | null
     _sum: HistorySumAggregateOutputType | null
@@ -11844,7 +11848,7 @@ export namespace Prisma {
     adminId?: boolean
     parentId?: boolean
     adminFeedback?: boolean
-    suggestion?: boolean
+    adminRating?: boolean
     feedback?: boolean | feedbackArgs
     admin?: boolean | adminArgs
     parent?: boolean | parentArgs
@@ -15665,7 +15669,7 @@ export namespace Prisma {
     adminId: 'adminId',
     parentId: 'parentId',
     adminFeedback: 'adminFeedback',
-    suggestion: 'suggestion'
+    adminRating: 'adminRating'
   };
 
   export type HistoryScalarFieldEnum = (typeof HistoryScalarFieldEnum)[keyof typeof HistoryScalarFieldEnum]
@@ -16387,7 +16391,7 @@ export namespace Prisma {
     adminId?: StringFilter | string
     parentId?: StringFilter | string
     adminFeedback?: StringNullableFilter | string | null
-    suggestion?: StringNullableFilter | string | null
+    adminRating?: IntNullableFilter | number | null
     feedback?: XOR<FeedbackRelationFilter, feedbackWhereInput> | null
     admin?: XOR<AdminRelationFilter, adminWhereInput>
     parent?: XOR<ParentRelationFilter, parentWhereInput>
@@ -16406,7 +16410,7 @@ export namespace Prisma {
     adminId?: SortOrder
     parentId?: SortOrder
     adminFeedback?: SortOrder
-    suggestion?: SortOrder
+    adminRating?: SortOrder
     feedback?: feedbackOrderByWithRelationInput
     admin?: adminOrderByWithRelationInput
     parent?: parentOrderByWithRelationInput
@@ -16429,7 +16433,7 @@ export namespace Prisma {
     adminId?: SortOrder
     parentId?: SortOrder
     adminFeedback?: SortOrder
-    suggestion?: SortOrder
+    adminRating?: SortOrder
     _count?: historyCountOrderByAggregateInput
     _avg?: historyAvgOrderByAggregateInput
     _max?: historyMaxOrderByAggregateInput
@@ -16452,7 +16456,7 @@ export namespace Prisma {
     adminId?: StringWithAggregatesFilter | string
     parentId?: StringWithAggregatesFilter | string
     adminFeedback?: StringNullableWithAggregatesFilter | string | null
-    suggestion?: StringNullableWithAggregatesFilter | string | null
+    adminRating?: IntNullableWithAggregatesFilter | number | null
   }
 
   export type userloginWhereInput = {
@@ -17318,7 +17322,7 @@ export namespace Prisma {
     status: Status
     referedTo: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
     feedback?: feedbackCreateNestedOneWithoutHistoryInput
     admin: adminCreateNestedOneWithoutHistoryInput
     parent: parentCreateNestedOneWithoutHistoryInput
@@ -17337,7 +17341,7 @@ export namespace Prisma {
     adminId: string
     parentId: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
     feedback?: feedbackUncheckedCreateNestedOneWithoutHistoryInput
   }
 
@@ -17349,7 +17353,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
-    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    adminRating?: NullableIntFieldUpdateOperationsInput | number | null
     feedback?: feedbackUpdateOneWithoutHistoryNestedInput
     admin?: adminUpdateOneRequiredWithoutHistoryNestedInput
     parent?: parentUpdateOneRequiredWithoutHistoryNestedInput
@@ -17368,7 +17372,7 @@ export namespace Prisma {
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
-    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    adminRating?: NullableIntFieldUpdateOperationsInput | number | null
     feedback?: feedbackUncheckedUpdateOneWithoutHistoryNestedInput
   }
 
@@ -17384,7 +17388,7 @@ export namespace Prisma {
     adminId: string
     parentId: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
   }
 
   export type historyUpdateManyMutationInput = {
@@ -17395,7 +17399,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
-    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    adminRating?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type historyUncheckedUpdateManyInput = {
@@ -17410,7 +17414,7 @@ export namespace Prisma {
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
-    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    adminRating?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type userloginCreateInput = {
@@ -18216,6 +18220,17 @@ export namespace Prisma {
     not?: NestedEnumStatusFilter | Status
   }
 
+  export type IntNullableFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableFilter | number | null
+  }
+
   export type FeedbackRelationFilter = {
     is?: feedbackWhereInput | null
     isNot?: feedbackWhereInput | null
@@ -18233,11 +18248,12 @@ export namespace Prisma {
     adminId?: SortOrder
     parentId?: SortOrder
     adminFeedback?: SortOrder
-    suggestion?: SortOrder
+    adminRating?: SortOrder
   }
 
   export type historyAvgOrderByAggregateInput = {
     hid?: SortOrder
+    adminRating?: SortOrder
   }
 
   export type historyMaxOrderByAggregateInput = {
@@ -18252,7 +18268,7 @@ export namespace Prisma {
     adminId?: SortOrder
     parentId?: SortOrder
     adminFeedback?: SortOrder
-    suggestion?: SortOrder
+    adminRating?: SortOrder
   }
 
   export type historyMinOrderByAggregateInput = {
@@ -18267,11 +18283,12 @@ export namespace Prisma {
     adminId?: SortOrder
     parentId?: SortOrder
     adminFeedback?: SortOrder
-    suggestion?: SortOrder
+    adminRating?: SortOrder
   }
 
   export type historySumOrderByAggregateInput = {
     hid?: SortOrder
+    adminRating?: SortOrder
   }
 
   export type EnumStatusWithAggregatesFilter = {
@@ -18282,6 +18299,22 @@ export namespace Prisma {
     _count?: NestedIntFilter
     _min?: NestedEnumStatusFilter
     _max?: NestedEnumStatusFilter
+  }
+
+  export type IntNullableWithAggregatesFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableWithAggregatesFilter | number | null
+    _count?: NestedIntNullableFilter
+    _avg?: NestedFloatNullableFilter
+    _sum?: NestedIntNullableFilter
+    _min?: NestedIntNullableFilter
+    _max?: NestedIntNullableFilter
   }
 
   export type userloginCountOrderByAggregateInput = {
@@ -18406,17 +18439,6 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter | Date | string | null
   }
 
-  export type IntNullableFilter = {
-    equals?: number | null
-    in?: Enumerable<number> | null
-    notIn?: Enumerable<number> | null
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntNullableFilter | number | null
-  }
-
   export type leaveCountOrderByAggregateInput = {
     id?: SortOrder
     date?: SortOrder
@@ -18460,22 +18482,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter
     _min?: NestedDateTimeNullableFilter
     _max?: NestedDateTimeNullableFilter
-  }
-
-  export type IntNullableWithAggregatesFilter = {
-    equals?: number | null
-    in?: Enumerable<number> | null
-    notIn?: Enumerable<number> | null
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntNullableWithAggregatesFilter | number | null
-    _count?: NestedIntNullableFilter
-    _avg?: NestedFloatNullableFilter
-    _sum?: NestedIntNullableFilter
-    _min?: NestedIntNullableFilter
-    _max?: NestedIntNullableFilter
   }
 
   export type historyCreateNestedManyWithoutParentInput = {
@@ -19506,6 +19512,14 @@ export namespace Prisma {
     set?: Status
   }
 
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type feedbackUpdateOneWithoutHistoryNestedInput = {
     create?: XOR<feedbackCreateWithoutHistoryInput, feedbackUncheckedCreateWithoutHistoryInput>
     connectOrCreate?: feedbackCreateOrConnectWithoutHistoryInput
@@ -19654,14 +19668,6 @@ export namespace Prisma {
     delete?: boolean
     connect?: timeslotWhereUniqueInput
     update?: XOR<timeslotUpdateWithoutLeaveInput, timeslotUncheckedUpdateWithoutLeaveInput>
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type NestedStringFilter = {
@@ -19859,6 +19865,22 @@ export namespace Prisma {
     _max?: NestedEnumStatusFilter
   }
 
+  export type NestedIntNullableWithAggregatesFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableWithAggregatesFilter | number | null
+    _count?: NestedIntNullableFilter
+    _avg?: NestedFloatNullableFilter
+    _sum?: NestedIntNullableFilter
+    _min?: NestedIntNullableFilter
+    _max?: NestedIntNullableFilter
+  }
+
   export type NestedFloatNullableFilter = {
     equals?: number | null
     in?: Enumerable<number> | null
@@ -19911,22 +19933,6 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter
   }
 
-  export type NestedIntNullableWithAggregatesFilter = {
-    equals?: number | null
-    in?: Enumerable<number> | null
-    notIn?: Enumerable<number> | null
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntNullableWithAggregatesFilter | number | null
-    _count?: NestedIntNullableFilter
-    _avg?: NestedFloatNullableFilter
-    _sum?: NestedIntNullableFilter
-    _min?: NestedIntNullableFilter
-    _max?: NestedIntNullableFilter
-  }
-
   export type historyCreateWithoutParentInput = {
     date: Date | string
     startTime: Date | string
@@ -19935,7 +19941,7 @@ export namespace Prisma {
     status: Status
     referedTo: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
     feedback?: feedbackCreateNestedOneWithoutHistoryInput
     admin: adminCreateNestedOneWithoutHistoryInput
     student: studentCreateNestedOneWithoutHistoryInput
@@ -19952,7 +19958,7 @@ export namespace Prisma {
     regNo: string
     adminId: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
     feedback?: feedbackUncheckedCreateNestedOneWithoutHistoryInput
   }
 
@@ -20081,7 +20087,7 @@ export namespace Prisma {
     adminId?: StringFilter | string
     parentId?: StringFilter | string
     adminFeedback?: StringNullableFilter | string | null
-    suggestion?: StringNullableFilter | string | null
+    adminRating?: IntNullableFilter | number | null
   }
 
   export type meetingUpsertWithWhereUniqueWithoutParentInput = {
@@ -20177,7 +20183,7 @@ export namespace Prisma {
     status: Status
     referedTo: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
     feedback?: feedbackCreateNestedOneWithoutHistoryInput
     parent: parentCreateNestedOneWithoutHistoryInput
     student: studentCreateNestedOneWithoutHistoryInput
@@ -20194,7 +20200,7 @@ export namespace Prisma {
     regNo: string
     parentId: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
     feedback?: feedbackUncheckedCreateNestedOneWithoutHistoryInput
   }
 
@@ -20720,7 +20726,7 @@ export namespace Prisma {
     status: Status
     referedTo: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
     feedback?: feedbackCreateNestedOneWithoutHistoryInput
     admin: adminCreateNestedOneWithoutHistoryInput
     parent: parentCreateNestedOneWithoutHistoryInput
@@ -20737,7 +20743,7 @@ export namespace Prisma {
     adminId: string
     parentId: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
     feedback?: feedbackUncheckedCreateNestedOneWithoutHistoryInput
   }
 
@@ -22341,7 +22347,7 @@ export namespace Prisma {
     status: Status
     referedTo: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
     admin: adminCreateNestedOneWithoutHistoryInput
     parent: parentCreateNestedOneWithoutHistoryInput
     student: studentCreateNestedOneWithoutHistoryInput
@@ -22359,7 +22365,7 @@ export namespace Prisma {
     adminId: string
     parentId: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
   }
 
   export type historyCreateOrConnectWithoutFeedbackInput = {
@@ -22380,7 +22386,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
-    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    adminRating?: NullableIntFieldUpdateOperationsInput | number | null
     admin?: adminUpdateOneRequiredWithoutHistoryNestedInput
     parent?: parentUpdateOneRequiredWithoutHistoryNestedInput
     student?: studentUpdateOneRequiredWithoutHistoryNestedInput
@@ -22398,7 +22404,7 @@ export namespace Prisma {
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
-    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    adminRating?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type adminCreateWithoutLeaveInput = {
@@ -22538,7 +22544,7 @@ export namespace Prisma {
     regNo: string
     adminId: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
   }
 
   export type meetingCreateManyParentInput = {
@@ -22570,7 +22576,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
-    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    adminRating?: NullableIntFieldUpdateOperationsInput | number | null
     feedback?: feedbackUpdateOneWithoutHistoryNestedInput
     admin?: adminUpdateOneRequiredWithoutHistoryNestedInput
     student?: studentUpdateOneRequiredWithoutHistoryNestedInput
@@ -22587,7 +22593,7 @@ export namespace Prisma {
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
-    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    adminRating?: NullableIntFieldUpdateOperationsInput | number | null
     feedback?: feedbackUncheckedUpdateOneWithoutHistoryNestedInput
   }
 
@@ -22602,7 +22608,7 @@ export namespace Prisma {
     regNo?: StringFieldUpdateOperationsInput | string
     adminId?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
-    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    adminRating?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type meetingUpdateWithoutParentInput = {
@@ -22677,7 +22683,7 @@ export namespace Prisma {
     regNo: string
     parentId: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
   }
 
   export type leaveCreateManyAdminInput = {
@@ -22723,7 +22729,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
-    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    adminRating?: NullableIntFieldUpdateOperationsInput | number | null
     feedback?: feedbackUpdateOneWithoutHistoryNestedInput
     parent?: parentUpdateOneRequiredWithoutHistoryNestedInput
     student?: studentUpdateOneRequiredWithoutHistoryNestedInput
@@ -22740,7 +22746,7 @@ export namespace Prisma {
     regNo?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
-    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    adminRating?: NullableIntFieldUpdateOperationsInput | number | null
     feedback?: feedbackUncheckedUpdateOneWithoutHistoryNestedInput
   }
 
@@ -22874,7 +22880,7 @@ export namespace Prisma {
     adminId: string
     parentId: string
     adminFeedback?: string | null
-    suggestion?: string | null
+    adminRating?: number | null
   }
 
   export type meetingCreateManyStudentInput = {
@@ -22957,7 +22963,7 @@ export namespace Prisma {
     status?: EnumStatusFieldUpdateOperationsInput | Status
     referedTo?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
-    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    adminRating?: NullableIntFieldUpdateOperationsInput | number | null
     feedback?: feedbackUpdateOneWithoutHistoryNestedInput
     admin?: adminUpdateOneRequiredWithoutHistoryNestedInput
     parent?: parentUpdateOneRequiredWithoutHistoryNestedInput
@@ -22974,7 +22980,7 @@ export namespace Prisma {
     adminId?: StringFieldUpdateOperationsInput | string
     parentId?: StringFieldUpdateOperationsInput | string
     adminFeedback?: NullableStringFieldUpdateOperationsInput | string | null
-    suggestion?: NullableStringFieldUpdateOperationsInput | string | null
+    adminRating?: NullableIntFieldUpdateOperationsInput | number | null
     feedback?: feedbackUncheckedUpdateOneWithoutHistoryNestedInput
   }
 

@@ -21,11 +21,24 @@ const handler = async(req, res) => {
                                          AND m.tsid = t.tsid
                                          AND m."adminId" = a."cnic"`;
 
+      const completedMeetings = await prisma.history.findMany({
+        where: {
+          OR: [
+            { adminId: userId },
+            { regNo: userId },
+            { parentId: userId }
+          ]
+        },
+        include: {
+          feedback: true
+        }
+      })
+
     // if(!meetings.Meeting.length) return res.status(204).json();
 
   await prisma.$disconnect();
     
-    return res.status(200).json({meetings});
+    return res.status(200).json({meetings, completedMeetings});
   }
 
 export default handler;

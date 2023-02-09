@@ -4,10 +4,10 @@ import axios from "axios";
 const useUpdateMeetingCW = () => {
 
     return useMutation(
-        async ({ meetingId, action, feedback }) => {
+        async ({ meetingId, action, feedback, adminRating }) => {
 
             return await axios.post("/api/meetings/update-meeting-cw", {
-                meetingId, action, feedback
+                meetingId, action, feedback, adminRating
             });
         },
         {

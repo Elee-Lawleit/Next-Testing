@@ -98,6 +98,7 @@ const Meetings = ({ session }) => {
   const [rudeRating, setRudeRating] = useState(0);
   const [attentiveRating, setAttentiveRating] = useState(0);
   const [politeRating, setPoliteRating] = useState(0);
+  const[adminRating, setAdminRating] = useState(0);
 
   const [waitToResDate, setWaitToResDate] = useState(new Date());
 
@@ -1031,7 +1032,7 @@ const Meetings = ({ session }) => {
                         ? meeting.feedback?.suggestion
                         : "required"}
                     </td>
-                    <td>
+                    {session?.user.role === "Parent" && <td>
                       <Menu width={200} shadow="sm">
                         <Menu.Target>
                           <ActionIcon>
@@ -1041,8 +1042,7 @@ const Meetings = ({ session }) => {
 
                         <Menu.Dropdown>
                           <Menu.Label>Feedback</Menu.Label>
-                          {(session?.user.role === "Parent") ?
-                            !meeting?.feedback ?  
+                          {!meeting?.feedback ?  
                             <Menu.Item
                               onClick={() => setFeedbackModal(meeting)}
                             >
@@ -1053,18 +1053,11 @@ const Meetings = ({ session }) => {
                             >
                               View Rating
                             </Menu.Item>
-                            :
-                            //for admin
-                            <Menu.Item
-                                onClick={() => setRatingModal(meeting)}
-                            >
-                              View rating
-                            </Menu.Item>
                           }
 
                         </Menu.Dropdown>
                       </Menu>
-                    </td>
+                    </td>}
                   </tr>
                 );
               })}
@@ -1120,11 +1113,19 @@ const Meetings = ({ session }) => {
         {console.log("Meeting", statusModal)}
 
         {statusModal?.action === "held" && (
-          <Textarea
+          <><Textarea
             error={feedbackError}
             ref={adminFeedbackRef}
             label="provide feedback"
           />
+          <Text className="font-semibold mt-4">Rate the parent</Text>
+            <Rating
+              emptySymbol={getEmptyIcon}
+              fullSymbol={getFullIcon}
+              highlightSelectedOnly
+              value={adminRating}
+              onChange={setAdminRating} 
+            /></>
         )}
         <div className="flex gap-4 justify-start mt-3">
           <Button
@@ -1181,6 +1182,7 @@ const Meetings = ({ session }) => {
                     meetingId: statusModal?.mid,
                     action: statusModal?.action,
                     feedback: adminFeedbackRef?.current?.value,
+                    adminRating: adminRating
                   },
                   {
                     onSuccess: () => {

@@ -145,7 +145,7 @@ model history {
   adminId       String    @db.VarChar(13)
   parentId      String    @db.VarChar(13)
   adminFeedback String?   @db.VarChar(128)
-  suggestion    String?   @db.VarChar(128)
+  adminRating   Int?
   feedback      feedback?
   admin         admin     @relation(fields: [adminId], references: [cnic])
   parent        parent    @relation(fields: [parentId], references: [cnic])

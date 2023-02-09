@@ -12,7 +12,7 @@ export default async function handler(req, res) {
             });
         }
 
-        const { meetingId, action, feedback } = req.body;
+        const { meetingId, action, feedback, adminRating } = req.body;
 
         if (!meetingId || !action) {
             return res.status(403).json({ error: "Please fill in all the fields" })
@@ -103,6 +103,7 @@ export default async function handler(req, res) {
                                 adminId: meeting.adminId,
                                 parentId: meeting.parentId,
                                 adminFeedback: feedback,
+                                adminRating: adminRating
 
                             }
                         })
