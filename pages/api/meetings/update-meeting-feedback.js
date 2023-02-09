@@ -11,17 +11,9 @@ export default async function handler(req, res) {
             });
         }
 
-        // console.log(req.body);
+        
 
         const { meetingId, suggesstion, rude, polite, attentive } = req.body;
-
-        console.log("iD: ", meetingId)
-        console.log("suggesstion: ", suggesstion)
-        console.log("rude: ", rude)
-        console.log("polite: ", polite)
-        console.log("attentive: ", attentive)
-
-        // console.log("at back: ", meetingId, referal);
 
         if (meetingId < 1 || suggesstion.length < 1 || rude < 1 || polite < 1 || attentive < 1) {
             return res.status(403).json({ error: "Please fill in all the fields" })

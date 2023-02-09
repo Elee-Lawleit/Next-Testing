@@ -18,7 +18,6 @@ const handler = async (req, res) => {
         return res.status(403).json({ error: "Please fill in all the fields" });
     }
 
-    console.log("USerID: ", userId)
 
     // this only gives the count, now how do I get the details for every meeting
     const totalMonthlyMeetings = await prisma.$queryRaw`SELECT COUNT(mid)::int as meetings_in_week, TO_CHAR(date, 'W')::integer AS week_number
@@ -44,9 +43,6 @@ const handler = async (req, res) => {
     AND ( "adminId" = ${userId} OR "parentId" = ${userId} OR "regNo" = ${userId} )
     GROUP BY week_number`;
 
-    console.log("monthly meetings are: ", totalMonthlyMeetings);
-    console.log("monthly meetings are: ", totalPendingMeetings);
-    console.log("monthly meetings are: ", totalCompletedMeetings);
 
     await prisma.$disconnect();
 

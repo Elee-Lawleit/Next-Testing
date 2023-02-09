@@ -12,8 +12,6 @@ export default async function handler(req, res) {
             });
         }
 
-        // console.log(req.body);
-
         const {time, date } = req.body;
 
 
@@ -31,10 +29,7 @@ export default async function handler(req, res) {
             return res.status(403).json({ error: "Please fill in all the fields" })
         }
 
-        // console.log("DATE: ", dayjs(date).toDate())
 
-        // console.log("timarray: ", timeArray);
-        // console.log("date: ", date);
 
         //old meeting id to get prev meeting details
         const prev = await prisma.meeting.findFirst({
@@ -43,7 +38,7 @@ export default async function handler(req, res) {
             }
         })
 
-        // console.log("Prec: ", prev)
+
 
         //get new admin id
         const admin = await prisma.timeslot.findFirst({

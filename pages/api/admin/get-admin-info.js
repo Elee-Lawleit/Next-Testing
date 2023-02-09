@@ -9,24 +9,24 @@ const handler = async (req, res) => {
         return res.status(403).json({ error: "Method not allowed" });
     }
 
-    const info = await prisma.meeting.findMany({});
+    const info = await prisma.$queryRaw`SELECT m."adminId", a."firstName", a."lastName", a."desgination", COUNT(*)::INT as meetings_attended
+    FROM meeting m, admin a
+    where m."adminId" = a.cnic
+    GROUP BY m."adminId", a."firstName", a."lastName", a."desgination"`;
 
-    let groupedItems = {};
+    const leaves = await prisma.$queryRaw`
+        select l."adminId", a."firstName", a."lastName", a."desgination", COUNT(*)::INT as total_leaves
+        FROM leave l, admin a
+        where l."adminId" = a.cnic
+        GROUP BY  l."adminId", a."firstName", a."lastName", a."desgination"
+    `;
 
-    info.forEach(item => {
-        if (!groupedItems[item.adminId]) {
-            groupedItems[item.adminId] = [];
-        }
-        groupedItems[item.adminId].push(item);
-    });
-
-    console.log("grouped: ", groupedItems)
-
-    // console.log("INFO: ", info)
+    console.log("INFO: ", info)
+    console.log("leaves: ", leaves)
 
     await prisma.$disconnect();
 
-    return res.status(200).json({ groupedItems });
+    return res.status(200).json({ info, leaves });
 }
 
 export default handler;

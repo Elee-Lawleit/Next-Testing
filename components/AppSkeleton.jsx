@@ -57,7 +57,7 @@ const AppSkeloton = ({ children, ...props }) => {
             {/* will  do something about the logo */}
             {!props.session && <Overlay blur={1} zIndex={49} />}
             <div className='h-max'>
-              <h1 className='font-bold'>Logo goes here</h1>
+              
             </div>
             <div className='flex flex-col'>
               <Link href='/'>
@@ -66,12 +66,15 @@ const AppSkeloton = ({ children, ...props }) => {
               <Link href='/dashboard'>
                 <NavLink component='a' label="Dashboard" active={router.pathname === "/dashboard"} icon={<FontAwesomeIcon icon={faWaveSquare} />} />
               </Link>
-              <Link href='/create'>
+              {(props.session?.user.role === "Admin" || props.session?.user.role === "Parent") && <Link href='/create'>
                 <NavLink component='a' label="Create Meeting" active={router.pathname === "/create"} icon={<FontAwesomeIcon icon={faHourglass} />} />
-              </Link>
-              <Link href='/meetings'>
+              </Link>}
+              {props.session?.user.role !== "Student" && <Link href='/meetings'>
                 <NavLink component='a' label="Meetings" active={router.pathname === "/meetings"} icon={<FontAwesomeIcon icon={faHourglass} />} />
-              </Link>
+              </Link>}
+              {props.session?.user.role === "Student" && <Link href='/student-info'>
+                <NavLink component='a' label="Student-info" active={router.pathname === "/student-info"} icon={<FontAwesomeIcon icon={faHourglass} />} />
+              </Link>}
               {props.session?.user.role !== "Parent" && props.session?.user.role !== "Student"  && <Link href='/timeslots'>
                 <NavLink component='a' label="Timeslots" active={router.pathname === "/timeslots"} icon={<FontAwesomeIcon icon={faHourglass} />} />
               </Link>}

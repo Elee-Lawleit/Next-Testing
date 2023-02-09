@@ -1,5 +1,4 @@
 import { PrismaClient } from "/prisma/src/generated/client";
-import dayjs from "dayjs";
 const prisma = new PrismaClient();
 
 const handler = async (req, res) => {
@@ -9,23 +8,11 @@ const handler = async (req, res) => {
         return res.status(403).json({ error: "Method not allowed" });
     }
 
-    // const { dayString, userId, userRole } = req.query;
-    // // console.log("Date: ", typeof new Date(dayString));
+    
+    const ratings = await prisma.$queryRaw`SELECT  SUM(polite) as polite_sum, SUM(rude) as rude_sum, SUM(attentive) as attentive_sum 
+    FROM feedback`;
 
-
-    // // console.log("daystring: ", new Date(dayString))
-
-    // const ratings = await prisma.history.findMany({
-    //     where:{
-    //         adminId: userId
-    //     },
-    //     select: {
-    //         rating: true
-    //     }
-    // })
-
-    // console.log(ratings)
-    let ratings = [];
+    console.log("RATINGS: ", ratings)
     await prisma.$disconnect();
     return res.status(200).json({ ratings });
 }

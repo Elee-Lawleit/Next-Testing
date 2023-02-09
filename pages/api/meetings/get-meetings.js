@@ -7,10 +7,7 @@ const handler = async (req, res) => {
     return res.status(403).json({ error: "Method not allowed" });
   }
 
-  const { dayString, userId, userRole } = req.query;
-  // console.log("Date: ", typeof new Date(dayString));
-
-  // console.log("daystring: ", new Date(dayString))
+  const { dayString, userId } = req.query;
 
   const meetings = await prisma.$queryRaw`SELECT reason, status, "regNo", mid
                                          FROM meeting

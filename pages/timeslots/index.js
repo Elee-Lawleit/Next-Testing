@@ -288,7 +288,6 @@ const Timeslots = ({ session }) => {
         <Title order={1} align="center" className="text-gray-900 font-Montserrat">
           Timeslots
         </Title>
-        {/* <Button className="bg-purple-500 hover:bg-purple-600 absolute right-0">Turn off for day</Button> */}
       </div>
       <div>
         <Table>
@@ -559,6 +558,14 @@ export async function getServerSideProps(context) {
     return {
       redirect: {
         destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+  else if (session?.user.role === "Parent" || session?.user.role === "Student") {
+    return {
+      redirect: {
+        destination: "/dashboard",
         permanent: false,
       },
     };

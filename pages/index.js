@@ -16,8 +16,7 @@ export default function ({ session }) {
             </h1>
           </div>
           <div className="flex flex-col text-center gap-3">
-            <h1 className='font-extrabold text-3xl font-Montserrat'>Who we are</h1>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia veritatis sed quis. Sapiente nulla similique distinctio eligendi. Neque debitis sapiente minima ea! Labore, tempora. Quidem accusamus dolores quam numquam ipsa error assumenda, temporibus fugiat non! Omnis deserunt recusandae illum eaque sit repudiandae earum veritatis placeat? Rerum, cupiditate odio. Obcaecati inventore sapiente blanditiis sequi tempore quasi!</p>
+            <p>Feel free to explore. Create meetings with ease.</p>
           </div>
         </div>
       }

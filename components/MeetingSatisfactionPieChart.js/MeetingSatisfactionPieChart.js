@@ -79,20 +79,14 @@ const renderActiveShape = (props) => {
 
 export default function MeetingSatisfactionPieChart({ session }) {
 
-    const{data: ratings, isLoading, isError} = useFetchMeetingsRatings(session.user.id);
-
-    const one = ratings?.ratings.filter((rating) => rating.rating == 1)
-    const two = ratings?.ratings.filter((rating) => rating.rating == 2)
-    const three = ratings?.ratings.filter((rating) => rating.rating == 3)
-    const four = ratings?.ratings.filter((rating) => rating.rating == 4)
-    const five = ratings?.ratings.filter((rating) => rating.rating == 5)
+    const{data: ratings, isLoading, isError} = useFetchMeetingsRatings();
+    console.log(ratings?.ratings[0]);
+    
 
     const data = [
-        { name: "Very Dissatisfied", value: one != null ? one[0]?.rating: 0 },
-        { name: "Dissatisfied", value: two != null ? two[0]?.rating : 0 },
-        { name: "Average", value: three != null ? three[0]?.rating : 0 },
-        { name: "Satisfied", value: four != null ? four[0]?.rating : 0 },
-        { name: "Very Satisfied", value: five != null ? five[0]?.rating : 0 },
+        { name: "Attentive", value: ratings?.ratings[0].attentive_sum },
+        { name: "Polite", value: ratings?.ratings[0].polite_sum },
+        { name: "Rude", value: ratings?.ratings[0].rude_sum },
     ];
 
     const [activeIndex, setActiveIndex] = useState(0);

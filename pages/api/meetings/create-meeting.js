@@ -12,16 +12,10 @@ export default async function handler(req, res) {
       });
     }
 
-    // console.log(req.body);
+
 
     const { reason, time, students, registrationNumber, userId, date } = req.body;
 
-    console.log("reason: ", reason);
-    console.log("time array: ", time)
-    console.log("userId is; ", userId);
-    console.log("reg no; ", registrationNumber);
-    console.log("students: ", students)
-    console.log("date: ", date)
 
 
     if (!reason || !time || (!registrationNumber && !students)) {
@@ -39,7 +33,6 @@ export default async function handler(req, res) {
 
       const timeArray = time.split(",");
 
-      // console.log("parentId is: ", parent.parent.cnic);
 
       const timeslot = await prisma.timeslot.findFirst({
         where: {
@@ -53,7 +46,6 @@ export default async function handler(req, res) {
         }
       })
 
-      // console.log("TimeSlot is: ", timeslot);
 
       await prisma.meeting.create({
         data: {
@@ -70,7 +62,6 @@ export default async function handler(req, res) {
 
     }
 
-    console.log("Students: ", students);
 
     let count = 0;
     let timeSlotsEnded = false;
@@ -89,7 +80,7 @@ export default async function handler(req, res) {
 
         if(anotherCount === students.length) break;
 
-        console.log("INSIDE FOR LOOP:")
+        
 
         //getting the student
         const student = await prisma.student.findFirst({
@@ -113,7 +104,7 @@ export default async function handler(req, res) {
           },
         });
 
-        console.log("timeslot: ", timeslot)
+        
 
 
         //in case the timeslots end for the admin
@@ -126,14 +117,13 @@ export default async function handler(req, res) {
         count++;
 
         if (timeslot.availibility == false) {
-          console.log("ts: ", timeslot)
+          
           startTime = dayjs(startTime).add(15, "minute").toDate();
           endTime = dayjs(endTime).add(15, "minute").toDate();
           continue;
         }
 
-        console.log("after getting false: ", timeslot)
-        console.log("after getting false: ", students[i])
+
 
         await prisma.meeting.create({
           data: {

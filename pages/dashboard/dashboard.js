@@ -104,7 +104,7 @@ const Dashboard = ({ session }) => {
         <div className="shadow-sm bg-white flex flex-col justify-between p-2 gap-2">
           <div className="bg-white flex justify-between gap-2">
             <Time />
-            {availibility && session?.user.role === "Admin" && (
+            {/* {availibility && session?.user.role === "Admin" && (
               <Switch
                 size="lg"
                 label="Set availibility"
@@ -113,7 +113,7 @@ const Dashboard = ({ session }) => {
                 onClick={updateAvail}
                 color={"#ba68c8"}
               />
-            )}
+            )} */}
           </div>
           <div>
             <h1 className="text-2xl font-semibold text-gray-700">
@@ -197,7 +197,7 @@ const Dashboard = ({ session }) => {
         {session?.user.role === "Admin" &&<div className="bg-white relative">
           <div className="relative font-semibold text-2xl">
             <p className="absolute top-10 bottom-0 m-auto left-0 right-0 text-center">
-              Parent satisfaction rate
+              Parent feedback analysis
             </p>
           </div>
           <MeetingPieChart session={session} />

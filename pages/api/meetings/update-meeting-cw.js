@@ -14,14 +14,9 @@ export default async function handler(req, res) {
 
         const { meetingId, action, feedback } = req.body;
 
-        console.log("id: ", meetingId, " action: ", action)
-        console.log("feedback: ", feedback)
-
         if (!meetingId || !action) {
             return res.status(403).json({ error: "Please fill in all the fields" })
         }
-
-        console.log("meetinID: ", meetingId);
 
 
         //meetingId constains an arrays when the action is "waiting"
@@ -60,7 +55,6 @@ export default async function handler(req, res) {
                 }
             })
 
-            console.log("meetingasdasdasdfsad: ", meeting)
 
             let history = null;
             if (meeting) {
@@ -93,10 +87,9 @@ export default async function handler(req, res) {
                     // })
                 }
                 if (action === "held") {
-                    console.log("feedback: ", feedback)
+
                     if (feedback) {
 
-                        console.log("feedback2: ", feedback)
 
                         history = await prisma.history.create({
                             data: {
@@ -119,8 +112,6 @@ export default async function handler(req, res) {
                                 mid: Number(meetingId)
                             }
                         })
-
-                        console.log("HISTORU: ", history)
                     }
                 }
             }

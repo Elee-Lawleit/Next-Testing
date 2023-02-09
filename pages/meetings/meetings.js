@@ -49,6 +49,8 @@ import useUpdateMeetingCW from "hooks/meetings/use-update-meeting-cw";
 import useFetchWaitingList from "hooks/meetings/use-fetch-waiting-meetings";
 import clsx from "clsx";
 import useChangeWaitToRes from "hooks/meetings/use-change-wait-to-res";
+import useCallParent from "hooks/meetings/use-call-parent";
+import useRemoveFromWait from "hooks/meetings/use-remove-from-wait";
 
 const Meetings = ({ session }) => {
   const [activeTab, setActiveTab] = useState("pending");
@@ -81,7 +83,7 @@ const Meetings = ({ session }) => {
     session?.user.role === "Parent" ? session?.user.id : null
   );
 
-  console.log("WAITING: ", waitingList);
+  // console.log("WAITING: ", waitingList);
 
   const [referModal, setReferModal] = useState(null);
   const [statusModal, setStatusModal] = useState(null);
@@ -104,11 +106,15 @@ const Meetings = ({ session }) => {
     isLoading: tsLoading,
     isError: tsError,
   } = useFetchTimeSlots(session?.user.id);
+
   const {
     mutate: refer,
     isLoading: submittingReferal,
     isError: referalError,
   } = useReferMeeting();
+
+  //to call parent for meeting
+  const{mutate: callParent, isLoading: callingParent, isError: errorCallingParent} = useCallParent();
 
   //for completed & waiting list
   const {
@@ -116,6 +122,9 @@ const Meetings = ({ session }) => {
     isLoading: CWLoading,
     isError: CWError,
   } = useUpdateMeetingCW();
+
+  //to remove from waitinglist
+  const{mutate: removeFromWait, isLoading: removing, isError: errorRemoving} = useRemoveFromWait();
 
   //for rescheduling
   const {
@@ -369,6 +378,7 @@ const Meetings = ({ session }) => {
   const [ratingModal, setRatingModal] = useState(false);
   const [suggestionError, setSuggestionError] = useState(false);
   const [waitToResModal, setWaitToResModal] = useState(false);
+  const [callDialog, setCallDialog] = useState();
 
   return (
     <AppSkeloton session={session}>
@@ -427,6 +437,18 @@ const Meetings = ({ session }) => {
             </Button>
           </div>
         )}
+      </Dialog>
+      <Dialog
+        className="border-green-500"
+        opened={callDialog}
+        size="xl"
+        onClose={() => setCallDialog(false)}
+        withCloseButton
+      >
+        <div className="flex">
+          <IconAlertCircle className="mr-1" color="green" />
+          <Text>Admin has called you in for meeting!</Text>
+        </div>
       </Dialog>
       <Tabs value={activeTab} onTabChange={setActiveTab}>
         <Tabs.List position="center">
@@ -876,7 +898,7 @@ const Meetings = ({ session }) => {
             </thead>
             <tbody>
               <Loading visible={isLoading} />
-              {waitingList?.meetings.map((meeting) => {
+              {waitingList?.meetings.sort((a, b) => Number(a.id) - Number(b.id)).map((meeting) => {
                 return (
                   <tr key={meeting.mid}>
                     <td>waiting</td>
@@ -891,6 +913,34 @@ const Meetings = ({ session }) => {
                             }}
                           >
                             <IconAlertCircle color="red" />
+                          </ActionIcon>
+                        </Tooltip>
+                      </td>
+                    )}
+                    {session?.user.role === "Parent" && meeting.status === "confirmCall" && (
+                      <td>
+                        <Tooltip label="you're being called">
+                          <ActionIcon
+                            onClick={() => {
+                              setCallDialog(meeting);
+                              console.log("waiting: ", meeting)
+                              setTimeout(() => {
+                                setCallDialog(false)
+                              }, 4000);
+                              removeFromWait({
+                                waitingId: meeting?.id,
+                                timeslotId: meeting?.tsid
+                              }, {
+                                onSuccess: ()=>{
+                                  toast.success("Please head to the admin room")
+                                },
+                                onError: ()=>{
+                                  toast.error("Error")
+                                }
+                              });
+                            }}
+                          >
+                            <IconAlertCircle color="green" />
                           </ActionIcon>
                         </Tooltip>
                       </td>
@@ -968,7 +1018,7 @@ const Meetings = ({ session }) => {
             <tbody>
               <Loading visible={isLoading} />
               {completedMeetings?.meetings?.map((meeting) => {
-                console.log("Completed meetings: ASDASD: ", meeting);
+                // console.log("Completed meetings: ASDASD: ", meeting);
                 return (
                   <tr key={meeting.mid}>
                     <td>{meeting.hid}</td>
@@ -1066,7 +1116,7 @@ const Meetings = ({ session }) => {
         overlayOpacity={0.1}
         centered
       >
-        <LoadingOverlay visible={CWLoading} />
+        <LoadingOverlay visible={CWLoading || callingParent} />
         {console.log("Meeting", statusModal)}
 
         {statusModal?.action === "held" && (
@@ -1103,10 +1153,11 @@ const Meetings = ({ session }) => {
               }
               else if(statusModal?.action === "call"){
                 // console.log("Meeting: ", statusModal)
-                updateStatus(
+                callParent(
                   { currentAdminId: session?.user.id,
                     oldTimeslotId: statusModal?.tsid,
-                    status: "call"
+                    status: "call",
+                    waitingListId: statusModal?.id
                   },
                   {
                     onSuccess: () => {
@@ -1115,7 +1166,7 @@ const Meetings = ({ session }) => {
                       toast.success("Meeting status updated");
                     },
                     onError: () => {
-                      toast.error("Error updating status");
+                      toast.error("Error calling parent");
                     },
                   }
                 );

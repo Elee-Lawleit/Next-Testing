@@ -12,17 +12,12 @@ export default async function handler(req, res) {
             });
         }
 
-        // console.log(req.body);
-
         const { meetingId, startTime, endTime, day, adminId } = req.body;
 
         if (!meetingId || startTime == null ||  endTime == null ||  day == null || !adminId) {
             return res.status(403).json({ error: "Please fill in all the fields" })
         }
 
-        
-        
-        console.log(adminId)
 
         const timeslot = await prisma.timeslot.findFirst({
             where:{
@@ -55,7 +50,6 @@ export default async function handler(req, res) {
         //     order by random()            
         // `;
 
-        console.log("TS: ", timeslot)
 
         res.status(200).json({
             msg: "Meeting status update successful",

@@ -8,8 +8,7 @@ const handler = async (req, res) => {
         return res.status(403).json({ error: "Method not allowed" });
     }
 
-    const { dayString, userId, userRole } = req.query;
-    console.log("Date: ", typeof new Date(dayString));
+    const { userId } = req.query;
 
 
     // console.log("daystring: ", new Date(dayString))

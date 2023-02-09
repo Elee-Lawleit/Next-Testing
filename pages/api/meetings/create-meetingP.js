@@ -12,15 +12,15 @@ export default async function handler(req, res) {
       });
     }
 
-    // console.log(req.body);
+    
 
     const { reason, time, assocRegno, userId, date } = req.body;
 
-    // console.log("data at backend: ", assocRegno)
+    
 
     const timeArray = time.split(",");
 
-    console.log("data at backend: ", timeArray[2])
+    
 
     const timeslot = await prisma.timeslot.findFirst({
         where: {

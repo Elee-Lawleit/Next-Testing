@@ -12,15 +12,16 @@ export default async function handler(req, res) {
             });
         }
 
-        // console.log(req.body);
-
-        const { currentAdminId, oldTimeslotId, status } = req.body;
+        const { time, date } = req.body;
         
-        if(!currentAdminId || !oldTimeslotId || status == "undefined" || status == "null"){
+        const timeArray = time.split(",")
+        
+        if(!timeArray[0] || !timeArray[1] || !date){
             return res.status(403).json({ error: "Please fill in all the fields" })
         }
-       
-        
+
+        const oldMid = timeArray[0];
+        const newTimeslotId = timeArray[1];
 
         await prisma.meeting.update({
             where: {

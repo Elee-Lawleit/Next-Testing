@@ -1,13 +1,13 @@
 import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 
-const useUpdateMeetingStatus = () => {
-    
+const useRemoveFromWait = () => {
+
     return useMutation(
-        async ({ time, date }) => {
-            
-            return await axios.post("/api/meetings/update-meeting-status", {
-                time, date
+        async ({ waitingId, timeslotId }) => {
+            console.log("values in hook", [waitingId, timeslotId])
+            return await axios.post("/api/meetings/remove-from-wait", {
+                waitingId, timeslotId
             });
         },
         {
@@ -21,4 +21,4 @@ const useUpdateMeetingStatus = () => {
     )
 }
 
-export default useUpdateMeetingStatus;
+export default useRemoveFromWait;

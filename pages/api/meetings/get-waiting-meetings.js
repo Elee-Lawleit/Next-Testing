@@ -11,7 +11,7 @@ const handler = async (req, res) => {
     const { userId } = req.query;
 
 
-    // console.log("daystring: ", new Date(dayString))
+
     let meetings;
 
     //if parent is fetching the waiting list,
@@ -19,7 +19,6 @@ const handler = async (req, res) => {
     console.log("USERDIDSAD: ", typeof userId)
     if (userId === "null" || userId === "undefined") {
         meetings = await prisma.waitinglist.findMany();
-        console.log("ESKE RUNFUANSF")
 
     } else {
         meetings = await prisma.waitinglist.findMany({
@@ -27,8 +26,6 @@ const handler = async (req, res) => {
                 parentId: userId
             }
         })
-        console.log("ESKE RUNFUANSFASDASDASDASfd111");
-
     }
 
 

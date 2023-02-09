@@ -184,6 +184,7 @@ model leave {
   timeslot timeslot? @relation(fields: [tsid], references: [tsid], onDelete: NoAction, onUpdate: NoAction, map: "timeslot_fk")
 }
 
+//not really being used anywhere I think
 enum Status {
   held
   pending

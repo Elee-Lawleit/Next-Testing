@@ -13,8 +13,6 @@ const handler = async (req, res) => {
 
     const { userId } = req.query;
 
-    console.log("PARENTID: ", userId)
-
     const meetings = await prisma.$queryRaw`SELECT count(mid)::int
                                          FROM meeting
                                          WHERE ("regNo" = ${userId} 
@@ -34,7 +32,6 @@ const handler = async (req, res) => {
     // })
 
 
-    console.log("Meeting count is: ", meetings)
 
     const count = meetings[0].count;
 

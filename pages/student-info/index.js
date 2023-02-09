@@ -1,20 +1,20 @@
-import create from "./create"
+import studentInfo from "./student.info";
 import { getSession } from "next-auth/react";
 
-export default create;
+export default studentInfo;
 
 export async function getServerSideProps(context) {
     const session = await getSession(context);
 
-    if (!session) {
+    if (session) {
         return {
             redirect: {
-                destination: "/login",
+                destination: "/dashboard",
                 permanent: false,
             },
         };
     }
-    else if (session?.user.role === "Student" || session?.user.role === "Datacell" || session?.user.role === "Deputy Director" || session?.user.role === "Director" || session?.user.role === "Attendance" || session?.user.role === "Project Committee") {
+    else if (session?.user.role !== "Student") {
         return {
             redirect: {
                 destination: "/dashboard",

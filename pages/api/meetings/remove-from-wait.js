@@ -11,21 +11,35 @@ export default async function handler(req, res) {
             });
         }
 
-        const { meetingId, adminId } = req.body;
+        // console.log(req.body);
 
-        if (!meetingId || !adminId) {
+        const { waitingId, timeslotId } = req.body;
+
+
+        if (!waitingId || !timeslotId) {
             return res.status(403).json({ error: "Please fill in all the fields" })
         }
 
-        await prisma.meeting.update({
-            where: {
-                mid: meetingId
-            },
-            data: {
-                adminId: adminId
+        const meeting = await prisma.meeting.findFirst({
+            where:{
+                tsid: Number(timeslotId)
             }
         })
 
+        await prisma.meeting.update({
+            where:{
+                mid: meeting.mid
+            },
+            data:{
+                status: "pending"
+            }
+        })
+
+        await prisma.waitinglist.delete({
+            where:{
+                id: Number(waitingId)
+            }
+        })
 
         res.status(200).json({
             msg: "Meeting referal successful",

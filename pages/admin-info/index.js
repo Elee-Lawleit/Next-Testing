@@ -14,6 +14,14 @@ export async function getServerSideProps(context) {
             },
         };
     }
+    else if(session?.user.role !== "Director"){
+        return {
+            redirect: {
+                destination: "/dashboard",
+                permanent: false,
+            },
+        };
+    }
     return {
         props: {},
     };
