@@ -1,4 +1,4 @@
-import create from "./create"
+import create from "./Create"
 import { getSession } from "next-auth/react";
 
 export default create;

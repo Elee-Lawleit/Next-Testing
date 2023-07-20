@@ -3,7 +3,7 @@ import AppSkeloton from 'components/AppSkeleton'
 import { Button } from '@mantine/core'
 import Link from 'next/link'
 
-export default function ({ session }) {
+export default function App({ session }) {
 
 
   return (

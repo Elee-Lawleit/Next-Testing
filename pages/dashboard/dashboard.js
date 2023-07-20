@@ -92,9 +92,9 @@ const Dashboard = ({ session }) => {
     toggle();
   }
   
-  session?.user.role === "Admin" ? useEffect(() => {
-    availibility?.availibility[0]?.generalavail? toggle("true") : toggle("false");
-  }, [availibility]) : null
+  // session?.user.role === "Admin" ? useEffect(() => {
+  //   availibility?.availibility[0]?.generalavail? toggle("true") : toggle("false");
+  // }, [availibility]) : null
 
   const theme = useMantineTheme();
   return (

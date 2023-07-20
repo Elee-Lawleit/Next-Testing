@@ -289,7 +289,7 @@ const Create = ({ session }) => {
                 {session?.user.role === "Admin" && (
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
                     {extractTimeSlotsForDayAdmin(timeSlots?.timeSlots, days[new Date(date).getDay() - 1])?.map((ts) => (
-                      <div className="flex flex-col items-center justify-center col-span-1 gap-0">
+                      <div className="flex flex-col items-center justify-center col-span-1 gap-0" key={ts}>
                         <Radio
                           value={[ts.startTime, ts.endTime, ts.day]}
                           label={

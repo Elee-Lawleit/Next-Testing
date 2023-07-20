@@ -18,7 +18,7 @@ import {
 import useGetPairStats from "hooks/meetings/use-get-admin-parent-pair-statistics";
 import useFetchBestAdmin from "hooks/admin/use-get-avarage-rating";
 
-const adminInfo = ({session}) => {
+const AdminInfo = ({session}) => {
 
 
     const{data, isLoading, isError} = useFetchAdminInfo();
@@ -151,7 +151,7 @@ const adminInfo = ({session}) => {
             <tbody>
               {
                 data?.info.map((ad)=>{
-                  return <tr>
+                  return <tr key={ad}>
                     <td>{ad.firstName}</td>
                     <td>{ad.lastName}</td>
                     <td>{ad.desgination}</td>
@@ -200,7 +200,7 @@ const adminInfo = ({session}) => {
             <tbody>
               {
                 data?.leaves.map((ad)=>{
-                  return <tr>
+                  return <tr key={ad}>
                     <td>{ad.firstName}</td>
                     <td>{ad.lastName}</td>
                     <td>{ad.desgination}</td>
@@ -228,7 +228,7 @@ const adminInfo = ({session}) => {
             <tbody>
               {uniqueData &&
                 uniqueData?.map((ad) => {
-                  return <tr>
+                  return <tr key={ad}>
                     <td>{ad.adminId}</td>
                     <td>{ad.firstName} {ad.lastName}</td>
                     <td>{ad.parentId}</td>
@@ -254,7 +254,7 @@ const adminInfo = ({session}) => {
             <tbody>
               {
                 avgRating?.avgRating.map((ad) => {
-                  return <tr>
+                  return <tr key={ad}>
                     <td>{ad.firstName} {ad.lastName}</td>
                     <td>{ad.average_rating}</td>
                   </tr>
@@ -293,7 +293,7 @@ const adminInfo = ({session}) => {
                 <tbody>
                   {
                     meetings?.meetings.map((meeting)=>{
-                      return <tr>
+                      return <tr key={meeting}>
                         <td>{meeting.mid}</td>
                         <td>{meeting.status}</td>
                         <td>{meeting.parentId}</td>
@@ -323,7 +323,7 @@ const adminInfo = ({session}) => {
                 <tbody>
                   {
                     meetings?.completedMeetings.map((meeting) => {
-                      return <tr>
+                      return <tr key={meeting}>
                         <td>{meeting.hid}</td>
                         <td>{meeting.status}</td>
                         <td>{meeting.parentId}</td>
@@ -396,4 +396,4 @@ const adminInfo = ({session}) => {
   )
 }
 
-export default adminInfo;
+export default AdminInfo;

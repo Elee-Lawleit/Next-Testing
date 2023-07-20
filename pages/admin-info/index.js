@@ -1,4 +1,4 @@
-import adminInfo from "./admin-info";
+import adminInfo from "./Admin-info";
 import { getSession } from "next-auth/react";
 
 export default adminInfo;

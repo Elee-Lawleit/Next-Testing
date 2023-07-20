@@ -52,11 +52,16 @@ const Login = ({ session }) => {
       {/* Container div to give border */}
       <div className="flex flex-col w-full max-w-md p-5 xl:max-w-lg gap-9">
         <div className="flex items-center gap-2 m-auto">
-          <h1 className="text-xl font-bold lg:text-2xl font-Montserrat">Login</h1>
+          <h1 className="text-xl font-bold lg:text-2xl font-Montserrat">
+            Login
+          </h1>
           <FontAwesomeIcon icon={faLock} />
         </div>
 
-        <form onSubmit={handleSubmit(onLogin)} className="w-full gap-2 form-control">
+        <form
+          onSubmit={handleSubmit(onLogin)}
+          className="w-full gap-2 form-control"
+        >
           <div className="relative">
             <input
               type="text"
@@ -73,7 +78,6 @@ const Login = ({ session }) => {
               icon={faUser}
               className="absolute ml-1 text-gray-800 top-4 md:xl:top-6 left-2"
             />
-
           </div>
           <div className="relative">
             <input
@@ -105,7 +109,7 @@ const Login = ({ session }) => {
       </div>
       <div className="px-2 sm:p-0">
         <span className="text-gray-500">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/signup">
             <a href="" className="font-bold link link-primary">
               Signup
@@ -114,7 +118,6 @@ const Login = ({ session }) => {
         </span>
       </div>
     </div>
-
   );
 };
 

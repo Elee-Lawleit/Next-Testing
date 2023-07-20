@@ -6,7 +6,7 @@ import useGetFailedSubjects from 'hooks/students/use-get-failed-subjects';
 import useGetCgpa from 'hooks/students/use-get-cgpa';
 import useGetDisciplinary from 'hooks/students/use-get-disciplinary';
 
-const studentInfo = ({session}) => {
+const StudentInfo = ({session}) => {
 
   const{data: students, isLoading: attendanceLoading, isError: attendanceError} = useGetAttendance(session?.user.id);
   const { data: fs, isLoading: fsLoading, isError: fsError } = useGetFailedSubjects(session?.user.id)
@@ -33,7 +33,7 @@ const studentInfo = ({session}) => {
                   <tbody>
                     {
                           students?.attendance.map((std)=>{
-                            return <tr>
+                            return <tr key={std}>
                                 <td>{std.subject}</td>
                                 <td>{std.percentage}</td>
                             </tr>
@@ -57,7 +57,7 @@ const studentInfo = ({session}) => {
                   <tbody>
                     {
                           cgpa?.cgpa.map((std)=>{
-                            return <tr>
+                            return <tr key={std}>
                                 <td>{std.cgpa}</td>
                             </tr>
                           })
@@ -82,7 +82,7 @@ const studentInfo = ({session}) => {
                   <tbody>
                     {
                           fs?.failedsubjects.map((std)=>{
-                            return <tr>
+                            return <tr key={std}>
                                 <td>{std.semester}</td>
                                 <td>{std.subject}</td>
                                 <td>{std.grade}</td>
@@ -107,7 +107,7 @@ const studentInfo = ({session}) => {
                   <tbody>
                     {
                           ds?.disciplinary.map((std)=>{
-                            return <tr>
+                            return <tr key={std}>
                                 <td>{std.actions}</td>
                             </tr>
                           })
@@ -119,4 +119,4 @@ const studentInfo = ({session}) => {
   )
 }
 
-export default studentInfo;
+export default StudentInfo;

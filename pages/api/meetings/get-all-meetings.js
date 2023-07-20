@@ -21,6 +21,8 @@ const handler = async(req, res) => {
                                          AND m.tsid = t.tsid
                                          AND m."adminId" = a."cnic"`;
 
+                                         console.log(meetings);
+
       const completedMeetings = await prisma.history.findMany({
         where: {
           OR: [

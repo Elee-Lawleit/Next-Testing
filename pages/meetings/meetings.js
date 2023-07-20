@@ -1240,7 +1240,7 @@ const Meetings = ({ session }) => {
                 ts,
                 days[new Date(date).getDay() - 1]
               ).map((ts) => (
-                <div className="flex flex-col col-span-1 gap-0">
+                <div className="flex flex-col col-span-1 gap-0" key={ts}>
                   <Radio
                     value={[rescheduleModal?.mid, ts.tsid]}
                     label={
@@ -1445,7 +1445,7 @@ const Meetings = ({ session }) => {
                 ts,
                 days[new Date(waitToResDate).getDay() - 1]
               ).map((ts) => (
-                <div className="flex flex-col col-span-1 gap-0">
+                <div className="flex flex-col col-span-1 gap-0" key={ts}>
                   <Radio
                     value={[waitToResModal?.tsid, ts.tsid]}
                     label={

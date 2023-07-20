@@ -285,7 +285,11 @@ const Timeslots = ({ session }) => {
   return (
     <AppSkeloton session={session}>
       <div className="flex items-center justify-center relative">
-        <Title order={1} align="center" className="text-gray-900 font-Montserrat">
+        <Title
+          order={1}
+          align="center"
+          className="text-gray-900 font-Montserrat"
+        >
           Timeslots
         </Title>
       </div>
@@ -484,7 +488,7 @@ const Timeslots = ({ session }) => {
         ) : (
           <>
             <Text className="font-semibold">
-              You're all set, no meetings for this timeslot.
+              You&apos;re all set, no meetings for this timeslot.
             </Text>
           </>
         )}
@@ -503,17 +507,17 @@ const Timeslots = ({ session }) => {
               //to get the date of the timeslot
               if (slotDay === currentDay) {
                 currentDate = new Date();
-                console.log(currentDate)
+                console.log(currentDate);
               } else if (slotDay > currentDay) {
                 currentDate.setDate(
                   currentDate.getDate() + (slotDay - currentDay)
-                  );
-                  console.log(currentDate)
-                } else {
-                  currentDate.setDate(
-                    currentDate.getDate() + (7 - currentDay + slotDay)
-                    );
-                    console.log(currentDate)
+                );
+                console.log(currentDate);
+              } else {
+                currentDate.setDate(
+                  currentDate.getDate() + (7 - currentDay + slotDay)
+                );
+                console.log(currentDate);
               }
               updateAvail(
                 {
