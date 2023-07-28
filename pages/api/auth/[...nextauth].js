@@ -19,44 +19,48 @@ export const authOptions = {
         },
       },
       authorize: async (credentials) => {
+        console.log("CREDENTIALS: ", credentials);
 
-        console.log("CREDENTIALS: ", credentials)
-
-        if (
-          !credentials.username ||
-          !credentials.password
-        ) {
+        if (!credentials.username || !credentials.password) {
           return null;
         }
-        
-        // console.log("ADASDASDASDASFD")
-        let user = await prisma.userlogin.findFirst({
-          where: {
-            OR:[
-              {userName: credentials.username},
-              {email : credentials.username}
-            ],
-            password: credentials.password,
-          },
-          include:{
-            parent: true,
-            admin: true,
-            student: true
-          }
-        });
-        console.log("ADASDASDASDASFD")
-
-        console.log("USER: ", user)
+        var user;
+        try {
+          user = await prisma.userlogin.findFirst({
+            where: {
+              OR: [
+                { userName: credentials.username },
+                { email: credentials.username },
+              ],
+              password: credentials.password,
+            },
+            include: {
+              parent: true,
+              admin: true,
+              student: true,
+            },
+          });
+        } catch (err) {
+          console.log(err);
+        }
 
         if (user) {
           const uniqueIdentifier = user.regNo || user.parentId || user.adminId;
-          const name = user.parent?.firstName || user.admin?.firstName || user.student?.firstName
-          console.log("User: ", user)
+          const name =
+            user.parent?.firstName ||
+            user.admin?.firstName ||
+            user.student?.firstName;
 
           return {
             id: uniqueIdentifier,
-            role: user.regNo ? "Student" : null || user.parentId? "Parent":null || user.adminId? user.role :null,
-            name: name
+            role: user.regNo
+              ? "Student"
+              : null || user.parentId
+              ? "Parent"
+              : null || user.adminId
+              ? user.role
+              : null,
+            name: name,
           };
         }
         return null;
@@ -70,7 +74,7 @@ export const authOptions = {
         //because it's sensitive I guess
         //didn't have to reattach the username here to token
         // token.id = user.id;
-        token.id= user.id;
+        token.id = user.id;
         token.role = user.role;
         token.name = user.name;
       }

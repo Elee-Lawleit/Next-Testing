@@ -280,7 +280,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "F:\\biitappointmentsystem\\prisma\\src\\generated\\client",
+      "value": "G:\\.Hopefully Deployed Projects\\biitappointmentsystem\\prisma\\src\\generated\\client",
       "fromEnvVar": null
     },
     "config": {

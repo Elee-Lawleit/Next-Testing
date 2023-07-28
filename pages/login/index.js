@@ -36,6 +36,7 @@ const Login = ({ session }) => {
         router.push("/dashboard");
       }
       else {
+        console.log(res)
         toast.error("couldn't log in, try again later")
       }
     } catch (error) {

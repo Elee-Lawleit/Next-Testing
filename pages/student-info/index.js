@@ -6,7 +6,7 @@ export default studentInfo;
 export async function getServerSideProps(context) {
   const session = await getSession(context);
 
-  if (session) {
+  if (!session) {
     return {
       redirect: {
         destination: "/dashboard",
