@@ -1,34 +1,76 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Project: PTM Scheduling and Management Web Portal
 
-## Getting Started
 
-First, run the development server:
+## Table of Contents
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+- [Introduction](#introduction)
+- [Features](#features)
+- [Role-Based Permissions](#role-based-permissions)
+- [Intelligent Meeting Scheduling](#intelligent-meeting-scheduling)
+- [Schedule Management](#schedule-management)
+- [Rescheduling Capabilities](#rescheduling-capabilities)
+- [Waiting Room Functionality](#waiting-room-functionality)
+- [Meeting Cancellation](#meeting-cancellation)
+- [Feedback and Suggestions](#feedback-and-suggestions)
+- [Technologies Used](#technologies-used)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Introduction
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+This Markdown document presents the details of the **Streamline PTM Scheduling and Management Web Portal** developed as a Final Year Project (FYP). The project is built using Next.js 12, Prisma ORM, and PostgreSQL, aiming to enhance parent-teacher communication and optimize the scheduling process for educational institutes.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+## Features
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+The key features of the project are as follows:
 
-## Learn More
+### Role-Based Permissions
 
-To learn more about Next.js, take a look at the following resources:
+The system supports the following roles with specific access levels:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Director
+- Deputy-Director
+- Admin
+- Parent
+- Student
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Each role is granted appropriate permissions to access the relevant functionalities of the web portal.
 
-## Deploy on Vercel
+### Intelligent Meeting Scheduling
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The portal intelligently allocates optimal meeting times based on the student's CGPA and attendance. This ensures efficient utilization of time and enhances the overall scheduling process.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Schedule Management
+
+The system facilitates efficient coordination of Parent-Teacher Meetings (PTMs) by synchronizing with the institute's timetable and managing free slots for meetings. This helps to avoid conflicts and ensures a seamless scheduling experience.
+
+### Rescheduling Capabilities
+
+Flexibility is provided to reschedule meetings when necessary. Administrators can easily reschedule meetings with the consent of other admins or at a later suitable date.
+
+### Waiting Room Functionality
+
+The waiting room feature allows administrators to manage meeting statuses effectively. Parents and students are placed in the waiting room until the designated meeting time, streamlining the meeting process.
+
+### Meeting Cancellation
+
+The web portal offers a smooth cancellation process for both parties involved. If any unexpected situation arises, meetings can be canceled efficiently with proper notifications to all stakeholders.
+
+### Feedback and Suggestions
+
+To continuously improve the system, the portal gathers feedback and suggestions from parents and administrators regarding the PTM experience and system enhancements.
+
+## Technologies Used
+
+The project is built using the following technologies:
+
+- Mantine UI: An up and coming open source UI library for the web, with beautiful components along with control hooks.
+- Next.js 12: A popular React framework for building server-side rendered (SSR) and statically generated web applications.
+- Prisma ORM: A modern and efficient Object-Relational Mapping (ORM) tool used for database interactions.
+- PostgreSQL: A powerful open-source relational database management system used to store and manage the project's data.
+
+## Conclusion
+
+The PTM Scheduling and Management Web Portal is an innovative solution to streamline PTM processes in educational institutes, facilitating better communication between parents and teachers. The use of Next.js, Prisma, and PostgreSQL provides a robust and efficient foundation for this web portal, making it a valuable addition to any educational institution.
+
+Feel free to ask for more information on the project or contribute.
+
+---
