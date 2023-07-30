@@ -11,6 +11,7 @@ import { MantineProvider } from "@mantine/core";
 import { useState, useEffect, useRef } from "react";
 import Router from "next/router";
 import LoadingBar from "react-top-loading-bar";
+import { Analytics } from "@vercel/analytics/react";
 
 
 //dynamically importing it because goddammit it
@@ -60,6 +61,7 @@ function MyApp({ Component, pageProps, session }) {
             }
             }}>
             <Component {...pageProps} session={session}  />
+            <Analytics/>
           </MantineProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
